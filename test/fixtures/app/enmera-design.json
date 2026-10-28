@@ -1,0 +1,6 @@
+{
+    "include": ["src", "lang"],
+    "i18n": { "files": ["lang/*.json"], "keysAreSource": true, "framework": ["Reset Password"] },
+    "allow": { "radius-scale": ["src/page.tsx:rounded-[28px]"] },
+    "rules": { "pulse-for-live-only": "off" }
+}
