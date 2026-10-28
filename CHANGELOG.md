@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0
+
+- New rule `use-shared-looks`: a span styled as a badge, a div styled as a card, a heading with its own size classes
+  or a link styled as a button is flagged; `config.looks` names the component that owns each look.
+- Container components (`config.containers`: Card, SectionCard, Tile, Panel, row and list components) may take padding,
+  gap, height and text classes from the caller; only colour, radius, border, ring, shadow and outline count as overrides.
+- `inventory` counts a component's look as its props plus outside look classes, so inner layout no longer inflates the
+  number of looks; Heading, Tile and Panel are counted as shared.
+- Paths given as `./src/a.tsx` or absolute paths are checked (they were silently skipped).
+
 ## 0.2.1
 
 - Fewer false positives found while applying the rules to two production panels: dialog/popover containers and

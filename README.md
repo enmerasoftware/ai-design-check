@@ -99,6 +99,7 @@ Ignore one place, always with a reason after `--` (an ignore without a reason is
     "componentDirs": ["**/components/ui/**"],
     "components": { "button": "Button", "input": "Input" },
     "sharedComponents": ["Button", "Badge", "Input", "Card"],
+    "looks": { "badge": "StatusBadge", "card": "Tile or SectionCard", "heading": "Heading", "link": "LinkButton" },
     "rules": { "pulse-for-live-only": "off" },
     "allow": {
         "type-scale": ["src/marketing/hero.tsx:text-[44px]"],
@@ -115,6 +116,8 @@ Ignore one place, always with a reason after `--` (an ignore without a reason is
 - `componentDirs`: where raw `<button>`/`<input>` are allowed (the components themselves).
 - `components`: raw element → the shared component to use instead. `sharedComponents`: components whose look comes
   from props; `className` on them may only place them (width, margin, grid position).
+- `looks`: the component that owns each hand-written look found by `use-shared-looks` (a span styled as a badge, a
+  div styled as a card, a heading with size classes, a link styled as a button). `false` turns one kind off.
 
 ### In CI
 

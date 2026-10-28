@@ -80,6 +80,16 @@
 
 **Nasıl düzeltilir:** Bileşenle değiştirin; bileşende gereken görünüm yoksa görünümü bileşene ekleyin.
 
+### Rozet, kutu, başlık ve düğme görünümlü bağlantı ortak bileşenden
+
+`use-shared-looks` · uyarı · denetlenir
+
+**Kural:** Rozet gibi biçimlenmiş span, kart gibi biçimlenmiş div, kendi boyut sınıflarını taşıyan başlık ya da düğme gibi biçimlenmiş bağlantı, ortak bileşenin elle yapılmış kopyasıdır. Rozet, kutu, başlık ve bağlantı düğmesi bileşenleri kullanılır; proje adlarını config.looks ile verir.
+
+**Neden:** En hızlı dağılan şey rozet ve kutudur: aynı 'yeni' etiketi beş farklı boşluk ve dört farklı yeşille yazılır. Başlık ölçeği ancak başlıklar boyut yazmak yerine boyut seçtiğinde korunur.
+
+**Nasıl düzeltilir:** Öğeyi bileşenle değiştirip ton ve boyut seçin; uyan yoksa çağrı yerine sınıf değil, bileşene ton ya da boyut ekleyin.
+
 ### Ortak bileşene dışarıdan görünüm verilmez
 
 `no-style-overrides` · uyarı · denetlenir

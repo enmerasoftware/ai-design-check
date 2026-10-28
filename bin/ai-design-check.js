@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync, writeFileSync, writeSync } from 'node:fs';
-import { join, relative, sep } from 'node:path';
+import { join, relative, resolve, sep } from 'node:path';
 import { CONFIG_FILE, applyBaseline, check, loadRules, toBaseline } from '../src/check.js';
 import { inventory } from '../src/inventory.js';
 
@@ -42,7 +42,9 @@ const valueOf = (name) => {
 const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook'];
 const positional = args.filter((arg, index) => !arg.startsWith('--') && args[index - 1] !== '--format');
 // "ai-design-check src lang" is a check of those paths; the command word is optional.
-const [command, ...rest] = COMMANDS.includes(positional[0]) ? positional : ['check', ...positional];
+const [command, ...named] = COMMANDS.includes(positional[0]) ? positional : ['check', ...positional];
+// "./src/a.tsx" and absolute paths name the same file as "src/a.tsx"; the walker and the globs expect the last form.
+const rest = named.map((path) => relative(process.cwd(), resolve(path)).split(sep).join('/') || '.');
 const format = flags.has('--json') ? 'json' : (valueOf('format') ?? 'text');
 const lang = flags.has('--tr') ? 'tr' : 'en';
 const cwd = process.cwd();

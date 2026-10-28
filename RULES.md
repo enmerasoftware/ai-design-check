@@ -80,6 +80,16 @@
 
 **How to fix:** Replace it with the component; if the component lacks a variant, add the variant to the component.
 
+### Badges, boxes, headings and button links come from shared components
+
+`use-shared-looks` · warning · checked
+
+**Rule:** A span styled as a badge, a div styled as a card, a heading with its own size classes or a link styled as a button is a hand-made copy of a shared component. Use the badge, box, heading and link-button components; the project names them in config.looks.
+
+**Why:** Badges and boxes drift fastest: the same 'new' label ends up in five paddings and four greens. A heading scale only holds when headings pick a size instead of writing one.
+
+**How to fix:** Replace the element with the component and pick a tone and size; if none fits, add a tone or size to the component, not a class at the call site.
+
 ### No visual overrides on shared components
 
 `no-style-overrides` · warning · checked

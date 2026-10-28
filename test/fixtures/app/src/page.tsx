@@ -37,6 +37,13 @@ export function Page({ count, active }: { count: number; active: boolean }) {
             <span>{count === 1 ? 'item' : 'items'}</span>
             <span className={rank === 1 ? 'border-foreground/15' : 'border-transparent'}>{rank === 1 ? t('Number 1') : t('Top :rank')}</span>
             <Dialog className="outline-none">dialog</Dialog>
+            <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs">New</span>
+            <span className="text-xs text-muted-foreground">plain</span>
+            <Card className="flex gap-3 p-2 text-sm">laid out</Card>
+            <Card className="bg-red-500">recoloured</Card>
+            <div className="flex gap-4 p-4">spaced</div>
+            <h2 className="font-display text-2xl font-semibold">Title</h2>
+            <a href="/register" className="rounded-full bg-ink px-4 py-2 text-white">Start</a>
             {/* ai-design-check-ignore-next-line focus-ring-removed -- the wrapping group draws the focus ring */}
             <Input
                 data-slot="multi-line"

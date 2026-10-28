@@ -14,7 +14,7 @@ const values = (rule) => by(rule).map((item) => item.value);
 
 test('every rule has both languages, a known area and a valid check type', () => {
     const { areas, rules } = loadRules();
-    const types = ['class', 'regex', 'i18n-case', 'icon-button-name', 'shared-components', 'style-overrides', 'repeated-markup'];
+    const types = ['class', 'regex', 'i18n-case', 'icon-button-name', 'shared-components', 'style-overrides', 'repeated-markup', 'shared-looks'];
     for (const rule of rules) {
         assert.ok(areas[rule.area], rule.id);
         for (const field of ['title', 'rule', 'why', 'fix']) assert.ok(rule[field].en && rule[field].tr, `${rule.id}.${field}`);
@@ -49,8 +49,9 @@ test('accessibility: focus ring and icon-only buttons', () => {
 
 test('components: raw elements and outside styling', () => {
     assert.deepEqual(values('use-shared-components'), ['button', 'input']); // hidden input and components/ui are fine
+    assert.deepEqual(values('use-shared-looks'), ['badge:span', 'heading:h2', 'button link:a', 'box:div', 'box:div', 'box:div']); // the three repeated cards are boxes too; a plain span, a spaced div and components/ui are fine
     // mt-2 w-full only places it; the ignore on the Input covers focus-ring-removed only, not this rule
-    assert.deepEqual(values('no-style-overrides'), ['rounded-full bg-red-500 px-6', 'outline-none']);
+    assert.deepEqual(values('no-style-overrides'), ['rounded-full bg-red-500 px-6', 'bg-red-500', 'outline-none']); // a Card may take gap, padding and text, not a colour
     const repeated = by('repeated-markup');
     assert.equal(repeated.length, 1);
     assert.equal(repeated[0].places.length, 3); // w-full is layout, so the third copy matches too

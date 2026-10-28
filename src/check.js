@@ -3,6 +3,7 @@ import { dirname, join, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CLASS_FUNCTIONS, blankComments, classUnits, tokens, utility } from './classes.js';
 import { children, parseAttrs, tags, visibleText } from './jsx.js';
+import { LOOKS } from './looks.js';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 
@@ -33,7 +34,8 @@ const COMPONENTS = { button: 'Button', input: 'Input', select: 'Select', textare
 const SHARED = ['Button', 'LinkButton', 'IconButton', 'Badge', 'StatusBadge', 'Input', 'Select', 'Textarea', 'Card', 'SectionCard', 'Tabs', 'TabsList', 'TabsTrigger'];
 
 /** Utilities that change how a component looks (as opposed to where it sits). */
-const VISUAL = /^(?:bg-|text-(?!left$|right$|center$|start$|end$|justify$|wrap$|nowrap$|balance$|pretty$|ellipsis$|clip$)|font-|rounded|border|ring|shadow|p[xytrblse]?-|h-|size-|min-h-|gap-|tracking-|leading-|outline)/;
+export const CONTAINER_VISUAL = /^(?:bg-|rounded|border(?!-[trblsexy]?-?0$)|ring|shadow|outline)/;
+export const VISUAL = /^(?:bg-|text-(?!left$|right$|center$|start$|end$|justify$|wrap$|nowrap$|balance$|pretty$|ellipsis$|clip$)|font-|rounded|border|ring|shadow|p[xytrblse]?-|h-|size-|min-h-|gap-|tracking-|leading-|outline)/;
 
 /** Turkish- and English-aware: small connectives that stay lower case inside a label. */
 const SMALL = new Set(['a', 'an', 'the', 'and', 'or', 'for', 'of', 'on', 'in', 'to', 'by', 'with', 'vs', 've', 'ile', 'veya', 'ya', 'da', 'de', 'ki', 'mi', 'mı', 'mu', 'mü']);
@@ -55,8 +57,10 @@ export function loadConfig(cwd) {
         properNouns: [...PROPER_NOUNS, ...(config.properNouns ?? [])],
         classFunctions: [...CLASS_FUNCTIONS, ...(config.classFunctions ?? [])],
         components: { ...COMPONENTS, ...(config.components ?? {}) },
+        looks: Object.fromEntries(Object.entries(LOOKS).map(([kind, look]) => [kind, { ...look, component: config.looks?.[kind] ?? look.component }]).filter(([kind]) => config.looks?.[kind] !== false)),
         componentDirs: config.componentDirs ?? ['**/components/ui/**'],
         sharedComponents: config.sharedComponents ?? SHARED,
+        containers: config.containers ?? ['Card', 'SectionCard', 'Tile', 'Panel', 'RowButton', 'RowLink', 'MetaRow', 'List', 'CardContent'],
     };
 }
 
@@ -226,6 +230,18 @@ function checkSharedComponents(config, path, source, report) {
     }
 }
 
+function checkLooks(config, path, source, report) {
+    if (matches(config.componentDirs, path)) return;
+    const looks = Object.values(config.looks);
+    for (const tag of tags(source, looks.flatMap((look) => look.tags))) {
+        const raw = parseAttrs(tag.attrs).className ?? parseAttrs(tag.attrs).class;
+        if (raw === undefined) continue;
+        const text = typeof raw === 'string' ? raw : classUnits(`className={${raw.code}}`, config.classFunctions).map((unit) => unit.text).join(' ');
+        const look = looks.find((item) => item.tags.includes(tag.name) && item.test(text));
+        if (look) report('use-shared-looks', path, lineOf(source, tag.start), `${look.name}:${tag.name}`, `Hand-written ${look.name} <${tag.name}>: use ${look.component}`);
+    }
+}
+
 function checkOverrides(config, path, source, report) {
     // Inside the component folder components compose each other (a calendar's day Button, an input inside a group).
     if (matches(config.componentDirs, path)) return;
@@ -234,7 +250,9 @@ function checkOverrides(config, path, source, report) {
         const raw = attrs.className;
         if (raw === undefined) continue;
         const text = typeof raw === 'string' ? raw : classUnits(`className={${raw.code}}`, config.classFunctions).map((unit) => unit.text).join(' ');
-        const visual = tokens(text).filter((token) => VISUAL.test(utility(token)));
+        // Containers (boxes, rows, lists) are laid out by their caller: padding, gap, height and text belong there.
+        const look = config.containers.includes(tag.name) ? CONTAINER_VISUAL : VISUAL;
+        const visual = tokens(text).filter((token) => look.test(utility(token)));
         if (visual.length > 0) report('no-style-overrides', path, lineOf(source, tag.start), visual.join(' '), `<${tag.name}> styled from outside: ${visual.join(' ')}`);
     }
 }
@@ -325,6 +343,7 @@ export function check(cwd, overrides = {}) {
             if (on('icon-button-name')) checkIconButtons(path, source, report);
             if (on('use-shared-components')) checkSharedComponents(config, path, source, report);
             if (on('no-style-overrides')) checkOverrides(config, path, source, report);
+            if (on('use-shared-looks')) checkLooks(config, path, source, report);
         }
     }
 

@@ -1,6 +1,6 @@
 {
   "name": "@enmera/ai-design-check",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Design rules and a zero-dependency checker for interfaces built with AI coding agents (Claude Code, Cursor, Codex): sentence case, one type and radius scale, one selector language, no generated-UI tells. English and Turkish.",
   "type": "module",
   "bin": {

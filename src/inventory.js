@@ -1,8 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { classUnits, tokens, utility } from './classes.js';
-import { extensionOf, loadConfig, matches, signature, walk } from './check.js';
+import { CONTAINER_VISUAL, VISUAL, extensionOf, loadConfig, matches, signature, walk } from './check.js';
 import { parseAttrs, tags } from './jsx.js';
+import { LOOKS } from './looks.js';
 
 /**
  * Inventory: how many different ways each kind of element is written. A healthy system has one or two button
@@ -12,9 +13,9 @@ import { parseAttrs, tags } from './jsx.js';
 const KINDS = {
     button: { raw: ['button'], components: ['Button', 'LinkButton', 'IconButton'] },
     input: { raw: ['input', 'select', 'textarea'], components: ['Input', 'Select', 'Textarea', 'SelectField', 'TextField'] },
-    heading: { raw: ['h1', 'h2', 'h3', 'h4'], components: [] },
-    badge: { raw: ['span'], components: ['Badge', 'StatusBadge'], rawFilter: (text) => /\brounded(?:-full|-md|-lg)?\b/.test(text) && /\btext-(?:2xs|xs)\b/.test(text) && /\bpx-/.test(text) && /\b(?:bg-|ring-)/.test(text) },
-    card: { raw: ['div', 'section', 'article', 'li'], components: ['Card', 'SectionCard'], rawFilter: (text) => /\brounded-(?:xl|2xl|3xl|lg)\b/.test(text) && /\b(?:border|ring-1|shadow)/.test(text) && /\bbg-/.test(text) },
+    heading: { raw: LOOKS.heading.tags, components: ['Heading'] },
+    badge: { raw: LOOKS.badge.tags, components: ['Badge', 'StatusBadge'], rawFilter: LOOKS.badge.test },
+    card: { raw: LOOKS.card.tags, components: ['Card', 'SectionCard', 'Tile', 'Panel'], rawFilter: LOOKS.card.test },
 };
 
 const PROP_KEYS = ['variant', 'size', 'tone', 'color', 'intent', 'appearance'];
@@ -45,7 +46,9 @@ export function inventory(cwd, overrides = {}) {
                 let key;
                 if (spec.components.includes(tag.name)) {
                     const props = PROP_KEYS.filter((name) => typeof attrs[name] === 'string').map((name) => `${name}=${attrs[name]}`);
-                    const extra = signature(text);
+                    // A component's look is its props plus any look classes added from outside; placement and inner layout do not count.
+                    const look = config.containers.includes(tag.name) ? CONTAINER_VISUAL : VISUAL;
+                    const extra = [...new Set(tokens(text).filter((token) => look.test(utility(token))))].sort().join(' ');
                     key = `<${tag.name}${props.length ? ` ${props.join(' ')}` : ''}>${extra ? ` + ${extra}` : ''}`;
                 } else {
                     if (insideComponents) continue; // the component's own definition is the one allowed raw copy

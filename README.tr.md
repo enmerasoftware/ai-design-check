@@ -65,6 +65,10 @@ Proje kökünde `ai-design-check.json` (ya da nokta dosyası `.design-rules.json
 - `properNouns`: büyük harfini koruyan adlar.
 - `allow`: kural başına `"glob"` ya da `"glob:birebir eşleşme"`.
 - `rules`: kural kimliği başına `"off"`, `"info"`, `"warn"` ya da `"error"`.
+- `componentDirs`: ham öğelerin serbest olduğu yer (bileşenlerin kendisi). `sharedComponents`: görünümü prop'tan gelen
+  bileşenler; `className` onları yalnız yerleştirir.
+- `looks`: `use-shared-looks` kuralının bulduğu her elle yazılmış görünümün sahibi bileşen (rozet gibi span, kart gibi
+  div, boyut sınıflı başlık, düğme gibi bağlantı). `false` o türü kapatır.
 
 ## Yapay zekâ ajanları için
 

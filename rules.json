@@ -633,6 +633,30 @@
       }
     },
     {
+      "id": "use-shared-looks",
+      "area": "components",
+      "severity": "warn",
+      "title": {
+        "en": "Badges, boxes, headings and button links come from shared components",
+        "tr": "Rozet, kutu, başlık ve düğme görünümlü bağlantı ortak bileşenden"
+      },
+      "rule": {
+        "en": "A span styled as a badge, a div styled as a card, a heading with its own size classes or a link styled as a button is a hand-made copy of a shared component. Use the badge, box, heading and link-button components; the project names them in config.looks.",
+        "tr": "Rozet gibi biçimlenmiş span, kart gibi biçimlenmiş div, kendi boyut sınıflarını taşıyan başlık ya da düğme gibi biçimlenmiş bağlantı, ortak bileşenin elle yapılmış kopyasıdır. Rozet, kutu, başlık ve bağlantı düğmesi bileşenleri kullanılır; proje adlarını config.looks ile verir."
+      },
+      "why": {
+        "en": "Badges and boxes drift fastest: the same 'new' label ends up in five paddings and four greens. A heading scale only holds when headings pick a size instead of writing one.",
+        "tr": "En hızlı dağılan şey rozet ve kutudur: aynı 'yeni' etiketi beş farklı boşluk ve dört farklı yeşille yazılır. Başlık ölçeği ancak başlıklar boyut yazmak yerine boyut seçtiğinde korunur."
+      },
+      "fix": {
+        "en": "Replace the element with the component and pick a tone and size; if none fits, add a tone or size to the component, not a class at the call site.",
+        "tr": "Öğeyi bileşenle değiştirip ton ve boyut seçin; uyan yoksa çağrı yerine sınıf değil, bileşene ton ya da boyut ekleyin."
+      },
+      "check": {
+        "type": "shared-looks"
+      }
+    },
+    {
       "id": "no-style-overrides",
       "area": "components",
       "severity": "warn",
