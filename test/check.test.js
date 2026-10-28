@@ -30,6 +30,7 @@ test('visual tells are found', () => {
     assert.equal(by('icons-not-emoji').length, 1);
     assert.equal(by('no-buzzwords')[0].value, 'Seamless');
     assert.deepEqual(by('pulse-for-live-only'), []); // turned off in config
+    assert.deepEqual(by('glow-in-charts-only').map((item) => item.value), ['shadow-[0_0_24px']); // a 1px ring is not a glow
 });
 
 test('sentence case: JSX labels, source keys and translations', () => {

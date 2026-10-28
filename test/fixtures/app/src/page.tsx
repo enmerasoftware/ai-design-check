@@ -17,3 +17,5 @@ export function Page() {
         </div>
     );
 }
+export const ring = 'shadow-[0_0_0_1px_var(--line)]';
+export const glow = 'shadow-[0_0_24px_var(--brand)]';

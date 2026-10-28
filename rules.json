@@ -1,24 +1,60 @@
 {
   "version": 1,
   "areas": {
-    "writing": { "en": "Writing", "tr": "Yazım" },
-    "type": { "en": "Type scale", "tr": "Yazı ölçeği" },
-    "shape": { "en": "Corners and surfaces", "tr": "Köşe ve yüzey" },
-    "selectors": { "en": "Selectors", "tr": "Seçiciler" },
-    "layout": { "en": "Layout", "tr": "Yerleşim" },
-    "navigation": { "en": "Navigation", "tr": "Menü" },
-    "visual": { "en": "Visual language", "tr": "Görsel dil" },
-    "motion": { "en": "Motion", "tr": "Hareket" },
-    "data": { "en": "Data and numbers", "tr": "Veri ve sayılar" },
-    "interaction": { "en": "Interaction", "tr": "Etkileşim" },
-    "copy": { "en": "Copy", "tr": "Metin" }
+    "writing": {
+      "en": "Writing",
+      "tr": "Yazım"
+    },
+    "type": {
+      "en": "Type scale",
+      "tr": "Yazı ölçeği"
+    },
+    "shape": {
+      "en": "Corners and surfaces",
+      "tr": "Köşe ve yüzey"
+    },
+    "selectors": {
+      "en": "Selectors",
+      "tr": "Seçiciler"
+    },
+    "layout": {
+      "en": "Layout",
+      "tr": "Yerleşim"
+    },
+    "navigation": {
+      "en": "Navigation",
+      "tr": "Menü"
+    },
+    "visual": {
+      "en": "Visual language",
+      "tr": "Görsel dil"
+    },
+    "motion": {
+      "en": "Motion",
+      "tr": "Hareket"
+    },
+    "data": {
+      "en": "Data and numbers",
+      "tr": "Veri ve sayılar"
+    },
+    "interaction": {
+      "en": "Interaction",
+      "tr": "Etkileşim"
+    },
+    "copy": {
+      "en": "Copy",
+      "tr": "Metin"
+    }
   },
   "rules": [
     {
       "id": "sentence-case",
       "area": "writing",
       "severity": "error",
-      "title": { "en": "Sentence case for interface text", "tr": "Arayüz metninde yalnız ilk kelime büyük" },
+      "title": {
+        "en": "Sentence case for interface text",
+        "tr": "Arayüz metninde yalnız ilk kelime büyük"
+      },
       "rule": {
         "en": "Only the first word and proper names start with a capital letter: \"Rank tracking\", \"Site health\". No automatic title-casing helper; text shows as written.",
         "tr": "Yalnız ilk kelime ve özel adlar büyük harfle başlar: \"Kelime takibi\", \"Bu hafta yükselen\". Otomatik büyük harf dönüştürücü yok; metin nasıl yazıldıysa öyle görünür."
@@ -31,13 +67,18 @@
         "en": "Keep proper names (Google Business Profile, Search Console), official category and document names, abbreviations (AI, SERP) and language-code badges as they are. After a path separator the first word stays capitalised: \"Site health › Site audit\".",
         "tr": "Özel adlar (Google İşletme Profili, Search Console), resmî kategori ve belge adları (Sağlık ve Fitness, Gizlilik Politikası), kısaltmalar (AI, SERP) ve dil kodu rozetleri olduğu gibi kalır. Yol ayracından sonraki ilk kelime büyük: \"Site sağlığı › Site denetimi\"."
       },
-      "check": { "type": "i18n-case" }
+      "check": {
+        "type": "i18n-case"
+      }
     },
     {
       "id": "no-decorative-uppercase",
       "area": "writing",
       "severity": "warn",
-      "title": { "en": "No tracked uppercase labels", "tr": "Süs amaçlı büyük harf ve harf aralığı yok" },
+      "title": {
+        "en": "No tracked uppercase labels",
+        "tr": "Süs amaçlı büyük harf ve harf aralığı yok"
+      },
       "rule": {
         "en": "No small uppercase, letter-spaced labels (kickers, eyebrows, section captions such as \"NAVIGATION\").",
         "tr": "Küçük, büyük harfli ve harf aralıklı etiket yok (başlık üstü etiket, kahraman alanı hap etiketi, \"NAVIGATION\" gibi bölüm başlığı)."
@@ -50,25 +91,48 @@
         "en": "Write the label in sentence case with normal tracking. Codes, language codes and initials avatars may stay uppercase.",
         "tr": "Etiketi normal yazım ve harf aralığıyla yazın. Kodlar, dil kodu rozeti ve baş harf avatarı büyük kalabilir."
       },
-      "check": { "type": "regex", "pattern": "(?:\\buppercase\\b[^\"'`]*\\btracking-(?:wide|wider|widest)\\b|\\btracking-(?:wide|wider|widest)\\b[^\"'`]*\\buppercase\\b)", "files": ["tsx", "jsx", "vue", "svelte", "html", "blade.php"] }
+      "check": {
+        "type": "regex",
+        "pattern": "(?:\\buppercase\\b[^\"'`]*\\btracking-(?:wide|wider|widest)\\b|\\btracking-(?:wide|wider|widest)\\b[^\"'`]*\\buppercase\\b)",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html",
+          "blade.php"
+        ]
+      }
     },
     {
       "id": "short-labels",
       "area": "writing",
       "severity": "info",
-      "title": { "en": "Labels fit their slot", "tr": "Etiket yerine sığar" },
+      "title": {
+        "en": "Labels fit their slot",
+        "tr": "Etiket yerine sığar"
+      },
       "rule": {
         "en": "A menu item or tab label that gets truncated is shortened, using the same word for the same thing everywhere.",
         "tr": "Menüde ya da sekmede kesilen etiket kısaltılır; aynı şey her yerde aynı kelimeyle söylenir (kısa etikette \"keyword\" = \"kelime\": \"Kelime araştırması\")."
       },
-      "why": { "en": "A cut label hides the meaning and looks unfinished.", "tr": "Kesilen etiket anlamı gizler ve yarım görünür." },
-      "fix": { "en": "Shorten the label; do not shrink the font.", "tr": "Etiketi kısaltın; yazıyı küçültmeyin." }
+      "why": {
+        "en": "A cut label hides the meaning and looks unfinished.",
+        "tr": "Kesilen etiket anlamı gizler ve yarım görünür."
+      },
+      "fix": {
+        "en": "Shorten the label; do not shrink the font.",
+        "tr": "Etiketi kısaltın; yazıyı küçültmeyin."
+      }
     },
     {
       "id": "type-scale",
       "area": "type",
       "severity": "error",
-      "title": { "en": "Font sizes from the scale only", "tr": "Yazı boyutu yalnız ölçekten" },
+      "title": {
+        "en": "Font sizes from the scale only",
+        "tr": "Yazı boyutu yalnız ölçekten"
+      },
       "rule": {
         "en": "Use the theme scale: text-2xs (11 px, the smallest), text-xs, text-sm, text-base and up. No arbitrary text-[10px] or text-[13px].",
         "tr": "Temadaki ölçek kullanılır: text-2xs (11 px, en küçük), text-xs, text-sm, text-base … Elle text-[10px], text-[13px] yazılmaz."
@@ -81,35 +145,79 @@
         "en": "Add --text-2xs: 0.6875rem (line height 1rem) to the theme and map 9–11 px to it, 12 px to text-xs, 13 px to text-sm. Display sizes on marketing pages go in the allow list.",
         "tr": "Temaya --text-2xs: 0.6875rem (satır yüksekliği 1rem) ekleyin; 9–11 px → text-2xs, 12 px → text-xs, 13 px → text-sm. Tanıtım sitesinin büyük başlık boyutları izin listesine yazılır."
       },
-      "check": { "type": "regex", "pattern": "\\btext-\\[[0-9.]+(?:px|rem)\\]", "files": ["tsx", "jsx", "vue", "svelte", "html"] }
+      "check": {
+        "type": "regex",
+        "pattern": "\\btext-\\[[0-9.]+(?:px|rem)\\]",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html"
+        ]
+      }
     },
     {
       "id": "radius-scale",
       "area": "shape",
       "severity": "error",
-      "title": { "en": "Corner radii from the scale only", "tr": "Köşe yuvarlaklığı yalnız ölçekten" },
+      "title": {
+        "en": "Corner radii from the scale only",
+        "tr": "Köşe yuvarlaklığı yalnız ölçekten"
+      },
       "rule": {
         "en": "Use rounded-md … rounded-3xl and rounded-full; large marketing surfaces get one shared token (rounded-panel). Arbitrary radii only for micro elements up to 5 px and for drawn device or icon shapes.",
         "tr": "rounded-md … rounded-3xl ve rounded-full kullanılır; tanıtım sitesinin büyük yüzeyleri tek bir ortak değer alır (rounded-panel). Elle köşe yalnız 5 px'e kadar mikro öğelerde ve cihaz/ikon çizimlerinde."
       },
-      "why": { "en": "28, 30 and 32 px side by side read as noise, not as a system.", "tr": "Yan yana 28, 30 ve 32 px'lik köşeler sistem değil gürültü gibi okunur." },
-      "fix": { "en": "Pick the nearest scale step or add one named token.", "tr": "En yakın ölçek adımını seçin ya da tek bir adlı değer ekleyin." },
-      "check": { "type": "regex", "pattern": "\\brounded(?:-[a-z]{1,2})?-\\[(?![1-5]px\\]|inherit\\])[^\\]]+\\]", "files": ["tsx", "jsx", "vue", "svelte", "html"] }
+      "why": {
+        "en": "28, 30 and 32 px side by side read as noise, not as a system.",
+        "tr": "Yan yana 28, 30 ve 32 px'lik köşeler sistem değil gürültü gibi okunur."
+      },
+      "fix": {
+        "en": "Pick the nearest scale step or add one named token.",
+        "tr": "En yakın ölçek adımını seçin ya da tek bir adlı değer ekleyin."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "\\brounded(?:-[a-z]{1,2})?-\\[(?![1-5]px\\]|inherit\\])[^\\]]+\\]",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html"
+        ]
+      }
     },
     {
       "id": "no-nested-cards",
       "area": "shape",
       "severity": "warn",
-      "title": { "en": "No cards inside cards", "tr": "Kart içinde kart yok" },
-      "rule": { "en": "Group inside a card with spacing, type and dividers, not another bordered card.", "tr": "Kartın içindeki gruplar boşluk, yazı ve ayraçla ayrılır; içe ikinci bir çerçeveli kart konmaz." },
-      "why": { "en": "Nested frames add depth without meaning.", "tr": "İç içe çerçeve anlamı olmayan derinlik ekler." },
-      "fix": { "en": "Flatten: a divider or a muted background block instead of a second border and shadow.", "tr": "Düzleştirin: ikinci kenarlık ve gölge yerine ayraç ya da hafif zeminli blok." }
+      "title": {
+        "en": "No cards inside cards",
+        "tr": "Kart içinde kart yok"
+      },
+      "rule": {
+        "en": "Group inside a card with spacing, type and dividers, not another bordered card.",
+        "tr": "Kartın içindeki gruplar boşluk, yazı ve ayraçla ayrılır; içe ikinci bir çerçeveli kart konmaz."
+      },
+      "why": {
+        "en": "Nested frames add depth without meaning.",
+        "tr": "İç içe çerçeve anlamı olmayan derinlik ekler."
+      },
+      "fix": {
+        "en": "Flatten: a divider or a muted background block instead of a second border and shadow.",
+        "tr": "Düzleştirin: ikinci kenarlık ve gölge yerine ayraç ya da hafif zeminli blok."
+      }
     },
     {
       "id": "selector-language",
       "area": "selectors",
       "severity": "error",
-      "title": { "en": "One selector language", "tr": "Tek seçici dili" },
+      "title": {
+        "en": "One selector language",
+        "tr": "Tek seçici dili"
+      },
       "rule": {
         "en": "A primary choice that changes the content (page tabs, topic groups, separate lists) is a segmented control. Its sub-tabs sit on the same row to its right as plain text (selected one on a light fill). Filters that narrow the same list are pill chips inside the list.",
         "tr": "İçerik değiştiren ana seçim (sayfa sekmeleri, konu grupları, ayrı listeler) bölmeli seçicidir. Alt sekmeleri aynı satırda, sağında, ince ayraçtan sonra kutusuz metindir (seçili olan hafif zeminli). Aynı listeyi daraltan süzgeç, listenin içinde hap düğmedir."
@@ -127,7 +235,10 @@
       "id": "full-width-tables",
       "area": "layout",
       "severity": "warn",
-      "title": { "en": "Wide tables span the page", "tr": "Geniş tablo tam genişlikte" },
+      "title": {
+        "en": "Wide tables span the page",
+        "tr": "Geniş tablo tam genişlikte"
+      },
       "rule": {
         "en": "A data table with several columns takes the full width; the last column absorbs the spare width (w-full, cells max-w-0 truncate) so date and value never drift apart.",
         "tr": "Çok sütunlu veri tablosu tam genişlikte durur; artan genişliği son sütun alır (w-full, hücrede max-w-0 truncate). Az sütunda tarih ile değer birbirinden kopmaz, uzun adlar kesilmez."
@@ -136,13 +247,19 @@
         "en": "Squeezed into a side column it truncates names; with few rows it leaves an empty area below.",
         "tr": "Yan sütuna sıkışan tablo adları keser; satır azken altında boş alan bırakır."
       },
-      "fix": { "en": "Move the side cards below the table into a two-column masonry.", "tr": "Yan kartları tablonun altına, iki sütunlu masonry yerleşime alın." }
+      "fix": {
+        "en": "Move the side cards below the table into a two-column masonry.",
+        "tr": "Yan kartları tablonun altına, iki sütunlu masonry yerleşime alın."
+      }
     },
     {
       "id": "masonry",
       "area": "layout",
       "severity": "warn",
-      "title": { "en": "Uneven cards in a grid masonry", "tr": "Yüksekliği farklı kartlar ızgara tabanlı masonry'de" },
+      "title": {
+        "en": "Uneven cards in a grid masonry",
+        "tr": "Yüksekliği farklı kartlar ızgara tabanlı masonry'de"
+      },
       "rule": {
         "en": "Cards of different heights go into a grid-based masonry (two columns, left-to-right order). No CSS columns, and no narrow column with empty space under it.",
         "tr": "Yüksekliği farklı kartlar ızgara tabanlı masonry'ye girer (iki sütun, soldan sağa sıra). CSS columns kullanılmaz; altı boş kalan dar sütun bırakılmaz."
@@ -151,35 +268,73 @@
         "en": "CSS columns split shadows at the column top in Chrome and order cards column by column.",
         "tr": "CSS columns Chrome'da gölgeyi sütun başında bölüyor ve kartları sütun sütun diziyor."
       },
-      "fix": { "en": "Use a grid masonry component that places each card into the shortest column.", "tr": "Her kartı en kısa sütuna yerleştiren ızgara tabanlı masonry bileşeni kullanın." },
-      "check": { "type": "regex", "pattern": "\\b(?:columns-[1-9]|columns-(?:xs|sm|md|lg|xl)|column-count:)", "files": ["tsx", "jsx", "vue", "svelte", "html", "css"] }
+      "fix": {
+        "en": "Use a grid masonry component that places each card into the shortest column.",
+        "tr": "Her kartı en kısa sütuna yerleştiren ızgara tabanlı masonry bileşeni kullanın."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "\\b(?:columns-[1-9]|columns-(?:xs|sm|md|lg|xl)|column-count:)",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html",
+          "css"
+        ]
+      }
     },
     {
       "id": "readable-measure",
       "area": "layout",
       "severity": "warn",
-      "title": { "en": "Readable line length and leading", "tr": "Okunur satır uzunluğu ve aralığı" },
+      "title": {
+        "en": "Readable line length and leading",
+        "tr": "Okunur satır uzunluğu ve aralığı"
+      },
       "rule": {
         "en": "Running text stays under about 80 characters per line (max-w-prose / max-w-3xl) with line height of at least 1.3; headings have more space above than below.",
         "tr": "Akan metin satırda yaklaşık 80 karakteri geçmez (max-w-prose / max-w-3xl), satır aralığı en az 1,3; başlığın üstündeki boşluk altındakinden büyüktür."
       },
-      "why": { "en": "Long lines lose the reader on the way back.", "tr": "Uzun satırda göz bir sonraki satırın başını kaybeder." },
-      "fix": { "en": "Cap the paragraph width, not the card.", "tr": "Kartı değil paragrafı daraltın." }
+      "why": {
+        "en": "Long lines lose the reader on the way back.",
+        "tr": "Uzun satırda göz bir sonraki satırın başını kaybeder."
+      },
+      "fix": {
+        "en": "Cap the paragraph width, not the card.",
+        "tr": "Kartı değil paragrafı daraltın."
+      }
     },
     {
       "id": "spacing-rhythm",
       "area": "layout",
       "severity": "info",
-      "title": { "en": "Spacing with rhythm", "tr": "Boşlukta ritim" },
-      "rule": { "en": "Related items sit tight, sections breathe. The same gap everywhere has no rhythm.", "tr": "İlgili öğeler sıkı, bölümler arası geniş. Her yerde aynı boşluk ritimsizdir." },
-      "why": { "en": "Grouping is read from spacing before anything else.", "tr": "Gruplama her şeyden önce boşluktan okunur." },
-      "fix": { "en": "Use two or three steps: inside a group, between groups, between sections.", "tr": "İki üç adım kullanın: grup içi, gruplar arası, bölümler arası." }
+      "title": {
+        "en": "Spacing with rhythm",
+        "tr": "Boşlukta ritim"
+      },
+      "rule": {
+        "en": "Related items sit tight, sections breathe. The same gap everywhere has no rhythm.",
+        "tr": "İlgili öğeler sıkı, bölümler arası geniş. Her yerde aynı boşluk ritimsizdir."
+      },
+      "why": {
+        "en": "Grouping is read from spacing before anything else.",
+        "tr": "Gruplama her şeyden önce boşluktan okunur."
+      },
+      "fix": {
+        "en": "Use two or three steps: inside a group, between groups, between sections.",
+        "tr": "İki üç adım kullanın: grup içi, gruplar arası, bölümler arası."
+      }
     },
     {
       "id": "menu-by-job",
       "area": "navigation",
       "severity": "warn",
-      "title": { "en": "Menu grouped by job, place decided first", "tr": "Menü işe göre, yer önce kararlaştırılır" },
+      "title": {
+        "en": "Menu grouped by job, place decided first",
+        "tr": "Menü işe göre, yer önce kararlaştırılır"
+      },
       "rule": {
         "en": "Before building a feature decide its place: which menu section, its own row or a tab of an existing page, which URL prefix. Pages of the same job are one menu row with tabs. Sections collapse; the current one stays open.",
         "tr": "Özellik yazılmadan önce yeri kararlaştırılır: hangi menü bölümü, ayrı satır mı var olan sayfanın sekmesi mi, hangi adres öneki. Aynı işin sayfaları menüde tek satır, sayfada sekmedir. Bölümler katlanır; içinde bulunulan bölüm açık kalır."
@@ -197,129 +352,312 @@
       "id": "icons-not-emoji",
       "area": "visual",
       "severity": "warn",
-      "title": { "en": "Line icons, not emoji", "tr": "Emoji yerine çizgi ikon" },
+      "title": {
+        "en": "Line icons, not emoji",
+        "tr": "Emoji yerine çizgi ikon"
+      },
       "rule": {
         "en": "Interface marks are line icons from one set (lucide). Emoji and text glyphs such as ✓ ★ are not used as UI decoration; emoji that are content (an emoji picker) stay.",
         "tr": "Arayüz işaretleri tek bir setten çizgi ikondur (lucide). Emoji ve ✓ gibi metin işaretleri süs olarak kullanılmaz; içerik olan emoji (sohbet emoji seçici) kalır."
       },
-      "why": { "en": "Emoji render differently on every platform and read as generated.", "tr": "Emoji her platformda farklı çizilir ve üretilmiş gibi okunur." },
-      "fix": { "en": "Replace with the matching icon at the text size.", "tr": "Metin boyutunda karşılık gelen ikonla değiştirin." },
-      "check": { "type": "regex", "pattern": "[\\u{1F300}-\\u{1FAFF}\\u{2705}\\u{2714}\\u{2728}]", "flags": "u", "files": ["tsx", "jsx", "vue", "svelte"] }
+      "why": {
+        "en": "Emoji render differently on every platform and read as generated.",
+        "tr": "Emoji her platformda farklı çizilir ve üretilmiş gibi okunur."
+      },
+      "fix": {
+        "en": "Replace with the matching icon at the text size.",
+        "tr": "Metin boyutunda karşılık gelen ikonla değiştirin."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "[\\u{1F300}-\\u{1FAFF}\\u{2705}\\u{2714}\\u{2728}]",
+        "flags": "u",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte"
+        ]
+      }
     },
     {
       "id": "no-ai-gradients",
       "area": "visual",
       "severity": "error",
-      "title": { "en": "No gradient text or purple gradients", "tr": "Gradyan metin ve mor gradyan yok" },
+      "title": {
+        "en": "No gradient text or purple gradients",
+        "tr": "Gradyan metin ve mor gradyan yok"
+      },
       "rule": {
         "en": "Text is solid colour. No purple, violet or indigo gradients and no decorative radial halos behind sections.",
         "tr": "Metin düz renktir. Mor, menekşe ya da çivit gradyan ve bölümlerin arkasında süs amaçlı radyal parıltı yok."
       },
-      "why": { "en": "They are the most recognisable tells of generated interfaces.", "tr": "Yapay zekâ üretimi arayüzlerin en tanınan izleridir." },
-      "fix": { "en": "Use the brand colour flat; colour carries meaning (state, series, selection).", "tr": "Marka rengini düz kullanın; renk anlam taşır (durum, seri, seçim)." },
-      "check": { "type": "regex", "pattern": "(?:\\bbg-clip-text\\b|\\b(?:from|via|to)-(?:purple|violet|fuchsia|indigo)-[0-9]{2,3}\\b)", "files": ["tsx", "jsx", "vue", "svelte", "html"] }
+      "why": {
+        "en": "They are the most recognisable tells of generated interfaces.",
+        "tr": "Yapay zekâ üretimi arayüzlerin en tanınan izleridir."
+      },
+      "fix": {
+        "en": "Use the brand colour flat; colour carries meaning (state, series, selection).",
+        "tr": "Marka rengini düz kullanın; renk anlam taşır (durum, seri, seçim)."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "(?:\\bbg-clip-text\\b|\\b(?:from|via|to)-(?:purple|violet|fuchsia|indigo)-[0-9]{2,3}\\b)",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html"
+        ]
+      }
     },
     {
       "id": "no-side-stripe",
       "area": "visual",
       "severity": "warn",
-      "title": { "en": "No coloured side stripe on cards", "tr": "Kartın kenarında renkli kalın çizgi yok" },
-      "rule": { "en": "No thick coloured border on one side of a card or alert.", "tr": "Kartın ya da uyarının tek kenarında kalın renkli çizgi yok." },
-      "why": { "en": "It is the single most common generated-UI accent and fights the rounded corner.", "tr": "Yapay zekâ üretimi arayüzün en yaygın vurgusudur ve yuvarlak köşeyle çatışır." },
-      "fix": { "en": "Use a status badge, an icon or a light tinted background.", "tr": "Durum rozeti, ikon ya da hafif renkli zemin kullanın." },
-      "check": { "type": "regex", "pattern": "\\bborder-(?:l|s|r|e)-(?:2|4|8)\\b", "files": ["tsx", "jsx", "vue", "svelte", "html"] }
+      "title": {
+        "en": "No coloured side stripe on cards",
+        "tr": "Kartın kenarında renkli kalın çizgi yok"
+      },
+      "rule": {
+        "en": "No thick coloured border on one side of a card or alert.",
+        "tr": "Kartın ya da uyarının tek kenarında kalın renkli çizgi yok."
+      },
+      "why": {
+        "en": "It is the single most common generated-UI accent and fights the rounded corner.",
+        "tr": "Yapay zekâ üretimi arayüzün en yaygın vurgusudur ve yuvarlak köşeyle çatışır."
+      },
+      "fix": {
+        "en": "Use a status badge, an icon or a light tinted background.",
+        "tr": "Durum rozeti, ikon ya da hafif renkli zemin kullanın."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "\\bborder-(?:l|s|r|e)-(?:2|4|8)\\b",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html"
+        ]
+      }
     },
     {
       "id": "glow-in-charts-only",
       "area": "visual",
       "severity": "warn",
-      "title": { "en": "Glow only in charts", "tr": "Parıltı yalnız grafikte" },
+      "title": {
+        "en": "Glow only in charts",
+        "tr": "Parıltı yalnız grafikte"
+      },
       "rule": {
         "en": "Coloured glow shadows belong to the chart language (score rings, chart lines) only; buttons, cards and text do not glow.",
         "tr": "Renkli parıltı gölgesi yalnız grafik dilindedir (puan halkası, grafik çizgisi); düğme, kart ve metin parlamaz."
       },
-      "why": { "en": "Glow everywhere is noise; glow on data draws the eye to the number.", "tr": "Her yerde parıltı gürültüdür; veride parıltı gözü sayıya çeker." },
-      "fix": { "en": "Remove it, or list the chart component in the allow list.", "tr": "Kaldırın ya da grafik bileşenini izin listesine yazın." },
-      "check": { "type": "regex", "pattern": "(?:\\bshadow-\\[0_0_|\\bdrop-shadow-\\[0_0_)", "files": ["tsx", "jsx", "vue", "svelte", "html"] }
+      "why": {
+        "en": "Glow everywhere is noise; glow on data draws the eye to the number.",
+        "tr": "Her yerde parıltı gürültüdür; veride parıltı gözü sayıya çeker."
+      },
+      "fix": {
+        "en": "Remove it, or list the chart component in the allow list.",
+        "tr": "Kaldırın ya da grafik bileşenini izin listesine yazın."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "\\b(?:drop-)?shadow-\\[0_0_[1-9][0-9]*(?:px|rem)",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html"
+        ]
+      }
     },
     {
       "id": "pulse-for-live-only",
       "area": "motion",
       "severity": "info",
-      "title": { "en": "Pulse only for live data", "tr": "Nabız yalnız canlı veride" },
-      "rule": { "en": "A pulsing dot means something is running right now; it never decorates.", "tr": "Nabız atan nokta şu an süren bir işi anlatır; süs için atmaz." },
-      "why": { "en": "Fake liveness teaches people to ignore real alerts.", "tr": "Sahte canlılık gerçek uyarıları görmezden gelmeyi öğretir." },
-      "fix": { "en": "Bind the animation to the running state; show a static dot otherwise.", "tr": "Animasyonu süren duruma bağlayın; değilse sabit nokta gösterin." },
-      "check": { "type": "regex", "pattern": "\\banimate-(?:ping|pulse)\\b", "files": ["tsx", "jsx", "vue", "svelte", "html"] }
+      "title": {
+        "en": "Pulse only for live data",
+        "tr": "Nabız yalnız canlı veride"
+      },
+      "rule": {
+        "en": "A pulsing dot means something is running right now; it never decorates.",
+        "tr": "Nabız atan nokta şu an süren bir işi anlatır; süs için atmaz."
+      },
+      "why": {
+        "en": "Fake liveness teaches people to ignore real alerts.",
+        "tr": "Sahte canlılık gerçek uyarıları görmezden gelmeyi öğretir."
+      },
+      "fix": {
+        "en": "Bind the animation to the running state; show a static dot otherwise.",
+        "tr": "Animasyonu süren duruma bağlayın; değilse sabit nokta gösterin."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "\\banimate-(?:ping|pulse)\\b",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html"
+        ]
+      }
     },
     {
       "id": "no-marquee",
       "area": "motion",
       "severity": "warn",
-      "title": { "en": "No auto-scrolling strips", "tr": "Kendiliğinden kayan şerit yok" },
-      "rule": { "en": "Content does not scroll by itself.", "tr": "İçerik kendiliğinden kaymaz." },
-      "why": { "en": "It demands attention and always hides half of its content.", "tr": "Dikkat ister ve içeriğinin yarısını hep gizler." },
-      "fix": { "en": "A static, swipeable row or a short list.", "tr": "Kaydırılabilen sabit bir satır ya da kısa liste." },
-      "check": { "type": "regex", "pattern": "(?:\\banimate-marquee\\b|<marquee\\b|@keyframes\\s+marquee)", "files": ["tsx", "jsx", "vue", "svelte", "html", "css"] }
+      "title": {
+        "en": "No auto-scrolling strips",
+        "tr": "Kendiliğinden kayan şerit yok"
+      },
+      "rule": {
+        "en": "Content does not scroll by itself.",
+        "tr": "İçerik kendiliğinden kaymaz."
+      },
+      "why": {
+        "en": "It demands attention and always hides half of its content.",
+        "tr": "Dikkat ister ve içeriğinin yarısını hep gizler."
+      },
+      "fix": {
+        "en": "A static, swipeable row or a short list.",
+        "tr": "Kaydırılabilen sabit bir satır ya da kısa liste."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "(?:\\banimate-marquee\\b|<marquee\\b|@keyframes\\s+marquee)",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html",
+          "css"
+        ]
+      }
     },
     {
       "id": "numbers-with-context",
       "area": "data",
       "severity": "warn",
-      "title": { "en": "Numbers carry their comparison", "tr": "Sayı neye göre olduğunu söyler" },
+      "title": {
+        "en": "Numbers carry their comparison",
+        "tr": "Sayı neye göre olduğunu söyler"
+      },
       "rule": {
         "en": "A headline number shows what it is compared with (\"−1.2 vs last week\") and, if it moves over time, its recent history.",
         "tr": "Öne çıkan sayı neyle kıyaslandığını söyler (\"geçen haftaya göre −1,2\"); zamanla değişiyorsa yakın geçmişini gösterir."
       },
-      "why": { "en": "\"Average rank 13.8\" alone does not say whether that is good news.", "tr": "Tek başına \"Ortalama sıra 13,8\" bunun iyi haber olup olmadığını söylemez." },
-      "fix": { "en": "Add the delta and its period under the number.", "tr": "Sayının altına değişimi ve dönemini ekleyin." }
+      "why": {
+        "en": "\"Average rank 13.8\" alone does not say whether that is good news.",
+        "tr": "Tek başına \"Ortalama sıra 13,8\" bunun iyi haber olup olmadığını söylemez."
+      },
+      "fix": {
+        "en": "Add the delta and its period under the number.",
+        "tr": "Sayının altına değişimi ve dönemini ekleyin."
+      }
     },
     {
       "id": "empty-states",
       "area": "data",
       "severity": "warn",
-      "title": { "en": "Empty data shows an empty state", "tr": "Boş veride boş durum" },
-      "rule": { "en": "No data means an empty state with the next step, never an empty chart or a table of dashes.", "tr": "Veri yoksa bir sonraki adımı söyleyen boş durum gösterilir; boş grafik ya da tirelerle dolu tablo değil." },
-      "why": { "en": "An empty chart looks broken.", "tr": "Boş grafik bozuk görünür." },
-      "fix": { "en": "Say why it is empty and what fills it (connect, run, wait for the first check).", "tr": "Neden boş olduğunu ve neyin dolduracağını söyleyin (bağlayın, çalıştırın, ilk kontrolü bekleyin)." }
+      "title": {
+        "en": "Empty data shows an empty state",
+        "tr": "Boş veride boş durum"
+      },
+      "rule": {
+        "en": "No data means an empty state with the next step, never an empty chart or a table of dashes.",
+        "tr": "Veri yoksa bir sonraki adımı söyleyen boş durum gösterilir; boş grafik ya da tirelerle dolu tablo değil."
+      },
+      "why": {
+        "en": "An empty chart looks broken.",
+        "tr": "Boş grafik bozuk görünür."
+      },
+      "fix": {
+        "en": "Say why it is empty and what fills it (connect, run, wait for the first check).",
+        "tr": "Neden boş olduğunu ve neyin dolduracağını söyleyin (bağlayın, çalıştırın, ilk kontrolü bekleyin)."
+      }
     },
     {
       "id": "legible-contrast",
       "area": "visual",
       "severity": "warn",
-      "title": { "en": "Legible contrast", "tr": "Okunur kontrast" },
-      "rule": { "en": "Text meets WCAG AA (4.5:1, large text 3:1); no grey text on coloured backgrounds.", "tr": "Metin WCAG AA'yı karşılar (4,5:1, büyük metin 3:1); renkli zeminde gri metin yok." },
-      "why": { "en": "Grey on colour looks washed out and fails readers in sunlight.", "tr": "Renkli zeminde gri soluk görünür ve güneş altında okunmaz." },
-      "fix": { "en": "Use a darker shade of the background colour or near-white.", "tr": "Zemin renginin koyu tonunu ya da beyaza yakın rengi kullanın." }
+      "title": {
+        "en": "Legible contrast",
+        "tr": "Okunur kontrast"
+      },
+      "rule": {
+        "en": "Text meets WCAG AA (4.5:1, large text 3:1); no grey text on coloured backgrounds.",
+        "tr": "Metin WCAG AA'yı karşılar (4,5:1, büyük metin 3:1); renkli zeminde gri metin yok."
+      },
+      "why": {
+        "en": "Grey on colour looks washed out and fails readers in sunlight.",
+        "tr": "Renkli zeminde gri soluk görünür ve güneş altında okunmaz."
+      },
+      "fix": {
+        "en": "Use a darker shade of the background colour or near-white.",
+        "tr": "Zemin renginin koyu tonunu ya da beyaza yakın rengi kullanın."
+      }
     },
     {
       "id": "instant-filters",
       "area": "interaction",
       "severity": "info",
-      "title": { "en": "Filters react instantly", "tr": "Süzgeç anında tepki verir" },
+      "title": {
+        "en": "Filters react instantly",
+        "tr": "Süzgeç anında tepki verir"
+      },
       "rule": {
         "en": "A filter's value updates in local state at once; the list does not fade while reloading; tabs are prefetched.",
         "tr": "Süzgeç değeri anında yerel durumda değişir; liste yenilenirken soluklaşmaz; sekmeler önden yüklenir."
       },
-      "why": { "en": "Waiting for the server before the control moves feels broken.", "tr": "Denetim sunucuyu beklerken kıpırdamazsa bozuk hissettirir." },
-      "fix": { "en": "Optimistic local value, background reload without a progress bar, prefetch on tabs.", "tr": "İyimser yerel değer, ilerleme çubuğu olmadan arka planda yenileme, sekmelerde önden yükleme." }
+      "why": {
+        "en": "Waiting for the server before the control moves feels broken.",
+        "tr": "Denetim sunucuyu beklerken kıpırdamazsa bozuk hissettirir."
+      },
+      "fix": {
+        "en": "Optimistic local value, background reload without a progress bar, prefetch on tabs.",
+        "tr": "İyimser yerel değer, ilerleme çubuğu olmadan arka planda yenileme, sekmelerde önden yükleme."
+      }
     },
     {
       "id": "no-buzzwords",
       "area": "copy",
       "severity": "warn",
-      "title": { "en": "No marketing buzzwords", "tr": "Pazarlama klişesi yok" },
+      "title": {
+        "en": "No marketing buzzwords",
+        "tr": "Pazarlama klişesi yok"
+      },
       "rule": {
         "en": "No streamline, empower, supercharge, seamless, cutting-edge, next-generation, world-class, revolutionize. Say what it does, with a number if there is one.",
         "tr": "\"Yeni nesil\", \"devrim niteliğinde\", \"kusursuz\", \"sınırları zorlayan\", \"üst düzey deneyim\" yok. Ne yaptığını söyleyin, varsa sayıyla."
       },
-      "why": { "en": "These words are instant tells of generated copy and promise nothing measurable.", "tr": "Bu kelimeler üretilmiş metnin anında fark edilen izleridir ve ölçülebilir bir şey vaat etmez." },
-      "fix": { "en": "Replace the claim with the measured fact.", "tr": "İddiayı ölçülmüş bilgiyle değiştirin." },
+      "why": {
+        "en": "These words are instant tells of generated copy and promise nothing measurable.",
+        "tr": "Bu kelimeler üretilmiş metnin anında fark edilen izleridir ve ölçülebilir bir şey vaat etmez."
+      },
+      "fix": {
+        "en": "Replace the claim with the measured fact.",
+        "tr": "İddiayı ölçülmüş bilgiyle değiştirin."
+      },
       "check": {
         "type": "regex",
         "pattern": "\\b(?:streamline[sd]?|empower(?:s|ing)?|supercharge[sd]?|seamless(?:ly)?|cutting-edge|next-generation|world-class|revolutioni[sz]e[sd]?|game-chang(?:er|ing))\\b|yeni nesil|devrim niteliğinde|sınırları zorlayan|kusursuz deneyim",
         "flags": "iu",
-        "files": ["tsx", "jsx", "vue", "svelte", "html", "json", "md"]
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html",
+          "json",
+          "md"
+        ]
       }
     }
   ]
