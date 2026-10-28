@@ -9,7 +9,7 @@ const { areas, rules } = JSON.parse(readFileSync(join(root, 'rules.json'), 'utf8
 const TEXT = {
     en: {
         title: 'Enmera design rules',
-        intro: 'Generated from `rules.json`; edit that file, then run `npm run docs`. Rules marked **checked** are found by `npx @enmera/design check`; the others are reviewed by people and agents.',
+        intro: 'Generated from `rules.json`; edit that file, then run `npm run docs`. Rules marked **checked** are found by `npx @enmera/design-check`; the others are reviewed by people and agents.',
         rule: 'Rule',
         why: 'Why',
         fix: 'How to fix',
@@ -20,7 +20,7 @@ const TEXT = {
     },
     tr: {
         title: 'Enmera tasarım kuralları',
-        intro: '`rules.json` dosyasından üretilir; o dosyayı düzenleyip `npm run docs` çalıştırın. **Denetlenir** işaretli kuralları `npx @enmera/design check` bulur; diğerlerine insanlar ve ajanlar bakar.',
+        intro: '`rules.json` dosyasından üretilir; o dosyayı düzenleyip `npm run docs` çalıştırın. **Denetlenir** işaretli kuralları `npx @enmera/design-check` bulur; diğerlerine insanlar ve ajanlar bakar.',
         rule: 'Kural',
         why: 'Neden',
         fix: 'Nasıl düzeltilir',

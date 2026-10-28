@@ -1,6 +1,6 @@
 # Enmera design rules
 
-[Türkçe](RULES.tr.md) · Generated from `rules.json`; edit that file, then run `npm run docs`. Rules marked **checked** are found by `npx @enmera/design check`; the others are reviewed by people and agents.
+[Türkçe](RULES.tr.md) · Generated from `rules.json`; edit that file, then run `npm run docs`. Rules marked **checked** are found by `npx @enmera/design-check`; the others are reviewed by people and agents.
 
 ## Writing
 

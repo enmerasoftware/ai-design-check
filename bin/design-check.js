@@ -3,12 +3,12 @@ import { existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { CONFIG_FILE, check, loadRules } from '../src/check.js';
 
-const HELP = `enmera-design — Enmera design rules for product interfaces
+const HELP = `design-check — Enmera design rules for product interfaces
 
 Usage
-  npx @enmera/design check [path …]   Check the project (default command)
-  npx @enmera/design rules [--tr]      List the rules
-  npx @enmera/design init              Write ${CONFIG_FILE} with the defaults
+  npx @enmera/design-check [path …]         Check the project
+  npx @enmera/design-check rules [--tr]      List the rules
+  npx @enmera/design-check init              Write ${CONFIG_FILE} with the defaults
 
 Options
   --json      Machine-readable findings
@@ -16,11 +16,14 @@ Options
   --quiet     Only the summary line
   --tr        Turkish rule texts
 
-Rules and reasons: https://github.com/enmerasoftware/design/blob/main/RULES.md`;
+Rules and reasons: https://github.com/enmerasoftware/design-check/blob/main/RULES.md`;
 
 const args = process.argv.slice(2);
 const flags = new Set(args.filter((arg) => arg.startsWith('--')));
-const [command = 'check', ...rest] = args.filter((arg) => !arg.startsWith('--'));
+const COMMANDS = ['check', 'rules', 'init', 'help'];
+const positional = args.filter((arg) => !arg.startsWith('--'));
+// "design-check src lang" is a check of those paths; the command word is optional.
+const [command, ...rest] = COMMANDS.includes(positional[0]) ? positional : ['check', ...positional];
 const lang = flags.has('--tr') ? 'tr' : 'en';
 const cwd = process.cwd();
 const color = process.stdout.isTTY && !process.env.NO_COLOR;

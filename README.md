@@ -1,4 +1,4 @@
-# @enmera/design
+# @enmera/design-check
 
 [Türkçe](README.tr.md)
 
@@ -10,9 +10,9 @@ what read as "generated", what broke at narrow widths, what people did not under
 **why** and **how to fix it**, in English and Turkish.
 
 ```bash
-npx @enmera/design check          # check the project
-npx @enmera/design rules          # list the rules (--tr for Turkish)
-npx @enmera/design init           # write a config with the defaults
+npx @enmera/design-check            # check the project (or: design-check src lang)
+npx @enmera/design-check rules      # list the rules (--tr for Turkish)
+npx @enmera/design-check init       # write a config with the defaults
 ```
 
 ## What it covers
@@ -50,7 +50,7 @@ Exit code 1 on errors (`--strict`: also on warnings), `--json` for machines.
 
 ### Configuration
 
-`enmera-design.json` (or the neutral `.design-rules.json`) in the project root:
+`design-check.json` (or the dotfile `.design-rules.json`) in the project root:
 
 ```json
 {
@@ -75,7 +75,7 @@ Exit code 1 on errors (`--strict`: also on warnings), `--json` for machines.
 ### In CI
 
 ```yaml
-- run: npx @enmera/design check
+- run: npx @enmera/design-check
 ```
 
 ## For AI coding agents
@@ -83,11 +83,11 @@ Exit code 1 on errors (`--strict`: also on warnings), `--json` for machines.
 The package ships a skill that tells an agent to read the rules before touching UI and to run the checker after:
 
 ```bash
-npx skills add enmerasoftware/design
+npx skills add enmerasoftware/design-check
 ```
 
 Or point your agent's instructions (`CLAUDE.md`, `AGENTS.md`, `.cursor/rules`) at
-`node_modules/@enmera/design/RULES.md`.
+`node_modules/@enmera/design-check/RULES.md`.
 
 ## Adding a rule
 

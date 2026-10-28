@@ -1,4 +1,4 @@
-# @enmera/design
+# @enmera/design-check
 
 [English](README.md)
 
@@ -10,9 +10,9 @@ Kurallar [Enmera](https://enmera.com.tr) ve [Searvia](https://searvia.com)'da ca
 **nasıl düzeltilir** sorularını Türkçe ve İngilizce yanıtlar.
 
 ```bash
-npx @enmera/design check          # projeyi denetle
-npx @enmera/design rules --tr     # kuralları listele
-npx @enmera/design init           # varsayılan ayar dosyasını yaz
+npx @enmera/design-check            # projeyi denetle (ya da: design-check src lang)
+npx @enmera/design-check rules --tr # kuralları listele
+npx @enmera/design-check init       # varsayılan ayar dosyasını yaz
 ```
 
 ## Neleri kapsar
@@ -40,7 +40,7 @@ Hata varsa çıkış kodu 1 (`--strict` ile uyarıda da), makineler için `--jso
 
 ### Ayar
 
-Proje kökünde `enmera-design.json` (ya da tarafsız adla `.design-rules.json`). Örnek ve alanlar için
+Proje kökünde `design-check.json` (ya da nokta dosyası `.design-rules.json`). Örnek ve alanlar için
 [README.md](README.md#configuration).
 
 - `i18n.files`: çeviri sözlükleri. `keysAreSource` ile anahtarlar İngilizce kaynak metindir ve onlar da denetlenir;
@@ -54,7 +54,7 @@ Proje kökünde `enmera-design.json` (ya da tarafsız adla `.design-rules.json`)
 Paket, ajana arayüze dokunmadan önce kuralları okumasını ve sonra denetçiyi çalıştırmasını söyleyen bir beceriyle gelir:
 
 ```bash
-npx skills add enmerasoftware/design
+npx skills add enmerasoftware/design-check
 ```
 
 ## Kural eklemek

@@ -1,10 +1,10 @@
 {
-  "name": "@enmera/design",
+  "name": "@enmera/design-check",
   "version": "0.1.0",
   "description": "Design rules for product interfaces, with a zero-dependency checker and an agent skill: sentence case, one type and radius scale, one selector language, layouts that do not leave dead space, and no generated-UI tells.",
   "type": "module",
   "bin": {
-    "enmera-design": "bin/enmera-design.js"
+    "design-check": "bin/design-check.js"
   },
   "exports": {
     ".": "./src/check.js",
@@ -23,10 +23,10 @@
   "keywords": ["design-system", "ui", "lint", "tailwind", "react", "sentence-case", "accessibility", "agent-skill", "claude", "design-rules"],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/enmerasoftware/design.git"
+    "url": "git+https://github.com/enmerasoftware/design-check.git"
   },
-  "homepage": "https://github.com/enmerasoftware/design#readme",
-  "bugs": "https://github.com/enmerasoftware/design/issues",
+  "homepage": "https://github.com/enmerasoftware/design-check#readme",
+  "bugs": "https://github.com/enmerasoftware/design-check/issues",
   "license": "MIT",
   "author": "Enmera"
 }

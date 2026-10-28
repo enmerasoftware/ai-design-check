@@ -1,5 +1,5 @@
 ---
-name: enmera-design
+name: design-check
 description: Design rules for product interfaces (dashboards, admin panels, SaaS screens) with a checker. Use before building or changing any UI screen, component, label, menu item, table or chart, and before reviewing UI changes: sentence case, one type and radius scale, one selector language, layouts without dead space, no generated-UI tells.
 ---
 
@@ -9,7 +9,7 @@ Apply these rules whenever you build, change or review interface code.
 
 ## Before you write UI
 
-1. Read `RULES.md` from this package (Turkish: `RULES.tr.md`), or run `npx @enmera/design rules`.
+1. Read `RULES.md` from this package (Turkish: `RULES.tr.md`), or run `npx @enmera/design-check rules`.
 2. Decide the place first: which menu section, its own row or a tab of an existing page, which URL prefix
    (`menu-by-job`). State the decision in one line before writing code.
 3. Reuse the project's components for the selector language: segmented control for the primary choice, plain
@@ -29,7 +29,7 @@ Apply these rules whenever you build, change or review interface code.
 Run the checker and fix what it reports, or add a justified entry to the project's config `allow` list:
 
 ```bash
-npx @enmera/design check
+npx @enmera/design-check
 ```
 
 For the rules marked *review* (layout, selectors, empty states, contrast), look at the screen itself (screenshot
