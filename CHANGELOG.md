@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.1
+
+- Fewer false positives found while applying the rules to two production panels: dialog/popover containers and
+  inputs whose wrapper draws the focus ring (`focus-within:`, `has-[…:focus-visible]`) are exempt from
+  `focus-ring-removed`; react-aria `slot` buttons are labelled by their parent; components inside the component folder
+  may compose each other; `no-naive-plural` needs a real singular/plural pair; `" " + t('…')` is not a glued sentence;
+  `t('OK')` as a status label is no longer a button label.
+- `ai-design-check-ignore-next-line` covers a tag spread over several lines.
+
 ## 0.2.0
 
 - 17 new rules (40 in total): shared components with one look per element (`use-shared-components`,

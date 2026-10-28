@@ -707,7 +707,7 @@
         "pattern": "(?:^|\\s)(?:[\\w-]+:)*outline-(?:none|hidden)(?=\\s|$)",
         "unless": "(?:focus-visible|focus|focus-within|group-focus-visible|peer-focus-visible|data-focus-visible|data-\\[focus-visible\\]|data-\\[focused\\]|data-focused|has-focus-visible):(?:ring|outline|shadow|border|bg|underline)",
         "exceptElements": "^(?:\\w*(?:Dialog|Popover|Modal|Sheet|Drawer|Menu|ListBox|Listbox|Tooltip|Command|Overlay|Popup|Viewport|Panel)\\w*|[A-Z]\\w*Content)$",
-        "unlessBefore": "(?:focus-within|has-\\[:focus-visible\\]|has-focus-visible):(?:ring|outline|shadow|border)"
+        "unlessBefore": "(?:focus-within|has-\\[:focus-visible\\]|has-focus-visible|has-\\[\\[[^\\]]*\\]:focus-visible\\]):(?:ring|outline|shadow|border)"
       }
     },
     {
@@ -874,7 +874,7 @@
       },
       "check": {
         "type": "regex",
-        "pattern": "\\bt\\([^()\\n]*\\)\\s*\\+\\s*(?:['\"`]|t\\()|['\"`]\\s*\\+\\s*t\\(",
+        "pattern": "\\bt\\([^()\\n]*\\)\\s*\\+\\s*(?:['\"`][^'\"`\\n]*\\p{L}|t\\(|['\"`][^'\"`\\n]*['\"`]\\s*\\+\\s*t\\()|['\"`][^'\"`\\n]*\\p{L}[^'\"`\\n]*['\"`]\\s*\\+\\s*t\\(",
         "files": [
           "tsx",
           "jsx",
@@ -882,7 +882,8 @@
           "js",
           "vue",
           "svelte"
-        ]
+        ],
+        "flags": "u"
       }
     },
     {
@@ -980,7 +981,7 @@
       },
       "check": {
         "type": "regex",
-        "pattern": ">\\s*(?:Submit|OK|Ok|Click here|Tamam|Gönder|Buraya tıklayın|Tıklayın)\\s*<|\\bt\\(\\s*['\"](?:Submit|OK|Click here)['\"]\\s*\\)",
+        "pattern": ">\\s*(?:Submit|OK|Ok|Click here|Tamam|Gönder|Buraya tıklayın|Tıklayın)\\s*<|\\bt\\(\\s*['\"](?:Submit|Click here)['\"]\\s*\\)",
         "files": [
           "tsx",
           "jsx",

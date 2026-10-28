@@ -122,9 +122,13 @@ function ignores(source) {
         if (!match) return;
         const ids = match[2].split(',').map((id) => id.trim()).filter(Boolean);
         if (match[1] === 'file') ids.forEach((id) => file.add(id));
+        else if (match[1] === 'line') byLine.set(index + 1, [...(byLine.get(index + 1) ?? []), ...ids]);
         else {
-            const line = match[1] === 'next-line' ? index + 2 : index + 1;
-            byLine.set(line, [...(byLine.get(line) ?? []), ...ids]);
+            // next-line covers the whole next element: a tag spread over several lines ends at its first ">".
+            for (let next = index + 1; next < Math.min(lines.length, index + 12); next++) {
+                byLine.set(next + 1, [...(byLine.get(next + 1) ?? []), ...ids]);
+                if (/>\s*$|\/>|>[^<]*</.test(lines[next])) break;
+            }
         }
     });
 
@@ -223,6 +227,8 @@ function checkSharedComponents(config, path, source, report) {
 }
 
 function checkOverrides(config, path, source, report) {
+    // Inside the component folder components compose each other (a calendar's day Button, an input inside a group).
+    if (matches(config.componentDirs, path)) return;
     for (const tag of tags(source, config.sharedComponents)) {
         const attrs = parseAttrs(tag.attrs);
         const raw = attrs.className;
@@ -285,7 +291,7 @@ export function check(cwd, overrides = {}) {
                     if (rule.check.unless && new RegExp(rule.check.unless, 'u').test(unit.text)) continue;
                     if (rule.check.exceptElements && unit.element && new RegExp(rule.check.exceptElements).test(unit.element)) continue;
                     // A wrapper just above may carry the style (focus-within: ring on the box around an input).
-                    if (rule.check.unlessBefore && new RegExp(rule.check.unlessBefore, 'u').test(source.slice(Math.max(0, unit.index - 700), unit.index))) continue;
+                    if (rule.check.unlessBefore && new RegExp(rule.check.unlessBefore, 'u').test(source.slice(Math.max(0, unit.index - 1500), unit.index))) continue;
                     for (const match of unit.text.matchAll(new RegExp(rule.check.pattern, 'gu'))) {
                         report(rule.id, path, line, match[0].trim(), `${rule.title.en}: ${match[0].trim()}`);
                     }

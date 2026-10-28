@@ -49,7 +49,8 @@ test('accessibility: focus ring and icon-only buttons', () => {
 
 test('components: raw elements and outside styling', () => {
     assert.deepEqual(values('use-shared-components'), ['button', 'input']); // hidden input and components/ui are fine
-    assert.deepEqual(values('no-style-overrides'), ['rounded-full bg-red-500 px-6']); // mt-2 w-full only places it
+    // mt-2 w-full only places it; the ignore on the Input covers focus-ring-removed only, not this rule
+    assert.deepEqual(values('no-style-overrides'), ['rounded-full bg-red-500 px-6', 'outline-none']);
     const repeated = by('repeated-markup');
     assert.equal(repeated.length, 1);
     assert.equal(repeated[0].places.length, 3); // w-full is layout, so the third copy matches too

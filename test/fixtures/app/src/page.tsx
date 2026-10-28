@@ -37,6 +37,11 @@ export function Page({ count, active }: { count: number; active: boolean }) {
             <span>{count === 1 ? 'item' : 'items'}</span>
             <span className={rank === 1 ? 'border-foreground/15' : 'border-transparent'}>{rank === 1 ? t('Number 1') : t('Top :rank')}</span>
             <Dialog className="outline-none">dialog</Dialog>
+            {/* ai-design-check-ignore-next-line focus-ring-removed -- the wrapping group draws the focus ring */}
+            <Input
+                data-slot="multi-line"
+                className="outline-none"
+            />
             <a href={url}>{url.replace(/^https:\/\//, '')}<ExternalLinkIcon /></a>
             <span>{t('Saved') + ' ' + t('today')}</span>
             <div className="transition-all duration-200">moving</div>
