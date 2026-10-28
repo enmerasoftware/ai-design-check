@@ -1,18 +1,20 @@
-# @enmera/design-check
+# @enmera/ai-design-check
 
 [English](README.md)
 
-Ürün arayüzleri (paneller, yönetim ekranları, SaaS ekranları) için bir kez yazılıp her yerde kullanılan tasarım
-kuralları. İnsanlar, yapay zekâ kodlama ajanları ve CI'daki bağımlılıksız bir denetçi aynı kuralları kullanır.
+Yapay zekâ kodlama ajanlarıyla (Claude Code, Cursor, Codex) yapılan arayüzleri tasarım kurallarına göre denetler;
+böylece "yapay zekâ yapmış" gibi görünmez ve tek bir sisteme uyarlar. Ajan arayüzü yazmadan önce kuralları okur,
+bağımlılıksız denetçi gözden kaçanı bulur, her kural nasıl düzeltileceğini söyler. Paneller, yönetim ekranları ve
+SaaS ekranları için.
 
 Kurallar [Enmera](https://enmera.com.tr) ve [Searvia](https://searvia.com)'da canlıya çıkmış gerçek ekranlardan
 çıktı: "üretilmiş" gibi okunanlar, dar ekranda bozulanlar, kullanıcının anlamadıkları. Her kural **ne**, **neden** ve
 **nasıl düzeltilir** sorularını Türkçe ve İngilizce yanıtlar.
 
 ```bash
-npx @enmera/design-check            # projeyi denetle (ya da: design-check src lang)
-npx @enmera/design-check rules --tr # kuralları listele
-npx @enmera/design-check init       # varsayılan ayar dosyasını yaz
+npx @enmera/ai-design-check            # projeyi denetle (ya da: ai-design-check src lang)
+npx @enmera/ai-design-check rules --tr # kuralları listele
+npx @enmera/ai-design-check init       # varsayılan ayar dosyasını yaz
 ```
 
 ## Neleri kapsar
@@ -40,7 +42,7 @@ Hata varsa çıkış kodu 1 (`--strict` ile uyarıda da), makineler için `--jso
 
 ### Ayar
 
-Proje kökünde `design-check.json` (ya da nokta dosyası `.design-rules.json`). Örnek ve alanlar için
+Proje kökünde `ai-design-check.json` (ya da nokta dosyası `.design-rules.json`). Örnek ve alanlar için
 [README.md](README.md#configuration).
 
 - `i18n.files`: çeviri sözlükleri. `keysAreSource` ile anahtarlar İngilizce kaynak metindir ve onlar da denetlenir;
@@ -54,7 +56,7 @@ Proje kökünde `design-check.json` (ya da nokta dosyası `.design-rules.json`).
 Paket, ajana arayüze dokunmadan önce kuralları okumasını ve sonra denetçiyi çalıştırmasını söyleyen bir beceriyle gelir:
 
 ```bash
-npx skills add enmerasoftware/design-check
+npx skills add enmerasoftware/ai-design-check
 ```
 
 ## Kural eklemek

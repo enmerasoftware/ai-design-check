@@ -1,6 +1,6 @@
 # Enmera tasarım kuralları
 
-[English](RULES.md) · `rules.json` dosyasından üretilir; o dosyayı düzenleyip `npm run docs` çalıştırın. **Denetlenir** işaretli kuralları `npx @enmera/design-check` bulur; diğerlerine insanlar ve ajanlar bakar.
+[English](RULES.md) · `rules.json` dosyasından üretilir; o dosyayı düzenleyip `npm run docs` çalıştırın. **Denetlenir** işaretli kuralları `npx @enmera/ai-design-check` bulur; diğerlerine insanlar ve ajanlar bakar.
 
 ## Yazım
 

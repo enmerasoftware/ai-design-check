@@ -1,10 +1,10 @@
 {
-  "name": "@enmera/design-check",
+  "name": "@enmera/ai-design-check",
   "version": "0.1.0",
-  "description": "Design rules for product interfaces, with a zero-dependency checker and an agent skill: sentence case, one type and radius scale, one selector language, layouts that do not leave dead space, and no generated-UI tells.",
+  "description": "Design rules and a zero-dependency checker for interfaces built with AI coding agents (Claude Code, Cursor, Codex): sentence case, one type and radius scale, one selector language, no generated-UI tells. English and Turkish.",
   "type": "module",
   "bin": {
-    "design-check": "bin/design-check.js"
+    "ai-design-check": "bin/ai-design-check.js"
   },
   "exports": {
     ".": "./src/check.js",
@@ -20,13 +20,13 @@
     "test": "node --test",
     "check:docs": "node scripts/docs.js --check"
   },
-  "keywords": ["design-system", "ui", "lint", "tailwind", "react", "sentence-case", "accessibility", "agent-skill", "claude", "design-rules"],
+  "keywords": ["ai", "ai-generated-ui", "claude-code", "cursor", "design-system", "ui", "lint", "tailwind", "react", "sentence-case", "accessibility", "agent-skill", "claude", "design-rules"],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/enmerasoftware/design-check.git"
+    "url": "git+https://github.com/enmerasoftware/ai-design-check.git"
   },
-  "homepage": "https://github.com/enmerasoftware/design-check#readme",
-  "bugs": "https://github.com/enmerasoftware/design-check/issues",
+  "homepage": "https://github.com/enmerasoftware/ai-design-check#readme",
+  "bugs": "https://github.com/enmerasoftware/ai-design-check/issues",
   "license": "MIT",
   "author": "Enmera"
 }

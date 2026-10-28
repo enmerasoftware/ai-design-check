@@ -9,8 +9,8 @@ export function loadRules() {
     return JSON.parse(readFileSync(join(ROOT, 'rules.json'), 'utf8'));
 }
 
-export const CONFIG_FILE = 'design-check.json';
-/** Also read: the neutral dotfile and the 0.1 name. */
+export const CONFIG_FILE = 'ai-design-check.json';
+/** Also read: the neutral dotfile and the name used by @enmera/design 0.1. */
 export const CONFIG_FILES = [CONFIG_FILE, '.design-rules.json', 'enmera-design.json'];
 
 const DEFAULT_IGNORE = ['**/node_modules/**', '**/vendor/**', '**/dist/**', '**/build/**', '**/public/build/**', '**/.git/**', '**/storage/**', '**/*.min.*'];

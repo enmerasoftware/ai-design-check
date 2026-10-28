@@ -3,12 +3,12 @@ import { existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { CONFIG_FILE, check, loadRules } from '../src/check.js';
 
-const HELP = `design-check — Enmera design rules for product interfaces
+const HELP = `ai-design-check — design rules and a checker for AI-built product interfaces
 
 Usage
-  npx @enmera/design-check [path …]         Check the project
-  npx @enmera/design-check rules [--tr]      List the rules
-  npx @enmera/design-check init              Write ${CONFIG_FILE} with the defaults
+  npx @enmera/ai-design-check [path …]         Check the project
+  npx @enmera/ai-design-check rules [--tr]      List the rules
+  npx @enmera/ai-design-check init              Write ${CONFIG_FILE} with the defaults
 
 Options
   --json      Machine-readable findings
@@ -16,7 +16,7 @@ Options
   --quiet     Only the summary line
   --tr        Turkish rule texts
 
-Rules and reasons: https://github.com/enmerasoftware/design-check/blob/main/RULES.md`;
+Rules and reasons: https://github.com/enmerasoftware/ai-design-check/blob/main/RULES.md`;
 
 const args = process.argv.slice(2);
 const flags = new Set(args.filter((arg) => arg.startsWith('--')));

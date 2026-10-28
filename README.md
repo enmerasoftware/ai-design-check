@@ -1,18 +1,19 @@
-# @enmera/design-check
+# @enmera/ai-design-check
 
 [Türkçe](README.tr.md)
 
-Design rules for product interfaces (dashboards, admin panels, SaaS screens), written down once and used everywhere:
-by people, by AI coding agents, and by a zero-dependency checker in CI.
+Checks interfaces built with AI coding agents (Claude Code, Cursor, Codex) against design rules, so they stop looking
+generated and follow one system: the agent reads the rules before it writes UI, a zero-dependency checker finds what
+slipped through, and every rule says how to fix it. For dashboards, admin panels and SaaS screens.
 
 The rules come from real screens shipped by [Enmera](https://enmera.com.tr) and [Searvia](https://searvia.com):
 what read as "generated", what broke at narrow widths, what people did not understand. Each rule says **what**,
 **why** and **how to fix it**, in English and Turkish.
 
 ```bash
-npx @enmera/design-check            # check the project (or: design-check src lang)
-npx @enmera/design-check rules      # list the rules (--tr for Turkish)
-npx @enmera/design-check init       # write a config with the defaults
+npx @enmera/ai-design-check            # check the project (or: ai-design-check src lang)
+npx @enmera/ai-design-check rules      # list the rules (--tr for Turkish)
+npx @enmera/ai-design-check init       # write a config with the defaults
 ```
 
 ## What it covers
@@ -50,7 +51,7 @@ Exit code 1 on errors (`--strict`: also on warnings), `--json` for machines.
 
 ### Configuration
 
-`design-check.json` (or the dotfile `.design-rules.json`) in the project root:
+`ai-design-check.json` (or the dotfile `.design-rules.json`) in the project root:
 
 ```json
 {
@@ -75,7 +76,7 @@ Exit code 1 on errors (`--strict`: also on warnings), `--json` for machines.
 ### In CI
 
 ```yaml
-- run: npx @enmera/design-check
+- run: npx @enmera/ai-design-check
 ```
 
 ## For AI coding agents
@@ -83,11 +84,11 @@ Exit code 1 on errors (`--strict`: also on warnings), `--json` for machines.
 The package ships a skill that tells an agent to read the rules before touching UI and to run the checker after:
 
 ```bash
-npx skills add enmerasoftware/design-check
+npx skills add enmerasoftware/ai-design-check
 ```
 
 Or point your agent's instructions (`CLAUDE.md`, `AGENTS.md`, `.cursor/rules`) at
-`node_modules/@enmera/design-check/RULES.md`.
+`node_modules/@enmera/ai-design-check/RULES.md`.
 
 ## Adding a rule
 
