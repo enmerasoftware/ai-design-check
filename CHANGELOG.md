@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+- Published from GitHub Actions with npm trusted publishing and provenance; no rule changes.
+
 ## 0.1.0 (@enmera/ai-design-check)
 
 - Renamed from `@enmera/design`: the name says what it is for, checking interfaces built with AI coding agents.
