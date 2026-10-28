@@ -1,6 +1,6 @@
 ---
 name: ai-design-check
-description: Design rules for product interfaces (dashboards, admin panels, SaaS screens) with a checker. Use before building or changing any UI screen, component, label, menu item, table or chart, and before reviewing UI changes: sentence case, one type and radius scale, one selector language, layouts without dead space, no generated-UI tells.
+description: Design rules and a checker for interfaces built with AI agents (dashboards, admin panels, SaaS screens). Use before building or changing any UI screen, component, button, form field, label, menu item, table or chart, and before reviewing UI changes: shared components with one look per element, sentence case, one type and radius scale, one selector language, focus and names for accessibility, locale-aware formatting, no generated-UI tells.
 ---
 
 # Enmera design rules
@@ -14,10 +14,19 @@ Apply these rules whenever you build, change or review interface code.
    (`menu-by-job`). State the decision in one line before writing code.
 3. Reuse the project's components for the selector language: segmented control for the primary choice, plain
    sub-tabs on the same row, pill chips only for filters (`selector-language`).
+4. Know the context: an app screen (dashboard, settings, tables) is dense and quiet; a marketing page may use display
+   type and more colour. If the project has a DESIGN.md or a brief, it wins over these defaults.
+5. Run `npx @enmera/ai-design-check inventory` once: it shows the looks that already exist for buttons, inputs,
+   headings, badges and cards. Use one of those; do not invent another.
 
 ## While you write
 
+- Buttons, inputs, selects, badges and cards come from the shared components. A different look is a new `variant`
+  or `size` on the component, never a `className` with colour, radius, padding or height on one instance.
+- When the same block of markup appears a third time, extract a component instead of copying it.
 - Sentence case for every label you add, in the source language and in each translation; keep proper names.
+- Never remove a focus ring without a focus-visible replacement; give icon-only buttons an aria-label.
+- Format numbers, dates and money through the project's locale formatter; case changes name the locale (Turkish i/İ).
 - Font sizes and radii only from the theme scale; never `text-[Npx]` or a one-off `rounded-[..]`.
 - No tracked uppercase labels, emoji as decoration, gradient text, purple gradients, side stripes, decorative glow,
   fake pulses or marquees.
@@ -26,7 +35,8 @@ Apply these rules whenever you build, change or review interface code.
 
 ## After you write
 
-Run the checker and fix what it reports, or add a justified entry to the project's config `allow` list:
+Run the checker and fix what it reports. When a rule does not apply, add an inline ignore with the reason
+(`ai-design-check-ignore-next-line rule-id -- why`) or a config `allow` entry; never ignore to skip a fix:
 
 ```bash
 npx @enmera/ai-design-check

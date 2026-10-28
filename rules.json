@@ -13,6 +13,10 @@
       "en": "Corners and surfaces",
       "tr": "Köşe ve yüzey"
     },
+    "components": {
+      "en": "Components and reuse",
+      "tr": "Bileşen ve tekrar"
+    },
     "selectors": {
       "en": "Selectors",
       "tr": "Seçiciler"
@@ -29,6 +33,10 @@
       "en": "Visual language",
       "tr": "Görsel dil"
     },
+    "accessibility": {
+      "en": "Accessibility",
+      "tr": "Erişilebilirlik"
+    },
     "motion": {
       "en": "Motion",
       "tr": "Hareket"
@@ -36,6 +44,10 @@
     "data": {
       "en": "Data and numbers",
       "tr": "Veri ve sayılar"
+    },
+    "i18n": {
+      "en": "Localisation",
+      "tr": "Yerelleştirme"
     },
     "interaction": {
       "en": "Interaction",
@@ -92,16 +104,8 @@
         "tr": "Etiketi normal yazım ve harf aralığıyla yazın. Kodlar, dil kodu rozeti ve baş harf avatarı büyük kalabilir."
       },
       "check": {
-        "type": "regex",
-        "pattern": "(?:\\buppercase\\b[^\"'`]*\\btracking-(?:wide|wider|widest)\\b|\\btracking-(?:wide|wider|widest)\\b[^\"'`]*\\buppercase\\b)",
-        "files": [
-          "tsx",
-          "jsx",
-          "vue",
-          "svelte",
-          "html",
-          "blade.php"
-        ]
+        "type": "class",
+        "pattern": "(?:\\buppercase\\b[^\"'`]*\\btracking-(?:wide|wider|widest)\\b|\\btracking-(?:wide|wider|widest)\\b[^\"'`]*\\buppercase\\b)"
       }
     },
     {
@@ -146,15 +150,8 @@
         "tr": "Temaya --text-2xs: 0.6875rem (satır yüksekliği 1rem) ekleyin; 9–11 px → text-2xs, 12 px → text-xs, 13 px → text-sm. Tanıtım sitesinin büyük başlık boyutları izin listesine yazılır."
       },
       "check": {
-        "type": "regex",
-        "pattern": "\\btext-\\[[0-9.]+(?:px|rem)\\]",
-        "files": [
-          "tsx",
-          "jsx",
-          "vue",
-          "svelte",
-          "html"
-        ]
+        "type": "class",
+        "pattern": "\\btext-\\[[0-9.]+(?:px|rem)\\]"
       }
     },
     {
@@ -178,15 +175,8 @@
         "tr": "En yakın ölçek adımını seçin ya da tek bir adlı değer ekleyin."
       },
       "check": {
-        "type": "regex",
-        "pattern": "\\brounded(?:-[a-z]{1,2})?-\\[(?![1-5]px\\]|inherit\\])[^\\]]+\\]",
-        "files": [
-          "tsx",
-          "jsx",
-          "vue",
-          "svelte",
-          "html"
-        ]
+        "type": "class",
+        "pattern": "\\brounded(?:-[a-z]{1,2})?-\\[(?![1-5]px\\]|inherit\\])[^\\]]+\\]"
       }
     },
     {
@@ -273,16 +263,9 @@
         "tr": "Her kartı en kısa sütuna yerleştiren ızgara tabanlı masonry bileşeni kullanın."
       },
       "check": {
-        "type": "regex",
-        "pattern": "\\b(?:columns-[1-9]|columns-(?:xs|sm|md|lg|xl)|column-count:)",
-        "files": [
-          "tsx",
-          "jsx",
-          "vue",
-          "svelte",
-          "html",
-          "css"
-        ]
+        "type": "class",
+        "pattern": "(?:^|\\s)(?:[\\w-]+:)*columns-(?:[1-9]|xs|sm|md|lg|xl|[2-7]xl)(?=\\s|$)",
+        "css": "column-count\\s*:"
       }
     },
     {
@@ -401,15 +384,8 @@
         "tr": "Marka rengini düz kullanın; renk anlam taşır (durum, seri, seçim)."
       },
       "check": {
-        "type": "regex",
-        "pattern": "(?:\\bbg-clip-text\\b|\\b(?:from|via|to)-(?:purple|violet|fuchsia|indigo)-[0-9]{2,3}\\b)",
-        "files": [
-          "tsx",
-          "jsx",
-          "vue",
-          "svelte",
-          "html"
-        ]
+        "type": "class",
+        "pattern": "(?:\\bbg-clip-text\\b|\\b(?:from|via|to)-(?:purple|violet|fuchsia|indigo)-[0-9]{2,3}\\b)"
       }
     },
     {
@@ -433,15 +409,8 @@
         "tr": "Durum rozeti, ikon ya da hafif renkli zemin kullanın."
       },
       "check": {
-        "type": "regex",
-        "pattern": "\\bborder-(?:l|s|r|e)-(?:2|4|8)\\b",
-        "files": [
-          "tsx",
-          "jsx",
-          "vue",
-          "svelte",
-          "html"
-        ]
+        "type": "class",
+        "pattern": "\\bborder-(?:l|s|r|e)-(?:2|4|8)\\b"
       }
     },
     {
@@ -465,15 +434,8 @@
         "tr": "Kaldırın ya da grafik bileşenini izin listesine yazın."
       },
       "check": {
-        "type": "regex",
-        "pattern": "\\b(?:drop-)?shadow-\\[0_0_[1-9][0-9]*(?:px|rem)",
-        "files": [
-          "tsx",
-          "jsx",
-          "vue",
-          "svelte",
-          "html"
-        ]
+        "type": "class",
+        "pattern": "\\b(?:drop-)?shadow-\\[0_0_[1-9][0-9]*(?:px|rem)"
       }
     },
     {
@@ -497,15 +459,8 @@
         "tr": "Animasyonu süren duruma bağlayın; değilse sabit nokta gösterin."
       },
       "check": {
-        "type": "regex",
-        "pattern": "\\banimate-(?:ping|pulse)\\b",
-        "files": [
-          "tsx",
-          "jsx",
-          "vue",
-          "svelte",
-          "html"
-        ]
+        "type": "class",
+        "pattern": "\\banimate-(?:ping|pulse)\\b"
       }
     },
     {
@@ -529,16 +484,9 @@
         "tr": "Kaydırılabilen sabit bir satır ya da kısa liste."
       },
       "check": {
-        "type": "regex",
-        "pattern": "(?:\\banimate-marquee\\b|<marquee\\b|@keyframes\\s+marquee)",
-        "files": [
-          "tsx",
-          "jsx",
-          "vue",
-          "svelte",
-          "html",
-          "css"
-        ]
+        "type": "class",
+        "pattern": "(?:^|\\s)(?:[\\w-]+:)*animate-marquee(?=\\s|$)",
+        "css": "@keyframes\\s+marquee|<marquee\\b"
       }
     },
     {
@@ -658,6 +606,480 @@
           "json",
           "md"
         ]
+      }
+    },
+    {
+      "id": "use-shared-components",
+      "area": "components",
+      "severity": "warn",
+      "title": {
+        "en": "Interactive elements come from shared components",
+        "tr": "Etkileşimli öğeler ortak bileşenden"
+      },
+      "rule": {
+        "en": "Pages use the shared Button, Input, Select, Textarea and Checkbox components, not raw <button>, <input>, <select> or <textarea>. Raw elements live only inside the component folder.",
+        "tr": "Sayfalar ortak Button, Input, Select, Textarea ve Checkbox bileşenlerini kullanır; ham <button>, <input>, <select>, <textarea> yazılmaz. Ham öğeler yalnız bileşen klasörünün içinde durur."
+      },
+      "why": {
+        "en": "Every raw element is a new copy of the button: one place gets a different height, focus ring or radius, and the next fix misses it.",
+        "tr": "Her ham öğe düğmenin yeni bir kopyasıdır: bir yerde yükseklik, odak halkası ya da köşe farklı olur ve bir sonraki düzeltme onu kaçırır."
+      },
+      "fix": {
+        "en": "Replace it with the component; if the component lacks a variant, add the variant to the component.",
+        "tr": "Bileşenle değiştirin; bileşende gereken görünüm yoksa görünümü bileşene ekleyin."
+      },
+      "check": {
+        "type": "shared-components"
+      }
+    },
+    {
+      "id": "no-style-overrides",
+      "area": "components",
+      "severity": "warn",
+      "title": {
+        "en": "No visual overrides on shared components",
+        "tr": "Ortak bileşene dışarıdan görünüm verilmez"
+      },
+      "rule": {
+        "en": "className on Button, Badge, Input, Card and other shared components only places them (width, margin, alignment, grid position). Colour, radius, padding, height, font and border come from the component's variant and size props.",
+        "tr": "Button, Badge, Input, Card gibi ortak bileşenlere verilen className yalnız yerleştirir (genişlik, kenar boşluğu, hizalama, ızgara konumu). Renk, köşe, iç boşluk, yükseklik, yazı ve kenarlık bileşenin variant/size seçeneklerinden gelir."
+      },
+      "why": {
+        "en": "An override is a hidden fork of the component: the same button looks different on two screens, which is exactly what a design system exists to stop.",
+        "tr": "Dışarıdan verilen görünüm bileşenin gizli bir kopyasıdır: aynı düğme iki ekranda farklı görünür; tasarım sistemi tam da bunu engellemek için vardır."
+      },
+      "fix": {
+        "en": "Move the look into a named variant or size of the component and use that.",
+        "tr": "Görünümü bileşenin adlı bir variant ya da size seçeneğine taşıyın ve onu kullanın."
+      },
+      "check": {
+        "type": "style-overrides"
+      }
+    },
+    {
+      "id": "repeated-markup",
+      "area": "components",
+      "severity": "warn",
+      "title": {
+        "en": "Repeated markup becomes a component",
+        "tr": "Tekrarlanan kalıp bileşen olur"
+      },
+      "rule": {
+        "en": "The same long class list repeated in several places (a card, a badge, a stat tile, a section heading) is extracted into one shared component.",
+        "tr": "Birden çok yerde tekrarlanan aynı uzun sınıf listesi (kart, rozet, gösterge kutusu, bölüm başlığı) tek bir ortak bileşene çıkarılır."
+      },
+      "why": {
+        "en": "Copies drift: one gets a new padding, another keeps the old radius. One component means one fix and less code.",
+        "tr": "Kopyalar zamanla ayrışır: birine yeni boşluk verilir, diğeri eski köşede kalır. Tek bileşen tek düzeltme ve daha az kod demektir."
+      },
+      "fix": {
+        "en": "Extract the element into a component (or a variant of an existing one) and replace the copies.",
+        "tr": "Öğeyi bir bileşene (ya da var olanın bir görünümüne) çıkarın ve kopyaları onunla değiştirin."
+      },
+      "check": {
+        "type": "repeated-markup",
+        "minTokens": 6,
+        "minCount": 3
+      }
+    },
+    {
+      "id": "focus-ring-removed",
+      "area": "accessibility",
+      "severity": "error",
+      "title": {
+        "en": "Never remove the focus ring without a replacement",
+        "tr": "Odak halkası yerine yenisi konmadan kaldırılmaz"
+      },
+      "rule": {
+        "en": "outline-none / outline-hidden only together with a visible focus-visible style (ring, outline or border) on the same element.",
+        "tr": "outline-none / outline-hidden yalnız aynı öğede görünür bir focus-visible biçimiyle (ring, outline ya da border) birlikte kullanılır."
+      },
+      "why": {
+        "en": "Keyboard users lose their place. WCAG 2.4.7 (focus visible), 2.4.11 (focus not obscured).",
+        "tr": "Klavye kullanan kişi nerede olduğunu kaybeder. WCAG 2.4.7 (görünür odak), 2.4.11 (odak gizlenmez)."
+      },
+      "fix": {
+        "en": "Add focus-visible:ring-2 (or the component's focus style); prefer outline-hidden over outline-none in Tailwind 4 so forced-colours mode keeps an outline. Dialog and popover containers receive focus programmatically and are exempt.",
+        "tr": "focus-visible:ring-2 (ya da bileşenin odak biçimini) ekleyin; Tailwind 4'te outline-none yerine outline-hidden kullanın, zorlanmış renk kipinde çerçeve kalsın. Odağı programla alan diyalog ve açılır pencere kapsayıcıları muaftır."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?:^|\\s)(?:[\\w-]+:)*outline-(?:none|hidden)(?=\\s|$)",
+        "unless": "(?:focus-visible|focus|focus-within|group-focus-visible|peer-focus-visible|data-focus-visible|data-\\[focus-visible\\]|data-\\[focused\\]|data-focused|has-focus-visible):(?:ring|outline|shadow|border|bg|underline)",
+        "exceptElements": "^(?:\\w*(?:Dialog|Popover|Modal|Sheet|Drawer|Menu|ListBox|Listbox|Tooltip|Command|Overlay|Popup|Viewport|Panel)\\w*|[A-Z]\\w*Content)$",
+        "unlessBefore": "(?:focus-within|has-\\[:focus-visible\\]|has-focus-visible):(?:ring|outline|shadow|border)"
+      }
+    },
+    {
+      "id": "icon-button-name",
+      "area": "accessibility",
+      "severity": "error",
+      "title": {
+        "en": "Icon-only buttons have a name",
+        "tr": "Yalnız ikonlu düğmenin adı vardır"
+      },
+      "rule": {
+        "en": "A button or link that shows only an icon carries aria-label (or title, or visually hidden text).",
+        "tr": "Yalnız ikon gösteren düğme ya da bağlantı aria-label (ya da title veya görünmeyen metin) taşır."
+      },
+      "why": {
+        "en": "Screen readers announce \"button\" with no purpose; WCAG 4.1.2 name, role, value.",
+        "tr": "Ekran okuyucu amacı olmadan yalnız \"düğme\" der; WCAG 4.1.2 ad, rol, değer."
+      },
+      "fix": {
+        "en": "Add aria-label with the action in sentence case (\"Delete keyword\").",
+        "tr": "Eylemi söyleyen bir aria-label ekleyin (\"Kelimeyi sil\")."
+      },
+      "check": {
+        "type": "icon-button-name"
+      }
+    },
+    {
+      "id": "tabular-numbers",
+      "area": "data",
+      "severity": "info",
+      "title": {
+        "en": "Tabular numerals in tables and KPIs",
+        "tr": "Tablo ve göstergelerde eşit genişlikte rakam"
+      },
+      "rule": {
+        "en": "Numbers that are compared or update (table columns, KPIs, counters, timers) use tabular-nums and right alignment in tables.",
+        "tr": "Kıyaslanan ya da değişen sayılar (tablo sütunları, göstergeler, sayaçlar, süreler) tabular-nums kullanır; tabloda sağa hizalanır."
+      },
+      "why": {
+        "en": "Proportional digits make columns jagged and values jump as they change.",
+        "tr": "Orantılı rakamlar sütunları eğri büğrü yapar, değer değişince sayı zıplar."
+      },
+      "fix": {
+        "en": "Add tabular-nums to the cell or the table; text-end for numeric columns.",
+        "tr": "Hücreye ya da tabloya tabular-nums ekleyin; sayısal sütunda text-end."
+      }
+    },
+    {
+      "id": "locale-aware-case",
+      "area": "i18n",
+      "severity": "warn",
+      "title": {
+        "en": "Case changes name the locale",
+        "tr": "Büyük-küçük harf dönüşümü dili belirtir"
+      },
+      "rule": {
+        "en": "toUpperCase()/toLowerCase() on interface text use toLocaleUpperCase(locale)/toLocaleLowerCase(locale).",
+        "tr": "Arayüz metninde toUpperCase()/toLowerCase() yerine toLocaleUpperCase(dil)/toLocaleLowerCase(dil) kullanılır."
+      },
+      "why": {
+        "en": "Turkish i/İ and ı/I: \"istanbul\".toUpperCase() is \"ISTANBUL\", not \"İSTANBUL\".",
+        "tr": "Türkçe i/İ ve ı/I: \"istanbul\".toUpperCase() \"ISTANBUL\" verir, \"İSTANBUL\" değil."
+      },
+      "fix": {
+        "en": "Pass the interface locale; for keys and ids the plain methods are fine (allow-list them).",
+        "tr": "Arayüz dilini verin; anahtar ve kimlikler için düz yöntem doğrudur (izin listesine yazın)."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "\\.to(?:Upper|Lower)Case\\(\\)|\\.toLocale(?:Upper|Lower)Case\\(\\s*\\)",
+        "files": [
+          "tsx",
+          "jsx",
+          "ts",
+          "js",
+          "vue",
+          "svelte"
+        ]
+      }
+    },
+    {
+      "id": "locale-number-format",
+      "area": "i18n",
+      "severity": "warn",
+      "title": {
+        "en": "Numbers, dates and money through the locale formatter",
+        "tr": "Sayı, tarih ve para dil biçimleyicisinden"
+      },
+      "rule": {
+        "en": "Interface numbers go through the project's formatter (Intl with an explicit locale). No toFixed(), no toLocaleString() without a locale, no \"$\" + value.",
+        "tr": "Arayüzdeki sayılar projenin biçimleyicisinden geçer (açık dil verilmiş Intl). toFixed(), dilsiz toLocaleString() ve \"$\" + değer yok."
+      },
+      "why": {
+        "en": "1,255.00 vs 1.255,00: the wrong separator misreads by a factor of a thousand; server and browser render different text.",
+        "tr": "1,255.00 ile 1.255,00: yanlış ayraç değeri bin kat yanlış okutur; sunucu ve tarayıcı farklı metin üretir."
+      },
+      "fix": {
+        "en": "Use the shared format helper; keep raw toFixed() only for machine values.",
+        "tr": "Ortak biçim yardımcısını kullanın; düz toFixed() yalnız makine değerleri için."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "\\.toFixed\\(|\\.toLocale(?:String|DateString|TimeString)\\(\\s*\\)|new Intl\\.(?:NumberFormat|DateTimeFormat|RelativeTimeFormat)\\(\\s*\\)",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte"
+        ]
+      }
+    },
+    {
+      "id": "no-naive-plural",
+      "area": "i18n",
+      "severity": "warn",
+      "title": {
+        "en": "Plurals through the plural system",
+        "tr": "Çoğul, çoğul sistemiyle"
+      },
+      "rule": {
+        "en": "No count === 1 ? \"item\" : \"items\" and no + \"s\": plurals go through the i18n plural form (trans_choice, ICU, Intl.PluralRules).",
+        "tr": "sayı === 1 ? \"öğe\" : \"öğeler\" ve + \"s\" yok: çoğul, çeviri sisteminin çoğul biçiminden geçer (trans_choice, ICU, Intl.PluralRules)."
+      },
+      "why": {
+        "en": "Languages have up to six plural categories; English-only logic breaks every translation.",
+        "tr": "Dillerde altıya kadar çoğul türü vardır; yalnız İngilizceye göre yazılmış mantık her çeviriyi bozar."
+      },
+      "fix": {
+        "en": "Use the plural helper of the i18n layer with the count.",
+        "tr": "Çeviri katmanının çoğul yardımcısını sayıyla kullanın."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "===?\\s*1\\s*\\?\\s*(?:t\\()?(['\"`])((?:[^'\"`\\n]){1,40})\\1\\)?\\s*:\\s*(?:t\\()?\\1\\2(?:s|es)\\1|\\+\\s*['\"]s['\"]",
+        "files": [
+          "tsx",
+          "jsx",
+          "ts",
+          "js",
+          "vue",
+          "svelte"
+        ]
+      }
+    },
+    {
+      "id": "no-concatenated-translation",
+      "area": "i18n",
+      "severity": "warn",
+      "title": {
+        "en": "No sentences glued from pieces",
+        "tr": "Parçalardan yapıştırılmış cümle yok"
+      },
+      "rule": {
+        "en": "A sentence is one translation key with placeholders, never t('a') + value + t('b').",
+        "tr": "Bir cümle yer tutuculu tek bir çeviri anahtarıdır; t('a') + değer + t('b') yazılmaz."
+      },
+      "why": {
+        "en": "Word order differs by language: Turkish puts the verb last.",
+        "tr": "Kelime sırası dile göre değişir: Türkçede fiil sondadır."
+      },
+      "fix": {
+        "en": "One key: t(':count keywords on page one', { count }).",
+        "tr": "Tek anahtar: t(':count keywords on page one', { count })."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "\\bt\\([^()\\n]*\\)\\s*\\+\\s*(?:['\"`]|t\\()|['\"`]\\s*\\+\\s*t\\(",
+        "files": [
+          "tsx",
+          "jsx",
+          "ts",
+          "js",
+          "vue",
+          "svelte"
+        ]
+      }
+    },
+    {
+      "id": "no-transition-all",
+      "area": "motion",
+      "severity": "warn",
+      "title": {
+        "en": "Transition named properties, not all",
+        "tr": "Geçiş tüm özelliklere değil, adlı özelliklere"
+      },
+      "rule": {
+        "en": "No transition-all / transition: all; animate transform and opacity, transition colours by name.",
+        "tr": "transition-all / transition: all yok; transform ve opacity canlandırılır, renk geçişi adıyla verilir."
+      },
+      "why": {
+        "en": "transition: all animates layout and size changes nobody intended and costs frames.",
+        "tr": "transition: all kimsenin istemediği yerleşim ve boyut değişimlerini de canlandırır, kare kaybettirir."
+      },
+      "fix": {
+        "en": "transition-colors, transition-opacity, transition-transform or transition-[width].",
+        "tr": "transition-colors, transition-opacity, transition-transform ya da transition-[width]."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?:^|\\s)(?:[\\w-]+:)*transition-all(?=\\s|$)",
+        "css": "transition(?:-property)?\\s*:\\s*all\\b"
+      }
+    },
+    {
+      "id": "no-bounce-easing",
+      "area": "motion",
+      "severity": "warn",
+      "title": {
+        "en": "No bounce or overshoot easing on interface",
+        "tr": "Arayüzde zıplama ve taşma eğrisi yok"
+      },
+      "rule": {
+        "en": "No animate-bounce and no cubic-bezier that overshoots for controls, panels and lists.",
+        "tr": "Denetim, panel ve listelerde animate-bounce ve taşan cubic-bezier yok."
+      },
+      "why": {
+        "en": "Bounce reads as toy-like and dated on working screens and slows repeated actions.",
+        "tr": "Zıplama çalışılan ekranda oyuncak ve eski görünür, tekrarlanan işi yavaşlatır."
+      },
+      "fix": {
+        "en": "ease-out for entering, ease-in for leaving, 150–300 ms.",
+        "tr": "Girişte ease-out, çıkışta ease-in, 150–300 ms."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?:^|\\s)(?:[\\w-]+:)*animate-bounce(?=\\s|$)",
+        "css": "cubic-bezier\\(\\s*[\\d.]+\\s*,\\s*(?:-[\\d.]+|1\\.\\d*[1-9])|cubic-bezier\\(\\s*[\\d.]+\\s*,\\s*[\\d.-]+\\s*,\\s*[\\d.]+\\s*,\\s*(?:-[\\d.]+|1\\.\\d*[1-9])"
+      }
+    },
+    {
+      "id": "reduced-motion",
+      "area": "motion",
+      "severity": "info",
+      "title": {
+        "en": "Respect reduced motion",
+        "tr": "\"Hareketi azalt\" tercihine uyulur"
+      },
+      "rule": {
+        "en": "Decorative and large motion stops or shrinks under prefers-reduced-motion (motion-safe: / motion-reduce:).",
+        "tr": "Süs amaçlı ve büyük hareket prefers-reduced-motion altında durur ya da küçülür (motion-safe: / motion-reduce:)."
+      },
+      "why": {
+        "en": "Motion triggers vestibular discomfort; WCAG 2.3.3.",
+        "tr": "Hareket denge rahatsızlığı tetikler; WCAG 2.3.3."
+      },
+      "fix": {
+        "en": "Prefix long or looping animations with motion-safe:.",
+        "tr": "Uzun ya da döngülü animasyonların başına motion-safe: ekleyin."
+      }
+    },
+    {
+      "id": "specific-action-labels",
+      "area": "copy",
+      "severity": "warn",
+      "title": {
+        "en": "Buttons say what they do",
+        "tr": "Düğme ne yaptığını söyler"
+      },
+      "rule": {
+        "en": "No Submit, OK, Click here, Yes/No: the label names the action and its object (\"Save changes\", \"Delete keyword\").",
+        "tr": "\"Gönder\", \"Tamam\", \"Buraya tıklayın\", \"Evet/Hayır\" yok: etiket eylemi ve nesnesini söyler (\"Değişiklikleri kaydet\", \"Kelimeyi sil\")."
+      },
+      "why": {
+        "en": "Generic labels force people to read the whole dialog and make destructive buttons easy to hit by mistake.",
+        "tr": "Genel etiket tüm pencereyi okutur ve yıkıcı düğmeye yanlışlıkla basmayı kolaylaştırır."
+      },
+      "fix": {
+        "en": "Verb + object, sentence case.",
+        "tr": "Fiil + nesne, yalnız ilk kelime büyük."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": ">\\s*(?:Submit|OK|Ok|Click here|Tamam|Gönder|Buraya tıklayın|Tıklayın)\\s*<|\\bt\\(\\s*['\"](?:Submit|OK|Click here)['\"]\\s*\\)",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html",
+          "blade.php"
+        ]
+      }
+    },
+    {
+      "id": "error-copy",
+      "area": "copy",
+      "severity": "warn",
+      "title": {
+        "en": "Errors say what happened and what to do",
+        "tr": "Hata ne olduğunu ve ne yapılacağını söyler"
+      },
+      "rule": {
+        "en": "No \"Oops\", \"Something went wrong\", \"An error occurred\", \"Invalid input\": name the problem and the next step.",
+        "tr": "\"Hay aksi\", \"Bir şeyler ters gitti\", \"Bir hata oluştu\", \"Geçersiz giriş\" yok: sorunu ve sonraki adımı söyleyin."
+      },
+      "why": {
+        "en": "A vague error leaves people stuck and creates support tickets (GOV.UK error message guidance).",
+        "tr": "Belirsiz hata kişiyi takılı bırakır ve destek talebi doğurur (GOV.UK hata mesajı rehberi)."
+      },
+      "fix": {
+        "en": "\"Enter a date in the past\", \"The file is over 5 MB: choose a smaller one\".",
+        "tr": "\"Geçmiş bir tarih girin\", \"Dosya 5 MB'tan büyük: daha küçük bir dosya seçin\"."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "\\b(?:Oops|Whoops|Something went wrong|An error (?:has )?occurred|Invalid input)\\b|Bir şeyler ters gitti|Bir hata oluştu|Hay aksi",
+        "flags": "iu",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html",
+          "blade.php",
+          "json"
+        ]
+      }
+    },
+    {
+      "id": "ellipsis-character",
+      "area": "copy",
+      "severity": "info",
+      "title": {
+        "en": "Ellipsis character, not three dots",
+        "tr": "Üç nokta yerine üç nokta karakteri"
+      },
+      "rule": {
+        "en": "\"Loading…\", \"Search…\" use the single … character.",
+        "tr": "\"Yükleniyor…\", \"Ara…\" tek … karakteriyle yazılır."
+      },
+      "why": {
+        "en": "Three periods break differently and read as a typo next to real typography.",
+        "tr": "Üç ayrı nokta farklı satır kırar ve düzgün yazının yanında yazım hatası gibi durur."
+      },
+      "fix": {
+        "en": "Replace ... with … in interface strings.",
+        "tr": "Arayüz metinlerinde ... yerine … yazın."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "(?<=[\\p{L}])\\.\\.\\.(?=['\"`<\\s])",
+        "flags": "u",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html",
+          "blade.php",
+          "json"
+        ]
+      }
+    },
+    {
+      "id": "no-icon-tile-stack",
+      "area": "visual",
+      "severity": "warn",
+      "title": {
+        "en": "No icon tile above every heading",
+        "tr": "Her başlığın üstünde ikon kutusu yok"
+      },
+      "rule": {
+        "en": "A grid of identical cards each with a rounded icon tile, a heading and two lines of text is a template, not a layout. Use the icon inline or not at all, and vary what leads.",
+        "tr": "Her birinde yuvarlak ikon kutusu, başlık ve iki satır metin olan aynı kartlardan ızgara bir şablondur, yerleşim değildir. İkonu satır içinde kullanın ya da hiç kullanmayın; öne çıkanı değiştirin."
+      },
+      "why": {
+        "en": "It is the default output of every generator and says nothing about the product.",
+        "tr": "Her üreticinin varsayılan çıktısıdır ve ürün hakkında hiçbir şey söylemez."
+      },
+      "fix": {
+        "en": "Lead with the real content (a number, a screenshot, an example) instead of an icon.",
+        "tr": "İkon yerine gerçek içerikle başlayın (bir sayı, bir ekran görüntüsü, bir örnek)."
       }
     }
   ]

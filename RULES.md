@@ -68,6 +68,38 @@
 
 **How to fix:** Flatten: a divider or a muted background block instead of a second border and shadow.
 
+## Components and reuse
+
+### Interactive elements come from shared components
+
+`use-shared-components` · warning · checked
+
+**Rule:** Pages use the shared Button, Input, Select, Textarea and Checkbox components, not raw <button>, <input>, <select> or <textarea>. Raw elements live only inside the component folder.
+
+**Why:** Every raw element is a new copy of the button: one place gets a different height, focus ring or radius, and the next fix misses it.
+
+**How to fix:** Replace it with the component; if the component lacks a variant, add the variant to the component.
+
+### No visual overrides on shared components
+
+`no-style-overrides` · warning · checked
+
+**Rule:** className on Button, Badge, Input, Card and other shared components only places them (width, margin, alignment, grid position). Colour, radius, padding, height, font and border come from the component's variant and size props.
+
+**Why:** An override is a hidden fork of the component: the same button looks different on two screens, which is exactly what a design system exists to stop.
+
+**How to fix:** Move the look into a named variant or size of the component and use that.
+
+### Repeated markup becomes a component
+
+`repeated-markup` · warning · checked
+
+**Rule:** The same long class list repeated in several places (a card, a badge, a stat tile, a section heading) is extracted into one shared component.
+
+**Why:** Copies drift: one gets a new padding, another keeps the old radius. One component means one fix and less code.
+
+**How to fix:** Extract the element into a component (or a variant of an existing one) and replace the copies.
+
 ## Selectors
 
 ### One selector language
@@ -186,6 +218,38 @@
 
 **How to fix:** Use a darker shade of the background colour or near-white.
 
+### No icon tile above every heading
+
+`no-icon-tile-stack` · warning · review
+
+**Rule:** A grid of identical cards each with a rounded icon tile, a heading and two lines of text is a template, not a layout. Use the icon inline or not at all, and vary what leads.
+
+**Why:** It is the default output of every generator and says nothing about the product.
+
+**How to fix:** Lead with the real content (a number, a screenshot, an example) instead of an icon.
+
+## Accessibility
+
+### Never remove the focus ring without a replacement
+
+`focus-ring-removed` · error · checked
+
+**Rule:** outline-none / outline-hidden only together with a visible focus-visible style (ring, outline or border) on the same element.
+
+**Why:** Keyboard users lose their place. WCAG 2.4.7 (focus visible), 2.4.11 (focus not obscured).
+
+**How to fix:** Add focus-visible:ring-2 (or the component's focus style); prefer outline-hidden over outline-none in Tailwind 4 so forced-colours mode keeps an outline. Dialog and popover containers receive focus programmatically and are exempt.
+
+### Icon-only buttons have a name
+
+`icon-button-name` · error · checked
+
+**Rule:** A button or link that shows only an icon carries aria-label (or title, or visually hidden text).
+
+**Why:** Screen readers announce "button" with no purpose; WCAG 4.1.2 name, role, value.
+
+**How to fix:** Add aria-label with the action in sentence case ("Delete keyword").
+
 ## Motion
 
 ### Pulse only for live data
@@ -208,6 +272,36 @@
 
 **How to fix:** A static, swipeable row or a short list.
 
+### Transition named properties, not all
+
+`no-transition-all` · warning · checked
+
+**Rule:** No transition-all / transition: all; animate transform and opacity, transition colours by name.
+
+**Why:** transition: all animates layout and size changes nobody intended and costs frames.
+
+**How to fix:** transition-colors, transition-opacity, transition-transform or transition-[width].
+
+### No bounce or overshoot easing on interface
+
+`no-bounce-easing` · warning · checked
+
+**Rule:** No animate-bounce and no cubic-bezier that overshoots for controls, panels and lists.
+
+**Why:** Bounce reads as toy-like and dated on working screens and slows repeated actions.
+
+**How to fix:** ease-out for entering, ease-in for leaving, 150–300 ms.
+
+### Respect reduced motion
+
+`reduced-motion` · note · review
+
+**Rule:** Decorative and large motion stops or shrinks under prefers-reduced-motion (motion-safe: / motion-reduce:).
+
+**Why:** Motion triggers vestibular discomfort; WCAG 2.3.3.
+
+**How to fix:** Prefix long or looping animations with motion-safe:.
+
 ## Data and numbers
 
 ### Numbers carry their comparison
@@ -229,6 +323,58 @@
 **Why:** An empty chart looks broken.
 
 **How to fix:** Say why it is empty and what fills it (connect, run, wait for the first check).
+
+### Tabular numerals in tables and KPIs
+
+`tabular-numbers` · note · review
+
+**Rule:** Numbers that are compared or update (table columns, KPIs, counters, timers) use tabular-nums and right alignment in tables.
+
+**Why:** Proportional digits make columns jagged and values jump as they change.
+
+**How to fix:** Add tabular-nums to the cell or the table; text-end for numeric columns.
+
+## Localisation
+
+### Case changes name the locale
+
+`locale-aware-case` · warning · checked
+
+**Rule:** toUpperCase()/toLowerCase() on interface text use toLocaleUpperCase(locale)/toLocaleLowerCase(locale).
+
+**Why:** Turkish i/İ and ı/I: "istanbul".toUpperCase() is "ISTANBUL", not "İSTANBUL".
+
+**How to fix:** Pass the interface locale; for keys and ids the plain methods are fine (allow-list them).
+
+### Numbers, dates and money through the locale formatter
+
+`locale-number-format` · warning · checked
+
+**Rule:** Interface numbers go through the project's formatter (Intl with an explicit locale). No toFixed(), no toLocaleString() without a locale, no "$" + value.
+
+**Why:** 1,255.00 vs 1.255,00: the wrong separator misreads by a factor of a thousand; server and browser render different text.
+
+**How to fix:** Use the shared format helper; keep raw toFixed() only for machine values.
+
+### Plurals through the plural system
+
+`no-naive-plural` · warning · checked
+
+**Rule:** No count === 1 ? "item" : "items" and no + "s": plurals go through the i18n plural form (trans_choice, ICU, Intl.PluralRules).
+
+**Why:** Languages have up to six plural categories; English-only logic breaks every translation.
+
+**How to fix:** Use the plural helper of the i18n layer with the count.
+
+### No sentences glued from pieces
+
+`no-concatenated-translation` · warning · checked
+
+**Rule:** A sentence is one translation key with placeholders, never t('a') + value + t('b').
+
+**Why:** Word order differs by language: Turkish puts the verb last.
+
+**How to fix:** One key: t(':count keywords on page one', { count }).
 
 ## Interaction
 
@@ -253,3 +399,33 @@
 **Why:** These words are instant tells of generated copy and promise nothing measurable.
 
 **How to fix:** Replace the claim with the measured fact.
+
+### Buttons say what they do
+
+`specific-action-labels` · warning · checked
+
+**Rule:** No Submit, OK, Click here, Yes/No: the label names the action and its object ("Save changes", "Delete keyword").
+
+**Why:** Generic labels force people to read the whole dialog and make destructive buttons easy to hit by mistake.
+
+**How to fix:** Verb + object, sentence case.
+
+### Errors say what happened and what to do
+
+`error-copy` · warning · checked
+
+**Rule:** No "Oops", "Something went wrong", "An error occurred", "Invalid input": name the problem and the next step.
+
+**Why:** A vague error leaves people stuck and creates support tickets (GOV.UK error message guidance).
+
+**How to fix:** "Enter a date in the past", "The file is over 5 MB: choose a smaller one".
+
+### Ellipsis character, not three dots
+
+`ellipsis-character` · note · checked
+
+**Rule:** "Loading…", "Search…" use the single … character.
+
+**Why:** Three periods break differently and read as a typo next to real typography.
+
+**How to fix:** Replace ... with … in interface strings.

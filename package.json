@@ -1,6 +1,6 @@
 {
   "name": "@enmera/ai-design-check",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Design rules and a zero-dependency checker for interfaces built with AI coding agents (Claude Code, Cursor, Codex): sentence case, one type and radius scale, one selector language, no generated-UI tells. English and Turkish.",
   "type": "module",
   "bin": {
@@ -20,7 +20,7 @@
     "test": "node --test",
     "check:docs": "node scripts/docs.js --check"
   },
-  "keywords": ["ai", "ai-generated-ui", "claude-code", "cursor", "design-system", "ui", "lint", "tailwind", "react", "sentence-case", "accessibility", "agent-skill", "claude", "design-rules"],
+  "keywords": ["ai", "ai-generated-ui", "claude-code", "cursor", "codex", "hooks", "accessibility", "i18n", "components", "design-system", "ui", "lint", "tailwind", "react", "sentence-case", "accessibility", "agent-skill", "claude", "design-rules"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/enmerasoftware/ai-design-check.git"

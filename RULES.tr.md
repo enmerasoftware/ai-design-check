@@ -68,6 +68,38 @@
 
 **Nasıl düzeltilir:** Düzleştirin: ikinci kenarlık ve gölge yerine ayraç ya da hafif zeminli blok.
 
+## Bileşen ve tekrar
+
+### Etkileşimli öğeler ortak bileşenden
+
+`use-shared-components` · uyarı · denetlenir
+
+**Kural:** Sayfalar ortak Button, Input, Select, Textarea ve Checkbox bileşenlerini kullanır; ham <button>, <input>, <select>, <textarea> yazılmaz. Ham öğeler yalnız bileşen klasörünün içinde durur.
+
+**Neden:** Her ham öğe düğmenin yeni bir kopyasıdır: bir yerde yükseklik, odak halkası ya da köşe farklı olur ve bir sonraki düzeltme onu kaçırır.
+
+**Nasıl düzeltilir:** Bileşenle değiştirin; bileşende gereken görünüm yoksa görünümü bileşene ekleyin.
+
+### Ortak bileşene dışarıdan görünüm verilmez
+
+`no-style-overrides` · uyarı · denetlenir
+
+**Kural:** Button, Badge, Input, Card gibi ortak bileşenlere verilen className yalnız yerleştirir (genişlik, kenar boşluğu, hizalama, ızgara konumu). Renk, köşe, iç boşluk, yükseklik, yazı ve kenarlık bileşenin variant/size seçeneklerinden gelir.
+
+**Neden:** Dışarıdan verilen görünüm bileşenin gizli bir kopyasıdır: aynı düğme iki ekranda farklı görünür; tasarım sistemi tam da bunu engellemek için vardır.
+
+**Nasıl düzeltilir:** Görünümü bileşenin adlı bir variant ya da size seçeneğine taşıyın ve onu kullanın.
+
+### Tekrarlanan kalıp bileşen olur
+
+`repeated-markup` · uyarı · denetlenir
+
+**Kural:** Birden çok yerde tekrarlanan aynı uzun sınıf listesi (kart, rozet, gösterge kutusu, bölüm başlığı) tek bir ortak bileşene çıkarılır.
+
+**Neden:** Kopyalar zamanla ayrışır: birine yeni boşluk verilir, diğeri eski köşede kalır. Tek bileşen tek düzeltme ve daha az kod demektir.
+
+**Nasıl düzeltilir:** Öğeyi bir bileşene (ya da var olanın bir görünümüne) çıkarın ve kopyaları onunla değiştirin.
+
 ## Seçiciler
 
 ### Tek seçici dili
@@ -186,6 +218,38 @@
 
 **Nasıl düzeltilir:** Zemin renginin koyu tonunu ya da beyaza yakın rengi kullanın.
 
+### Her başlığın üstünde ikon kutusu yok
+
+`no-icon-tile-stack` · uyarı · gözden geçirilir
+
+**Kural:** Her birinde yuvarlak ikon kutusu, başlık ve iki satır metin olan aynı kartlardan ızgara bir şablondur, yerleşim değildir. İkonu satır içinde kullanın ya da hiç kullanmayın; öne çıkanı değiştirin.
+
+**Neden:** Her üreticinin varsayılan çıktısıdır ve ürün hakkında hiçbir şey söylemez.
+
+**Nasıl düzeltilir:** İkon yerine gerçek içerikle başlayın (bir sayı, bir ekran görüntüsü, bir örnek).
+
+## Erişilebilirlik
+
+### Odak halkası yerine yenisi konmadan kaldırılmaz
+
+`focus-ring-removed` · hata · denetlenir
+
+**Kural:** outline-none / outline-hidden yalnız aynı öğede görünür bir focus-visible biçimiyle (ring, outline ya da border) birlikte kullanılır.
+
+**Neden:** Klavye kullanan kişi nerede olduğunu kaybeder. WCAG 2.4.7 (görünür odak), 2.4.11 (odak gizlenmez).
+
+**Nasıl düzeltilir:** focus-visible:ring-2 (ya da bileşenin odak biçimini) ekleyin; Tailwind 4'te outline-none yerine outline-hidden kullanın, zorlanmış renk kipinde çerçeve kalsın. Odağı programla alan diyalog ve açılır pencere kapsayıcıları muaftır.
+
+### Yalnız ikonlu düğmenin adı vardır
+
+`icon-button-name` · hata · denetlenir
+
+**Kural:** Yalnız ikon gösteren düğme ya da bağlantı aria-label (ya da title veya görünmeyen metin) taşır.
+
+**Neden:** Ekran okuyucu amacı olmadan yalnız "düğme" der; WCAG 4.1.2 ad, rol, değer.
+
+**Nasıl düzeltilir:** Eylemi söyleyen bir aria-label ekleyin ("Kelimeyi sil").
+
 ## Hareket
 
 ### Nabız yalnız canlı veride
@@ -208,6 +272,36 @@
 
 **Nasıl düzeltilir:** Kaydırılabilen sabit bir satır ya da kısa liste.
 
+### Geçiş tüm özelliklere değil, adlı özelliklere
+
+`no-transition-all` · uyarı · denetlenir
+
+**Kural:** transition-all / transition: all yok; transform ve opacity canlandırılır, renk geçişi adıyla verilir.
+
+**Neden:** transition: all kimsenin istemediği yerleşim ve boyut değişimlerini de canlandırır, kare kaybettirir.
+
+**Nasıl düzeltilir:** transition-colors, transition-opacity, transition-transform ya da transition-[width].
+
+### Arayüzde zıplama ve taşma eğrisi yok
+
+`no-bounce-easing` · uyarı · denetlenir
+
+**Kural:** Denetim, panel ve listelerde animate-bounce ve taşan cubic-bezier yok.
+
+**Neden:** Zıplama çalışılan ekranda oyuncak ve eski görünür, tekrarlanan işi yavaşlatır.
+
+**Nasıl düzeltilir:** Girişte ease-out, çıkışta ease-in, 150–300 ms.
+
+### "Hareketi azalt" tercihine uyulur
+
+`reduced-motion` · not · gözden geçirilir
+
+**Kural:** Süs amaçlı ve büyük hareket prefers-reduced-motion altında durur ya da küçülür (motion-safe: / motion-reduce:).
+
+**Neden:** Hareket denge rahatsızlığı tetikler; WCAG 2.3.3.
+
+**Nasıl düzeltilir:** Uzun ya da döngülü animasyonların başına motion-safe: ekleyin.
+
 ## Veri ve sayılar
 
 ### Sayı neye göre olduğunu söyler
@@ -229,6 +323,58 @@
 **Neden:** Boş grafik bozuk görünür.
 
 **Nasıl düzeltilir:** Neden boş olduğunu ve neyin dolduracağını söyleyin (bağlayın, çalıştırın, ilk kontrolü bekleyin).
+
+### Tablo ve göstergelerde eşit genişlikte rakam
+
+`tabular-numbers` · not · gözden geçirilir
+
+**Kural:** Kıyaslanan ya da değişen sayılar (tablo sütunları, göstergeler, sayaçlar, süreler) tabular-nums kullanır; tabloda sağa hizalanır.
+
+**Neden:** Orantılı rakamlar sütunları eğri büğrü yapar, değer değişince sayı zıplar.
+
+**Nasıl düzeltilir:** Hücreye ya da tabloya tabular-nums ekleyin; sayısal sütunda text-end.
+
+## Yerelleştirme
+
+### Büyük-küçük harf dönüşümü dili belirtir
+
+`locale-aware-case` · uyarı · denetlenir
+
+**Kural:** Arayüz metninde toUpperCase()/toLowerCase() yerine toLocaleUpperCase(dil)/toLocaleLowerCase(dil) kullanılır.
+
+**Neden:** Türkçe i/İ ve ı/I: "istanbul".toUpperCase() "ISTANBUL" verir, "İSTANBUL" değil.
+
+**Nasıl düzeltilir:** Arayüz dilini verin; anahtar ve kimlikler için düz yöntem doğrudur (izin listesine yazın).
+
+### Sayı, tarih ve para dil biçimleyicisinden
+
+`locale-number-format` · uyarı · denetlenir
+
+**Kural:** Arayüzdeki sayılar projenin biçimleyicisinden geçer (açık dil verilmiş Intl). toFixed(), dilsiz toLocaleString() ve "$" + değer yok.
+
+**Neden:** 1,255.00 ile 1.255,00: yanlış ayraç değeri bin kat yanlış okutur; sunucu ve tarayıcı farklı metin üretir.
+
+**Nasıl düzeltilir:** Ortak biçim yardımcısını kullanın; düz toFixed() yalnız makine değerleri için.
+
+### Çoğul, çoğul sistemiyle
+
+`no-naive-plural` · uyarı · denetlenir
+
+**Kural:** sayı === 1 ? "öğe" : "öğeler" ve + "s" yok: çoğul, çeviri sisteminin çoğul biçiminden geçer (trans_choice, ICU, Intl.PluralRules).
+
+**Neden:** Dillerde altıya kadar çoğul türü vardır; yalnız İngilizceye göre yazılmış mantık her çeviriyi bozar.
+
+**Nasıl düzeltilir:** Çeviri katmanının çoğul yardımcısını sayıyla kullanın.
+
+### Parçalardan yapıştırılmış cümle yok
+
+`no-concatenated-translation` · uyarı · denetlenir
+
+**Kural:** Bir cümle yer tutuculu tek bir çeviri anahtarıdır; t('a') + değer + t('b') yazılmaz.
+
+**Neden:** Kelime sırası dile göre değişir: Türkçede fiil sondadır.
+
+**Nasıl düzeltilir:** Tek anahtar: t(':count keywords on page one', { count }).
 
 ## Etkileşim
 
@@ -253,3 +399,33 @@
 **Neden:** Bu kelimeler üretilmiş metnin anında fark edilen izleridir ve ölçülebilir bir şey vaat etmez.
 
 **Nasıl düzeltilir:** İddiayı ölçülmüş bilgiyle değiştirin.
+
+### Düğme ne yaptığını söyler
+
+`specific-action-labels` · uyarı · denetlenir
+
+**Kural:** "Gönder", "Tamam", "Buraya tıklayın", "Evet/Hayır" yok: etiket eylemi ve nesnesini söyler ("Değişiklikleri kaydet", "Kelimeyi sil").
+
+**Neden:** Genel etiket tüm pencereyi okutur ve yıkıcı düğmeye yanlışlıkla basmayı kolaylaştırır.
+
+**Nasıl düzeltilir:** Fiil + nesne, yalnız ilk kelime büyük.
+
+### Hata ne olduğunu ve ne yapılacağını söyler
+
+`error-copy` · uyarı · denetlenir
+
+**Kural:** "Hay aksi", "Bir şeyler ters gitti", "Bir hata oluştu", "Geçersiz giriş" yok: sorunu ve sonraki adımı söyleyin.
+
+**Neden:** Belirsiz hata kişiyi takılı bırakır ve destek talebi doğurur (GOV.UK hata mesajı rehberi).
+
+**Nasıl düzeltilir:** "Geçmiş bir tarih girin", "Dosya 5 MB'tan büyük: daha küçük bir dosya seçin".
+
+### Üç nokta yerine üç nokta karakteri
+
+`ellipsis-character` · not · denetlenir
+
+**Kural:** "Yükleniyor…", "Ara…" tek … karakteriyle yazılır.
+
+**Neden:** Üç ayrı nokta farklı satır kırar ve düzgün yazının yanında yazım hatası gibi durur.
+
+**Nasıl düzeltilir:** Arayüz metinlerinde ... yerine … yazın.
