@@ -93,8 +93,15 @@ export async function launch(chrome) {
             socket.close();
             const exited = new Promise((done) => proc.once('exit', done));
             proc.kill();
+            // Chrome's helpers can outlive the main process for a moment (Linux); never let cleanup fail the run.
+            const timer = setTimeout(() => proc.kill('SIGKILL'), 3000);
             await exited;
-            rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+            clearTimeout(timer);
+            try {
+                rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
+            } catch {
+                // A leftover temp profile is harmless; the OS clears tmp.
+            }
         },
     };
 }

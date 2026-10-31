@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1
+
+- Chrome cleanup no longer fails a run when its helper processes outlive it (Linux CI); 0.6.0 was tagged but not
+  published because of this.
+
 ## 0.6.0
 
 - `narrow` command: renders a page at phone width (320 px by default) and at desktop width in Chrome and reports
