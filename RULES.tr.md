@@ -54,6 +54,16 @@
 
 **Nasıl düzeltilir:** "Ara" ya da "ad@sirket.com" gibi bir örnek.
 
+### Metin kesilmez
+
+`text-not-clipped` · uyarı · denetlenir
+
+**Kural:** Etiket, düğme ve tablo hücreleri 320 px'te metnin tamamını gösterir. Üç noktayla kısaltma yalnız tam metin bir dokunuş uzaktaysa (title, ipucu, ayrıntı) serbesttir.
+
+**Neden:** Kesilen etiket anlamını değiştirebilir ("Tümünü sil…" neyi?) ve çeviriler İngilizceden çoğu zaman %30–40 uzundur.
+
+**Nasıl düzeltilir:** Metni alt satıra geçirin; gerçekten tek satır olmalıysa tam metni title'da ve ayrıntı görünümünde tutun.
+
 ## Yazı ölçeği
 
 ### Yazı boyutu yalnız ölçekten
@@ -95,6 +105,16 @@
 **Neden:** Sıkıştırılmış küçük harfler biçimini kaybeder, zor okunur.
 
 **Nasıl düzeltilir:** Küçük metinde harf aralığını 0 bırakın; soluk açıklamada hafif artı olabilir.
+
+### Metin sığsın diye küçültülmez
+
+`no-shrunk-text` · uyarı · denetlenir
+
+**Kural:** Gövde metni ve etiketler telefonda boyutunu korur (12 px altına inmez, masaüstünden küçük olmaz); yalnız büyük başlıklar küçülebilir.
+
+**Neden:** Telefon kol mesafesinde ve güneş altında okunur; yerleşimi sığdırmak için yazıyı küçültmek sorunu okura yükler.
+
+**Nasıl düzeltilir:** Boyutu koruyun, yerleşim esnesin: alta geçirin, üst üste dizin ya da ikincil içeriği aşağı alın.
 
 ## Köşe ve yüzey
 
@@ -293,6 +313,26 @@
 **Neden:** Yan yana iki dolu düğme, kullanıcıdan sayfanın ne için olduğunu anlamadan seçim yapmasını ister.
 
 **Nasıl düzeltilir:** Sayfanın işini ilerleten işlemi dolu bırakın; gerisini bir basamak indirin.
+
+### Telefonda yana kaydırma yok
+
+`no-horizontal-overflow` · hata · denetlenir
+
+**Kural:** 320 px'te sayfa ekrandan geniş değildir. Geniş içerik (tablo, kod bloğu) sayfa değil kendi kutusu içinde kayar.
+
+**Neden:** Yana kayan sayfa sağ kenarını saklar ve her dikey kaydırmayı yalpalatır.
+
+**Nasıl düzeltilir:** Satırların alta geçmesine izin verin (flex-wrap), uzun kelimeleri bölün (doğru lang ile hyphens: auto, overflow-wrap), geniş tabloyu overflow-x-auto içine alın.
+
+### Telefon aynı içeriği alır
+
+`no-hidden-content-narrow` · not · denetlenir
+
+**Kural:** Masaüstünde görünen metin telefonda gizlenmez (hidden sm:block). Öğeler bir dokunuş uzakta kaldıkça daraltılmış menü sorun değildir.
+
+**Neden:** Küçük yerleşimi çalıştırmak için içerik gizlemek ziyaretçilerin çoğundan bilgiyi saklar.
+
+**Nasıl düzeltilir:** Gösterin, herkes için kısaltın ya da gizlemek yerine sayfada aşağı taşıyın.
 
 ## Menü
 

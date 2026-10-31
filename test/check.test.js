@@ -6,6 +6,8 @@ import { applyBaseline, check, globToRegExp, isLabel, isTitled, justified, loadR
 import { classUnits, literals } from '../src/classes.js';
 import { inventory } from '../src/inventory.js';
 import { parseAttrs, readTag, visibleText } from '../src/jsx.js';
+import { narrow } from '../src/narrow.js';
+import { findChrome } from '../src/story.js';
 
 const app = join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'app');
 const findings = check(app);
@@ -14,7 +16,7 @@ const values = (rule) => by(rule).map((item) => item.value);
 
 test('every rule has both languages, a known area and a valid check type', () => {
     const { areas, rules } = loadRules();
-    const types = ['class', 'regex', 'i18n-case', 'icon-button-name', 'shared-components', 'style-overrides', 'repeated-markup', 'shared-looks'];
+    const types = ['render', 'class', 'regex', 'i18n-case', 'icon-button-name', 'shared-components', 'style-overrides', 'repeated-markup', 'shared-looks'];
     for (const rule of rules) {
         assert.ok(areas[rule.area], rule.id);
         for (const field of ['title', 'rule', 'why', 'fix']) assert.ok(rule[field].en && rule[field].tr, `${rule.id}.${field}`);
@@ -136,4 +138,12 @@ test('glob', () => {
     assert.ok(globToRegExp('lang/*.json').test('lang/tr.json'));
     assert.ok(globToRegExp('**/node_modules/**').test('a/node_modules/b/c.js'));
     assert.ok(!globToRegExp('lang/*.json').test('lang/x/tr.json'));
+});
+
+// Renders in Chrome; skipped where no Chrome is installed.
+test('narrow: overflow, cut-off, shrunk and hidden text at 320 px', { skip: !findChrome() && 'no Chrome' }, async () => {
+    const examples = join(dirname(fileURLToPath(import.meta.url)), '..', 'examples');
+    const broken = (await narrow(join(examples, 'narrow-de.html'))).map((item) => item.rule).sort();
+    assert.deepEqual(broken, ['no-hidden-content-narrow', 'no-horizontal-overflow', 'no-shrunk-text', 'text-not-clipped']);
+    assert.deepEqual(await narrow(join(examples, 'narrow-de.fixed.html')), []);
 });

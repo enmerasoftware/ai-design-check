@@ -33,7 +33,7 @@ export function findChrome() {
     return null;
 }
 
-async function launch(chrome) {
+export async function launch(chrome) {
     const profile = mkdtempSync(join(tmpdir(), 'ai-design-check-chrome-'));
     const proc = spawn(chrome, ['--headless=new', '--remote-debugging-port=0', `--user-data-dir=${profile}`, '--hide-scrollbars', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--allow-file-access-from-files', 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] });
     const endpoint = await new Promise((done, fail) => {
@@ -82,8 +82,8 @@ async function launch(chrome) {
     return {
         send,
         evaluate,
-        async open(url, { width, height, settle = 1200 }) {
-            await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: false });
+        async open(url, { width, height, settle = 1200, mobile = false }) {
+            await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: mobile ? 2 : 1, mobile });
             const loaded = once('Page.loadEventFired');
             await send('Page.navigate', { url });
             await loaded;

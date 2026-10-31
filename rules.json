@@ -1865,6 +1865,106 @@
         "en": "Keep the action that moves the page's job forward filled; demote the rest.",
         "tr": "Sayfanın işini ilerleten işlemi dolu bırakın; gerisini bir basamak indirin."
       }
+    },
+    {
+      "id": "no-horizontal-overflow",
+      "area": "layout",
+      "severity": "error",
+      "title": {
+        "en": "No sideways scrolling on phones",
+        "tr": "Telefonda yana kaydırma yok"
+      },
+      "rule": {
+        "en": "At 320 px the page is no wider than the screen. Wide content (a table, a code block) scrolls inside its own box, never the page.",
+        "tr": "320 px'te sayfa ekrandan geniş değildir. Geniş içerik (tablo, kod bloğu) sayfa değil kendi kutusu içinde kayar."
+      },
+      "why": {
+        "en": "A page that scrolls sideways hides its right edge and makes every vertical scroll wobble.",
+        "tr": "Yana kayan sayfa sağ kenarını saklar ve her dikey kaydırmayı yalpalatır."
+      },
+      "fix": {
+        "en": "Let rows wrap (flex-wrap), allow long words to break (hyphens: auto with the right lang, overflow-wrap), wrap wide tables in overflow-x-auto.",
+        "tr": "Satırların alta geçmesine izin verin (flex-wrap), uzun kelimeleri bölün (doğru lang ile hyphens: auto, overflow-wrap), geniş tabloyu overflow-x-auto içine alın."
+      },
+      "check": {
+        "type": "render",
+        "command": "narrow"
+      }
+    },
+    {
+      "id": "text-not-clipped",
+      "area": "writing",
+      "severity": "warn",
+      "title": {
+        "en": "Text is not cut off",
+        "tr": "Metin kesilmez"
+      },
+      "rule": {
+        "en": "Labels, buttons and table cells show their whole text at 320 px. Truncation with an ellipsis is allowed only where the full text is one tap away (title, tooltip, detail view).",
+        "tr": "Etiket, düğme ve tablo hücreleri 320 px'te metnin tamamını gösterir. Üç noktayla kısaltma yalnız tam metin bir dokunuş uzaktaysa (title, ipucu, ayrıntı) serbesttir."
+      },
+      "why": {
+        "en": "A cut-off label can change meaning (\"Delete all…\" of what?), and translations are often 30–40 % longer than English.",
+        "tr": "Kesilen etiket anlamını değiştirebilir (\"Tümünü sil…\" neyi?) ve çeviriler İngilizceden çoğu zaman %30–40 uzundur."
+      },
+      "fix": {
+        "en": "Let the text wrap; if it truly must be one line, keep the full text in a title and in the detail view.",
+        "tr": "Metni alt satıra geçirin; gerçekten tek satır olmalıysa tam metni title'da ve ayrıntı görünümünde tutun."
+      },
+      "check": {
+        "type": "render",
+        "command": "narrow"
+      }
+    },
+    {
+      "id": "no-shrunk-text",
+      "area": "type",
+      "severity": "warn",
+      "title": {
+        "en": "Text is not shrunk to fit",
+        "tr": "Metin sığsın diye küçültülmez"
+      },
+      "rule": {
+        "en": "Body text and labels keep their size on phones (never below 12 px, never smaller than on desktop); only large headlines may scale down.",
+        "tr": "Gövde metni ve etiketler telefonda boyutunu korur (12 px altına inmez, masaüstünden küçük olmaz); yalnız büyük başlıklar küçülebilir."
+      },
+      "why": {
+        "en": "Phones are read at arm's length and in sunlight; shrinking text to make a layout fit moves the problem to the reader.",
+        "tr": "Telefon kol mesafesinde ve güneş altında okunur; yerleşimi sığdırmak için yazıyı küçültmek sorunu okura yükler."
+      },
+      "fix": {
+        "en": "Keep the size and let the layout give: wrap, stack, or move secondary content below.",
+        "tr": "Boyutu koruyun, yerleşim esnesin: alta geçirin, üst üste dizin ya da ikincil içeriği aşağı alın."
+      },
+      "check": {
+        "type": "render",
+        "command": "narrow"
+      }
+    },
+    {
+      "id": "no-hidden-content-narrow",
+      "area": "layout",
+      "severity": "info",
+      "title": {
+        "en": "Phones get the same content",
+        "tr": "Telefon aynı içeriği alır"
+      },
+      "rule": {
+        "en": "Text shown on desktop is not hidden on phones (hidden sm:block). A collapsed menu is fine when the items stay one tap away.",
+        "tr": "Masaüstünde görünen metin telefonda gizlenmez (hidden sm:block). Öğeler bir dokunuş uzakta kaldıkça daraltılmış menü sorun değildir."
+      },
+      "why": {
+        "en": "Hiding content to make a small layout work removes information from the majority of visitors.",
+        "tr": "Küçük yerleşimi çalıştırmak için içerik gizlemek ziyaretçilerin çoğundan bilgiyi saklar."
+      },
+      "fix": {
+        "en": "Show it, shorten it for everyone, or move it lower on the page instead of hiding it.",
+        "tr": "Gösterin, herkes için kısaltın ya da gizlemek yerine sayfada aşağı taşıyın."
+      },
+      "check": {
+        "type": "render",
+        "command": "narrow"
+      }
     }
   ]
 }

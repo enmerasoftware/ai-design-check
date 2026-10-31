@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.0
+
+- `narrow` command: renders a page at phone width (320 px by default) and at desktop width in Chrome and reports
+  sideways scrolling with the elements that cause it, cut-off text, text shrunk to fit and content hidden on phones.
+  Four new rules (74 in all): `no-horizontal-overflow`, `text-not-clipped`, `no-shrunk-text`,
+  `no-hidden-content-narrow`.
+- Example `examples/narrow-de.html`: a German settings screen that breaks at 320 px, and a fixed version that keeps every
+  word and every size. Suggested on X by @Max9105134.
+- The fix skill renders the page at phone width with the longest locale and never counts shrinking or cutting text as a
+  fix.
+
 ## 0.5.0
 
 - Rules compared with 16 high-rated dashboard designs on Dribbble and Behance ([RESEARCH.md](RESEARCH.md)). 9 new rules

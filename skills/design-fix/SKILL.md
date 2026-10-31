@@ -75,8 +75,17 @@ see [scales.md](references/scales.md) for starting values when the project has n
 
 1. Run the checker again on the same files and report before → after per area (for example
    `221 → 0 findings; spacing 76 → 0, type 57 → 0`). Anything left gets a fix or an inline ignore with a reason.
-2. Look at the screen again at desktop and phone width. The checker cannot see contrast, rhythm or hierarchy.
-3. Optional, for sharing: render a square before/after video (Chrome and ffmpeg on the machine, no other
+2. Render it at phone width with the longest language the product ships (German, Finnish):
+
+   ```bash
+   npx @enmera/ai-design-check narrow path/to/page.html --width 320
+   ```
+
+   It reports the page scrolling sideways, cut-off text, text shrunk to fit and content hidden on phones. Fix these by
+   letting the layout give (wrap, stack, hyphenate, scroll a wide table inside its own box), never by shrinking text,
+   truncating labels or hiding content.
+3. Look at the screen again at desktop and phone width. The checkers cannot see contrast, rhythm or hierarchy.
+4. Optional, for sharing: render a square before/after video (Chrome and ffmpeg on the machine, no other
    dependencies):
 
    ```bash
@@ -88,5 +97,6 @@ see [scales.md](references/scales.md) for starting values when the project has n
 ## Rules for this skill
 
 - Never remove features, data or content to make the count go down.
+- Never make text smaller or cut it off to make a layout fit; a fix that does is not a fix.
 - Never silence a finding without a reason in the ignore comment.
 - When a fix is a general lesson (it would apply to the next project too), propose it as a rule for `rules.json`.

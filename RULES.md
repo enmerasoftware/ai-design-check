@@ -54,6 +54,16 @@
 
 **How to fix:** "Search", or an example such as "name@company.com".
 
+### Text is not cut off
+
+`text-not-clipped` · warning · checked
+
+**Rule:** Labels, buttons and table cells show their whole text at 320 px. Truncation with an ellipsis is allowed only where the full text is one tap away (title, tooltip, detail view).
+
+**Why:** A cut-off label can change meaning ("Delete all…" of what?), and translations are often 30–40 % longer than English.
+
+**How to fix:** Let the text wrap; if it truly must be one line, keep the full text in a title and in the detail view.
+
 ## Type scale
 
 ### Font sizes from the scale only
@@ -95,6 +105,16 @@
 **Why:** Small letters squeezed together lose their shapes and become hard to read.
 
 **How to fix:** Leave tracking at 0 for small text; slightly positive is fine for muted captions.
+
+### Text is not shrunk to fit
+
+`no-shrunk-text` · warning · checked
+
+**Rule:** Body text and labels keep their size on phones (never below 12 px, never smaller than on desktop); only large headlines may scale down.
+
+**Why:** Phones are read at arm's length and in sunlight; shrinking text to make a layout fit moves the problem to the reader.
+
+**How to fix:** Keep the size and let the layout give: wrap, stack, or move secondary content below.
 
 ## Corners and surfaces
 
@@ -293,6 +313,26 @@
 **Why:** Two filled buttons side by side ask the user to choose before they know what the page is for.
 
 **How to fix:** Keep the action that moves the page's job forward filled; demote the rest.
+
+### No sideways scrolling on phones
+
+`no-horizontal-overflow` · error · checked
+
+**Rule:** At 320 px the page is no wider than the screen. Wide content (a table, a code block) scrolls inside its own box, never the page.
+
+**Why:** A page that scrolls sideways hides its right edge and makes every vertical scroll wobble.
+
+**How to fix:** Let rows wrap (flex-wrap), allow long words to break (hyphens: auto with the right lang, overflow-wrap), wrap wide tables in overflow-x-auto.
+
+### Phones get the same content
+
+`no-hidden-content-narrow` · note · checked
+
+**Rule:** Text shown on desktop is not hidden on phones (hidden sm:block). A collapsed menu is fine when the items stay one tap away.
+
+**Why:** Hiding content to make a small layout work removes information from the majority of visitors.
+
+**How to fix:** Show it, shorten it for everyone, or move it lower on the page instead of hiding it.
 
 ## Navigation
 

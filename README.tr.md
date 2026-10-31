@@ -5,7 +5,7 @@
 ![Yapay zekâ ile yapılmış bir panel: denetlendi, düzeltildi, yeniden denetlendi; 266 bulgudan 0'a](examples/story-dashboard.webp)
 
 Yapay zekâ kodlama ajanlarıyla (Claude Code, Cursor, Codex) yapılan arayüzleri "yapay zekâ yapmış" gibi gösteren
-şeyleri bulur ve düzeltir: 70 tasarım kuralı, her bulguyu işaretleyen bağımlılıksız bir denetçi ve ekranı düzeltip
+şeyleri bulur ve düzeltir: 74 tasarım kuralı, her bulguyu işaretleyen bağımlılıksız bir denetçi ve ekranı düzeltip
 yeniden denetleyerek kanıtlayan bir ajan becerisi. Paneller, yönetim ekranları, SaaS ekranları ve tanıtım sayfaları için.
 
 ```bash
@@ -100,6 +100,14 @@ npx skills add enmerasoftware/ai-design-check
 Ajanın her düzenlemeden hemen sonra bulguları görmesi için kanca: Claude Code'da `.claude/settings.json` içine
 `PostToolUse` kancası olarak `npx -y @enmera/ai-design-check hook` (örnek [README.md](README.md#for-ai-coding-agents)).
 Kanca yalnız düzenlenen dosyayı denetler; bulgu varsa çıkış kodu 2 ile ajana geri verir.
+
+### Telefon ve uzun diller: `narrow`
+
+`npx @enmera/ai-design-check narrow sayfa.html --width 320` sayfayı Chrome'da telefon ve masaüstü genişliğinde çizer;
+yalnız çizilmiş sayfada görülenleri bildirir: yana kayan sayfa (ve onu iten öğeler), kesilen metin, sığsın diye
+küçültülen yazı, masaüstünde olup telefonda gizlenen içerik. En uzun dilinizle çalıştırın; Almanca etiketler çoğu
+zaman İngilizceden %30–40 uzundur. [examples/narrow-de.html](examples/narrow-de.html) 320 px'te dördünü de bozar,
+[examples/narrow-de.fixed.html](examples/narrow-de.fixed.html) içerik gizlemeden ve yazı küçültmeden düzeltir.
 
 ### Önce/sonra videosu: `story`
 

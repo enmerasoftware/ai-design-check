@@ -17,6 +17,9 @@ Usage
   npx @enmera/ai-design-check story <before> <after> [--out story.mp4] [--still frame.png] [--title name] [--music track.mp3]
                                                  Square before/after video with every finding marked (files or URLs;
                                                  needs Chrome and ffmpeg, nothing else)
+  npx @enmera/ai-design-check narrow <file|url> [--width 320]
+                                                 Render at phone width and report sideways scrolling, cut-off text,
+                                                 text shrunk to fit and content hidden on phones (needs Chrome)
 
 Options
   --format text|json|github   Output (github: annotations on pull requests)
@@ -42,8 +45,8 @@ const valueOf = (name) => {
 
     return index >= 0 ? args[index + 1] : undefined;
 };
-const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story'];
-const positional = args.filter((arg, index) => !arg.startsWith('--') && !['--format', '--out', '--still', '--title', '--music'].includes(args[index - 1]));
+const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story', 'narrow'];
+const positional = args.filter((arg, index) => !arg.startsWith('--') && !['--format', '--out', '--still', '--title', '--music', '--width'].includes(args[index - 1]));
 // "ai-design-check src lang" is a check of those paths; the command word is optional.
 const [command, ...named] = COMMANDS.includes(positional[0]) ? positional : ['check', ...positional];
 // "./src/a.tsx" and absolute paths name the same file as "src/a.tsx"; the walker and the globs expect the last form.
@@ -88,6 +91,28 @@ if (command === 'story') {
         const result = await story(named[0], named[1], { out: valueOf('out'), still: valueOf('still'), title: valueOf('title'), music: valueOf('music') });
         print(`${result.before} → ${result.after} findings, ${result.marked} marked on screen. Wrote ${relative(cwd, result.out)}`);
         done(0);
+    } catch (error) {
+        console.error(error.message);
+        done(1);
+    }
+}
+
+if (command === 'narrow') {
+    if (named.length !== 1) {
+        console.error('Usage: ai-design-check narrow <file.html|url> [--width 320]');
+        done(1);
+    }
+    const { narrow } = await import('../src/narrow.js');
+    try {
+        const width = Number(valueOf('width') ?? 320);
+        const results = await narrow(named[0], { width });
+        if (format === 'json') print(JSON.stringify({ findings: results }, null, 2));
+        else {
+            for (const item of results) print(`  ${SEVERITY[item.severity](item.severity.padEnd(5))}  ${item.message}  ${paint(2, item.rule)}`);
+            const errors = results.filter((item) => item.severity === 'error').length;
+            print(`\n${results.length === 0 ? paint(32, `No problems at ${width} px.`) : `${errors} errors, ${results.length - errors} warnings and notes at ${width} px.`}`);
+        }
+        done(results.some((item) => item.severity === 'error') ? 1 : 0);
     } catch (error) {
         console.error(error.message);
         done(1);

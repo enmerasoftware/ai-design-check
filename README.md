@@ -5,7 +5,7 @@
 ![A generated dashboard checked, fixed and checked again: 266 findings to 0](examples/story-dashboard.webp)
 
 Finds and fixes what makes interfaces built with AI coding agents (Claude Code, Cursor, Codex) look generated:
-70 design rules, a zero-dependency checker that marks every finding, and an agent skill that fixes the screen and
+74 design rules, a zero-dependency checker that marks every finding, and an agent skill that fixes the screen and
 proves it by checking again. For dashboards, admin panels, SaaS screens and landing pages.
 
 ```bash
@@ -152,6 +152,18 @@ The package ships two skills:
 ```bash
 npx skills add enmerasoftware/ai-design-check
 ```
+
+### Phones and long languages: `narrow`
+
+```bash
+npx @enmera/ai-design-check narrow examples/narrow-de.html --width 320
+```
+
+Renders the page at phone width and at desktop width in your Chrome and reports what only a rendered page shows:
+the page scrolling sideways (and which elements push it), text cut off, text made smaller to fit, and content shown on
+desktop but hidden on phones. Run it with your longest locale; German labels are often 30–40 % longer than English.
+[examples/narrow-de.html](examples/narrow-de.html) breaks all four at 320 px,
+[examples/narrow-de.fixed.html](examples/narrow-de.fixed.html) fixes them without hiding content or shrinking text.
 
 ### Before/after video: `story`
 
