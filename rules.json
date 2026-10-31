@@ -1666,6 +1666,205 @@
         "en": "Keep one badge where it changes a decision; remove the rest.",
         "tr": "Karar değiştiren yerde tek rozet bırakın; gerisini kaldırın."
       }
+    },
+    {
+      "id": "no-gradient-buttons",
+      "area": "visual",
+      "severity": "warn",
+      "title": {
+        "en": "Solid buttons, no gradient fills",
+        "tr": "Düğmeler düz renk, gradyan dolgu yok"
+      },
+      "rule": {
+        "en": "Buttons and button links use one solid fill from the theme; no gradient backgrounds, including the \"Ask AI\" button.",
+        "tr": "Düğme ve düğme görünümlü bağlantılar temadan tek düz renk kullanır; \"Yapay zekâya sor\" düğmesi dahil gradyan zemin yok."
+      },
+      "why": {
+        "en": "In the dashboards we studied the strongest work used flat primary buttons; gradient buttons appeared on the AI features of weaker shots and read as decoration, not as the main action.",
+        "tr": "İncelediğimiz panellerde en güçlü işler düz ana düğme kullandı; gradyan düğme zayıf işlerin yapay zekâ özelliklerinde çıktı ve ana işlem değil süs gibi okundu."
+      },
+      "fix": {
+        "en": "Use the primary colour as a flat fill; mark an AI action with a verb, not a gradient.",
+        "tr": "Ana rengi düz dolgu olarak kullanın; yapay zekâ işlemini gradyanla değil fiille belirtin."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?:^|\\s)(?:[\\w-]+:)*bg-(?:gradient|linear|radial|conic)-[\\w-]+",
+        "onlyElements": "^(?:button|Button|LinkButton|a|Link)$"
+      }
+    },
+    {
+      "id": "no-heavy-card-shadow",
+      "area": "shape",
+      "severity": "warn",
+      "title": {
+        "en": "Cards rest on surface steps, not heavy shadows",
+        "tr": "Kartlar ağır gölgeyle değil yüzey basamağıyla ayrılır"
+      },
+      "rule": {
+        "en": "Cards and panels in the page flow use a hairline border or a surface one step lighter than the page; shadow-lg and larger are for things that float (menus, dialogs, popovers).",
+        "tr": "Sayfa akışındaki kart ve paneller ince kenarlık ya da sayfadan bir basamak açık yüzey kullanır; shadow-lg ve üstü havada duran öğeler içindir (menü, iletişim kutusu, açılır panel)."
+      },
+      "why": {
+        "en": "Every high-rated dashboard we studied separated cards with a light page background and white or raised cards, with almost no shadow; heavy shadows make a grid of cards look like floating stickers.",
+        "tr": "İncelediğimiz yüksek puanlı panellerin hepsi kartları açık sayfa zemini ve beyaz ya da yükseltilmiş kartla ayırdı, gölge neredeyse yoktu; ağır gölge kart ızgarasını yapıştırma etiketler gibi gösterir."
+      },
+      "fix": {
+        "en": "Drop the shadow to shadow-sm or none and step the surface (page gray-50, card white; dark: page #0b0d14, card #11141c).",
+        "tr": "Gölgeyi shadow-sm'e indirin ya da kaldırın, yüzeyi basamaklayın (sayfa gray-50, kart beyaz; koyu: sayfa #0b0d14, kart #11141c)."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?:^|\\s)shadow-(?:lg|xl|2xl)(?=\\s|$)",
+        "unless": "\\b(?:absolute|fixed|sticky|z-\\d+|popover|dropdown|dialog|modal|tooltip)\\b"
+      }
+    },
+    {
+      "id": "stat-card-anatomy",
+      "area": "data",
+      "severity": "warn",
+      "title": {
+        "en": "Stat cards read label, value, change",
+        "tr": "Gösterge kartı: etiket, değer, değişim"
+      },
+      "rule": {
+        "en": "A stat card has three lines in this order: a short muted label, the value large and tabular, then the change with its period (\"+1.5% vs last month\"). No icon tiles, sparklines or emoji competing with the number.",
+        "tr": "Gösterge kartı bu sırayla üç satırdır: kısa soluk etiket, büyük ve sabit genişlikli rakamlarla değer, sonra dönemiyle değişim (\"geçen aya göre +%1,5\"). Sayıyla yarışan ikon kutusu, mini grafik ya da emoji yok."
+      },
+      "why": {
+        "en": "This was the most consistent pattern across the professional dashboards we studied: the eye reads down one column, and the change is meaningless without its period.",
+        "tr": "İncelediğimiz profesyonel panellerde en tutarlı örüntü buydu: göz tek sütunda aşağı okur ve değişim dönemi olmadan anlamsızdır."
+      },
+      "fix": {
+        "en": "Reorder to label → value → change; put the period next to every change.",
+        "tr": "Sırayı etiket → değer → değişim yapın; her değişimin yanına dönemi yazın."
+      }
+    },
+    {
+      "id": "card-header-pattern",
+      "area": "layout",
+      "severity": "warn",
+      "title": {
+        "en": "One card header pattern",
+        "tr": "Tek kart başlığı düzeni"
+      },
+      "rule": {
+        "en": "Every card header is the same: title on the left, at most one control on the right (period selector, \"See all\" or a ⋯ menu), on one baseline.",
+        "tr": "Her kart başlığı aynıdır: solda başlık, sağda en çok bir denetim (dönem seçici, \"Tümünü gör\" ya da ⋯ menüsü), aynı taban çizgisinde."
+      },
+      "why": {
+        "en": "Repeating one header across cards is what makes a dense dashboard calm; mixed headers make every card a new reading task.",
+        "tr": "Kartlarda tek başlık düzenini tekrarlamak yoğun paneli sakin gösteren şeydir; karışık başlıklar her kartı yeni bir okuma işi yapar."
+      },
+      "fix": {
+        "en": "Extract a CardHeader component with title and an optional action slot and use it everywhere.",
+        "tr": "Başlık ve isteğe bağlı işlem yuvası olan bir CardHeader bileşeni çıkarıp her yerde kullanın."
+      }
+    },
+    {
+      "id": "chart-highlight-one",
+      "area": "data",
+      "severity": "warn",
+      "title": {
+        "en": "Charts highlight one thing",
+        "tr": "Grafik tek şeyi öne çıkarır"
+      },
+      "rule": {
+        "en": "Bars and series are neutral; the accent goes on the one that matters (the current period, the selected point), with its value labelled on the chart. Category charts use one hue in steps, not a rainbow.",
+        "tr": "Çubuk ve seriler nötrdür; vurgu rengi önemli olana gider (bu dönem, seçili nokta) ve değeri grafiğin üstünde yazılıdır. Kategori grafikleri gökkuşağı değil tek rengin basamaklarıdır."
+      },
+      "why": {
+        "en": "The professional work we studied kept inactive bars light grey and lit one; the weaker shots used five or six hues, which turns a chart into a legend lookup.",
+        "tr": "İncelediğimiz profesyonel işler pasif çubukları açık gri tuttu ve birini yaktı; zayıf işler beş altı renk kullandı, bu da grafiği gösterge tablosunda arama işine çevirir."
+      },
+      "fix": {
+        "en": "Grey out every series but one; label it directly; collapse small categories into \"Other\".",
+        "tr": "Bir seri dışında hepsini griye çekin; onu doğrudan etiketleyin; küçük kategorileri \"Diğer\"de toplayın."
+      }
+    },
+    {
+      "id": "direct-labels",
+      "area": "data",
+      "severity": "info",
+      "title": {
+        "en": "Label series on the chart",
+        "tr": "Serileri grafiğin üstünde etiketleyin"
+      },
+      "rule": {
+        "en": "With three series or fewer, put the name or value at the end of the line or on the bar instead of a separate legend.",
+        "tr": "Üç ya da daha az seride ad ya da değer ayrı bir gösterge yerine çizginin sonuna ya da çubuğun üstüne yazılır."
+      },
+      "why": {
+        "en": "A legend makes the reader match colours back and forth; a direct label is read once.",
+        "tr": "Gösterge okuru renkleri ileri geri eşleştirmeye zorlar; doğrudan etiket bir kez okunur."
+      },
+      "fix": {
+        "en": "Move the legend text next to its series; keep a legend only for many series.",
+        "tr": "Gösterge metnini serisinin yanına taşıyın; göstergeyi yalnız çok seri varken tutun."
+      }
+    },
+    {
+      "id": "dim-secondary-digits",
+      "area": "data",
+      "severity": "info",
+      "title": {
+        "en": "Dim the digits that matter less",
+        "tr": "Daha az önemli basamakları soldurun"
+      },
+      "rule": {
+        "en": "In a headline figure the cents, decimals or unit are set in the secondary text colour ($422,525.82 with .82 muted), so the significant part reads first.",
+        "tr": "Öne çıkan sayıda kuruş, ondalık ya da birim ikincil metin rengindedir (422.525,82 $ içinde ,82 soluk); önemli kısım önce okunur."
+      },
+      "why": {
+        "en": "The strongest hero numbers we studied used this one detail instead of any decoration.",
+        "tr": "İncelediğimiz en güçlü öne çıkan sayılar süs yerine bu tek ayrıntıyı kullandı."
+      },
+      "fix": {
+        "en": "Wrap the fraction in a span with the secondary colour; keep the same size.",
+        "tr": "Kesirli kısmı ikincil renkli bir span içine alın; boyut aynı kalsın."
+      }
+    },
+    {
+      "id": "status-system",
+      "area": "components",
+      "severity": "warn",
+      "title": {
+        "en": "One status system",
+        "tr": "Tek durum sistemi"
+      },
+      "rule": {
+        "en": "Statuses are a small tinted pill with a dot and a word, from one shared map (success, pending, failed, draft); the same status has the same colour on every screen.",
+        "tr": "Durumlar nokta ve kelimeli küçük, hafif renkli haplardır ve tek bir ortak eşlemeden gelir (başarılı, bekliyor, başarısız, taslak); aynı durum her ekranda aynı renktir."
+      },
+      "why": {
+        "en": "Status colour is learned once; when \"Pending\" is amber in one table and blue in another, people stop trusting colour at all.",
+        "tr": "Durum rengi bir kez öğrenilir; \"Bekliyor\" bir tabloda turuncu, ötekinde maviyse kullanıcı renge hiç güvenmez."
+      },
+      "fix": {
+        "en": "Create one StatusBadge with a status → tone map and use it in every table and card.",
+        "tr": "Durum → ton eşlemesiyle tek bir StatusBadge oluşturun, her tablo ve kartta onu kullanın."
+      }
+    },
+    {
+      "id": "one-primary-action",
+      "area": "layout",
+      "severity": "warn",
+      "title": {
+        "en": "One primary action per page",
+        "tr": "Sayfa başına tek ana işlem"
+      },
+      "rule": {
+        "en": "A page header has one filled primary button (usually top right); other actions are secondary, ghost or in a menu.",
+        "tr": "Sayfa başlığında tek dolu ana düğme olur (genelde sağ üstte); diğer işlemler ikincil, hayalet ya da menü içindedir."
+      },
+      "why": {
+        "en": "Two filled buttons side by side ask the user to choose before they know what the page is for.",
+        "tr": "Yan yana iki dolu düğme, kullanıcıdan sayfanın ne için olduğunu anlamadan seçim yapmasını ister."
+      },
+      "fix": {
+        "en": "Keep the action that moves the page's job forward filled; demote the rest.",
+        "tr": "Sayfanın işini ilerleten işlemi dolu bırakın; gerisini bir basamak indirin."
+      }
     }
   ]
 }

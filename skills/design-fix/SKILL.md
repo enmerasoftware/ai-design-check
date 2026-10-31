@@ -51,19 +51,24 @@ see [scales.md](references/scales.md) for starting values when the project has n
    (`glow-in-charts-only`), blurred blobs (`no-blur-blobs`), side stripes. The accent appears two or three times.
 3. **Icons**: one line icon set at one size and stroke; emoji and sparkles out (`icons-not-emoji`,
    `no-sparkle-for-ai`); same icon box width in every row.
-4. **Copy**: the title names the page, not the user (`no-greeting-headline`); no exclamation marks
+4. **Data**: stat cards read label → value → change with its period (`stat-card-anatomy`); charts keep every series
+   neutral but one and label it on the chart (`chart-highlight-one`, `direct-labels`); dim cents and decimals in the
+   headline figure (`dim-secondary-digits`).
+5. **Copy**: the title names the page, not the user (`no-greeting-headline`); no exclamation marks
    (`no-exclamation-copy`), no buzzwords, every change says what it is compared with (`numbers-with-context`),
    buttons say what they do, sentence case, no full stop on labels, short placeholders, plausible sample data.
-5. **Type**: sizes from the scale (`type-scale`), weights 400–600 (`no-heavy-headings`), no tracked uppercase
+6. **Type**: sizes from the scale (`type-scale`), weights 400–600 (`no-heavy-headings`), no tracked uppercase
    labels, negative tracking only on large display text, tabular figures for numbers, one format per number.
-6. **Layout**: one main element leads (the main chart spans most of the width; stat cards are compact and equal
+7. **Layout**: one primary action per page header (`one-primary-action`), one card header pattern (title left, one
+   control right; `card-header-pattern`), one main element leads (the main chart spans most of the width; stat cards are compact and equal
    height); wide tables span the page; a hero has one primary and at most one secondary action; readable line
    length.
-7. **Components**: buttons, inputs, badges and cards from the shared components (`use-shared-components`,
+8. **Components**: flat buttons (`no-gradient-buttons`), cards on surface steps instead of heavy shadows
+   (`no-heavy-card-shadow`), one status system (`status-system`); buttons, inputs, badges and cards from the shared components (`use-shared-components`,
    `use-shared-looks`, `no-style-overrides`); radius by size and nested radius; few, quiet badges.
-8. **Motion**: named transitions only, no hover growth, no bounce, pulse only for live data, transform and opacity
+9. **Motion**: named transitions only, no hover growth, no bounce, pulse only for live data, transform and opacity
    instead of position; respect reduced motion.
-9. **Visual**: where the screen needs a picture, show the product with real-looking data instead of a generic
+10. **Visual**: where the screen needs a picture, show the product with real-looking data instead of a generic
    visual (`show-the-product`).
 
 ## 4. Prove it

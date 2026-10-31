@@ -128,6 +128,16 @@
 
 **Nasıl düzeltilir:** 8 px boşluklu 16 px kart 8 px köşeli öğe taşır; tam hapı çip ve avatarlara bırakın.
 
+### Kartlar ağır gölgeyle değil yüzey basamağıyla ayrılır
+
+`no-heavy-card-shadow` · uyarı · denetlenir
+
+**Kural:** Sayfa akışındaki kart ve paneller ince kenarlık ya da sayfadan bir basamak açık yüzey kullanır; shadow-lg ve üstü havada duran öğeler içindir (menü, iletişim kutusu, açılır panel).
+
+**Neden:** İncelediğimiz yüksek puanlı panellerin hepsi kartları açık sayfa zemini ve beyaz ya da yükseltilmiş kartla ayırdı, gölge neredeyse yoktu; ağır gölge kart ızgarasını yapıştırma etiketler gibi gösterir.
+
+**Nasıl düzeltilir:** Gölgeyi shadow-sm'e indirin ya da kaldırın, yüzeyi basamaklayın (sayfa gray-50, kart beyaz; koyu: sayfa #0b0d14, kart #11141c).
+
 ## Bileşen ve tekrar
 
 ### Etkileşimli öğeler ortak bileşenden
@@ -179,6 +189,16 @@
 **Neden:** Her satırdaki rozet anlamını yitirir ve menüye gürültü ekler.
 
 **Nasıl düzeltilir:** Karar değiştiren yerde tek rozet bırakın; gerisini kaldırın.
+
+### Tek durum sistemi
+
+`status-system` · uyarı · gözden geçirilir
+
+**Kural:** Durumlar nokta ve kelimeli küçük, hafif renkli haplardır ve tek bir ortak eşlemeden gelir (başarılı, bekliyor, başarısız, taslak); aynı durum her ekranda aynı renktir.
+
+**Neden:** Durum rengi bir kez öğrenilir; "Bekliyor" bir tabloda turuncu, ötekinde maviyse kullanıcı renge hiç güvenmez.
+
+**Nasıl düzeltilir:** Durum → ton eşlemesiyle tek bir StatusBadge oluşturun, her tablo ve kartta onu kullanın.
 
 ## Seçiciler
 
@@ -253,6 +273,26 @@
 **Neden:** Her ek işlem, ziyaretçinin kalıp kalmayacağına karar verdiği anda dikkati böler.
 
 **Nasıl düzeltilir:** Ana işlemi ve bir alternatifi tutun; gerisini sayfanın aşağısına taşıyın.
+
+### Tek kart başlığı düzeni
+
+`card-header-pattern` · uyarı · gözden geçirilir
+
+**Kural:** Her kart başlığı aynıdır: solda başlık, sağda en çok bir denetim (dönem seçici, "Tümünü gör" ya da ⋯ menüsü), aynı taban çizgisinde.
+
+**Neden:** Kartlarda tek başlık düzenini tekrarlamak yoğun paneli sakin gösteren şeydir; karışık başlıklar her kartı yeni bir okuma işi yapar.
+
+**Nasıl düzeltilir:** Başlık ve isteğe bağlı işlem yuvası olan bir CardHeader bileşeni çıkarıp her yerde kullanın.
+
+### Sayfa başına tek ana işlem
+
+`one-primary-action` · uyarı · gözden geçirilir
+
+**Kural:** Sayfa başlığında tek dolu ana düğme olur (genelde sağ üstte); diğer işlemler ikincil, hayalet ya da menü içindedir.
+
+**Neden:** Yan yana iki dolu düğme, kullanıcıdan sayfanın ne için olduğunu anlamadan seçim yapmasını ister.
+
+**Nasıl düzeltilir:** Sayfanın işini ilerleten işlemi dolu bırakın; gerisini bir basamak indirin.
 
 ## Menü
 
@@ -377,6 +417,16 @@
 **Neden:** Genel görsel her ürün sayfasına konabilir; hiçbir şey anlatmaz ve sayfayı şablon gibi gösterir.
 
 **Nasıl düzeltilir:** Gerçek veriyle gerçek bir ekran ya da ürünün ne yaptığını söyleyen bir nesne kullanın.
+
+### Düğmeler düz renk, gradyan dolgu yok
+
+`no-gradient-buttons` · uyarı · denetlenir
+
+**Kural:** Düğme ve düğme görünümlü bağlantılar temadan tek düz renk kullanır; "Yapay zekâya sor" düğmesi dahil gradyan zemin yok.
+
+**Neden:** İncelediğimiz panellerde en güçlü işler düz ana düğme kullandı; gradyan düğme zayıf işlerin yapay zekâ özelliklerinde çıktı ve ana işlem değil süs gibi okundu.
+
+**Nasıl düzeltilir:** Ana rengi düz dolgu olarak kullanın; yapay zekâ işlemini gradyanla değil fiille belirtin.
 
 ## Erişilebilirlik
 
@@ -513,6 +563,46 @@
 **Neden:** Dolgu veri bitmiş ekranı taslak gibi gösterir ve gerçek uzunlukların ortaya çıkaracağı yerleşim sorunlarını saklar.
 
 **Nasıl düzeltilir:** Gerçekçi adlar, düzensiz basamaklı tutarlar ve gerçek uzunluklar kullanın.
+
+### Gösterge kartı: etiket, değer, değişim
+
+`stat-card-anatomy` · uyarı · gözden geçirilir
+
+**Kural:** Gösterge kartı bu sırayla üç satırdır: kısa soluk etiket, büyük ve sabit genişlikli rakamlarla değer, sonra dönemiyle değişim ("geçen aya göre +%1,5"). Sayıyla yarışan ikon kutusu, mini grafik ya da emoji yok.
+
+**Neden:** İncelediğimiz profesyonel panellerde en tutarlı örüntü buydu: göz tek sütunda aşağı okur ve değişim dönemi olmadan anlamsızdır.
+
+**Nasıl düzeltilir:** Sırayı etiket → değer → değişim yapın; her değişimin yanına dönemi yazın.
+
+### Grafik tek şeyi öne çıkarır
+
+`chart-highlight-one` · uyarı · gözden geçirilir
+
+**Kural:** Çubuk ve seriler nötrdür; vurgu rengi önemli olana gider (bu dönem, seçili nokta) ve değeri grafiğin üstünde yazılıdır. Kategori grafikleri gökkuşağı değil tek rengin basamaklarıdır.
+
+**Neden:** İncelediğimiz profesyonel işler pasif çubukları açık gri tuttu ve birini yaktı; zayıf işler beş altı renk kullandı, bu da grafiği gösterge tablosunda arama işine çevirir.
+
+**Nasıl düzeltilir:** Bir seri dışında hepsini griye çekin; onu doğrudan etiketleyin; küçük kategorileri "Diğer"de toplayın.
+
+### Serileri grafiğin üstünde etiketleyin
+
+`direct-labels` · not · gözden geçirilir
+
+**Kural:** Üç ya da daha az seride ad ya da değer ayrı bir gösterge yerine çizginin sonuna ya da çubuğun üstüne yazılır.
+
+**Neden:** Gösterge okuru renkleri ileri geri eşleştirmeye zorlar; doğrudan etiket bir kez okunur.
+
+**Nasıl düzeltilir:** Gösterge metnini serisinin yanına taşıyın; göstergeyi yalnız çok seri varken tutun.
+
+### Daha az önemli basamakları soldurun
+
+`dim-secondary-digits` · not · gözden geçirilir
+
+**Kural:** Öne çıkan sayıda kuruş, ondalık ya da birim ikincil metin rengindedir (422.525,82 $ içinde ,82 soluk); önemli kısım önce okunur.
+
+**Neden:** İncelediğimiz en güçlü öne çıkan sayılar süs yerine bu tek ayrıntıyı kullandı.
+
+**Nasıl düzeltilir:** Kesirli kısmı ikincil renkli bir span içine alın; boyut aynı kalsın.
 
 ## Yerelleştirme
 

@@ -2,10 +2,10 @@
 
 [Türkçe](README.tr.md)
 
-![A generated dashboard checked, fixed and checked again: 263 findings to 0](examples/story-dashboard.webp)
+![A generated dashboard checked, fixed and checked again: 266 findings to 0](examples/story-dashboard.webp)
 
 Finds and fixes what makes interfaces built with AI coding agents (Claude Code, Cursor, Codex) look generated:
-61 design rules, a zero-dependency checker that marks every finding, and an agent skill that fixes the screen and
+70 design rules, a zero-dependency checker that marks every finding, and an agent skill that fixes the screen and
 proves it by checking again. For dashboards, admin panels, SaaS screens and landing pages.
 
 ```bash
@@ -18,7 +18,11 @@ spacing, colour, icons, copy, type, layout, components and motion in passes, and
 Fixing is what most tools stop at; the checker keeps the next agent edit from bringing the slop back.
 
 The rules come from real screens shipped by [Enmera](https://enmera.com.tr) and [Searvia](https://searvia.com):
-what read as "generated", what broke at narrow widths, what people did not understand. Each rule says **what**,
+what read as "generated", what broke at narrow widths, what people did not understand. They were then compared with 16
+high-rated dashboard designs on Dribbble and Behance: the patterns the strongest work shared became rules (stat card
+anatomy, one card header, one highlighted chart series, flat buttons, surface steps instead of shadows), and where the
+popular shots themselves show the tells (half of them open with "Welcome back 👋") the rule stayed. Method and
+findings: [RESEARCH.md](RESEARCH.md). Each rule says **what**,
 **why** and **how to fix it**, in English and Turkish.
 
 ```bash

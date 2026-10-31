@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0
+
+- Rules compared with 16 high-rated dashboard designs on Dribbble and Behance ([RESEARCH.md](RESEARCH.md)). 9 new rules
+  (70 in all): `no-gradient-buttons` and `no-heavy-card-shadow` (checked), `stat-card-anatomy`, `card-header-pattern`,
+  `chart-highlight-one`, `direct-labels`, `dim-secondary-digits`, `status-system`, `one-primary-action` (review).
+- Class rules can be limited to elements (`onlyElements`).
+- The fix skill has a data pass (stat cards, charts, headline figures).
+
 ## 0.4.2
 
 - `story`: marks stay on the before screen only, so the wipe leaves a clean after screen behind it; every occurrence of

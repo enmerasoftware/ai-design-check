@@ -5,7 +5,7 @@
 ![Yapay zekâ ile yapılmış bir panel: denetlendi, düzeltildi, yeniden denetlendi; 263 bulgudan 0'a](examples/story-dashboard.webp)
 
 Yapay zekâ kodlama ajanlarıyla (Claude Code, Cursor, Codex) yapılan arayüzleri "yapay zekâ yapmış" gibi gösteren
-şeyleri bulur ve düzeltir: 61 tasarım kuralı, her bulguyu işaretleyen bağımlılıksız bir denetçi ve ekranı düzeltip
+şeyleri bulur ve düzeltir: 70 tasarım kuralı, her bulguyu işaretleyen bağımlılıksız bir denetçi ve ekranı düzeltip
 yeniden denetleyerek kanıtlayan bir ajan becerisi. Paneller, yönetim ekranları, SaaS ekranları ve tanıtım sayfaları için.
 
 ```bash
@@ -19,7 +19,10 @@ ajan düzenlemesinin aynı kusurları geri getirmesini de engeller.
 
 Kurallar [Enmera](https://enmera.com.tr) ve [Searvia](https://searvia.com)'da canlıya çıkmış gerçek ekranlardan
 çıktı: "üretilmiş" gibi okunanlar, dar ekranda bozulanlar, kullanıcının anlamadıkları. Her kural **ne**, **neden** ve
-**nasıl düzeltilir** sorularını Türkçe ve İngilizce yanıtlar.
+**nasıl düzeltilir** sorularını Türkçe ve İngilizce yanıtlar. Ardından Dribbble ve Behance'teki 16 yüksek puanlı panel
+tasarımıyla karşılaştırıldı: en güçlü işlerin ortak örüntüleri kural oldu (gösterge kartı düzeni, tek kart başlığı,
+grafikte tek vurgulu seri, düz düğme, gölge yerine yüzey basamağı); popüler işlerin kendisinde görülen izlerde (yarısı
+"Tekrar hoş geldin 👋" ile açılıyor) kural korundu. Yöntem ve bulgular: [RESEARCH.md](RESEARCH.md).
 
 ```bash
 npx @enmera/ai-design-check            # projeyi denetle (ya da: ai-design-check src lang)

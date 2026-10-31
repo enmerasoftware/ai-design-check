@@ -87,6 +87,8 @@ test('generated-UI tells (fixtures/slop)', () => {
     assert.equal(at('no-sparkle-for-ai').length, 1);
     assert.deepEqual(at('no-placeholder-data'), ['John Doe']);
     assert.deepEqual(at('no-blur-blobs'), ['blur-3xl']);
+    assert.deepEqual(at('no-gradient-buttons'), ['bg-gradient-to-r']); // a section background is not a button
+    assert.deepEqual(at('no-heavy-card-shadow'), ['shadow-xl']); // the floating menu keeps its shadow
 });
 
 test('sentence case: JSX labels, source keys and translations', () => {

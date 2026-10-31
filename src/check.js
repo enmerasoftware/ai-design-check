@@ -308,6 +308,7 @@ export function check(cwd, overrides = {}) {
                 for (const rule of classRules) {
                     if (rule.check.unless && new RegExp(rule.check.unless, 'u').test(unit.text)) continue;
                     if (rule.check.exceptElements && unit.element && new RegExp(rule.check.exceptElements).test(unit.element)) continue;
+                    if (rule.check.onlyElements && !(unit.element && new RegExp(rule.check.onlyElements).test(unit.element))) continue;
                     // A wrapper just above may carry the style (focus-within: ring on the box around an input).
                     if (rule.check.unlessBefore && new RegExp(rule.check.unlessBefore, 'u').test(source.slice(Math.max(0, unit.index - 1500), unit.index))) continue;
                     for (const match of unit.text.matchAll(new RegExp(rule.check.pattern, 'gu'))) {

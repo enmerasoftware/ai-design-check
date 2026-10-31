@@ -128,6 +128,16 @@
 
 **How to fix:** A 16 px card with 8 px padding holds 8 px items; keep full pills for chips and avatars.
 
+### Cards rest on surface steps, not heavy shadows
+
+`no-heavy-card-shadow` · warning · checked
+
+**Rule:** Cards and panels in the page flow use a hairline border or a surface one step lighter than the page; shadow-lg and larger are for things that float (menus, dialogs, popovers).
+
+**Why:** Every high-rated dashboard we studied separated cards with a light page background and white or raised cards, with almost no shadow; heavy shadows make a grid of cards look like floating stickers.
+
+**How to fix:** Drop the shadow to shadow-sm or none and step the surface (page gray-50, card white; dark: page #0b0d14, card #11141c).
+
 ## Components and reuse
 
 ### Interactive elements come from shared components
@@ -179,6 +189,16 @@
 **Why:** Badges on every row stop meaning anything and add noise to the menu.
 
 **How to fix:** Keep one badge where it changes a decision; remove the rest.
+
+### One status system
+
+`status-system` · warning · review
+
+**Rule:** Statuses are a small tinted pill with a dot and a word, from one shared map (success, pending, failed, draft); the same status has the same colour on every screen.
+
+**Why:** Status colour is learned once; when "Pending" is amber in one table and blue in another, people stop trusting colour at all.
+
+**How to fix:** Create one StatusBadge with a status → tone map and use it in every table and card.
 
 ## Selectors
 
@@ -253,6 +273,26 @@
 **Why:** Each extra action splits attention at the moment the visitor decides whether to stay.
 
 **How to fix:** Keep the main action and one alternative; move the rest further down the page.
+
+### One card header pattern
+
+`card-header-pattern` · warning · review
+
+**Rule:** Every card header is the same: title on the left, at most one control on the right (period selector, "See all" or a ⋯ menu), on one baseline.
+
+**Why:** Repeating one header across cards is what makes a dense dashboard calm; mixed headers make every card a new reading task.
+
+**How to fix:** Extract a CardHeader component with title and an optional action slot and use it everywhere.
+
+### One primary action per page
+
+`one-primary-action` · warning · review
+
+**Rule:** A page header has one filled primary button (usually top right); other actions are secondary, ghost or in a menu.
+
+**Why:** Two filled buttons side by side ask the user to choose before they know what the page is for.
+
+**How to fix:** Keep the action that moves the page's job forward filled; demote the rest.
 
 ## Navigation
 
@@ -377,6 +417,16 @@
 **Why:** A generic visual could sit on any product page, so it explains nothing and makes the page look like a template.
 
 **How to fix:** Use a real screen with real data, or an object that says what the product does.
+
+### Solid buttons, no gradient fills
+
+`no-gradient-buttons` · warning · checked
+
+**Rule:** Buttons and button links use one solid fill from the theme; no gradient backgrounds, including the "Ask AI" button.
+
+**Why:** In the dashboards we studied the strongest work used flat primary buttons; gradient buttons appeared on the AI features of weaker shots and read as decoration, not as the main action.
+
+**How to fix:** Use the primary colour as a flat fill; mark an AI action with a verb, not a gradient.
 
 ## Accessibility
 
@@ -513,6 +563,46 @@
 **Why:** Filler data makes a finished screen look like a mock-up and hides layout problems that real lengths would show.
 
 **How to fix:** Use realistic names, amounts with uneven digits and real lengths.
+
+### Stat cards read label, value, change
+
+`stat-card-anatomy` · warning · review
+
+**Rule:** A stat card has three lines in this order: a short muted label, the value large and tabular, then the change with its period ("+1.5% vs last month"). No icon tiles, sparklines or emoji competing with the number.
+
+**Why:** This was the most consistent pattern across the professional dashboards we studied: the eye reads down one column, and the change is meaningless without its period.
+
+**How to fix:** Reorder to label → value → change; put the period next to every change.
+
+### Charts highlight one thing
+
+`chart-highlight-one` · warning · review
+
+**Rule:** Bars and series are neutral; the accent goes on the one that matters (the current period, the selected point), with its value labelled on the chart. Category charts use one hue in steps, not a rainbow.
+
+**Why:** The professional work we studied kept inactive bars light grey and lit one; the weaker shots used five or six hues, which turns a chart into a legend lookup.
+
+**How to fix:** Grey out every series but one; label it directly; collapse small categories into "Other".
+
+### Label series on the chart
+
+`direct-labels` · note · review
+
+**Rule:** With three series or fewer, put the name or value at the end of the line or on the bar instead of a separate legend.
+
+**Why:** A legend makes the reader match colours back and forth; a direct label is read once.
+
+**How to fix:** Move the legend text next to its series; keep a legend only for many series.
+
+### Dim the digits that matter less
+
+`dim-secondary-digits` · note · review
+
+**Rule:** In a headline figure the cents, decimals or unit are set in the secondary text colour ($422,525.82 with .82 muted), so the significant part reads first.
+
+**Why:** The strongest hero numbers we studied used this one detail instead of any decoration.
+
+**How to fix:** Wrap the fraction in a span with the secondary colour; keep the same size.
 
 ## Localisation
 
