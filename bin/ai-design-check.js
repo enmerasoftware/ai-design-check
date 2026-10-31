@@ -14,6 +14,9 @@ Usage
   npx @enmera/ai-design-check rules [--tr]       List the rules
   npx @enmera/ai-design-check init               Write ${CONFIG_FILE} with the defaults
   npx @enmera/ai-design-check hook               For agent hooks: check the file named in the hook JSON on stdin
+  npx @enmera/ai-design-check story <before> <after> [--out story.mp4] [--still frame.png] [--title name]
+                                                 Square before/after video with every finding marked (files or URLs;
+                                                 needs Chrome and ffmpeg, nothing else)
 
 Options
   --format text|json|github   Output (github: annotations on pull requests)
@@ -39,8 +42,8 @@ const valueOf = (name) => {
 
     return index >= 0 ? args[index + 1] : undefined;
 };
-const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook'];
-const positional = args.filter((arg, index) => !arg.startsWith('--') && args[index - 1] !== '--format');
+const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story'];
+const positional = args.filter((arg, index) => !arg.startsWith('--') && !['--format', '--out', '--still', '--title'].includes(args[index - 1]));
 // "ai-design-check src lang" is a check of those paths; the command word is optional.
 const [command, ...named] = COMMANDS.includes(positional[0]) ? positional : ['check', ...positional];
 // "./src/a.tsx" and absolute paths name the same file as "src/a.tsx"; the walker and the globs expect the last form.
@@ -73,6 +76,22 @@ const done = (code) => {
 if (flags.has('--help') || flags.has('-h') || command === 'help') {
     print(HELP);
     done(0);
+}
+
+if (command === 'story') {
+    if (named.length !== 2) {
+        console.error('Usage: ai-design-check story <before.html|url> <after.html|url> [--out story.mp4]');
+        done(1);
+    }
+    const { story } = await import('../src/story.js');
+    try {
+        const result = await story(named[0], named[1], { out: valueOf('out'), still: valueOf('still'), title: valueOf('title') });
+        print(`${result.before} → ${result.after} findings, ${result.marked} marked on screen. Wrote ${relative(cwd, result.out)}`);
+        done(0);
+    } catch (error) {
+        console.error(error.message);
+        done(1);
+    }
 }
 
 if (command === 'rules') {

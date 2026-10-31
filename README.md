@@ -2,24 +2,35 @@
 
 [Türkçe](README.tr.md)
 
-Checks interfaces built with AI coding agents (Claude Code, Cursor, Codex) against design rules, so they stop looking
-generated and follow one system: the agent reads the rules before it writes UI, a zero-dependency checker finds what
-slipped through, and every rule says how to fix it. For dashboards, admin panels and SaaS screens.
+![A generated dashboard checked, fixed and checked again: 200 findings to 0](examples/story-dashboard.webp)
+
+Finds and fixes what makes interfaces built with AI coding agents (Claude Code, Cursor, Codex) look generated:
+61 design rules, a zero-dependency checker that marks every finding, and an agent skill that fixes the screen and
+proves it by checking again. For dashboards, admin panels, SaaS screens and landing pages.
+
+```bash
+npx @enmera/ai-design-check                    # check the project (or: ai-design-check src lang)
+npx skills add enmerasoftware/ai-design-check  # the rules and the fix skill for your agent
+```
+
+Then ask your agent to "fix the design of this screen". It measures, proposes a direction from your product, fixes
+spacing, colour, icons, copy, type, layout, components and motion in passes, and shows the count before and after.
+Fixing is what most tools stop at; the checker keeps the next agent edit from bringing the slop back.
 
 The rules come from real screens shipped by [Enmera](https://enmera.com.tr) and [Searvia](https://searvia.com):
 what read as "generated", what broke at narrow widths, what people did not understand. Each rule says **what**,
 **why** and **how to fix it**, in English and Turkish.
 
 ```bash
-npx @enmera/ai-design-check            # check the project (or: ai-design-check src lang)
 npx @enmera/ai-design-check inventory  # how many different buttons, inputs, headings, badges, cards you have
 npx @enmera/ai-design-check rules      # list the rules (--tr for Turkish)
 npx @enmera/ai-design-check init       # write a config with the defaults
+npx @enmera/ai-design-check story before.html after.html  # a square before/after video, like the one above
 ```
 
 No LLM, no API key, no dependencies: it catches measurable defects (a focus ring removed, an icon button with no
-name, a font size off the scale, a raw `<button>` next to your `Button`, a Turkish `toUpperCase()`), and leaves taste to
-you.
+name, a font size off the scale, spacing off the 4 px grid, a raw `<button>` next to your `Button`, emoji as icons,
+"Welcome back, Alex!", a Turkish `toUpperCase()`), and leaves taste to you and the fix skill.
 
 ## What it covers
 
@@ -127,11 +138,27 @@ Ignore one place, always with a reason after `--` (an ignore without a reason is
 
 ## For AI coding agents
 
-The package ships a skill that tells an agent to read the rules before touching UI and to run the checker after:
+The package ships two skills:
+
+- **ai-design-check** tells an agent to read the rules before touching UI and to run the checker after.
+- **ai-design-fix** fixes a screen that already looks generated: measure, pick a direction from the product (who,
+  world, one accent, one moment), fix in passes across the whole screen, then check again and report before → after.
+  It keeps features, data and content; it never silences a finding without a reason.
 
 ```bash
 npx skills add enmerasoftware/ai-design-check
 ```
+
+### Before/after video: `story`
+
+```bash
+npx @enmera/ai-design-check story screen.before.html screen.html --out story.mp4 --still frame.png
+```
+
+A square 8 second video for sharing: the before screen with every finding marked one by one, a wipe to the after
+screen while the count falls, and an end card. Files or URLs. It drives your installed Chrome over the DevTools
+protocol and encodes with ffmpeg; nothing to install from npm. Try it on [examples/dashboard.html](examples/dashboard.html)
+and [examples/dashboard.fixed.html](examples/dashboard.fixed.html).
 
 Make the agent see findings right after each edit with a hook. Claude Code, in `.claude/settings.json`:
 
@@ -159,7 +186,7 @@ Rules live in [`rules.json`](rules.json): `id`, `area`, `severity`, and `title` 
 `css`), `regex` (pattern on code, comments excluded, with `flags` and `files`) or a structural check. Run `npm run docs` to regenerate
 RULES.md and RULES.tr.md and `npm test` before opening a pull request.
 
-Inspired in part by [Impeccable](https://github.com/pbakaus/impeccable) and Anthropic's frontend-design skill.
+Inspired in part by [Impeccable](https://github.com/pbakaus/impeccable), [unslop](https://github.com/heydamir/unslop) by Damir Sokolovsky and Anthropic's frontend-design skill.
 
 ## License
 

@@ -67,6 +67,28 @@ test('i18n, motion and css', () => {
     assert.deepEqual(by('no-marquee').map((item) => item.path), ['src/motion.css']);
 });
 
+test('generated-UI tells (fixtures/slop)', () => {
+    const slop = check(join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'slop'));
+    const at = (rule) => slop.filter((item) => item.rule === rule).map((item) => item.value);
+    assert.deepEqual(at('no-decorative-uppercase'), ['NAVIGATION']);
+    assert.equal(at('icons-not-emoji').length, 1); // HTML is scanned too
+    assert.deepEqual(at('no-heavy-headings'), ['font-extrabold']);
+    assert.deepEqual(at('no-greeting-headline'), ['Welcome back']);
+    assert.deepEqual(at('no-hover-scale'), ['hover:scale-105']);
+    assert.deepEqual(at('spacing-scale'), ['mt-[13px]', 'gap-[7px]']); // 32 px is on the grid, 1 px is a hairline
+    assert.deepEqual(at('no-exclamation-copy'), ['+12%!!']); // not a non-null assertion, not Tailwind's important
+    assert.equal(at('no-unsourced-proof').length, 1);
+    assert.deepEqual(at('no-layout-animation'), ['transition-[left]']);
+    assert.equal(at('no-announcement-pill').length, 1);
+    assert.deepEqual(at('no-italic-emphasis'), ['italic']);
+    assert.equal(at('no-tight-small-text').length, 1);
+    assert.equal(at('no-trailing-period-labels').length, 1);
+    assert.equal(at('short-placeholders').length, 1);
+    assert.equal(at('no-sparkle-for-ai').length, 1);
+    assert.deepEqual(at('no-placeholder-data'), ['John Doe']);
+    assert.deepEqual(at('no-blur-blobs'), ['blur-3xl']);
+});
+
 test('sentence case: JSX labels, source keys and translations', () => {
     assert.deepEqual(values('sentence-case').sort(), ['High Impact', 'Rank Tracking', 'Sıra Takibi', 'Takip Et']);
 });

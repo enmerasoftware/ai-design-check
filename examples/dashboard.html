@@ -1,0 +1,98 @@
+<!doctype html>
+<!-- A dashboard as an AI coding agent tends to write it. Fixed version: dashboard.fixed.html -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tidepool</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+</head>
+<body class="bg-[#0b0820] text-white">
+<div class="flex min-h-screen">
+  <aside class="w-[262px] border-r border-violet-500/30 bg-[#120c2e] p-[22px]">
+    <div class="flex items-center gap-[10px]">
+      <span class="flex h-[38px] w-[38px] items-center justify-center rounded-[14px] bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-[0_0_20px_rgba(168,85,247,0.6)]">✨</span>
+      <span class="bg-gradient-to-r from-violet-300 to-fuchsia-300 bg-clip-text text-[21px] font-black text-transparent">Tidepool</span>
+      <span class="ml-auto rounded-full bg-fuchsia-500 px-2 py-0.5 text-[10px] font-bold">PRO</span>
+    </div>
+    <p class="mt-[30px] text-[11px] font-bold tracking-[0.16em] text-violet-300/70">NAVIGATION</p>
+    <nav class="mt-[11px] flex flex-col gap-[5px] text-[15px]">
+      <a class="rounded-xl bg-gradient-to-r from-violet-600/60 to-fuchsia-600/40 px-3 py-[9px] shadow-[0_0_16px_rgba(139,92,246,0.5)]" href="#">🏠 Dashboard</a>
+      <a class="rounded-xl px-3 py-[9px] text-violet-200/80 transition-all hover:scale-105" href="#">📈 Rankings</a>
+      <a class="rounded-xl px-3 py-[9px] text-violet-200/80 transition-all hover:scale-105" href="#">💬 Reviews <span class="ml-1 rounded-full bg-pink-500 px-1.5 text-[11px] shadow-[0_0_10px_rgba(236,72,153,0.8)]">18</span></a>
+      <a class="rounded-xl px-3 py-[9px] text-violet-200/80 transition-all hover:scale-105" href="#">🚀 Growth</a>
+      <a class="rounded-xl px-3 py-[9px] text-violet-200/80 transition-all hover:scale-105" href="#">⚙️ Settings</a>
+    </nav>
+    <div class="mt-[38px] rounded-[18px] bg-gradient-to-br from-violet-600 to-indigo-600 p-[17px] shadow-[0_0_30px_rgba(99,102,241,0.5)]">
+      <p class="text-[15px] font-extrabold">Upgrade to Pro 🚀</p>
+      <p class="mt-1 text-[13px] text-violet-100">Supercharge your growth with AI insights!</p>
+    </div>
+  </aside>
+
+  <main class="relative flex-1 overflow-hidden p-[34px]">
+    <div class="absolute -right-24 -top-24 size-96 rounded-full bg-fuchsia-600/30 blur-3xl"></div>
+    <div class="relative flex items-center justify-between">
+      <div>
+        <h1 class="bg-gradient-to-r from-white to-violet-300 bg-clip-text text-[34px] font-black text-transparent">Welcome back, Alex! 👋</h1>
+        <p class="mt-[3px] text-[15px] text-violet-200/70">Here's what's happening with your apps today ✨</p>
+      </div>
+      <div class="flex items-center gap-[10px]">
+        <input class="w-[250px] rounded-full border border-violet-500/40 bg-white/5 px-[18px] py-[9px] text-[14px]" placeholder="Search anything...">
+        <button class="rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-[22px] py-[10px] text-[14px] font-bold shadow-[0_0_24px_rgba(168,85,247,0.6)] transition-all hover:scale-110">✨ Ask AI</button>
+      </div>
+    </div>
+
+    <div class="relative mt-[29px] grid grid-cols-4 gap-[18px]">
+      <div class="rounded-[22px] border border-violet-500/30 bg-white/5 p-[19px] backdrop-blur transition-all hover:scale-105">
+        <p class="text-[11px] font-bold tracking-[0.14em] text-violet-300/70">DOWNLOADS</p>
+        <p class="mt-[9px] text-[33px] font-black">48,210</p>
+        <p class="mt-[5px] text-[13px] font-bold text-emerald-400">🔥 +12%!!</p>
+      </div>
+      <div class="rounded-[22px] border border-violet-500/30 bg-white/5 p-[19px] backdrop-blur transition-all hover:scale-105">
+        <p class="text-[11px] font-bold tracking-[0.14em] text-violet-300/70">REVENUE</p>
+        <p class="mt-[9px] text-[33px] font-black">$124,860.40</p>
+        <p class="mt-[5px] text-[13px] font-bold text-emerald-400">💰 +8.1%!!</p>
+      </div>
+      <div class="rounded-[22px] border border-violet-500/30 bg-white/5 p-[19px] backdrop-blur transition-all hover:scale-105">
+        <p class="text-[11px] font-bold tracking-[0.14em] text-violet-300/70">AVG RATING</p>
+        <p class="mt-[9px] text-[33px] font-black">4.7 ⭐</p>
+        <p class="mt-[5px] text-[13px] font-bold text-rose-400">😬 0.1 less!!</p>
+      </div>
+      <div class="rounded-[22px] border border-violet-500/30 bg-white/5 p-[19px] backdrop-blur transition-all hover:scale-105">
+        <p class="text-[11px] font-bold tracking-[0.14em] text-violet-300/70">KEYWORDS</p>
+        <p class="mt-[9px] text-[33px] font-black">07</p>
+        <p class="mt-[5px] text-[13px] font-bold text-emerald-400">🚀 in top 10!</p>
+      </div>
+    </div>
+
+    <div class="relative mt-[22px] grid grid-cols-2 gap-[18px]">
+      <div class="rounded-[22px] border border-violet-500/30 bg-white/5 p-[21px]">
+        <div class="flex items-center justify-between">
+          <h2 class="text-[19px] font-extrabold">📊 Downloads This Week</h2>
+          <span class="animate-pulse rounded-full bg-emerald-500/20 px-2.5 py-1 text-[11px] font-bold text-emerald-300">● LIVE</span>
+        </div>
+        <div class="mt-[18px] flex h-[170px] items-end gap-[9px]">
+          <div class="h-[40%] flex-1 rounded-full bg-gradient-to-t from-violet-600 to-fuchsia-400 shadow-[0_0_14px_rgba(217,70,239,0.6)]"></div>
+          <div class="h-[55%] flex-1 rounded-full bg-gradient-to-t from-violet-600 to-fuchsia-400 shadow-[0_0_14px_rgba(217,70,239,0.6)]"></div>
+          <div class="h-[48%] flex-1 rounded-full bg-gradient-to-t from-violet-600 to-fuchsia-400 shadow-[0_0_14px_rgba(217,70,239,0.6)]"></div>
+          <div class="h-[70%] flex-1 rounded-full bg-gradient-to-t from-violet-600 to-fuchsia-400 shadow-[0_0_14px_rgba(217,70,239,0.6)]"></div>
+          <div class="h-[64%] flex-1 rounded-full bg-gradient-to-t from-violet-600 to-fuchsia-400 shadow-[0_0_14px_rgba(217,70,239,0.6)]"></div>
+          <div class="h-[88%] flex-1 rounded-full bg-gradient-to-t from-violet-600 to-fuchsia-400 shadow-[0_0_14px_rgba(217,70,239,0.6)]"></div>
+          <div class="h-[100%] flex-1 rounded-full bg-gradient-to-t from-violet-600 to-fuchsia-400 shadow-[0_0_14px_rgba(217,70,239,0.6)]"></div>
+        </div>
+        <div class="mt-[9px] flex justify-between text-[11px] font-bold tracking-[0.14em] text-violet-300/60"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
+      </div>
+      <div class="rounded-[22px] border border-violet-500/30 bg-white/5 p-[21px]">
+        <h2 class="text-[19px] font-extrabold">🔥 Top Keywords</h2>
+        <ul class="mt-[15px] flex flex-col gap-[11px] text-[15px]">
+          <li class="flex justify-between rounded-xl bg-white/5 px-[14px] py-[9px]"><span>habit tracker</span><span class="font-black text-fuchsia-300">#3 🚀</span></li>
+          <li class="flex justify-between rounded-xl bg-white/5 px-[14px] py-[9px]"><span>daily planner</span><span class="font-black text-fuchsia-300">#6 📈</span></li>
+          <li class="flex justify-between rounded-xl bg-white/5 px-[14px] py-[9px]"><span>routine app</span><span class="font-black text-fuchsia-300">#9 ✨</span></li>
+          <li class="flex justify-between rounded-xl bg-white/5 px-[14px] py-[9px]"><span>mood journal</span><span class="font-black text-fuchsia-300">#14 💪</span></li>
+        </ul>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

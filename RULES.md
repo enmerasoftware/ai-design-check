@@ -34,6 +34,26 @@
 
 **How to fix:** Shorten the label; do not shrink the font.
 
+### No full stop on buttons and labels
+
+`no-trailing-period-labels` · note · checked
+
+**Rule:** Buttons, tabs, menu items and short labels end without a full stop; sentences in help text keep theirs.
+
+**Why:** A full stop turns a command into a sentence and makes a row of buttons uneven.
+
+**How to fix:** Remove the final full stop.
+
+### Short placeholders
+
+`short-placeholders` · note · checked
+
+**Rule:** No "Search anything...", "Type here..." or "Enter your email here"; a placeholder is one or two words or an example value.
+
+**Why:** Wordy placeholders repeat the label, disappear when typing and read as filler.
+
+**How to fix:** "Search", or an example such as "name@company.com".
+
 ## Type scale
 
 ### Font sizes from the scale only
@@ -45,6 +65,36 @@
 **Why:** One-off sizes pile up into screens that are almost, but not quite, the same. Text under 11 px is a legibility failure.
 
 **How to fix:** Add --text-2xs: 0.6875rem (line height 1rem) to the theme and map 9–11 px to it, 12 px to text-xs, 13 px to text-sm. Display sizes on marketing pages go in the allow list.
+
+### Headings at regular to semibold weight
+
+`no-heavy-headings` · warning · checked
+
+**Rule:** No font-extrabold or font-black (weight 800–900) in interface headings and numbers; hierarchy comes from size and position.
+
+**Why:** Generated screens make every heading as heavy as possible, so nothing reads as more important.
+
+**How to fix:** Use 400–600 and a step up in size. A display face that is designed heavy can be allowed in config.
+
+### Emphasis with weight or colour, not italic
+
+`no-italic-emphasis` · note · checked
+
+**Rule:** Interface text is not set in italic for emphasis; quotes and titles of works may be italic.
+
+**Why:** Italic is harder to read at interface sizes and looks like a placeholder.
+
+**How to fix:** Use font-medium or the secondary text colour.
+
+### No negative tracking on small text
+
+`no-tight-small-text` · warning · checked
+
+**Rule:** tracking-tight and negative letter spacing belong to large display text (40 px and up), never to text-base and smaller.
+
+**Why:** Small letters squeezed together lose their shapes and become hard to read.
+
+**How to fix:** Leave tracking at 0 for small text; slightly positive is fine for muted captions.
 
 ## Corners and surfaces
 
@@ -67,6 +117,16 @@
 **Why:** Nested frames add depth without meaning.
 
 **How to fix:** Flatten: a divider or a muted background block instead of a second border and shadow.
+
+### Inner corners follow the outer ones
+
+`nested-radius` · warning · review
+
+**Rule:** An element inside a rounded container uses radius = outer radius − padding (never below 4 px); not every element is a full pill.
+
+**Why:** Equal radii inside and out make the gap look uneven at the corners; pills everywhere erase the difference between controls and containers.
+
+**How to fix:** A 16 px card with 8 px padding holds 8 px items; keep full pills for chips and avatars.
 
 ## Components and reuse
 
@@ -109,6 +169,16 @@
 **Why:** Copies drift: one gets a new padding, another keeps the old radius. One component means one fix and less code.
 
 **How to fix:** Extract the element into a component (or a variant of an existing one) and replace the copies.
+
+### Few, quiet badges
+
+`no-badge-spam` · warning · review
+
+**Rule:** PRO, New and Beta badges are rare, text-only and have a reason; counts and shortcuts are plain text or a keycap, not glowing pills.
+
+**Why:** Badges on every row stop meaning anything and add noise to the menu.
+
+**How to fix:** Keep one badge where it changes a decision; remove the rest.
 
 ## Selectors
 
@@ -163,6 +233,26 @@
 **Why:** Grouping is read from spacing before anything else.
 
 **How to fix:** Use two or three steps: inside a group, between groups, between sections.
+
+### Spacing on the 4 px grid
+
+`spacing-scale` · warning · checked
+
+**Rule:** Arbitrary spacing and sizes in px (mt-[13px], h-[31px], gap-[7px]) sit on the 4 px grid; prefer the theme steps.
+
+**Why:** Off-grid values are what a model types when it guesses; rows and gaps drift apart by a pixel or two and the screen looks uneven.
+
+**How to fix:** Round to the nearest theme step (mt-3, h-8, gap-2).
+
+### One primary action in a hero
+
+`hero-one-action` · warning · review
+
+**Rule:** A hero has one primary and at most one secondary action; no third button, no chips or avatar rows stacked under the buttons.
+
+**Why:** Each extra action splits attention at the moment the visitor decides whether to stay.
+
+**How to fix:** Keep the main action and one alternative; move the rest further down the page.
 
 ## Navigation
 
@@ -238,6 +328,56 @@
 
 **How to fix:** Lead with the real content (a number, a screenshot, an example) instead of an icon.
 
+### No announcement pill above the headline
+
+`no-announcement-pill` · warning · checked
+
+**Rule:** No "✨ Introducing X 2.0" pill above a hero headline unless it links to real, recent news; then it is a quiet text link.
+
+**Why:** It is the most copied hero template; the eye lands on it before the headline and finds nothing.
+
+**How to fix:** Remove it, or turn it into a plain link with a date.
+
+### No sparkle icon for anything AI
+
+`no-sparkle-for-ai` · note · checked
+
+**Rule:** A sparkle does not mark every AI feature; use an icon that says what the action does (write, summarise, translate), or none.
+
+**Why:** Sparkles are on every AI product, so they tell the user nothing about the button.
+
+**How to fix:** Replace with a verb icon (PenLine, ListChecks, Languages) or text only.
+
+### No blurred colour blobs behind content
+
+`no-blur-blobs` · warning · checked
+
+**Rule:** No large blurred shapes (blur-2xl, blur-3xl) or radial colour washes as decoration behind text and cards.
+
+**Why:** Blobs are the default backdrop of generated pages; they lower contrast and say nothing about the product.
+
+**How to fix:** Use one plain surface, or a real product view as the visual.
+
+### One accent, used where it means something
+
+`one-accent` · warning · review
+
+**Rule:** The accent colour covers a few percent of the screen: the primary action, the selection and one key figure. Surfaces, borders and labels stay neutral.
+
+**Why:** When everything is highlighted nothing stands out, and the screen loses the one place the eye should land.
+
+**How to fix:** Count the accent on a screenshot; move it off chrome and onto the one thing that matters.
+
+### Show the product, not a generic visual
+
+`show-the-product` · warning · review
+
+**Rule:** The main visual is the product itself or one concrete object from its world; no glossy blobs, orbs, robots, glowing brains or stock circuits.
+
+**Why:** A generic visual could sit on any product page, so it explains nothing and makes the page look like a template.
+
+**How to fix:** Use a real screen with real data, or an object that says what the product does.
+
 ## Accessibility
 
 ### Never remove the focus ring without a replacement
@@ -312,6 +452,26 @@
 
 **How to fix:** Prefix long or looping animations with motion-safe:.
 
+### No growing on hover
+
+`no-hover-scale` · warning · checked
+
+**Rule:** Cards and buttons do not scale up on hover; hover changes colour or surface, press may scale down slightly (0.97–0.98).
+
+**Why:** Growing elements push their neighbours visually, blur text and read as a template effect.
+
+**How to fix:** Replace hover:scale-105 with a background or border step; use active:scale-[0.98] for press feedback.
+
+### Animate transform and opacity, not position
+
+`no-layout-animation` · warning · checked
+
+**Rule:** Transitions do not animate top, left, right, bottom, margin or padding; movement uses transform. Width on a progress meter is fine.
+
+**Why:** Position and spacing changes re-run layout every frame and stutter on slower devices.
+
+**How to fix:** Use translate and opacity (transition-transform, transition-opacity).
+
 ## Data and numbers
 
 ### Numbers carry their comparison
@@ -343,6 +503,16 @@
 **Why:** Proportional digits make columns jagged and values jump as they change.
 
 **How to fix:** Add tabular-nums to the cell or the table; text-end for numeric columns.
+
+### Plausible sample data
+
+`no-placeholder-data` · warning · checked
+
+**Rule:** No Lorem ipsum, John Doe, $123,456 or [X] in screens, demos and screenshots; sample data looks like real data from the product's world.
+
+**Why:** Filler data makes a finished screen look like a mock-up and hides layout problems that real lengths would show.
+
+**How to fix:** Use realistic names, amounts with uneven digits and real lengths.
 
 ## Localisation
 
@@ -439,3 +609,33 @@
 **Why:** Three periods break differently and read as a typo next to real typography.
 
 **How to fix:** Replace ... with … in interface strings.
+
+### No exclamation marks in interface copy
+
+`no-exclamation-copy` · warning · checked
+
+**Rule:** Labels, numbers, toasts and headings state things plainly: no "!" or "!!", including after a change such as "+12%!!".
+
+**Why:** Exclamations make every message sound equally urgent and are a strong tell of generated copy.
+
+**How to fix:** Drop the mark; give a change its comparison ("+12% vs last month").
+
+### The title names the page, not the user
+
+`no-greeting-headline` · warning · checked
+
+**Rule:** No "Welcome back, Name" or "Good morning" as the page title of a working screen; the title says what the page shows.
+
+**Why:** A greeting takes the most valuable line on the screen and tells nothing on the hundredth visit.
+
+**How to fix:** Use the page or the period as the title ("Overview · this week").
+
+### Social proof with a source
+
+`no-unsourced-proof` · warning · checked
+
+**Rule:** No "Trusted by 10,000+ teams", rows of five stars or avatar stacks without a source; name the customers or the review site, or leave it out.
+
+**Why:** Round, unsourced numbers are the first thing a visitor stops believing, and they make the rest of the page look invented.
+
+**How to fix:** Show the real number with its source ("4.8 on the App Store, 312 ratings") or a named customer.

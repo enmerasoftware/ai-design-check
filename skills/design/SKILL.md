@@ -29,7 +29,9 @@ Apply these rules whenever you build, change or review interface code.
 - Format numbers, dates and money through the project's locale formatter; case changes name the locale (Turkish i/İ).
 - Font sizes and radii only from the theme scale; never `text-[Npx]` or a one-off `rounded-[..]`.
 - No tracked uppercase labels, emoji as decoration, gradient text, purple gradients, side stripes, decorative glow,
-  fake pulses or marquees.
+  blurred blobs, fake pulses, marquees, hover growth, or headings at weight 800–900.
+- Spacing on the 4 px grid; copy without exclamation marks, greetings as titles or unsourced social proof.
+- To clean up a screen that already looks generated, use the `ai-design-fix` skill.
 - Wide tables take the full width with the last column absorbing spare width; uneven cards go into a grid masonry.
 - Headline numbers say what they are compared with; empty data shows an empty state.
 

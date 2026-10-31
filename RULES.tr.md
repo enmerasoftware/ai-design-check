@@ -34,6 +34,26 @@
 
 **Nasıl düzeltilir:** Etiketi kısaltın; yazıyı küçültmeyin.
 
+### Düğme ve etiketlerde nokta yok
+
+`no-trailing-period-labels` · not · denetlenir
+
+**Kural:** Düğme, sekme, menü öğesi ve kısa etiketler noktasız biter; yardım metnindeki cümleler noktasını korur.
+
+**Neden:** Nokta bir komutu cümleye çevirir ve düğme sırasını düzensiz gösterir.
+
+**Nasıl düzeltilir:** Sondaki noktayı kaldırın.
+
+### Kısa yer tutucular
+
+`short-placeholders` · not · denetlenir
+
+**Kural:** "Her şeyi ara...", "Buraya yazın..." ya da "E-postanızı buraya girin" yok; yer tutucu bir iki kelime ya da örnek değerdir.
+
+**Neden:** Uzun yer tutucu etiketi tekrarlar, yazınca kaybolur ve dolgu gibi okunur.
+
+**Nasıl düzeltilir:** "Ara" ya da "ad@sirket.com" gibi bir örnek.
+
 ## Yazı ölçeği
 
 ### Yazı boyutu yalnız ölçekten
@@ -45,6 +65,36 @@
 **Neden:** Tek seferlik boyutlar ekranlar arasında küçük farklar biriktirir. 11 px altı metin okunmaz.
 
 **Nasıl düzeltilir:** Temaya --text-2xs: 0.6875rem (satır yüksekliği 1rem) ekleyin; 9–11 px → text-2xs, 12 px → text-xs, 13 px → text-sm. Tanıtım sitesinin büyük başlık boyutları izin listesine yazılır.
+
+### Başlıklar normal ile yarı kalın arası
+
+`no-heavy-headings` · uyarı · denetlenir
+
+**Kural:** Arayüz başlıklarında ve sayılarda font-extrabold ya da font-black (800–900) yok; hiyerarşi boyut ve konumdan gelir.
+
+**Neden:** Üretilmiş ekranlar her başlığı olabildiğince kalın yapar, böylece hiçbiri öne çıkmaz.
+
+**Nasıl düzeltilir:** 400–600 kullanın ve boyutu bir basamak büyütün. Kalın çizilmiş bir gösterim yazı tipi ayarda izinli yapılabilir.
+
+### Vurgu italikle değil, kalınlık ya da renkle
+
+`no-italic-emphasis` · not · denetlenir
+
+**Kural:** Arayüz metni vurgu için italik yazılmaz; alıntı ve eser adı italik olabilir.
+
+**Neden:** İtalik arayüz boyutlarında zor okunur ve yer tutucu gibi görünür.
+
+**Nasıl düzeltilir:** font-medium ya da ikincil metin rengi kullanın.
+
+### Küçük metinde dar harf aralığı yok
+
+`no-tight-small-text` · uyarı · denetlenir
+
+**Kural:** tracking-tight ve eksi harf aralığı büyük gösterim metnine (40 px ve üstü) aittir, text-base ve küçüğüne asla.
+
+**Neden:** Sıkıştırılmış küçük harfler biçimini kaybeder, zor okunur.
+
+**Nasıl düzeltilir:** Küçük metinde harf aralığını 0 bırakın; soluk açıklamada hafif artı olabilir.
 
 ## Köşe ve yüzey
 
@@ -67,6 +117,16 @@
 **Neden:** İç içe çerçeve anlamı olmayan derinlik ekler.
 
 **Nasıl düzeltilir:** Düzleştirin: ikinci kenarlık ve gölge yerine ayraç ya da hafif zeminli blok.
+
+### İç köşe dış köşeyi izler
+
+`nested-radius` · uyarı · gözden geçirilir
+
+**Kural:** Yuvarlak bir kabın içindeki öğe köşe = dış köşe − iç boşluk kullanır (4 px altına inmez); her öğe tam hap değildir.
+
+**Neden:** İç ve dışta eşit köşe, köşelerde boşluğu düzensiz gösterir; her yerde hap, denetim ile kap arasındaki farkı siler.
+
+**Nasıl düzeltilir:** 8 px boşluklu 16 px kart 8 px köşeli öğe taşır; tam hapı çip ve avatarlara bırakın.
 
 ## Bileşen ve tekrar
 
@@ -109,6 +169,16 @@
 **Neden:** Kopyalar zamanla ayrışır: birine yeni boşluk verilir, diğeri eski köşede kalır. Tek bileşen tek düzeltme ve daha az kod demektir.
 
 **Nasıl düzeltilir:** Öğeyi bir bileşene (ya da var olanın bir görünümüne) çıkarın ve kopyaları onunla değiştirin.
+
+### Az ve sakin rozet
+
+`no-badge-spam` · uyarı · gözden geçirilir
+
+**Kural:** PRO, Yeni ve Beta rozetleri seyrek, yalnız metindir ve bir nedeni vardır; sayaç ve kısayol parlayan hap değil, düz metin ya da tuş görünümüdür.
+
+**Neden:** Her satırdaki rozet anlamını yitirir ve menüye gürültü ekler.
+
+**Nasıl düzeltilir:** Karar değiştiren yerde tek rozet bırakın; gerisini kaldırın.
 
 ## Seçiciler
 
@@ -163,6 +233,26 @@
 **Neden:** Gruplama her şeyden önce boşluktan okunur.
 
 **Nasıl düzeltilir:** İki üç adım kullanın: grup içi, gruplar arası, bölümler arası.
+
+### Boşluklar 4 px ızgarasında
+
+`spacing-scale` · uyarı · denetlenir
+
+**Kural:** Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]) 4 px ızgarasına oturur; tema basamakları tercih edilir.
+
+**Neden:** Izgara dışı değerler modelin tahmin ederken yazdığı değerlerdir; satır ve aralıklar bir iki piksel kayar, ekran düzensiz görünür.
+
+**Nasıl düzeltilir:** En yakın tema basamağına yuvarlayın (mt-3, h-8, gap-2).
+
+### Kahraman alanında tek ana işlem
+
+`hero-one-action` · uyarı · gözden geçirilir
+
+**Kural:** Kahraman alanında bir ana ve en çok bir ikincil işlem olur; üçüncü düğme, düğmelerin altına yığılmış çip ya da avatar sırası yok.
+
+**Neden:** Her ek işlem, ziyaretçinin kalıp kalmayacağına karar verdiği anda dikkati böler.
+
+**Nasıl düzeltilir:** Ana işlemi ve bir alternatifi tutun; gerisini sayfanın aşağısına taşıyın.
 
 ## Menü
 
@@ -238,6 +328,56 @@
 
 **Nasıl düzeltilir:** İkon yerine gerçek içerikle başlayın (bir sayı, bir ekran görüntüsü, bir örnek).
 
+### Başlık üstünde duyuru hapı yok
+
+`no-announcement-pill` · uyarı · denetlenir
+
+**Kural:** Kahraman başlığının üstünde "✨ Introducing X 2.0" hapı yok; gerçek ve yeni bir habere gidiyorsa sade bir metin bağlantısıdır.
+
+**Neden:** En çok kopyalanan kahraman kalıbıdır; göz başlıktan önce ona takılır ve bir şey bulamaz.
+
+**Nasıl düzeltilir:** Kaldırın ya da tarihli düz bir bağlantıya çevirin.
+
+### Yapay zekâ için ışıltı ikonu yok
+
+`no-sparkle-for-ai` · not · denetlenir
+
+**Kural:** Her yapay zekâ özelliği ışıltıyla işaretlenmez; işlemin ne yaptığını söyleyen ikonu (yaz, özetle, çevir) kullanın ya da hiç kullanmayın.
+
+**Neden:** Işıltı her yapay zekâ ürününde var; düğme hakkında kullanıcıya hiçbir şey söylemez.
+
+**Nasıl düzeltilir:** Fiil ikonuyla (PenLine, ListChecks, Languages) ya da yalnız metinle değiştirin.
+
+### İçeriğin arkasında bulanık renk lekesi yok
+
+`no-blur-blobs` · uyarı · denetlenir
+
+**Kural:** Metin ve kartların arkasında süs olarak büyük bulanık şekil (blur-2xl, blur-3xl) ya da radyal renk lekesi yok.
+
+**Neden:** Leke, üretilmiş sayfaların varsayılan arka planıdır; kontrastı düşürür ve ürün hakkında bir şey söylemez.
+
+**Nasıl düzeltilir:** Tek düz yüzey kullanın ya da görsel olarak gerçek bir ürün ekranı koyun.
+
+### Tek vurgu rengi, anlamı olduğu yerde
+
+`one-accent` · uyarı · gözden geçirilir
+
+**Kural:** Vurgu rengi ekranın küçük bir bölümünü kaplar: ana işlem, seçim ve bir önemli sayı. Yüzey, kenarlık ve etiketler nötr kalır.
+
+**Neden:** Her şey vurgulanınca hiçbir şey öne çıkmaz; ekran gözün ineceği tek yeri kaybeder.
+
+**Nasıl düzeltilir:** Ekran görüntüsünde vurguyu sayın; çerçeveden alıp önemli olan tek şeye taşıyın.
+
+### Genel görsel değil, ürünü gösterin
+
+`show-the-product` · uyarı · gözden geçirilir
+
+**Kural:** Ana görsel ürünün kendisi ya da dünyasından somut bir nesnedir; parlak leke, küre, robot, parlayan beyin ya da hazır devre görseli yok.
+
+**Neden:** Genel görsel her ürün sayfasına konabilir; hiçbir şey anlatmaz ve sayfayı şablon gibi gösterir.
+
+**Nasıl düzeltilir:** Gerçek veriyle gerçek bir ekran ya da ürünün ne yaptığını söyleyen bir nesne kullanın.
+
 ## Erişilebilirlik
 
 ### Odak halkası yerine yenisi konmadan kaldırılmaz
@@ -312,6 +452,26 @@
 
 **Nasıl düzeltilir:** Uzun ya da döngülü animasyonların başına motion-safe: ekleyin.
 
+### Üzerine gelince büyüme yok
+
+`no-hover-scale` · uyarı · denetlenir
+
+**Kural:** Kart ve düğmeler üzerine gelince büyümez; üzerine gelme renk ya da yüzey değiştirir, basınca hafifçe küçülebilir (0,97–0,98).
+
+**Neden:** Büyüyen öğe komşularını görsel olarak iter, yazıyı bulanıklaştırır ve şablon efekti gibi durur.
+
+**Nasıl düzeltilir:** hover:scale-105 yerine zemin ya da kenarlık basamağı; basma geri bildirimi için active:scale-[0.98].
+
+### Konum değil, transform ve opacity canlandırılır
+
+`no-layout-animation` · uyarı · denetlenir
+
+**Kural:** Geçişler top, left, right, bottom, margin ya da padding canlandırmaz; hareket transform ile yapılır. İlerleme çubuğunda genişlik serbesttir.
+
+**Neden:** Konum ve boşluk değişimi her karede yerleşimi yeniden hesaplatır, yavaş cihazda takılır.
+
+**Nasıl düzeltilir:** translate ve opacity kullanın (transition-transform, transition-opacity).
+
 ## Veri ve sayılar
 
 ### Sayı neye göre olduğunu söyler
@@ -343,6 +503,16 @@
 **Neden:** Orantılı rakamlar sütunları eğri büğrü yapar, değer değişince sayı zıplar.
 
 **Nasıl düzeltilir:** Hücreye ya da tabloya tabular-nums ekleyin; sayısal sütunda text-end.
+
+### İnandırıcı örnek veri
+
+`no-placeholder-data` · uyarı · denetlenir
+
+**Kural:** Ekran, demo ve görüntülerde Lorem ipsum, John Doe, $123,456 ya da [X] yok; örnek veri ürünün dünyasından gerçek veri gibi görünür.
+
+**Neden:** Dolgu veri bitmiş ekranı taslak gibi gösterir ve gerçek uzunlukların ortaya çıkaracağı yerleşim sorunlarını saklar.
+
+**Nasıl düzeltilir:** Gerçekçi adlar, düzensiz basamaklı tutarlar ve gerçek uzunluklar kullanın.
 
 ## Yerelleştirme
 
@@ -439,3 +609,33 @@
 **Neden:** Üç ayrı nokta farklı satır kırar ve düzgün yazının yanında yazım hatası gibi durur.
 
 **Nasıl düzeltilir:** Arayüz metinlerinde ... yerine … yazın.
+
+### Arayüz metninde ünlem yok
+
+`no-exclamation-copy` · uyarı · denetlenir
+
+**Kural:** Etiket, sayı, bildirim ve başlıklar düz söyler: "!" ya da "!!" yok, "+12%!!" gibi değişimlerde de.
+
+**Neden:** Ünlem her mesajı aynı derecede acil gösterir ve üretilmiş metnin güçlü bir izidir.
+
+**Nasıl düzeltilir:** İşareti kaldırın; değişime karşılaştırmasını yazın ("geçen aya göre +%12").
+
+### Başlık kullanıcıyı değil sayfayı adlandırır
+
+`no-greeting-headline` · uyarı · denetlenir
+
+**Kural:** Çalışılan ekranın başlığı "Tekrar hoş geldin, Ad" ya da "Günaydın" değildir; başlık sayfanın ne gösterdiğini söyler.
+
+**Neden:** Selamlama ekranın en değerli satırını alır ve yüzüncü ziyarette hiçbir şey söylemez.
+
+**Nasıl düzeltilir:** Başlık olarak sayfayı ya da dönemi yazın ("Genel bakış · bu hafta").
+
+### Kaynağı olan sosyal kanıt
+
+`no-unsourced-proof` · uyarı · denetlenir
+
+**Kural:** "10.000+ ekip güveniyor", beş yıldız sırası ya da kaynaksız avatar yığını yok; müşterileri ya da puan sitesini adıyla yazın ya da çıkarın.
+
+**Neden:** Yuvarlak ve kaynaksız sayılar ziyaretçinin ilk inanmadığı şeydir ve sayfanın geri kalanını da uydurma gösterir.
+
+**Nasıl düzeltilir:** Gerçek sayıyı kaynağıyla ("App Store'da 4,8, 312 puan") ya da adı verilen bir müşteriyi gösterin.

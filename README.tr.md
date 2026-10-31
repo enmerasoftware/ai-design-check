@@ -2,10 +2,20 @@
 
 [English](README.md)
 
-Yapay zekâ kodlama ajanlarıyla (Claude Code, Cursor, Codex) yapılan arayüzleri tasarım kurallarına göre denetler;
-böylece "yapay zekâ yapmış" gibi görünmez ve tek bir sisteme uyarlar. Ajan arayüzü yazmadan önce kuralları okur,
-bağımlılıksız denetçi gözden kaçanı bulur, her kural nasıl düzeltileceğini söyler. Paneller, yönetim ekranları ve
-SaaS ekranları için.
+![Yapay zekâ ile yapılmış bir panel: denetlendi, düzeltildi, yeniden denetlendi; 200 bulgudan 0'a](examples/story-dashboard.webp)
+
+Yapay zekâ kodlama ajanlarıyla (Claude Code, Cursor, Codex) yapılan arayüzleri "yapay zekâ yapmış" gibi gösteren
+şeyleri bulur ve düzeltir: 61 tasarım kuralı, her bulguyu işaretleyen bağımlılıksız bir denetçi ve ekranı düzeltip
+yeniden denetleyerek kanıtlayan bir ajan becerisi. Paneller, yönetim ekranları, SaaS ekranları ve tanıtım sayfaları için.
+
+```bash
+npx @enmera/ai-design-check                    # projeyi denetle (ya da: ai-design-check src lang)
+npx skills add enmerasoftware/ai-design-check  # kurallar ve düzelten beceri, ajanınız için
+```
+
+Sonra ajanınıza "bu ekranın tasarımını düzelt" deyin. Ölçer, ürününüzden bir yön önerir; boşluk, renk, ikon, metin,
+yazı, yerleşim, bileşen ve hareketi katman katman düzeltir ve önce/sonra bulgu sayısını gösterir. Denetçi, bir sonraki
+ajan düzenlemesinin aynı kusurları geri getirmesini de engeller.
 
 Kurallar [Enmera](https://enmera.com.tr) ve [Searvia](https://searvia.com)'da canlıya çıkmış gerçek ekranlardan
 çıktı: "üretilmiş" gibi okunanlar, dar ekranda bozulanlar, kullanıcının anlamadıkları. Her kural **ne**, **neden** ve
@@ -16,11 +26,12 @@ npx @enmera/ai-design-check            # projeyi denetle (ya da: ai-design-check
 npx @enmera/ai-design-check inventory  # kaç farklı düğme, form öğesi, başlık, rozet, kutu var
 npx @enmera/ai-design-check rules --tr # kuralları listele
 npx @enmera/ai-design-check init       # varsayılan ayar dosyasını yaz
+npx @enmera/ai-design-check story once.html sonra.html  # yukarıdaki gibi kare önce/sonra videosu
 ```
 
 Yapay zekâ yok, API anahtarı yok, bağımlılık yok: ölçülebilir kusurları yakalar (yerine bir şey konmadan kaldırılmış
-odak halkası, adsız ikon düğmesi, ölçek dışı yazı boyutu, ortak `Button`un yanında ham `<button>`, Türkçeyi bozan
-`toUpperCase()`); zevki size bırakır.
+odak halkası, adsız ikon düğmesi, ölçek dışı yazı boyutu, 4 px ızgarası dışında boşluk, ortak `Button`un yanında ham `<button>`, ikon yerine
+emoji, "Tekrar hoş geldin, Ali!", Türkçeyi bozan `toUpperCase()`); zevki size ve düzelten beceriye bırakır.
 
 ## Neleri kapsar
 
@@ -72,7 +83,12 @@ Proje kökünde `ai-design-check.json` (ya da nokta dosyası `.design-rules.json
 
 ## Yapay zekâ ajanları için
 
-Paket, ajana arayüze dokunmadan önce kuralları okumasını ve sonra denetçiyi çalıştırmasını söyleyen bir beceriyle gelir:
+Paket iki beceriyle gelir:
+
+- **ai-design-check**: ajana arayüze dokunmadan önce kuralları okumasını, sonra denetçiyi çalıştırmasını söyler.
+- **ai-design-fix**: üretilmiş gibi görünen bir ekranı düzeltir: ölçer, üründen yön seçer (kim, dünya, tek vurgu rengi,
+  tek öne çıkan an), tüm ekranda katman katman düzeltir, yeniden denetleyip önce → sonra sayısını verir. Özellik, veri
+  ve içerik korunur; bulgu gerekçesiz susturulmaz.
 
 ```bash
 npx skills add enmerasoftware/ai-design-check
@@ -82,11 +98,20 @@ Ajanın her düzenlemeden hemen sonra bulguları görmesi için kanca: Claude Co
 `PostToolUse` kancası olarak `npx -y @enmera/ai-design-check hook` (örnek [README.md](README.md#for-ai-coding-agents)).
 Kanca yalnız düzenlenen dosyayı denetler; bulgu varsa çıkış kodu 2 ile ajana geri verir.
 
+### Önce/sonra videosu: `story`
+
+`npx @enmera/ai-design-check story once.html sonra.html --out story.mp4` paylaşmak için 8 saniyelik kare bir video
+üretir: önceki ekranda her bulgu tek tek işaretlenir, sayı düşerken sonraki ekrana geçilir, sonda özet kartı. Dosya ya
+da adres alır; kurulu Chrome'u DevTools protokolüyle sürer ve ffmpeg ile kodlar, npm'den bir şey kurulmaz.
+
 ## Kural eklemek
 
 Kurallar [`rules.json`](rules.json) dosyasında: `id`, `area`, `severity`, `en` ve `tr` olarak `title` / `rule` /
 `why` / `fix` ve isteğe bağlı `check` (`pattern`, `flags`, `files` ile `regex`). `npm run docs` RULES.md ve
 RULES.tr.md dosyalarını yeniden üretir; çekme isteğinden önce `npm test`.
+
+İlham kaynakları arasında [Impeccable](https://github.com/pbakaus/impeccable), Damir Sokolovsky'nin
+[unslop](https://github.com/heydamir/unslop) becerisi ve Anthropic'in frontend-design becerisi var.
 
 ## Lisans
 

@@ -311,6 +311,8 @@ export function check(cwd, overrides = {}) {
                     // A wrapper just above may carry the style (focus-within: ring on the box around an input).
                     if (rule.check.unlessBefore && new RegExp(rule.check.unlessBefore, 'u').test(source.slice(Math.max(0, unit.index - 1500), unit.index))) continue;
                     for (const match of unit.text.matchAll(new RegExp(rule.check.pattern, 'gu'))) {
+                        // Scale rules: a value on the scale (mt-[24px] on a 4 px grid) and hairlines (1–2 px) pass.
+                        if (rule.check.notMultipleOf && (Number(match[1]) <= 2 || Number(match[1]) % rule.check.notMultipleOf === 0)) continue;
                         report(rule.id, path, line, match[0].trim(), `${rule.title.en}: ${match[0].trim()}`);
                     }
                 }
@@ -318,6 +320,12 @@ export function check(cwd, overrides = {}) {
                     const key = signature(unit.text);
                     if (key.split(' ').length >= repeated.check.minTokens) groups.set(key, [...(groups.get(key) ?? []), { path, line, skip: skip('repeated-markup', line) }]);
                 }
+            }
+        }
+        // Class rules that also need the element's text (an all-caps label written by hand).
+        if (markup) {
+            for (const rule of classRules.filter((item) => item.check.markup)) {
+                for (const match of source.matchAll(new RegExp(rule.check.markup, 'gu'))) report(rule.id, path, lineOf(source, match.index), match[1] ?? match[0], `${rule.title.en}: ${(match[1] ?? match[0]).trim()}`);
             }
         }
         if (extension === 'css') {

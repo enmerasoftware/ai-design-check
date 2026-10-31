@@ -1,7 +1,7 @@
 {
   "name": "@enmera/ai-design-check",
-  "version": "0.3.0",
-  "description": "Design rules and a zero-dependency checker for interfaces built with AI coding agents (Claude Code, Cursor, Codex): sentence case, one type and radius scale, one selector language, no generated-UI tells. English and Turkish.",
+  "version": "0.4.0",
+  "description": "Finds and fixes what makes AI-built interfaces look generated: 61 design rules, a zero-dependency checker, an agent fix skill and before/after videos. English and Turkish.",
   "type": "module",
   "bin": {
     "ai-design-check": "bin/ai-design-check.js"
@@ -11,7 +11,18 @@
     "./rules.json": "./rules.json",
     "./package.json": "./package.json"
   },
-  "files": ["bin", "src", "rules.json", "RULES.md", "RULES.tr.md", "skills", "README.md", "README.tr.md", "CHANGELOG.md", "LICENSE"],
+  "files": [
+    "bin",
+    "src",
+    "rules.json",
+    "RULES.md",
+    "RULES.tr.md",
+    "skills",
+    "README.md",
+    "README.tr.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
   "engines": {
     "node": ">=20"
   },
@@ -20,7 +31,30 @@
     "test": "node --test",
     "check:docs": "node scripts/docs.js --check"
   },
-  "keywords": ["ai", "ai-generated-ui", "claude-code", "cursor", "codex", "hooks", "accessibility", "i18n", "components", "design-system", "ui", "lint", "tailwind", "react", "sentence-case", "accessibility", "agent-skill", "claude", "design-rules"],
+  "keywords": [
+    "ai",
+    "ai-generated-ui",
+    "claude-code",
+    "cursor",
+    "codex",
+    "hooks",
+    "accessibility",
+    "i18n",
+    "components",
+    "design-system",
+    "ui",
+    "lint",
+    "tailwind",
+    "react",
+    "sentence-case",
+    "agent-skill",
+    "claude",
+    "design-rules",
+    "unslop",
+    "vibecoding",
+    "design-lint",
+    "ui-review"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/enmerasoftware/ai-design-check.git"

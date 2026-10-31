@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.0
+
+- Fix skill `ai-design-fix`: measure with the checker, pick a direction from the product, fix spacing, surfaces,
+  icons, copy, type, layout, components and motion in passes, then check again and report before → after.
+- `story` command: a square before/after video with every finding marked (files or URLs; Chrome over the DevTools
+  protocol and ffmpeg, no npm dependencies). Example screens in `examples/`.
+- 20 new rules (61 in all). Checked: `no-heavy-headings`, `no-hover-scale`, `spacing-scale` (4 px grid),
+  `no-exclamation-copy`, `no-greeting-headline`, `no-unsourced-proof`, `no-layout-animation`, `no-announcement-pill`,
+  `no-italic-emphasis`, `no-tight-small-text`, `no-trailing-period-labels`, `short-placeholders`, `no-sparkle-for-ai`,
+  `no-placeholder-data`, `no-blur-blobs`. Review: `one-accent`, `nested-radius`, `hero-one-action`,
+  `show-the-product`, `no-badge-spam`.
+- `icons-not-emoji` also reads HTML and Blade and knows ⭐ ⚡ ❤; `no-decorative-uppercase` also catches labels typed in
+  capitals and arbitrary tracking such as `tracking-[0.14em]`.
+
 ## 0.3.0
 
 - New rule `use-shared-looks`: a span styled as a badge, a div styled as a card, a heading with its own size classes
