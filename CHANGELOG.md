@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.2
+
+- `story`: marks stay on the before screen only, so the wipe leaves a clean after screen behind it; every occurrence of
+  a matched text is marked (the same emoji in each row), not only the first; blurred or hidden decorations are not
+  boxed; marks appear in reading order and are clamped to the screen.
+
 ## 0.4.1
 
 - `story`: 12 seconds instead of 8 (findings appear over 4 s, a slower wipe), `--music track.mp3` lays a track under

@@ -117,29 +117,41 @@ async function source(input, work, name) {
 const BOXES = (values, view) => `(() => {
     const values = ${JSON.stringify(values)};
     const boxes = [];
-    const add = (rect) => {
-        // Page-sized regions (the main column, the sidebar) would cover everything; mark the details instead.
-        if (rect.width < 2 || rect.height < 2 || rect.bottom < 0 || rect.top > ${view.height} || rect.width * rect.height > ${view.width * view.height} * 0.12) return;
+    const add = (raw) => {
+        // Clamp to the screen; page-sized regions (the main column, the sidebar) would cover everything.
+        const left = Math.max(0, raw.left), top = Math.max(0, raw.top);
+        const rect = { left, top, width: Math.min(${view.width}, raw.right) - left, height: Math.min(${view.height}, raw.bottom) - top };
+        if (rect.width < 2 || rect.height < 2 || rect.width * rect.height > ${view.width * view.height} * 0.12) return;
         boxes.push({ x: rect.left, y: rect.top, w: rect.width, h: rect.height });
+    };
+    // A blurred or hidden decoration has no visible edge to point at.
+    const visible = (element) => {
+        const style = getComputedStyle(element);
+        return style.visibility !== 'hidden' && Number(style.opacity) > 0.05 && !/blur/.test(style.filter);
     };
     const all = [...document.querySelectorAll('body *')];
     for (const value of values) {
         if (!/\\s/.test(value) && /[-:[]/.test(value)) {
-            all.filter((element) => element.classList.contains(value)).slice(0, 4).forEach((element) => add(element.getBoundingClientRect()));
+            all.filter((element) => element.classList.contains(value) && visible(element)).slice(0, 40).forEach((element) => add(element.getBoundingClientRect()));
             continue;
         }
+        // Every place the text appears (the same emoji in each row), not only the first.
         const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-        while (walker.nextNode()) {
-            const at = walker.currentNode.textContent.indexOf(value);
-            if (at < 0) continue;
-            const range = document.createRange();
-            range.setStart(walker.currentNode, at);
-            range.setEnd(walker.currentNode, at + value.length);
-            add(range.getBoundingClientRect());
-            break;
+        let found = 0;
+        while (walker.nextNode() && found < 20) {
+            const text = walker.currentNode.textContent;
+            for (let at = text.indexOf(value); at >= 0 && found < 20; at = text.indexOf(value, at + value.length)) {
+                const range = document.createRange();
+                range.setStart(walker.currentNode, at);
+                range.setEnd(walker.currentNode, at + value.length);
+                add(range.getBoundingClientRect());
+                found++;
+            }
         }
     }
     const seen = new Set();
+    // Reading order, so the marks sweep down the screen.
+    boxes.sort((a, b) => Math.round(a.y / 8) - Math.round(b.y / 8) || a.x - b.x);
     return boxes.filter((box) => {
         const key = [box.x, box.y, box.w, box.h].map(Math.round).join(',');
         if (seen.has(key)) return false;
@@ -191,17 +203,19 @@ function render(t) {
     ctx.drawImage(before, X, Y, W, H);
     if (wipe > 0) { ctx.save(); ctx.beginPath(); ctx.rect(X, Y, wipeX - X, H); ctx.clip(); ctx.drawImage(after, X, Y, W, H); ctx.restore(); }
 
-    // Findings: pop in one by one, leave as the wipe passes them.
+    // Findings: pop in one by one; they live on the before screen only, so the wipe cuts them off.
+    ctx.save(); ctx.beginPath(); ctx.rect(wipeX, Y, X + W - wipeX, H); ctx.clip();
     data.boxes.forEach((box, index) => {
         const appear = span(t, 0.6 + (3.6 * index) / Math.max(1, data.boxes.length), 0.95 + (3.6 * index) / Math.max(1, data.boxes.length));
         const x = X + box.x * S, y = Y + box.y * S, w = box.w * S, h = box.h * S;
-        if (appear <= 0 || x + w / 2 < wipeX) return;
+        if (appear <= 0) return;
         const grow = 1 + (1 - appear) * 0.35;
         const cx = x + w / 2, cy = y + h / 2;
         rounded(cx - (w * grow) / 2 - 3, cy - (h * grow) / 2 - 3, w * grow + 6, h * grow + 6, 5);
-        ctx.fillStyle = 'rgba(255, 92, 112, ' + 0.14 * appear + ')'; ctx.fill();
+        ctx.fillStyle = 'rgba(255, 92, 112, ' + 0.08 * appear + ')'; ctx.fill();
         ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(255, 92, 112, ' + appear + ')'; ctx.stroke();
     });
+    ctx.restore();
     ctx.restore();
     if (wipe > 0 && wipe < 1) { ctx.fillStyle = '#eef0f5'; ctx.fillRect(wipeX - 1.5, Y - 10, 3, H + 20); }
     rounded(X, Y, W, H, 18); ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(255,255,255,.12)'; ctx.stroke();
