@@ -58,6 +58,17 @@
         <ul class="mt-4 flex flex-col divide-y divide-white/5 text-sm" id="keywords"></ul>
       </section>
     </div>
+
+    <section class="mt-4 rounded-xl border border-white/10 bg-[#11141c] p-5">
+      <div class="flex items-baseline justify-between">
+        <h2 class="text-base font-medium">Recent reviews</h2>
+        <a class="text-xs font-medium text-teal-300 hover:text-teal-200" href="#">Open reviews</a>
+      </div>
+      <table class="mt-3 w-full text-left text-sm">
+        <thead class="text-xs text-[#7a8296]"><tr><th class="py-2 font-normal">Rating</th><th class="py-2 font-normal">Review</th><th class="py-2 font-normal">Country</th><th class="py-2 font-normal">Date</th><th class="py-2 text-right font-normal">Reply</th></tr></thead>
+        <tbody class="divide-y divide-white/5" id="reviews"></tbody>
+      </table>
+    </section>
   </main>
 </div>
 <script>
@@ -86,6 +97,17 @@
     `<div class="flex-1 rounded-md ${index === days.length - 1 ? 'bg-teal-400' : 'bg-[#232836]'}" style="height:${height}%"></div>`).join('');
 
   const keywords = [['habit tracker', '#3', '+4'], ['daily planner', '#6', '+1'], ['routine app', '#9', '−2'], ['mood journal', '#14', '+5']];
+  const reviews = [
+    [5, 'Finally a habit app that does not nag me.', 'United States', '27 Oct', 'Replied'],
+    [2, 'Sync between my phone and iPad keeps failing.', 'Germany', '26 Oct', 'Draft ready'],
+    [4, 'Love the streaks, wish the widget updated faster.', 'United Kingdom', '26 Oct', 'Draft ready'],
+    [5, 'Simple and calm. Exactly what I wanted.', 'Türkiye', '25 Oct', 'Replied'],
+    [3, 'Good, but I miss a dark widget on the lock screen.', 'Japan', '25 Oct', 'Draft ready'],
+    [5, 'Kept a 90 day streak thanks to the gentle reminders.', 'Brazil', '24 Oct', 'Replied'],
+  ];
+  document.getElementById('reviews').innerHTML = reviews.map(([stars, text, country, date, reply]) =>
+    `<tr><td class="py-3 ${stars <= 2 ? 'text-rose-400' : 'text-[#eef0f5]'}">${stars}.0</td><td class="py-3 text-[#eef0f5]">${text}</td><td class="py-3 text-[#a3a9b8]">${country}</td><td class="py-3 text-[#a3a9b8]">${date}</td><td class="py-3 text-right ${reply === 'Replied' ? 'text-[#7a8296]' : 'text-teal-300'}">${reply}</td></tr>`).join('');
+
   document.getElementById('keywords').innerHTML = keywords.map(([keyword, rank, change]) =>
     `<li class="flex items-center justify-between py-3"><span>${keyword}</span><span class="flex items-center gap-3"><span class="text-xs ${change.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'}">${change}</span><span class="w-8 text-right font-medium">${rank}</span></span></li>`).join('');
 </script>

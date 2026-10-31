@@ -2,7 +2,7 @@
 
 [Türkçe](README.tr.md)
 
-![A generated dashboard checked, fixed and checked again: 200 findings to 0](examples/story-dashboard.webp)
+![A generated dashboard checked, fixed and checked again: 263 findings to 0](examples/story-dashboard.webp)
 
 Finds and fixes what makes interfaces built with AI coding agents (Claude Code, Cursor, Codex) look generated:
 61 design rules, a zero-dependency checker that marks every finding, and an agent skill that fixes the screen and
@@ -152,11 +152,11 @@ npx skills add enmerasoftware/ai-design-check
 ### Before/after video: `story`
 
 ```bash
-npx @enmera/ai-design-check story screen.before.html screen.html --out story.mp4 --still frame.png
+npx @enmera/ai-design-check story screen.before.html screen.html --out story.mp4 --music track.mp3 --still frame.png
 ```
 
-A square 8 second video for sharing: the before screen with every finding marked one by one, a wipe to the after
-screen while the count falls, and an end card. Files or URLs. It drives your installed Chrome over the DevTools
+A square 12 second video for sharing: the before screen with every finding marked one by one, a wipe to the after
+screen while the count falls, and an end card. `--music` lays a track under it, cut to length and faded out. Files or URLs. It drives your installed Chrome over the DevTools
 protocol and encodes with ffmpeg; nothing to install from npm. Try it on [examples/dashboard.html](examples/dashboard.html)
 and [examples/dashboard.fixed.html](examples/dashboard.fixed.html).
 

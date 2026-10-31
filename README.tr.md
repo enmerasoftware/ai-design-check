@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-![Yapay zekâ ile yapılmış bir panel: denetlendi, düzeltildi, yeniden denetlendi; 200 bulgudan 0'a](examples/story-dashboard.webp)
+![Yapay zekâ ile yapılmış bir panel: denetlendi, düzeltildi, yeniden denetlendi; 263 bulgudan 0'a](examples/story-dashboard.webp)
 
 Yapay zekâ kodlama ajanlarıyla (Claude Code, Cursor, Codex) yapılan arayüzleri "yapay zekâ yapmış" gibi gösteren
 şeyleri bulur ve düzeltir: 61 tasarım kuralı, her bulguyu işaretleyen bağımlılıksız bir denetçi ve ekranı düzeltip
@@ -100,8 +100,8 @@ Kanca yalnız düzenlenen dosyayı denetler; bulgu varsa çıkış kodu 2 ile aj
 
 ### Önce/sonra videosu: `story`
 
-`npx @enmera/ai-design-check story once.html sonra.html --out story.mp4` paylaşmak için 8 saniyelik kare bir video
-üretir: önceki ekranda her bulgu tek tek işaretlenir, sayı düşerken sonraki ekrana geçilir, sonda özet kartı. Dosya ya
+`npx @enmera/ai-design-check story once.html sonra.html --out story.mp4 --music parca.mp3` paylaşmak için 12 saniyelik kare bir video
+üretir: önceki ekranda her bulgu tek tek işaretlenir, sayı düşerken sonraki ekrana geçilir, sonda özet kartı; `--music` verilen parçayı videonun süresine kesip sonunda kısar. Dosya ya
 da adres alır; kurulu Chrome'u DevTools protokolüyle sürer ve ffmpeg ile kodlar, npm'den bir şey kurulmaz.
 
 ## Kural eklemek

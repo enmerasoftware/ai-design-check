@@ -1,6 +1,6 @@
 {
   "name": "@enmera/ai-design-check",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Finds and fixes what makes AI-built interfaces look generated: 61 design rules, a zero-dependency checker, an agent fix skill and before/after videos. English and Turkish.",
   "type": "module",
   "bin": {

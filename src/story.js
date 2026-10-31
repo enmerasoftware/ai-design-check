@@ -13,7 +13,7 @@ import { check, loadRules } from './check.js';
 
 const SIZE = 1080;
 const FPS = 30;
-const DURATION = 8;
+const DURATION = 12;
 const VIEW = { width: 1280, height: 1000 };
 
 export function findChrome() {
@@ -145,7 +145,7 @@ const BOXES = (values, view) => `(() => {
         if (seen.has(key)) return false;
         seen.add(key);
         return true;
-    }).slice(0, 80);
+    }).slice(0, 160);
 })()`;
 
 const STAGE = (data) => `<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0;background:#0e0f12">
@@ -166,22 +166,22 @@ function rounded(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r);
 function render(t) {
     ctx.clearRect(0, 0, ${SIZE}, ${SIZE});
     ctx.fillStyle = '#0e0f12'; ctx.fillRect(0, 0, ${SIZE}, ${SIZE});
-    const fade = span(t, 0, 0.4);
-    const wipe = span(t, 3.4, 5.0);
+    const fade = span(t, 0, 0.5);
+    const wipe = span(t, 5.4, 7.6);
     const wipeX = X + W * wipe;
-    const count = t < 3.4 ? Math.round(data.beforeCount * span(t, 0.5, 2.6)) : Math.round(data.beforeCount + (data.afterCount - data.beforeCount) * wipe);
+    const count = t < 5.4 ? Math.round(data.beforeCount * span(t, 0.6, 4.6)) : Math.round(data.beforeCount + (data.afterCount - data.beforeCount) * wipe);
     ctx.globalAlpha = fade;
 
     // Header: which screen and the live count.
     ctx.fillStyle = '#8b8f98'; ctx.font = '500 26px ' + FONT; ctx.textBaseline = 'alphabetic';
-    ctx.fillText(t < 4.2 ? 'Before' : 'After', X, 82);
+    ctx.fillText(t < 6.5 ? 'Before' : 'After', X, 82);
     ctx.fillStyle = '#eef0f5'; ctx.font = '600 34px ' + FONT;
     ctx.fillText(data.title, X, 128);
     ctx.textAlign = 'right';
     ctx.font = '500 26px ' + FONT; ctx.fillStyle = '#8b8f98';
     ctx.fillText(count === 1 ? 'finding' : 'findings', X + W, 128);
     const label = ctx.measureText(count === 1 ? 'finding' : 'findings').width;
-    ctx.fillStyle = count === 0 && t > 4.2 ? '#4cc38a' : (count > 0 ? '#ff7a8a' : '#eef0f5');
+    ctx.fillStyle = count === 0 && t > 6.5 ? '#4cc38a' : (count > 0 ? '#ff7a8a' : '#eef0f5');
     ctx.font = '600 84px ' + FONT;
     ctx.fillText(String(count), X + W - label - 16, 128);
     ctx.textAlign = 'left';
@@ -193,7 +193,7 @@ function render(t) {
 
     // Findings: pop in one by one, leave as the wipe passes them.
     data.boxes.forEach((box, index) => {
-        const appear = span(t, 0.5 + (2.1 * index) / Math.max(1, data.boxes.length), 0.75 + (2.1 * index) / Math.max(1, data.boxes.length));
+        const appear = span(t, 0.6 + (3.6 * index) / Math.max(1, data.boxes.length), 0.95 + (3.6 * index) / Math.max(1, data.boxes.length));
         const x = X + box.x * S, y = Y + box.y * S, w = box.w * S, h = box.h * S;
         if (appear <= 0 || x + w / 2 < wipeX) return;
         const grow = 1 + (1 - appear) * 0.35;
@@ -213,7 +213,7 @@ function render(t) {
     ctx.fillText(data.rules + ' rules', X + W, Y + H + 66); ctx.textAlign = 'left';
 
     // End card.
-    const end = span(t, 6.3, 6.9);
+    const end = span(t, 9.0, 9.8);
     if (end > 0) {
         ctx.fillStyle = 'rgba(14, 15, 18, ' + 0.9 * end + ')'; ctx.fillRect(0, 0, ${SIZE}, ${SIZE});
         ctx.globalAlpha = end; ctx.textAlign = 'center';
@@ -237,7 +237,8 @@ window.frame = async (t) => { await ready; render(t); return canvas.toDataURL('i
  * @param {string} afterInput file or URL
  * @param {{out?: string, still?: string, title?: string}} options
  */
-export async function story(beforeInput, afterInput, { out = 'story.mp4', still, title } = {}) {
+export async function story(beforeInput, afterInput, { out = 'story.mp4', still, title, music } = {}) {
+    if (music && !existsSync(resolve(music))) throw new Error(`Not found: ${music}`);
     const chrome = findChrome();
     if (!chrome) throw new Error('Chrome or Chromium not found; set CHROME_PATH');
     if (spawnSync('ffmpeg', ['-version']).status !== 0) throw new Error('ffmpeg not found on PATH');
@@ -262,10 +263,12 @@ export async function story(beforeInput, afterInput, { out = 'story.mp4', still,
         await browser.open(pathToFileURL(stage).href, { width: SIZE, height: SIZE, settle: 100 });
 
         if (still) {
-            const image = await browser.evaluate('frame(4.2)');
+            const image = await browser.evaluate('frame(6.5)');
             writeFileSync(still, Buffer.from(image.split(',')[1], 'base64'));
         }
-        const encoder = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '20', '-movflags', '+faststart', resolve(out)], { stdio: ['pipe', 'inherit', 'inherit'] });
+        // Music (optional) is cut to the video and faded out over the last second.
+        const audio = music ? ['-i', resolve(music), '-map', '0:v', '-map', '1:a', '-af', `afade=t=out:st=${DURATION - 1}:d=1`, '-c:a', 'aac', '-b:a', '192k', '-shortest'] : [];
+        const encoder = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', ...audio, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '20', '-movflags', '+faststart', resolve(out)], { stdio: ['pipe', 'inherit', 'inherit'] });
         const finished = new Promise((done, fail) => encoder.on('exit', (code) => (code === 0 ? done() : fail(new Error(`ffmpeg exited with ${code}`)))));
         for (let index = 0; index < FPS * DURATION; index++) {
             const image = await browser.evaluate(`frame(${index / FPS})`);

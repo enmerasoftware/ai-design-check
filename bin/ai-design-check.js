@@ -14,7 +14,7 @@ Usage
   npx @enmera/ai-design-check rules [--tr]       List the rules
   npx @enmera/ai-design-check init               Write ${CONFIG_FILE} with the defaults
   npx @enmera/ai-design-check hook               For agent hooks: check the file named in the hook JSON on stdin
-  npx @enmera/ai-design-check story <before> <after> [--out story.mp4] [--still frame.png] [--title name]
+  npx @enmera/ai-design-check story <before> <after> [--out story.mp4] [--still frame.png] [--title name] [--music track.mp3]
                                                  Square before/after video with every finding marked (files or URLs;
                                                  needs Chrome and ffmpeg, nothing else)
 
@@ -43,7 +43,7 @@ const valueOf = (name) => {
     return index >= 0 ? args[index + 1] : undefined;
 };
 const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story'];
-const positional = args.filter((arg, index) => !arg.startsWith('--') && !['--format', '--out', '--still', '--title'].includes(args[index - 1]));
+const positional = args.filter((arg, index) => !arg.startsWith('--') && !['--format', '--out', '--still', '--title', '--music'].includes(args[index - 1]));
 // "ai-design-check src lang" is a check of those paths; the command word is optional.
 const [command, ...named] = COMMANDS.includes(positional[0]) ? positional : ['check', ...positional];
 // "./src/a.tsx" and absolute paths name the same file as "src/a.tsx"; the walker and the globs expect the last form.
@@ -85,7 +85,7 @@ if (command === 'story') {
     }
     const { story } = await import('../src/story.js');
     try {
-        const result = await story(named[0], named[1], { out: valueOf('out'), still: valueOf('still'), title: valueOf('title') });
+        const result = await story(named[0], named[1], { out: valueOf('out'), still: valueOf('still'), title: valueOf('title'), music: valueOf('music') });
         print(`${result.before} → ${result.after} findings, ${result.marked} marked on screen. Wrote ${relative(cwd, result.out)}`);
         done(0);
     } catch (error) {

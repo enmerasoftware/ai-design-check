@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1
+
+- `story`: 12 seconds instead of 8 (findings appear over 4 s, a slower wipe), `--music track.mp3` lays a track under
+  the video, cut to length and faded out; up to 160 findings are marked on screen.
+- The example dashboard has a reviews table, so the screen fills the frame; its music was made with ElevenLabs Music.
+
 ## 0.4.0
 
 - Fix skill `ai-design-fix`: measure with the checker, pick a direction from the product, fix spacing, surfaces,
