@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.0
+
+- Mobile apps: the checker reads SwiftUI (`.swift`) and Jetpack Compose (`.kt`). Sixteen rules have native patterns
+  (spacing and radius scale, type scale, heavy weights, purple gradients and gradient text, `sparkles` for AI, emoji
+  and exclamation marks in strings, greeting titles, Title Case labels, heavy shadows, big blurs, bouncy and looping
+  motion, placeholder data).
+- New rule `dynamic-type`: SwiftUI text with a fixed `.system(size:)` instead of a text style (icons are left alone).
+- Pods, DerivedData, `.build`, `.gradle` and generated folders are skipped by default.
+- Example: the Cebbin iOS home screen, 23 findings to 0 in four passes (`examples/story-cebbin-swiftui.mp4`).
+- CI: the Chrome test has a 90 s timeout and jobs stop after 15 minutes.
+
 ## 0.6.1
 
 - Chrome cleanup no longer fails a run when its helper processes outlive it (Linux CI); 0.6.0 was tagged but not

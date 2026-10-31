@@ -56,7 +56,8 @@ Gerekçeleriyle tam liste: [RULES.tr.md](RULES.tr.md).
 
 ## Denetçi
 
-Bağımlılıksız Node (20+). `.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, Blade, CSS ve çeviri JSON dosyalarını okur;
+Bağımlılıksız Node (20+). `.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, Blade, CSS ve çeviri JSON dosyalarını, ayrıca mobil uygulama kodunu
+(SwiftUI `.swift`, Jetpack Compose `.kt`) okur;
 kural kimliğini dosya ve satırla bildirir. Göz gerektiren kurallar (yerleşim, seçiciler, boş durum) *gözden
 geçirilir* olarak işaretlidir; onlara insanlar ve ajanlar bakar.
 

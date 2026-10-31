@@ -54,10 +54,24 @@ name, a font size off the scale, spacing off the 4 px grid, a raw `<button>` nex
 
 The full list with reasons: [RULES.md](RULES.md).
 
+### Mobile apps
+
+The same rules read SwiftUI and Jetpack Compose: spacing off the 4 pt grid (`.padding(13)`, `10.dp`), radii off the
+scale, fixed `.system(size:)` text that ignores Dynamic Type, `.heavy` and `FontWeight.Black` headings, purple
+gradients, `sparkles` for AI, emoji in strings, Title Case labels, exclamation copy, heavy shadows, big blurs and
+looping animations. Point it at the app folder:
+
+```bash
+npx @enmera/ai-design-check Cebbin/Views
+```
+
+[A real run on the Cebbin iOS home screen](examples/story-cebbin-swiftui.mp4): 23 findings to 0 in four passes,
+each frame taken from the simulator after the code change.
+
 ## The checker
 
-Plain Node (20+), no dependencies. It reads `.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, Blade, CSS and i18n JSON and
-reports rule ids with file and line. Rules that need judgement (layout, selectors, empty states) are marked *review*
+Plain Node (20+), no dependencies. It reads `.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, Blade, CSS and i18n JSON, and native app code:
+SwiftUI (`.swift`) and Jetpack Compose (`.kt`). It reports rule ids with file and line. Rules that need judgement (layout, selectors, empty states) are marked *review*
 and are left to people and agents.
 
 ```
