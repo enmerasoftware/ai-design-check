@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-![Yapay zekâ ile yapılmış bir panel: denetlendi, düzeltildi, yeniden denetlendi; 263 bulgudan 0'a](examples/story-dashboard.webp)
+![Yapay zekâ ile yapılmış bir panel: denetlendi, düzeltildi, yeniden denetlendi; 266 bulgudan 0'a](examples/story-dashboard.webp)
 
 Yapay zekâ kodlama ajanlarıyla (Claude Code, Cursor, Codex) yapılan arayüzleri "yapay zekâ yapmış" gibi gösteren
 şeyleri bulur ve düzeltir: 70 tasarım kuralı, her bulguyu işaretleyen bağımlılıksız bir denetçi ve ekranı düzeltip
