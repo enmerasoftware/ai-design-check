@@ -16,7 +16,7 @@ const values = (rule) => by(rule).map((item) => item.value);
 
 test('every rule has both languages, a known area and a valid check type', () => {
     const { areas, rules } = loadRules();
-    const types = ['render', 'class', 'regex', 'i18n-case', 'icon-button-name', 'shared-components', 'style-overrides', 'repeated-markup', 'shared-looks'];
+    const types = ['render', 'native', 'class', 'regex', 'i18n-case', 'icon-button-name', 'shared-components', 'style-overrides', 'repeated-markup', 'shared-looks'];
     for (const rule of rules) {
         assert.ok(areas[rule.area], rule.id);
         for (const field of ['title', 'rule', 'why', 'fix']) assert.ok(rule[field].en && rule[field].tr, `${rule.id}.${field}`);
@@ -134,6 +134,21 @@ test('label helpers', () => {
     assert.ok(justified('Open the App Store', ['App Store']));
 });
 
+test('native apps: SwiftUI and Jetpack Compose', () => {
+    const native = check(join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'native'));
+    const of = (file, rule) => native.filter((item) => item.path.endsWith(file) && item.rule === rule).map((item) => item.value);
+    assert.deepEqual(of('.swift', 'spacing-scale'), ['spacing: 13', '.padding(10']);
+    assert.deepEqual(of('.swift', 'dynamic-type'), ['.font(.system(size: 26']);
+    assert.deepEqual(of('.swift', 'sentence-case'), ['Text("Upcoming Payments"']);
+    assert.equal(of('.swift', 'radius-scale').length, 1);
+    for (const rule of ['no-heavy-headings', 'no-ai-gradients', 'no-sparkle-for-ai', 'icons-not-emoji', 'no-greeting-headline', 'no-heavy-card-shadow', 'no-blur-blobs', 'pulse-for-live-only']) assert.equal(of('.swift', rule).length, 1, rule);
+    assert.deepEqual(of('.swift', 'no-exclamation-copy').length, 2); // the greeting and "You did it!", not the comment
+    assert.deepEqual(of('.kt', 'spacing-scale'), ['10.dp', '18.dp']);
+    assert.deepEqual(of('.kt', 'type-scale'), ['fontSize = 26.sp']);
+    assert.deepEqual(of('.kt', 'sentence-case'), ['Text(text = "Recent Activity"']);
+    for (const rule of ['no-heavy-headings', 'no-ai-gradients', 'no-sparkle-for-ai', 'icons-not-emoji', 'no-greeting-headline', 'radius-scale', 'no-heavy-card-shadow']) assert.equal(of('.kt', rule).length, 1, rule);
+});
+
 test('glob', () => {
     assert.ok(globToRegExp('lang/*.json').test('lang/tr.json'));
     assert.ok(globToRegExp('**/node_modules/**').test('a/node_modules/b/c.js'));
@@ -141,7 +156,7 @@ test('glob', () => {
 });
 
 // Renders in Chrome; skipped where no Chrome is installed.
-test('narrow: overflow, cut-off, shrunk and hidden text at 320 px', { skip: !findChrome() && 'no Chrome' }, async () => {
+test('narrow: overflow, cut-off, shrunk and hidden text at 320 px', { skip: !findChrome() && 'no Chrome', timeout: 90_000 }, async () => {
     const examples = join(dirname(fileURLToPath(import.meta.url)), '..', 'examples');
     const broken = (await narrow(join(examples, 'narrow-de.html'))).map((item) => item.rule).sort();
     assert.deepEqual(broken, ['no-hidden-content-narrow', 'no-horizontal-overflow', 'no-shrunk-text', 'text-not-clipped']);

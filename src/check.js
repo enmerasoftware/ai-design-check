@@ -16,7 +16,7 @@ export const CONFIG_FILE = 'ai-design-check.json';
 /** Also read: the neutral dotfile and the name used by @enmera/design 0.1. */
 export const CONFIG_FILES = [CONFIG_FILE, '.design-rules.json', 'enmera-design.json'];
 
-const DEFAULT_IGNORE = ['**/node_modules/**', '**/vendor/**', '**/dist/**', '**/build/**', '**/public/build/**', '**/.git/**', '**/storage/**', '**/*.min.*'];
+const DEFAULT_IGNORE = ['**/node_modules/**', '**/vendor/**', '**/dist/**', '**/build/**', '**/public/build/**', '**/.git/**', '**/storage/**', '**/*.min.*', '**/Pods/**', '**/DerivedData/**', '**/.build/**', '**/.gradle/**', '**/generated/**'];
 
 /** Names that keep their capitals inside a sentence-case label. Projects add their own in config.properNouns. */
 const PROPER_NOUNS = [
@@ -42,6 +42,8 @@ const SMALL = new Set(['a', 'an', 'the', 'and', 'or', 'for', 'of', 'on', 'in', '
 
 const MARKUP = ['tsx', 'jsx', 'vue', 'svelte', 'html', 'blade.php'];
 const JSX = ['tsx', 'jsx'];
+/** Native app code: SwiftUI (swift) and Jetpack Compose (kt) read through each rule's check.native patterns. */
+const NATIVE = ['swift', 'kt'];
 
 export function loadConfig(cwd) {
     const file = CONFIG_FILES.map((name) => join(cwd, name)).find((path) => existsSync(path));
@@ -62,6 +64,14 @@ export function loadConfig(cwd) {
         sharedComponents: config.sharedComponents ?? SHARED,
         containers: config.containers ?? ['Card', 'SectionCard', 'Tile', 'Panel', 'RowButton', 'RowLink', 'MetaRow', 'List', 'CardContent'],
     };
+}
+
+/** Two or more words that all start with a capital, apart from proper nouns and small connectives: "Yaklaşan Ödemeler". */
+function titleCased(text, properNouns) {
+    const words = text.replace(/[?!.:,]/g, ' ').split(/\s+/u).filter((word) => /^\p{L}/u.test(word));
+    const rest = words.slice(1).filter((word) => !SMALL.has(word.toLocaleLowerCase('tr')) && !properNouns.includes(word));
+
+    return words.length >= 2 && rest.length > 0 && rest.every((word) => /^\p{Lu}/u.test(word) && !/^\p{Lu}+$/u.test(word));
 }
 
 /** Minimal glob: ** any depth, * within a segment, ? one character. */
@@ -297,7 +307,8 @@ export function check(cwd, overrides = {}) {
         const isI18n = config.i18n.files.length > 0 && matches(config.i18n.files, path);
         const markup = MARKUP.includes(extension);
         const regexFor = regexRules.filter((rule) => rule.check.files.includes(extension) && !(isI18n && !['no-buzzwords', 'error-copy', 'ellipsis-character'].includes(rule.id)));
-        if (!markup && extension !== 'css' && regexFor.length === 0 && !isI18n) continue;
+        const nativeFor = NATIVE.includes(extension) ? active.filter((rule) => rule.check.native?.[extension]) : [];
+        if (!markup && extension !== 'css' && regexFor.length === 0 && nativeFor.length === 0 && !isI18n) continue;
 
         const source = readFileSync(join(cwd, path), 'utf8');
         skip = ignores(source);
@@ -335,7 +346,19 @@ export function check(cwd, overrides = {}) {
             }
         }
         // Code rules read code and copy, not comments (inline ignores were read above, before blanking).
-        const code = ['tsx', 'jsx', 'ts', 'js', 'vue', 'svelte', 'css'].includes(extension) ? blankComments(source, extension !== 'css') : source;
+        const code = ['tsx', 'jsx', 'ts', 'js', 'vue', 'svelte', 'css', ...NATIVE].includes(extension) ? blankComments(source, extension !== 'css') : source;
+        // Native rules: one pattern per platform; group 1 is the number when the rule checks a scale or a limit.
+        for (const rule of nativeFor) {
+            const native = typeof rule.check.native[extension] === 'string' ? { pattern: rule.check.native[extension] } : rule.check.native[extension];
+            for (const match of code.matchAll(new RegExp(native.pattern, 'gmu'))) {
+                const number = Number(match[1]);
+                if (native.notMultipleOf && (number <= 2 || number % native.notMultipleOf === 0)) continue;
+                if (native.min !== undefined && !(number >= native.min)) continue;
+                if (native.titleCase && !titleCased(match[1], config.properNouns)) continue;
+                if (native.unlessBefore && new RegExp(native.unlessBefore, 'u').test(code.slice(Math.max(0, match.index - 300), match.index))) continue;
+                report(rule.id, path, lineOf(source, match.index), match[0].trim(), `${rule.title.en}: ${match[0].trim()}`);
+            }
+        }
         for (const rule of regexFor) {
             const pattern = new RegExp(rule.check.pattern, `g${rule.check.flags ?? ''}`.replace(/(.)(?=.*\1)/g, ''));
             const seen = new Set();

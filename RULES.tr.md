@@ -76,6 +76,16 @@
 
 **Nasıl düzeltilir:** Temaya --text-2xs: 0.6875rem (satır yüksekliği 1rem) ekleyin; 9–11 px → text-2xs, 12 px → text-xs, 13 px → text-sm. Tanıtım sitesinin büyük başlık boyutları izin listesine yazılır.
 
+### Dinamik yazı boyutuna uyan metin stilleri
+
+`dynamic-type` · uyarı · denetlenir
+
+**Kural:** SwiftUI'da metni metin stilleriyle (.body, .headline, .caption) ya da relativeTo ile özel yazı tipiyle verin, sabit .system(size:) ile değil. İkonlar sabit boyut kullanabilir.
+
+**Neden:** Sabit boyut, kullanıcının yazı boyutu ayarını yok sayar: büyük yazıya ihtiyacı olan ekranı okuyamaz ve her ekran kendi gelişigüzel boyutlarına sahip olur.
+
+**Nasıl düzeltilir:** Her boyutu en yakın metin stiline eşleyin (11 caption2, 12 caption, 13 footnote, 15 subheadline, 17 body, 20 title3, 22 title2, 28 title, 34 largeTitle) ve kalınlığı .fontWeight ile verin.
+
 ### Başlıklar normal ile yarı kalın arası
 
 `no-heavy-headings` · uyarı · denetlenir
