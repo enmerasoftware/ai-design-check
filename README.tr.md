@@ -129,6 +129,30 @@ küçültülen yazı, masaüstünde olup telefonda gizlenen içerik. En uzun dil
 zaman İngilizceden %30–40 uzundur. [examples/narrow-de.html](examples/narrow-de.html) 320 px'te dördünü de bozar,
 [examples/narrow-de.fixed.html](examples/narrow-de.fixed.html) içerik gizlemeden ve yazı küçültmeden düzeltir.
 
+### Markandan tasarım sistemi: `system`
+
+```bash
+npx @enmera/ai-design-check system --character calm --brand "#1E5A63" --kind app --out design-system
+npx @enmera/ai-design-check fonts --character calm   # eşleşme ve seçenekler
+```
+
+Yeni bir ürün ya da henüz token'ı olmayan bir proje için. Bir karakterden (`calm`, `precise`, `friendly`, `warm`,
+`bold`, `editorial`, `luxurious`, `playful`, `technical`, `trustworthy`), bir marka renginden ve ekran türünden
+(`dashboard`, `app`, `marketing`, `reading`) şunlara karar verir:
+
+- **Yazı tipleri**: 50 yazı tipinden seçilmiş arayüz, başlık, rakam ve kod ailesi (40 Google Fonts, uygulamaya
+  gömülebilir; 10 Adobe Fonts, yalnız web). `--ui` ve `--display` ile değiştirilir, `fonts` hepsini listeler.
+- **Yazı ölçeği**: sekiz rol (caption'dan display'e, artı stat) boyut, ağırlık, satır yüksekliği ve harf aralığıyla;
+  uygulama boyutları iOS yazı stillerini izler, böylece Dynamic Type'a ve Material 3'e eşlenir.
+- **Renkler** açık ve koyu tema için: yüzeyler, üç metin düzeyi, kenarlıklar, üzerine gelme, yazı ve açık tonlarıyla
+  vurgu, başarı, uyarı, tehlike, bilgi ve grafik renkleri. Her metin rengi zeminine karşı ölçülür ve WCAG 2'yi geçene
+  dek kaydırılır (gövde metni 12:1, ikincil 7:1, diğerleri 4,5:1).
+- **Biçim**: 4 px boşluk ölçeği, iç içe uyan köşe yarıçapları, kontrol yükseklikleri ve kart iç boşluğu.
+
+`tokens.css` (koyu temalı değişkenler), `theme.css` (Tailwind v4 `@theme`), `tokens.json`, `DesignSystem.swift`,
+`DesignSystem.kt` (Compose renk şemaları ve Typography) ve `preview.html` yazar; önizleme sayfası her rolü ve bileşeni
+iki temada gösterir. `--json` dosya yazmak yerine sistemi ajan için yazdırır.
+
 ### Önce/sonra videosu: `story`
 
 `npx @enmera/ai-design-check story once.html sonra.html --out story.mp4 --music parca.mp3` paylaşmak için 12 saniyelik kare bir video

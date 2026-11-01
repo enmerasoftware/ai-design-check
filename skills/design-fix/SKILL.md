@@ -36,6 +36,10 @@ If the screen is already good, say so and suggest two or three small refinements
 - **One moment**: the single place that carries richness (the main chart, a product view, the headline number).
   Everything else stays quiet.
 
+When the project has no tokens yet (no type scale, no colour variables), generate them from the direction instead of
+inventing values: `npx @enmera/ai-design-check system --character <calm|precise|friendly|warm|bold|editorial|luxurious|playful|technical|trustworthy> --brand "<hex>" --kind <dashboard|app|marketing|reading>`.
+It writes CSS, Tailwind, SwiftUI and Compose tokens whose text colours already pass contrast; `--json` prints them.
+
 For a large change, show the audit and the direction and let the user steer before editing. For a small screen or
 when the user said "just do it", continue.
 

@@ -12,6 +12,7 @@ Jetpack Compose apps.
 ```bash
 npx @enmera/ai-design-check                    # check the project (or: ai-design-check src lang)
 npx skills add enmerasoftware/ai-design-check  # the rules and the fix skill for your agent
+npx @enmera/ai-design-check system --brand "#1E5A63"  # fonts, type and colours that pass contrast
 ```
 
 Then ask your agent to "fix the design of this screen". It measures, proposes a direction from your product, fixes
@@ -183,6 +184,30 @@ the page scrolling sideways (and which elements push it), text cut off, text mad
 desktop but hidden on phones. Run it with your longest locale; German labels are often 30–40 % longer than English.
 [examples/narrow-de.html](examples/narrow-de.html) breaks all four at 320 px,
 [examples/narrow-de.fixed.html](examples/narrow-de.fixed.html) fixes them without hiding content or shrinking text.
+
+### A design system from your brand: `system`
+
+```bash
+npx @enmera/ai-design-check system --character calm --brand "#1E5A63" --kind app --out design-system
+npx @enmera/ai-design-check fonts --character calm   # the pairing and the alternatives
+```
+
+For a new product, or one with no tokens yet. From a character (`calm`, `precise`, `friendly`, `warm`, `bold`,
+`editorial`, `luxurious`, `playful`, `technical`, `trustworthy`), a brand colour and the kind of screen (`dashboard`,
+`app`, `marketing`, `reading`) it decides:
+
+- **Fonts**: a UI, display, numbers and code family from a curated library of 50 (40 Google Fonts, free to bundle in
+  apps; 10 Adobe Fonts, web only). `--ui` and `--display` override, `fonts` lists them all.
+- **Type scale**: eight roles (caption to display, plus stat) with size, weight, line height and letter-spacing; app
+  sizes follow the iOS text styles so they map to Dynamic Type and Material 3.
+- **Colours** for light and dark: surfaces, three text levels, borders, the accent with its hover, ink and soft
+  variants, success, warning, danger, info and chart colours. Every text colour is checked against its background
+  and moved until it passes WCAG 2 (12:1 for body text, 7:1 secondary, 4.5:1 for the rest).
+- **Shape**: a 4 px spacing scale, radii that nest, control heights and card padding.
+
+It writes `tokens.css` (variables with a dark theme), `theme.css` (Tailwind v4 `@theme`), `tokens.json`,
+`DesignSystem.swift`, `DesignSystem.kt` (Compose colour schemes and Typography) and `preview.html`, a page that shows
+every role and component in both themes. `--json` prints the system for an agent instead of writing files.
 
 ### Before/after video: `story`
 

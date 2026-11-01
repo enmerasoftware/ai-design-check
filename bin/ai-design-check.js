@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync, writeFileSync, writeSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, writeSync } from 'node:fs';
 import { join, relative, resolve, sep } from 'node:path';
 import { CONFIG_FILE, applyBaseline, check, loadRules, toBaseline } from '../src/check.js';
 import { inventory } from '../src/inventory.js';
@@ -20,6 +20,12 @@ Usage
   npx @enmera/ai-design-check narrow <file|url> [--width 320]
                                                  Render at phone width and report sideways scrolling, cut-off text,
                                                  text shrunk to fit and content hidden on phones (needs Chrome)
+  npx @enmera/ai-design-check system [--character calm] [--brand "#1E5A63"] [--kind dashboard] [--out design-system]
+                                                 Generate a design system: fonts, type scale, light and dark colors that
+                                                 pass contrast, radius and spacing, as CSS, Tailwind, JSON, SwiftUI,
+                                                 Compose and a preview page (--ui/--display pick fonts, --source any)
+  npx @enmera/ai-design-check fonts [--character calm]
+                                                 The characters and the font library behind system
 
 Options
   --format text|json|github   Output (github: annotations on pull requests)
@@ -45,8 +51,8 @@ const valueOf = (name) => {
 
     return index >= 0 ? args[index + 1] : undefined;
 };
-const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story', 'narrow'];
-const positional = args.filter((arg, index) => !arg.startsWith('--') && !['--format', '--out', '--still', '--title', '--music', '--width'].includes(args[index - 1]));
+const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story', 'narrow', 'system', 'fonts'];
+const positional = args.filter((arg, index) => !arg.startsWith('--') && !['--format', '--out', '--still', '--title', '--music', '--width', '--character', '--brand', '--kind', '--ui', '--display', '--source'].includes(args[index - 1]));
 // "ai-design-check src lang" is a check of those paths; the command word is optional.
 const [command, ...named] = COMMANDS.includes(positional[0]) ? positional : ['check', ...positional];
 // "./src/a.tsx" and absolute paths name the same file as "src/a.tsx"; the walker and the globs expect the last form.
@@ -113,6 +119,79 @@ if (command === 'narrow') {
             print(`\n${results.length === 0 ? paint(32, `No problems at ${width} px.`) : `${errors} errors, ${results.length - errors} warnings and notes at ${width} px.`}`);
         }
         done(results.some((item) => item.severity === 'error') ? 1 : 0);
+    } catch (error) {
+        console.error(error.message);
+        done(1);
+    }
+}
+
+if (command === 'system') {
+    const { designSystem, contrastReport } = await import('../src/system.js');
+    const tokens = await import('../src/tokens.js');
+    const { preview } = await import('../src/preview.js');
+    try {
+        let brand = valueOf('brand');
+        if (brand !== undefined) {
+            if (!/^#?[0-9a-f]{6}$/i.test(brand)) throw new Error(`--brand takes a hex color like "#1E5A63", got ${brand}`);
+            brand = brand.startsWith('#') ? brand : `#${brand}`;
+        }
+        const system = designSystem({ character: valueOf('character'), kind: valueOf('kind'), brand, ui: valueOf('ui'), display: valueOf('display'), source: valueOf('source') });
+        const outArg = valueOf('out');
+        if (format === 'json' && !outArg) {
+            print(tokens.json(system).trimEnd());
+            done(0);
+        }
+        const out = resolve(outArg ?? 'design-system');
+        mkdirSync(out, { recursive: true });
+        const css = tokens.css(system);
+        const files = {
+            'tokens.css': css,
+            'theme.css': tokens.tailwind(system),
+            'tokens.json': tokens.json(system),
+            'DesignSystem.swift': tokens.swift(system),
+            'DesignSystem.kt': tokens.kotlin(system),
+            'preview.html': preview(system, css),
+        };
+        for (const [name, content] of Object.entries(files)) writeFileSync(join(out, name), content);
+        if (format === 'json') {
+            print(tokens.json(system).trimEnd());
+            done(0);
+        }
+        const low = (mode) => Math.min(...contrastReport(system.color[mode]).map((item) => item.ratio));
+        print(`${system.character} · ${system.kind} · brand ${system.brand}`);
+        print(`  Fonts     UI ${system.fonts.ui}, display ${system.fonts.display}, numbers ${system.fonts.numeric}, code ${system.fonts.mono}`);
+        if (system.fonts.alternatives.ui.length) print(`            other UI fonts for ${system.character}: ${system.fonts.alternatives.ui.filter((name) => name !== system.fonts.ui).slice(0, 4).join(', ')}`);
+        print(`  Type      ${Object.entries(system.type).map(([role, item]) => `${role} ${item.size}`).join(' · ')}`);
+        print(`  Accent    ${system.color.light.accent} light, ${system.color.dark.accent} dark`);
+        print(`  Contrast  lowest text pair ${low('light').toFixed(2)} light, ${low('dark').toFixed(2)} dark (WCAG 2, 4.5 for text)`);
+        print(`  Radius    ${Object.entries(system.shape.radius).filter(([name]) => name !== 'full').map(([name, value]) => `${name} ${value}`).join(' · ')}`);
+        print(`\nWrote ${Object.keys(files).join(', ')} to ${relative(cwd, out) || '.'}. Open preview.html to see both themes.`);
+        done(0);
+    } catch (error) {
+        console.error(error.message);
+        done(1);
+    }
+}
+
+if (command === 'fonts') {
+    const { library, fontsFor, CHARACTERS } = await import('../src/system.js');
+    const lib = library();
+    const character = valueOf('character');
+    try {
+        if (character) {
+            const fonts = fontsFor(character, { source: 'any' });
+            print(`${character}: ${lib.characters[character]}`);
+            print(`  Pairing   UI ${fonts.ui.name}, display ${fonts.display.name}, numbers ${fonts.numeric.name}, code ${fonts.mono.name}`);
+            print(`  Also      UI ${fonts.alternatives.ui.join(', ') || '-'}; display ${fonts.alternatives.display.join(', ') || '-'}`);
+            if (fonts.alternatives.adobe.length) print(`  Adobe     ${fonts.alternatives.adobe.join(', ')} (Creative Cloud; web only, not for bundling in an app)`);
+            done(0);
+        }
+        print('Characters (--character):');
+        for (const name of Object.keys(CHARACTERS)) print(`  ${name.padEnd(12)} ${lib.characters[name]}`);
+        print('\nFonts:');
+        for (const item of lib.families) print(`  ${item.name.padEnd(22)} ${item.source.padEnd(7)} ${item.category.padEnd(6)} ${item.roles.join(', ').padEnd(24)} ${paint(2, item.characters.join(', '))}`);
+        print(`\n${lib.families.filter((item) => item.source === 'google').length} Google Fonts (free to use and bundle), ${lib.families.filter((item) => item.source === 'adobe').length} Adobe Fonts (Creative Cloud, web only).`);
+        done(0);
     } catch (error) {
         console.error(error.message);
         done(1);

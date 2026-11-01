@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.0
+
+- `system` command: a design system from a character, a brand colour and the kind of screen. Fonts from a curated
+  library (40 Google Fonts, 10 Adobe Fonts), an eight-role type scale that maps to Dynamic Type and Material 3, light
+  and dark colours where every text colour is moved until it passes WCAG 2, spacing, radii and control heights.
+  Writes CSS variables, a Tailwind v4 `@theme`, JSON, SwiftUI, Jetpack Compose and a preview page of both themes.
+- `fonts` command: the characters, their pairings and the font library.
+- The fix skill generates tokens with `system` when a project has none.
+
 ## 0.7.1
 
 - Example: "Unslopping a SwiftUI app" (`examples/unslop-cebbin-swiftui.mp4`), the Cebbin iOS home screen through 16
