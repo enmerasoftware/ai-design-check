@@ -1,6 +1,6 @@
 ---
 name: ai-design-fix
-description: Fixes AI-generated, "vibecoded" UI so it reads as designed: audits the screen with the ai-design-check rules and checker, proposes a direction taken from the product, then fixes spacing, surfaces and colour, icons, copy, type, layout, components and motion in that order, and proves the result by re-running the checker. Use when the user asks to fix, clean up, polish, de-slop or redesign a screen, dashboard, landing page or component that looks generated (purple gradients, glows, emoji labels, tracked uppercase, heavy headings, uneven spacing, shouty copy). Works on React, Vue, Svelte, Tailwind, Blade and plain HTML/CSS. Can render a before/after video.
+description: "Fixes AI-generated, \"vibecoded\" UI so it reads as designed: audits the screen with the ai-design-check rules and checker, proposes a direction taken from the product, then fixes spacing, surfaces and colour, icons, copy, type, layout, components and motion in that order, and proves the result by re-running the checker. Use when the user asks to fix, clean up, polish, de-slop or redesign a screen, dashboard, landing page or component that looks generated (purple gradients, glows, emoji labels, tracked uppercase, heavy headings, uneven spacing, shouty copy). Works on React, Vue, Svelte, Tailwind, Blade and plain HTML/CSS. Can render a before/after video."
 ---
 
 # Fix a generated-looking screen

@@ -1,6 +1,6 @@
 ---
 name: ai-design-check
-description: Design rules and a checker for interfaces built with AI agents (dashboards, admin panels, SaaS screens). Use before building or changing any UI screen, component, button, form field, label, menu item, table or chart, and before reviewing UI changes: shared components with one look per element, sentence case, one type and radius scale, one selector language, focus and names for accessibility, locale-aware formatting, no generated-UI tells.
+description: "Design rules and a checker for interfaces built with AI agents (dashboards, admin panels, SaaS screens). Use before building or changing any UI screen, component, button, form field, label, menu item, table or chart, and before reviewing UI changes: shared components with one look per element, sentence case, one type and radius scale, one selector language, focus and names for accessibility, locale-aware formatting, no generated-UI tells."
 ---
 
 # Enmera design rules
