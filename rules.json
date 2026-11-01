@@ -644,6 +644,51 @@
       }
     },
     {
+      "id": "tap-target",
+      "area": "interaction",
+      "severity": "warn",
+      "title": {
+        "en": "Tap targets big enough for a finger",
+        "tr": "Parmağa yetecek dokunma alanı"
+      },
+      "rule": {
+        "en": "Anything that can be tapped is at least 44×44 pt on iOS, 48×48 dp on Android and 24×24 px on the web (44 px where you can). A small icon keeps its size; the area around it grows.",
+        "tr": "Dokunulabilen her şey iOS'ta en az 44×44 pt, Android'de 48×48 dp, web'de 24×24 px'tir (olabildiğince 44 px). Küçük ikon boyutunu korur; çevresindeki alan büyür."
+      },
+      "why": {
+        "en": "A small target is missed and hits its neighbour, most of all for people with larger fingers, a tremor or one hand on a moving bus. Apple, Material and WCAG 2.2 (2.5.8) all set a minimum.",
+        "tr": "Küçük hedef ıskalanır ve yanındakine basılır; özellikle iri parmaklı, eli titreyen ya da hareket eden otobüste tek eliyle kullanan kişilerde. Apple, Material ve WCAG 2.2 (2.5.8) bir alt sınır koyar."
+      },
+      "fix": {
+        "en": "SwiftUI: keep the icon's frame and add .frame(minWidth: 44, minHeight: 44) or padding, then .contentShape(Rectangle()). Compose: use IconButton (48 dp) or Modifier.minimumInteractiveComponentSize(); put .size() after the padding, not on the clickable. Web: size-11/h-11 on icon buttons, or padding around the icon.",
+        "tr": "SwiftUI: ikonun çerçevesini koruyup .frame(minWidth: 44, minHeight: 44) ya da dolgu ekleyin, ardından .contentShape(Rectangle()). Compose: IconButton (48 dp) ya da Modifier.minimumInteractiveComponentSize() kullanın; .size()'ı tıklanan öğeye değil dolgudan sonraya koyun. Web: ikon düğmelerinde size-11/h-11 ya da ikonun çevresinde dolgu."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?:^|\\s)(?:[\\w-]+:)*(?:h|size|min-h)-(?:[0-5](?:\\.5)?|px|\\[(?:1?\\d|2[0-3])(?:\\.\\d+)?px\\])(?=\\s|$)",
+        "onlyElements": "^(?:button|Button|IconButton|a|Link)$",
+        "native": {
+          "swift": {
+            "pattern": "\\.frame\\(\\s*(?:width:\\s*[0-9.]+\\s*,\\s*height|width|height):\\s*([0-9.]+)\\s*\\)",
+            "max": 44,
+            "onlyIf": {
+              "before": "(?:\\bButton\\s*(?:\\([^()]*\\))?\\s*\\{|\\blabel:\\s*\\{)[^{}]*$",
+              "after": "^(?:\\s*\\.[a-zA-Z]+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*\\.onTapGesture\\b"
+            },
+            "unlessAfter": "^(?:\\s*\\.[a-zA-Z]+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*\\.(?:padding|frame)\\("
+          },
+          "kt": {
+            "pattern": "\\.(?:size|height|requiredSize)\\(\\s*([0-9.]+)\\.dp\\s*\\)",
+            "max": 48,
+            "onlyIf": {
+              "before": "(?:\\.(?:clickable|toggleable|selectable)\\b(?:\\s*\\([^()]*\\))?(?:\\s*\\{[^{}]*\\})?|\\bIconButton\\((?:[^()]|\\([^()]*\\))*?modifier\\s*=\\s*Modifier)(?:\\s*\\.\\w+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*$",
+              "after": "^(?:\\s*\\.\\w+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*\\.(?:clickable|toggleable|selectable)\\b"
+            }
+          }
+        }
+      }
+    },
+    {
       "id": "no-buzzwords",
       "area": "copy",
       "severity": "warn",

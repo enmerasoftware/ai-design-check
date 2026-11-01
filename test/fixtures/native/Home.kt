@@ -8,5 +8,9 @@ fun Home() {
         Icon(Icons.Filled.AutoAwesome, contentDescription = null)
         Card(shape = RoundedCornerShape(13.dp), elevation = 12.dp) {}
         Box(Modifier.background(Brush.linearGradient(listOf(Purple, Pink))))
+        Icon(Icons.Filled.Close, contentDescription = "Close", modifier = Modifier.size(24.dp).clickable { })
+        IconButton(onClick = {}, modifier = Modifier.size(32.dp)) { Icon(Icons.Filled.Add, contentDescription = "Add") }
+        IconButton(onClick = {}) { Icon(Icons.Filled.Add, contentDescription = "Add", modifier = Modifier.size(24.dp)) } // passes: 48 dp button
+        Box(Modifier.size(8.dp)) // passes: not tappable
     }
 }

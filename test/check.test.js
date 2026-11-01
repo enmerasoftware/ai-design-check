@@ -91,6 +91,7 @@ test('generated-UI tells (fixtures/slop)', () => {
     assert.deepEqual(at('no-blur-blobs'), ['blur-3xl']);
     assert.deepEqual(at('no-gradient-buttons'), ['bg-gradient-to-r']); // a section background is not a button
     assert.deepEqual(at('no-heavy-card-shadow'), ['shadow-xl']); // the floating menu keeps its shadow
+    assert.deepEqual(at('tap-target'), ['size-5']); // a tall link and a status dot pass
 });
 
 test('sentence case: JSX labels, source keys and translations', () => {
@@ -140,11 +141,13 @@ test('native apps: SwiftUI and Jetpack Compose', () => {
     assert.deepEqual(of('.swift', 'spacing-scale'), ['spacing: 13', '.padding(10']);
     assert.deepEqual(of('.swift', 'dynamic-type'), ['.font(.system(size: 26']);
     assert.deepEqual(of('.swift', 'sentence-case'), ['Text("Upcoming Payments"']);
+    assert.deepEqual(of('.swift', 'tap-target'), ['.frame(width: 24, height: 24)', '.frame(width: 28, height: 28)']); // padded button and a plain dot pass
     assert.equal(of('.swift', 'radius-scale').length, 1);
     for (const rule of ['no-heavy-headings', 'no-ai-gradients', 'no-sparkle-for-ai', 'icons-not-emoji', 'no-greeting-headline', 'no-heavy-card-shadow', 'no-blur-blobs', 'pulse-for-live-only']) assert.equal(of('.swift', rule).length, 1, rule);
     assert.deepEqual(of('.swift', 'no-exclamation-copy').length, 2); // the greeting and "You did it!", not the comment
     assert.deepEqual(of('.kt', 'spacing-scale'), ['10.dp', '18.dp']);
     assert.deepEqual(of('.kt', 'type-scale'), ['fontSize = 26.sp']);
+    assert.deepEqual(of('.kt', 'tap-target'), ['.size(24.dp)', '.size(32.dp)']); // an icon inside a 48 dp IconButton passes
     assert.deepEqual(of('.kt', 'sentence-case'), ['Text(text = "Recent Activity"']);
     for (const rule of ['no-heavy-headings', 'no-ai-gradients', 'no-sparkle-for-ai', 'icons-not-emoji', 'no-greeting-headline', 'radius-scale', 'no-heavy-card-shadow']) assert.equal(of('.kt', rule).length, 1, rule);
 });

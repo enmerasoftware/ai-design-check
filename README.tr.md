@@ -5,7 +5,7 @@
 ![Yapay zekâ ile yapılmış bir panel: denetlendi, düzeltildi, yeniden denetlendi; 266 bulgudan 0'a](examples/story-dashboard.webp)
 
 Yapay zekâ kodlama ajanlarıyla (Claude Code, Cursor, Codex) yapılan arayüzleri "yapay zekâ yapmış" gibi gösteren
-şeyleri bulur ve düzeltir: 74 tasarım kuralı, her bulguyu işaretleyen bağımlılıksız bir denetçi ve ekranı düzeltip
+şeyleri bulur ve düzeltir: 76 tasarım kuralı, her bulguyu işaretleyen bağımlılıksız bir denetçi ve ekranı düzeltip
 yeniden denetleyerek kanıtlayan bir ajan becerisi. Paneller, yönetim ekranları, SaaS ekranları ve tanıtım sayfaları için;
 SwiftUI ve Jetpack Compose uygulamaları için de.
 
@@ -60,7 +60,8 @@ Gerekçeleriyle tam liste: [RULES.tr.md](RULES.tr.md).
 Aynı kurallar SwiftUI ve Jetpack Compose kodunu da okur: 4 pt ızgarasından kaymış boşluk (`.padding(13)`, `10.dp`),
 ölçek dışı köşe yarıçapı, Dynamic Type'ı yok sayan sabit `.system(size:)` yazı, `.heavy` ve `FontWeight.Black` başlıklar,
 mor gradyanlar, yapay zekâ için `sparkles`, metinde emoji, Title Case etiketler, ünlemli metin, ağır gölgeler, büyük
-bulanıklıklar ve sonsuz dönen animasyonlar. Uygulama klasörünü vermen yeter:
+bulanıklıklar, sonsuz dönen animasyonlar ve 44 pt / 48 dp'den küçük dokunma alanları (düğme etiketinde küçük `.frame`,
+`clickable` üzerinde `.size()`; küçük ikonun çevresindeki dolgu ya da dış çerçeve geçer). Uygulama klasörünü vermen yeter:
 
 ```bash
 npx @enmera/ai-design-check Cebbin/Views

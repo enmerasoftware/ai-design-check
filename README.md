@@ -5,7 +5,7 @@
 ![A generated dashboard checked, fixed and checked again: 266 findings to 0](examples/story-dashboard.webp)
 
 Finds and fixes what makes interfaces built with AI coding agents (Claude Code, Cursor, Codex) look generated:
-74 design rules, a zero-dependency checker that marks every finding, and an agent skill that fixes the screen and
+76 design rules, a zero-dependency checker that marks every finding, and an agent skill that fixes the screen and
 proves it by checking again. For dashboards, admin panels, SaaS screens and landing pages, and for SwiftUI and
 Jetpack Compose apps.
 
@@ -60,8 +60,9 @@ The full list with reasons: [RULES.md](RULES.md).
 
 The same rules read SwiftUI and Jetpack Compose: spacing off the 4 pt grid (`.padding(13)`, `10.dp`), radii off the
 scale, fixed `.system(size:)` text that ignores Dynamic Type, `.heavy` and `FontWeight.Black` headings, purple
-gradients, `sparkles` for AI, emoji in strings, Title Case labels, exclamation copy, heavy shadows, big blurs and
-looping animations. Point it at the app folder:
+gradients, `sparkles` for AI, emoji in strings, Title Case labels, exclamation copy, heavy shadows, big blurs,
+looping animations and tap targets under 44 pt / 48 dp (a small `.frame` on a button label or a `.size()` on a
+`clickable`; padding or an outer frame around a small icon passes). Point it at the app folder:
 
 ```bash
 npx @enmera/ai-design-check Cebbin/Views
@@ -243,7 +244,8 @@ Or point your agent's instructions (`CLAUDE.md`, `AGENTS.md`, `.cursor/rules`) a
 
 Rules live in [`rules.json`](rules.json): `id`, `area`, `severity`, and `title` / `rule` / `why` / `fix` in `en` and
 `tr`, plus an optional `check`: `class` (pattern on class strings, with `unless`, `exceptElements`, `unlessBefore`,
-`css`), `regex` (pattern on code, comments excluded, with `flags` and `files`) or a structural check. Run `npm run docs` to regenerate
+`css`), `native` (one pattern per platform under `swift` and `kt`, with `notMultipleOf`, `min`, `max`, `unlessBefore`,
+`unlessAfter` and `onlyIf`), `regex` (pattern on code, comments excluded, with `flags` and `files`) or a structural check. Run `npm run docs` to regenerate
 RULES.md and RULES.tr.md and `npm test` before opening a pull request.
 
 Inspired in part by [Impeccable](https://github.com/pbakaus/impeccable), [unslop](https://github.com/heydamir/unslop) by Damir Sokolovsky and Anthropic's frontend-design skill.

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.0
+
+- New rule `tap-target`: anything tappable is at least 44×44 pt on iOS, 48×48 dp on Android and 24×24 px on the web.
+  SwiftUI: a `.frame` under 44 on a button label or a view with `.onTapGesture` (padding or an outer frame around a
+  small icon passes). Compose: a `.size()` under 48 dp on a `clickable` or on an `IconButton`. Web: `h-`/`size-` under
+  24 px on buttons and links. On the Cebbin iOS app it found 43 round buttons, dots and handles between 14 and 40 pt.
+- Native patterns take `max`, `unlessAfter` and `onlyIf` (the code before or after must match).
+
 ## 0.8.0
 
 - `system` command: a design system from a character, a brand colour and the kind of screen. Fonts from a curated

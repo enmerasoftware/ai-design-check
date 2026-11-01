@@ -354,8 +354,14 @@ export function check(cwd, overrides = {}) {
                 const number = Number(match[1]);
                 if (native.notMultipleOf && (number <= 2 || number % native.notMultipleOf === 0)) continue;
                 if (native.min !== undefined && !(number >= native.min)) continue;
+                if (native.max !== undefined && !(number < native.max)) continue;
                 if (native.titleCase && !titleCased(match[1], config.properNouns)) continue;
-                if (native.unlessBefore && new RegExp(native.unlessBefore, 'u').test(code.slice(Math.max(0, match.index - 300), match.index))) continue;
+                const before = code.slice(Math.max(0, match.index - 300), match.index);
+                const after = code.slice(match.index + match[0].length, match.index + match[0].length + 300);
+                if (native.unlessBefore && new RegExp(native.unlessBefore, 'u').test(before)) continue;
+                if (native.unlessAfter && new RegExp(native.unlessAfter, 'u').test(after)) continue;
+                // Only where the context makes it count (a size on something tappable): either side may match.
+                if (native.onlyIf && !((native.onlyIf.before && new RegExp(native.onlyIf.before, 'u').test(before)) || (native.onlyIf.after && new RegExp(native.onlyIf.after, 'u').test(after)))) continue;
                 report(rule.id, path, lineOf(source, match.index), match[0].trim(), `${rule.title.en}: ${match[0].trim()}`);
             }
         }

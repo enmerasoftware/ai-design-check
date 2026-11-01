@@ -708,6 +708,16 @@
 
 **How to fix:** Optimistic local value, background reload without a progress bar, prefetch on tabs.
 
+### Tap targets big enough for a finger
+
+`tap-target` · warning · checked
+
+**Rule:** Anything that can be tapped is at least 44×44 pt on iOS, 48×48 dp on Android and 24×24 px on the web (44 px where you can). A small icon keeps its size; the area around it grows.
+
+**Why:** A small target is missed and hits its neighbour, most of all for people with larger fingers, a tremor or one hand on a moving bus. Apple, Material and WCAG 2.2 (2.5.8) all set a minimum.
+
+**How to fix:** SwiftUI: keep the icon's frame and add .frame(minWidth: 44, minHeight: 44) or padding, then .contentShape(Rectangle()). Compose: use IconButton (48 dp) or Modifier.minimumInteractiveComponentSize(); put .size() after the padding, not on the clickable. Web: size-11/h-11 on icon buttons, or padding around the icon.
+
 ## Copy
 
 ### No marketing buzzwords

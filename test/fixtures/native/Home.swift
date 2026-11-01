@@ -18,6 +18,24 @@ struct HomeView: View {
                 .blur(radius: 30)
             Text("You did it!")
             Circle().animation(.easeInOut.repeatForever(), value: true)
+            Button { } label: {
+                Image(systemName: "xmark")
+                    .frame(width: 24, height: 24)
+            }
+            Button { } label: {
+                Image(systemName: "plus")
+                    .frame(width: 24, height: 24) // passes: padded to 48
+                    .padding(12)
+            }
+            Image(systemName: "heart")
+                .frame(width: 28, height: 28)
+                .onTapGesture {}
+            Circle().frame(width: 8, height: 8) // passes: not tappable
+            Button { } label: {
+                Circle()
+                    .frame(width: 6, height: 6) // passes: the outer frame is the target
+                    .frame(width: 44, height: 44)
+            }
         }
         .padding(2) // passes: hairline
         // Text("Ignored In A Comment!")
