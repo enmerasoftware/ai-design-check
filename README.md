@@ -6,7 +6,8 @@
 
 Finds and fixes what makes interfaces built with AI coding agents (Claude Code, Cursor, Codex) look generated:
 74 design rules, a zero-dependency checker that marks every finding, and an agent skill that fixes the screen and
-proves it by checking again. For dashboards, admin panels, SaaS screens and landing pages.
+proves it by checking again. For dashboards, admin panels, SaaS screens and landing pages, and for SwiftUI and
+Jetpack Compose apps.
 
 ```bash
 npx @enmera/ai-design-check                    # check the project (or: ai-design-check src lang)
@@ -65,8 +66,12 @@ looping animations. Point it at the app folder:
 npx @enmera/ai-design-check Cebbin/Views
 ```
 
-[A real run on the Cebbin iOS home screen](examples/story-cebbin-swiftui.mp4): 23 findings to 0 in four passes,
-each frame taken from the simulator after the code change.
+[![Unslopping a SwiftUI app: the Cebbin home screen before and after](examples/unslop-cebbin-swiftui.webp)](examples/unslop-cebbin-swiftui.mp4)
+
+[Unslopping a SwiftUI app](examples/unslop-cebbin-swiftui.mp4): our own iOS app, Cebbin, live on the App Store. The
+home screen goes through 16 fixes one at a time (spacing, one accent, decoration, copy, hierarchy, layout); every
+frame is the real app on the simulator and the card under it shows the SwiftUI line that changed.
+[The first run](examples/story-cebbin-swiftui.mp4) took the same screen from 23 findings to 0.
 
 ## The checker
 

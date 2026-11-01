@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.1
+
+- Example: "Unslopping a SwiftUI app" (`examples/unslop-cebbin-swiftui.mp4`), the Cebbin iOS home screen through 16
+  fixes one at a time, with the SwiftUI line behind each change.
+- The package and both READMEs say it reads SwiftUI and Jetpack Compose apps; the Turkish README has the mobile section.
+
 ## 0.7.0
 
 - Mobile apps: the checker reads SwiftUI (`.swift`) and Jetpack Compose (`.kt`). Sixteen rules have native patterns
