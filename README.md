@@ -6,7 +6,7 @@
 [![license: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [Türkçe](README.tr.md)
 
-For anyone building with Claude Code, Cursor or Codex: 87 design rules, a checker with no dependencies and no API key, and
+For anyone building with Claude Code, Cursor or Codex: 95 design rules, a checker with no dependencies and no API key, and
 an agent skill that repairs the screen. It reads web projects and SwiftUI and Jetpack Compose apps.
 
 ## Start in two steps
@@ -60,18 +60,19 @@ it, and shows the count before and after. Features, data and words stay.
 
 ## What it catches
 
-The checker tests 50 rules automatically. The other 37 need eyes on the screen, so they are marked *review* and left to you
+The checker tests 57 rules automatically. The other 38 need eyes on the screen, so they are marked *review* and left to you
 and the fix skill. Each rule says what to do, why and how to fix it, in English and Turkish: [RULES.md](RULES.md).
 
 | Area | Examples |
 |---|---|
 | Accessibility | Focus rings never removed without a replacement, icon-only buttons have a name, tap targets |
+| Phone browsers | Pinch zoom stays on, 16 px text in fields, `dvh` beside fixed `100vh`, nothing hidden until hover |
 | Type and shape | One type scale with 11 px as the floor, one radius per level, no cards inside cards |
 | Writing and copy | Sentence case, no tracked uppercase labels, no buzzwords, buttons that say what they do, errors that say what to do |
 | Components | Buttons and inputs from shared components, no outside styling, repeated markup becomes a component |
 | Layout | Spacing on a 4 px grid with one gap per level, wide tables span the page, room for each cell on a phone |
 | Visual language | Line icons instead of emoji, no gradient text or purple gradients, no side stripes, glow only in charts |
-| Motion | No `transition-all`, no bounce, reduced motion respected, pulse only for live data |
+| Motion | No `transition-all`, no bounce, reduced motion respected, pulse only for live data, answers within 300 ms, no endless loops |
 | Data | Numbers carry their comparison, tabular numerals, empty states |
 | Localisation | Locale-aware case changes (Turkish i/İ), numbers through the formatter, real plurals |
 | Selectors and navigation | One selector language, menu grouped by job, moved URLs redirect |
@@ -174,6 +175,9 @@ Renders the page in your Chrome at phone and desktop width and reports what only
 and what causes it, text cut off, text shrunk to fit, and content hidden on phones. Run it with your longest language; German
 labels are often 30–40 % longer than English. Try [the broken example](examples/narrow-de.html) and
 [the fixed one](examples/narrow-de.fixed.html).
+
+Add `--stress` to run it again with worst-case data: long names, large numbers and text 40 % longer. It tests the layout;
+grammar such as "1 member" still needs a look at the screen with real data.
 
 ### `system`: a design system from your brand
 

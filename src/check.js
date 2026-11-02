@@ -111,6 +111,28 @@ export const extensionOf = (path) => (path.endsWith('.blade.php') ? 'blade.php' 
 
 const lineOf = (source, index) => source.slice(0, index).split('\n').length;
 
+/** Markup with everything outside <style> blanked, so CSS rules read inline styles and line numbers stay valid. */
+function styleBlocks(source) {
+    let out = source.replace(/[^\n]/g, ' ');
+    for (const match of source.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) {
+        const start = match.index + match[0].indexOf('>') + 1;
+        out = out.slice(0, start) + blankComments(match[1], false) + out.slice(start + match[1].length);
+    }
+
+    return out;
+}
+
+/** The at-rules (@media, @supports) whose block holds this position in a stylesheet. */
+function atRulesAround(css, index) {
+    const open = [];
+    for (const match of css.slice(0, index).matchAll(/([^{};]*)\{|\}/g)) {
+        if (match[0] === '}') open.pop();
+        else open.push(match[1].trim());
+    }
+
+    return open.filter((prelude) => prelude.startsWith('@'));
+}
+
 /** allow: { ruleId: ["glob", "glob:exact match"] } */
 function allowed(config, rule, path, value) {
     return (config.allow[rule] ?? []).some((entry) => {
@@ -316,10 +338,15 @@ export function check(cwd, overrides = {}) {
         if (markup) {
             for (const unit of classUnits(source, config.classFunctions)) {
                 const line = lineOf(source, unit.index);
-                for (const rule of classRules) {
+                for (const rule of classRules.filter((item) => item.check.pattern)) {
                     if (rule.check.unless && new RegExp(rule.check.unless, 'u').test(unit.text)) continue;
                     if (rule.check.exceptElements && unit.element && new RegExp(rule.check.exceptElements).test(unit.element)) continue;
                     if (rule.check.onlyElements && !(unit.element && new RegExp(rule.check.onlyElements).test(unit.element))) continue;
+                    // The element's own attributes can rule it out (type="file" has no text to zoom on).
+                    if (rule.check.unlessTag) {
+                        const next = source.indexOf('<', unit.index);
+                        if (new RegExp(rule.check.unlessTag, 'u').test(source.slice(source.lastIndexOf('<', unit.index), next < 0 ? undefined : next))) continue;
+                    }
                     // A wrapper just above may carry the style (focus-within: ring on the box around an input).
                     if (rule.check.unlessBefore && new RegExp(rule.check.unlessBefore, 'u').test(source.slice(Math.max(0, unit.index - 1500), unit.index))) continue;
                     for (const match of unit.text.matchAll(new RegExp(rule.check.pattern, 'gu'))) {
@@ -340,9 +367,16 @@ export function check(cwd, overrides = {}) {
                 for (const match of source.matchAll(new RegExp(rule.check.markup, 'gu'))) report(rule.id, path, lineOf(source, match.index), match[1] ?? match[0], `${rule.title.en}: ${(match[1] ?? match[0]).trim()}`);
             }
         }
-        if (extension === 'css') {
+        if (extension === 'css' || markup) {
+            const css = extension === 'css' ? blankComments(source, false) : styleBlocks(source);
             for (const rule of classRules.filter((item) => item.check.css)) {
-                for (const match of source.matchAll(new RegExp(rule.check.css, 'gu'))) report(rule.id, path, lineOf(source, match.index), match[0], `${rule.title.en}: ${match[0]}`);
+                let reported = false;
+                for (const match of css.matchAll(new RegExp(rule.check.css, 'gu'))) {
+                    if (reported && rule.check.cssOnePerFile) break;
+                    if (rule.check.unlessMedia && atRulesAround(css, match.index).some((at) => new RegExp(rule.check.unlessMedia, 'iu').test(at))) continue;
+                    const value = match[0].replace(/\s+/g, ' ').trim();
+                    reported = Boolean(report(rule.id, path, lineOf(source, match.index), value, `${rule.title.en}: ${value}`)) || reported;
+                }
             }
         }
         // Code rules read code and copy, not comments (inline ignores were read above, before blanking).

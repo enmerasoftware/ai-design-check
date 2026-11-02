@@ -42,13 +42,32 @@ const MEASURE = `(() => {
     return { width, scrollWidth: document.documentElement.scrollWidth, elements };
 })()`;
 
+/**
+ * Worst-case data, written over the rendered page: names become a long Turkish name, numbers a large one, other text grows
+ * by 40 % with one unbroken word. It tests the layout only; a page's own logic does not run again, so "1 members" needs a
+ * look at the screen with real data (worst-case-data, no-naive-plural).
+ */
+const STRESS = `(() => {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (const node of nodes) {
+        if (['SCRIPT', 'STYLE', 'TEMPLATE', 'NOSCRIPT', 'CODE', 'PRE'].includes(node.parentElement.tagName)) continue;
+        const text = node.textContent.trim();
+        if (!/[\\p{L}\\d]/u.test(text)) continue;
+        if (/^\\p{Lu}\\p{L}+(?: \\p{Lu}\\p{L}+){1,2}$/u.test(text)) { node.textContent = 'Muhammed Abdülkerim Çağlayanoğlu'; continue; }
+        const numbers = text.replace(/\\d[\\d.,]*/g, '1.234.567,89');
+        node.textContent = /\\p{L}/u.test(text) ? numbers + ' ' + 'Afyonkarahisarlılaştıramadıklarımız'.slice(0, Math.ceil(text.length * 0.4)) : numbers;
+    }
+})()`;
+
 const finding = (rule, severity, path, value, message) => ({ rule, area: loadRules().rules.find((item) => item.id === rule).area, severity, path, line: 0, value, message });
 
 /**
  * @param {string} input file or URL
- * @param {{width?: number, desktop?: number}} options
+ * @param {{width?: number, desktop?: number, stress?: boolean}} options
  */
-export async function narrow(input, { width = 320, desktop = 1280 } = {}) {
+export async function narrow(input, { width = 320, desktop = 1280, stress = false } = {}) {
     const chrome = findChrome();
     if (!chrome) throw new Error('Chrome or Chromium not found; set CHROME_PATH');
     const url = /^https?:\/\//.test(input) ? input : pathToFileURL(resolve(input)).href;
@@ -75,6 +94,21 @@ export async function narrow(input, { width = 320, desktop = 1280 } = {}) {
                 findings.push(finding('no-shrunk-text', 'warn', input, element.label, `Text shrinks from ${was.font} px to ${element.font} px at ${width} px: ${element.label}`));
             }
             if (element.text && !element.visible && was?.visible && was.text) findings.push(finding('no-hidden-content-narrow', 'info', input, element.label, `Shown on desktop, hidden at ${width} px: ${element.label}`));
+        }
+
+        if (stress) {
+            // Only what the longer data breaks; what was already broken is reported above.
+            const overflowing = phone.scrollWidth > phone.width + 1;
+            const cut = new Set(phone.elements.filter((element) => element.clipped || element.ellipsis).map((element) => element.key));
+            await browser.evaluate(STRESS);
+            const worst = await browser.evaluate(MEASURE);
+            if (!overflowing && worst.scrollWidth > worst.width + 1) {
+                const culprits = worst.elements.filter((element) => element.visible && !element.scroller && element.right > worst.width + 1 && element.text).slice(0, 3);
+                findings.push(finding('no-horizontal-overflow', 'warn', input, `${worst.scrollWidth}px`, `With long data the page is ${worst.scrollWidth} px wide at ${width} px${culprits.length ? `: ${culprits.map((element) => element.label).join(', ')}` : ''}`));
+            }
+            for (const element of worst.elements) {
+                if ((element.clipped || element.ellipsis) && !cut.has(element.key)) findings.push(finding('text-not-clipped', 'warn', input, element.label, `With long data text is cut off at ${width} px: ${element.label}`));
+            }
         }
 
         return findings;

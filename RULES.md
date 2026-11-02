@@ -404,6 +404,16 @@
 
 **How to fix:** Show as many items as fit beside the lead item, and add a link to the full list below.
 
+### Full height follows the phone's bars
+
+`dynamic-viewport-height` · warning · checked
+
+**Rule:** A fixed height of 100vh has a dvh or svh partner. On phones vh counts the space under the browser bars. A min-height is fine: the page just scrolls a little further.
+
+**Why:** The bottom of the screen ends up under the address bar: often the main button of a hero or the input of a chat.
+
+**How to fix:** h-dvh or min-h-svh; in CSS write height: 100vh; height: 100dvh; so old browsers keep a value.
+
 ## Navigation
 
 ### Menu grouped by job, place decided first
@@ -620,6 +630,36 @@
 
 **How to fix:** Add aria-label with the action in sentence case ("Delete keyword").
 
+### Pinch zoom stays on
+
+`no-zoom-lock` · error · checked
+
+**Rule:** The viewport never sets user-scalable=no or a maximum-scale below 2.
+
+**Why:** People with low vision zoom to read; a locked page leaves them with nothing. WCAG 1.4.4.
+
+**How to fix:** Use width=device-width, initial-scale=1 and nothing more. If a field zooms on focus, fix the field (input-text-16).
+
+### Fields use 16 px text on phones
+
+`input-text-16` · warning · checked
+
+**Rule:** Inputs, text areas and selects use text of at least 16 px at phone width; a smaller size may start at a larger breakpoint.
+
+**Why:** iOS Safari zooms the whole page when a smaller field gets focus, and leaves it zoomed.
+
+**How to fix:** text-base sm:text-sm, or font-size: 16px with the smaller size inside @media (min-width: …). Never lock zoom instead.
+
+### Nothing is hidden until hover
+
+`no-hover-only-content` · warning · checked
+
+**Rule:** Actions and information that appear on hover are visible by default on touch screens.
+
+**Why:** A finger has no hover, so the button does not exist for that person.
+
+**How to fix:** Hide only from a larger breakpoint: opacity-100 md:opacity-0 md:group-hover:opacity-100, with focus-within for the keyboard.
+
 ## Motion
 
 ### Pulse only for live data
@@ -691,6 +731,26 @@
 **Why:** Position and spacing changes re-run layout every frame and stutter on slower devices.
 
 **How to fix:** Use translate and opacity (transition-transform, transition-opacity).
+
+### Interface responds within 300 ms
+
+`interface-speed` · note · checked
+
+**Rule:** Hover, press, open and close transitions take 300 ms at most. Entrances on a landing page and stages may take longer.
+
+**Why:** People repeat these actions; a slow answer feels like a slow product, however good it looks the first time.
+
+**How to fix:** duration-150 for colour and press, duration-200 to 300 for panels. Ignore the finding with a reason on a real entrance.
+
+### Nothing loops forever without a reason
+
+`no-endless-loop` · note · checked
+
+**Rule:** A permanent element does not animate forever. A loader may while loading; a live dot follows pulse-for-live-only; a product stage is judged on screen.
+
+**Why:** Endless motion pulls the eye from what people are reading, and the eye soon learns to ignore it.
+
+**How to fix:** Play it once on entry, or tie it to a real state; pause it off screen and under reduced motion.
 
 ## Data and numbers
 
@@ -774,6 +834,16 @@
 
 **How to fix:** Wrap the fraction in a span with the secondary colour; keep the same size.
 
+### Designed for the worst data, not the demo
+
+`worst-case-data` · note · review
+
+**Rule:** The screen holds with one item ("1 member"), none, a very large number and the longest name a customer really has.
+
+**Why:** Sample data has tidy lengths. Real accounts have one member, no orders and a company name of 40 letters.
+
+**How to fix:** Run narrow --stress for the layout, then open the screen with one item and with none: grammar and empty states only show with real data.
+
 ## Localisation
 
 ### Case changes name the locale
@@ -827,6 +897,16 @@
 **Why:** Waiting for the server before the control moves feels broken.
 
 **How to fix:** Optimistic local value, background reload without a progress bar, prefetch on tabs.
+
+### Hover styles only where hover exists
+
+`hover-media-query` · note · checked
+
+**Rule:** In hand-written CSS, :hover sits inside @media (hover: hover). Tailwind 4 does this by itself.
+
+**Why:** After a tap the hover look stays on until the next tap elsewhere, so the button seems stuck.
+
+**How to fix:** Wrap the hover rules in @media (hover: hover) and give touch an :active state.
 
 ## Copy
 

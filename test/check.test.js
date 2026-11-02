@@ -172,6 +172,23 @@ test('accessibility is told apart from style', () => {
     assert.match(stdout, /\d+ accessibility, \d+ style: /);
 });
 
+test('phone browsers: zoom, field size, height and hover', () => {
+    const found = check(join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'mobile'));
+    const of = (rule) => found.filter((item) => item.rule === rule).map((item) => `${item.path.replace('src/', '')}:${item.line}`);
+    assert.deepEqual(of('no-zoom-lock'), ['form.tsx:1', 'locked.html:4']); // maximum-scale=5 is fine
+    assert.deepEqual(of('input-text-16'), ['form.tsx:6', 'form.tsx:7', 'forms.css:1']); // base with sm:text-sm, a file field, a placeholder, a label class and min-width pass
+    assert.deepEqual(of('dynamic-viewport-height'), ['form.tsx:14', 'locked.html:6', 'locked.html:7']); // a dvh partner, min-height and md: pass
+    assert.deepEqual(of('no-hover-only-content'), ['form.tsx:17', 'form.tsx:18']);
+    assert.deepEqual(of('hover-media-query'), ['forms.css:7']); // one per file; @media (hover: hover) passes
+});
+
+test('motion: slow answers and endless loops', () => {
+    const found = check(join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'mobile'));
+    const of = (rule) => found.filter((item) => item.rule === rule).map((item) => `${item.path.replace('src/', '')}:${item.line}`);
+    assert.deepEqual(of('interface-speed'), ['form.tsx:21', 'form.tsx:22', 'locked.html:9']); // 200 ms, an entrance and a 400 ms delay pass
+    assert.deepEqual(of('no-endless-loop'), ['form.tsx:25', 'locked.html:8']); // a loader and a comment pass
+});
+
 test('glob', () => {
     assert.ok(globToRegExp('lang/*.json').test('lang/tr.json'));
     assert.ok(globToRegExp('**/node_modules/**').test('a/node_modules/b/c.js'));
@@ -184,4 +201,13 @@ test('narrow: overflow, cut-off, shrunk and hidden text at 320 px', { skip: !fin
     const broken = (await narrow(join(examples, 'narrow-de.html'))).map((item) => item.rule).sort();
     assert.deepEqual(broken, ['no-hidden-content-narrow', 'no-horizontal-overflow', 'no-shrunk-text', 'text-not-clipped']);
     assert.deepEqual(await narrow(join(examples, 'narrow-de.fixed.html')), []);
+});
+
+test('narrow --stress: long names and large numbers break what short ones do not', { skip: !findChrome() && 'no Chrome', timeout: 90_000 }, async () => {
+    const page = join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'stress.html');
+    assert.deepEqual(await narrow(page), []);
+    const worst = await narrow(page, { stress: true });
+    assert.deepEqual([...new Set(worst.map((item) => item.rule))].sort(), ['no-horizontal-overflow', 'text-not-clipped']);
+    assert.ok(worst.every((item) => item.severity === 'warn' && /^With long data/.test(item.message)));
+    assert.ok(worst.some((item) => item.value.includes('Muhammed')));
 });

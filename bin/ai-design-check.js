@@ -17,9 +17,10 @@ Usage
   npx @enmera/ai-design-check story <before> <after> [--out story.mp4] [--still frame.png] [--title name] [--music track.mp3]
                                                  Square before/after video with every finding marked (files or URLs;
                                                  needs Chrome and ffmpeg, nothing else)
-  npx @enmera/ai-design-check narrow <file|url> [--width 320]
+  npx @enmera/ai-design-check narrow <file|url> [--width 320] [--stress]
                                                  Render at phone width and report sideways scrolling, cut-off text,
-                                                 text shrunk to fit and content hidden on phones (needs Chrome)
+                                                 text shrunk to fit and content hidden on phones (needs Chrome);
+                                                 --stress runs it again with long names, large numbers, longer text
   npx @enmera/ai-design-check system [--character calm] [--brand "#1E5A63"] [--kind dashboard] [--out design-system]
                                                  Generate a design system: fonts, type scale, light and dark colors that
                                                  pass contrast, radius and spacing, as CSS, Tailwind, JSON, SwiftUI,
@@ -105,13 +106,13 @@ if (command === 'story') {
 
 if (command === 'narrow') {
     if (named.length !== 1) {
-        console.error('Usage: ai-design-check narrow <file.html|url> [--width 320]');
+        console.error('Usage: ai-design-check narrow <file.html|url> [--width 320] [--stress]');
         done(1);
     }
     const { narrow } = await import('../src/narrow.js');
     try {
         const width = Number(valueOf('width') ?? 320);
-        const results = await narrow(named[0], { width });
+        const results = await narrow(named[0], { width, stress: flags.has('--stress') });
         if (format === 'json') print(JSON.stringify({ findings: results }, null, 2));
         else {
             for (const item of results) print(`  ${SEVERITY[item.severity](item.severity.padEnd(5))}  ${item.message}  ${paint(2, item.rule)}`);
