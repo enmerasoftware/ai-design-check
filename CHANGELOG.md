@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+- The report keeps accessibility apart: the text report shows it first under its own heading, the summary counts it
+  separately, and every finding in `--json` and from `narrow` carries `area`. `tap-target` and `dynamic-type` now belong
+  to the accessibility area. Severities are unchanged.
+- `narrow` and `story` work on Node 20. Chrome is driven over a pipe instead of a WebSocket, which Node 20 does not have.
+  If Chrome fails to start, or does not answer within 30 seconds, it is closed and the command ends with an error instead
+  of hanging.
+- A test reads the frontmatter of every `SKILL.md`, so an unquoted description cannot break `npx skills add` again.
+- The fix skill measures the screen, writes a four-line brief, shows a card per section before editing and works in order
+  of harm, accessibility first. New references: `proof.md`, `motions.md` and a working stage example.
+- 87 rules, among them `one-display-size`, `keep-text-on-brand`, `keep-what-works`, `measure-alignment`,
+  `card-footer-pattern`, `balance-columns` and `one-surface-radius`.
+
 ## 0.9.0
 
 - New rule `tap-target`: anything tappable is at least 44×44 pt on iOS, 48×48 dp on Android and 24×24 px on the web.
