@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { existsSync, mkdirSync, readFileSync, writeFileSync, writeSync } from 'node:fs';
 import { join, relative, resolve, sep } from 'node:path';
-import { CONFIG_FILE, applyBaseline, check, loadRules, toBaseline } from '../src/check.js';
+import { CONFIG_FILE, applyBaseline, check, loadConfig, loadRules, spacingScales, toBaseline } from '../src/check.js';
 import { inventory } from '../src/inventory.js';
+import { scaleLines } from '../src/spacing.js';
 
 const BASELINE = '.ai-design-check-baseline.json';
 
@@ -267,7 +268,8 @@ if (command !== 'check') {
     done(2);
 }
 
-let findings = check(cwd, rest.length > 0 ? { include: rest } : {});
+const scales = loadConfig(cwd).rules['spacing-scale'] === 'off' ? null : spacingScales(cwd);
+let findings = check(cwd, { ...(rest.length > 0 ? { include: rest } : {}), ...(scales ? { scales } : {}) });
 const baselineFile = join(cwd, BASELINE);
 
 if (flags.has('--write-baseline')) {
@@ -288,10 +290,11 @@ const { rules, areas } = loadRules();
 const review = rules.filter((rule) => !rule.check).length;
 
 if (format === 'json') {
-    print(JSON.stringify({ findings, errors: count('error'), warnings: count('warn'), notes: count('info'), baselined, reviewRules: review }, null, 2));
+    print(JSON.stringify({ findings, errors: count('error'), warnings: count('warn'), notes: count('info'), baselined, reviewRules: review, ...(scales ? { spacing: { web: scales.web, native: scales.native } } : {}) }, null, 2));
 } else if (format === 'github') {
     const LEVEL = { error: 'error', warn: 'warning', info: 'notice' };
     for (const item of findings) print(`::${LEVEL[item.severity]} file=${item.path},line=${item.line},title=${item.rule}::${item.message.replace(/\n/g, ' ')}`);
+    if (scales) print(...scaleLines(scales));
 } else {
     if (!flags.has('--quiet')) {
         // Accessibility comes first and on its own: a screen people cannot use is a different problem from one that looks generated.
@@ -312,6 +315,7 @@ if (format === 'json') {
             }
         }
     }
+    if (scales && !flags.has('--quiet')) print(`\n${paint(2, scaleLines(scales).join('\n'))}`);
     const summary = findings.length === 0 ? paint(32, 'No findings.') : `${findings.filter((item) => item.area === 'accessibility').length} accessibility, ${findings.filter((item) => item.area !== 'accessibility').length} style: ${count('error')} errors, ${count('warn')} warnings, ${count('info')} notes.`;
     print(`\n${summary}${baselined ? ` ${baselined} known findings hidden by the baseline.` : ''} ${paint(2, `${rules.length - review} rules checked automatically; ${review} need a look at the screen (npx @enmera/ai-design-check rules).`)}`);
 }

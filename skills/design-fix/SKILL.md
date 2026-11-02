@@ -91,8 +91,8 @@ is worse than one that looks plain, so looks come last. Reuse the project's comp
 3. **Does it say what it means?** The title names the page, not the user (`no-greeting-headline`); buttons say what they do;
    no exclamation marks (`no-exclamation-copy`) or buzzwords; sentence case, no full stop on labels, short placeholders,
    plausible sample data.
-4. **Do the numbers agree?** Bring the measured gaps and radii to one value per level on the 4 px grid (`spacing-scale`,
-   `spacing-rhythm`, `one-surface-radius`, `nested-radius`): one padding for sibling cards, one row height per list. Type
+4. **Do the numbers agree?** Bring the measured gaps and radii to one value per level on the project's scale, which the
+   report names (`spacing-scale`, `spacing-rhythm`, `one-surface-radius`, `nested-radius`): one padding for sibling cards, one row height per list. Type
    sizes come from the scale (`type-scale`), weights stay 400–600 (`no-heavy-headings`), no tracked uppercase labels,
    negative tracking only on large display text, tabular figures, one format per number. Giant type appears once a page
    (`one-display-size`).

@@ -32,7 +32,7 @@ Apply these rules whenever you build, change or review interface code.
   blurred blobs, fake pulses, marquees, hover growth, or headings at weight 800–900.
 - On phones: pinch zoom stays on, fields use 16 px text, a fixed `100vh` has a `dvh` partner, nothing is reachable only by
   hover. Hover, press and open answer within 300 ms; nothing loops forever without a reason.
-- Spacing on the 4 px grid; copy without exclamation marks, greetings as titles or unsourced social proof.
+- Spacing on the project's scale (4 px when it has none); copy without exclamation marks, greetings as titles or unsourced social proof.
 - To clean up a screen that already looks generated, use the `ai-design-fix` skill.
 - Wide tables take the full width with the last column absorbing spare width; uneven cards go into a grid masonry.
 - Headline numbers say what they are compared with; empty data shows an empty state.
