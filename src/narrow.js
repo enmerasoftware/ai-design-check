@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { loadRules } from './check.js';
 import { findChrome, launch } from './story.js';
 
 /**
@@ -41,7 +42,7 @@ const MEASURE = `(() => {
     return { width, scrollWidth: document.documentElement.scrollWidth, elements };
 })()`;
 
-const finding = (rule, severity, path, value, message) => ({ rule, severity, path, line: 0, value, message });
+const finding = (rule, severity, path, value, message) => ({ rule, area: loadRules().rules.find((item) => item.id === rule).area, severity, path, line: 0, value, message });
 
 /**
  * @param {string} input file or URL

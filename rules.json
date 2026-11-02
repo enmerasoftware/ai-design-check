@@ -172,7 +172,7 @@
     },
     {
       "id": "dynamic-type",
-      "area": "type",
+      "area": "accessibility",
       "severity": "warn",
       "title": {
         "en": "Text styles that follow Dynamic Type",
@@ -645,7 +645,7 @@
     },
     {
       "id": "tap-target",
-      "area": "interaction",
+      "area": "accessibility",
       "severity": "warn",
       "title": {
         "en": "Tap targets big enough for a finger",

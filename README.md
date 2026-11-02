@@ -18,13 +18,19 @@ npx @enmera/ai-design-check
 ```
 
 ```
+Accessibility (1)
+src/pages/dashboard.tsx
+     31  error  Never remove the focus ring without a replacement: outline-none  focus-ring-removed
+
+Style (3)
 src/pages/dashboard.tsx
      42  error  Font sizes from the scale only: text-[10px]  type-scale
      88  warn   No tracked uppercase labels: tracking-wide uppercase  no-decorative-uppercase
+
 lang/tr.json
     812  error  Translation in Title Case: "Sıra Takibi" (Rank tracking)  sentence-case
 
-2 errors, 1 warning, 0 notes.
+1 accessibility, 3 style: 3 errors, 1 warnings, 0 notes.
 ```
 
 **2. Let your agent fix it.**

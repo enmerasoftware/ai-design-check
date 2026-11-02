@@ -76,16 +76,6 @@
 
 **How to fix:** Add --text-2xs: 0.6875rem (line height 1rem) to the theme and map 9–11 px to it, 12 px to text-xs, 13 px to text-sm. Display sizes on marketing pages go in the allow list.
 
-### Text styles that follow Dynamic Type
-
-`dynamic-type` · warning · checked
-
-**Rule:** In SwiftUI, set text with text styles (.body, .headline, .caption) or a custom font with relativeTo, not a fixed .system(size:). Icons may use a fixed size.
-
-**Why:** A fixed size ignores the reader's text size setting, so people who need larger text cannot read the screen, and every screen ends up with its own ad hoc sizes.
-
-**How to fix:** Map each size to the nearest text style (11 caption2, 12 caption, 13 footnote, 15 subheadline, 17 body, 20 title3, 22 title2, 28 title, 34 largeTitle) and keep the weight with .fontWeight.
-
 ### Headings at regular to semibold weight
 
 `no-heavy-headings` · warning · checked
@@ -590,6 +580,26 @@
 
 ## Accessibility
 
+### Text styles that follow Dynamic Type
+
+`dynamic-type` · warning · checked
+
+**Rule:** In SwiftUI, set text with text styles (.body, .headline, .caption) or a custom font with relativeTo, not a fixed .system(size:). Icons may use a fixed size.
+
+**Why:** A fixed size ignores the reader's text size setting, so people who need larger text cannot read the screen, and every screen ends up with its own ad hoc sizes.
+
+**How to fix:** Map each size to the nearest text style (11 caption2, 12 caption, 13 footnote, 15 subheadline, 17 body, 20 title3, 22 title2, 28 title, 34 largeTitle) and keep the weight with .fontWeight.
+
+### Tap targets big enough for a finger
+
+`tap-target` · warning · checked
+
+**Rule:** Anything that can be tapped is at least 44×44 pt on iOS, 48×48 dp on Android and 24×24 px on the web (44 px where you can). A small icon keeps its size; the area around it grows.
+
+**Why:** A small target is missed and hits its neighbour, most of all for people with larger fingers, a tremor or one hand on a moving bus. Apple, Material and WCAG 2.2 (2.5.8) all set a minimum.
+
+**How to fix:** SwiftUI: keep the icon's frame and add .frame(minWidth: 44, minHeight: 44) or padding, then .contentShape(Rectangle()). Compose: use IconButton (48 dp) or Modifier.minimumInteractiveComponentSize(); put .size() after the padding, not on the clickable. Web: size-11/h-11 on icon buttons, or padding around the icon.
+
 ### Never remove the focus ring without a replacement
 
 `focus-ring-removed` · error · checked
@@ -817,16 +827,6 @@
 **Why:** Waiting for the server before the control moves feels broken.
 
 **How to fix:** Optimistic local value, background reload without a progress bar, prefetch on tabs.
-
-### Tap targets big enough for a finger
-
-`tap-target` · warning · checked
-
-**Rule:** Anything that can be tapped is at least 44×44 pt on iOS, 48×48 dp on Android and 24×24 px on the web (44 px where you can). A small icon keeps its size; the area around it grows.
-
-**Why:** A small target is missed and hits its neighbour, most of all for people with larger fingers, a tremor or one hand on a moving bus. Apple, Material and WCAG 2.2 (2.5.8) all set a minimum.
-
-**How to fix:** SwiftUI: keep the icon's frame and add .frame(minWidth: 44, minHeight: 44) or padding, then .contentShape(Rectangle()). Compose: use IconButton (48 dp) or Modifier.minimumInteractiveComponentSize(); put .size() after the padding, not on the clickable. Web: size-11/h-11 on icon buttons, or padding around the icon.
 
 ## Copy
 

@@ -26,7 +26,8 @@ effect gets chosen. Tidy is not the goal: if the result could sit on a rival's s
 4. On the rendered screen, measure what the eye only feels: the gaps between its blocks and the corner radii of its
    surfaces. Write them as numbers (`gaps 25, 18, 10, 12; radii 10, 8, 4`). Several values at one level is the finding
    (`spacing-rhythm`, `one-surface-radius`); it is what makes a screen look generated when every rule passes.
-5. Write the audit in one short list: each problem, where it is, which rule. Group by area, worst first.
+5. Write the audit in one short list: each problem, where it is, which rule. Accessibility comes first and
+   apart (the checker prints it that way; `area` in `--json`), then the other areas, worst first.
 
 A screen that works needs no redesign. Say that, and offer a couple of small improvements.
 
@@ -99,8 +100,8 @@ is worse than one that looks plain, so looks come last. Reuse the project's comp
 
 ## 4. Prove it
 
-1. Run the checker again on the same files and report before → after per area (for example
-   `221 → 0 findings; spacing 76 → 0, type 57 → 0`). Anything left gets a fix or an inline ignore with a reason.
+1. Run the checker again on the same files and report before → after, accessibility first, then per area (for
+   example `221 → 0 findings; accessibility 4 → 0, spacing 76 → 0, type 57 → 0`). Anything left gets a fix or an inline ignore with a reason.
 2. Render it at phone width with the longest language the product ships (German, Finnish):
 
    ```bash
