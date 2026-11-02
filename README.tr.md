@@ -71,7 +71,7 @@ düzelten beceriye bırakılır. Her kural ne yapılacağını, nedenini ve nas�
 | Yazı ve biçim | En küçüğü 11 px olan tek yazı ölçeği, düzey başına tek köşe, kart içinde kart yok |
 | Yazım ve metin | Yalnız ilk kelime büyük, aralıklı büyük harfli etiket yok, boş söz yok, ne yaptığını söyleyen düğme, ne yapılacağını söyleyen hata |
 | Bileşenler | Düğme ve form öğeleri ortak bileşenden, dışarıdan biçim yok, tekrarlanan kod bileşene dönüşür |
-| Yerleşim | 4 px ızgarada düzey başına tek boşluk, geniş tablolar sayfayı kaplar, telefonda her hücreye yer |
+| Yerleşim | Projenin ölçeğinde (okunamazsa 4 px) düzey başına tek boşluk, geniş tablolar sayfayı kaplar, telefonda her hücreye yer |
 | Görsel dil | Emoji yerine çizgi ikon, gradyan yazı ve mor gradyan yok, yan şerit yok, parıltı yalnız grafikte |
 | Hareket | `transition-all` yok, sıçrama yok, hareket azaltma ayarına uyum, nabız yalnız canlı veride, yanıt 300 ms içinde, sonsuz döngü yok |
 | Veri | Sayı neyle kıyaslandığını söyler, sabit genişlikte rakamlar, boş durumlar |
@@ -84,7 +84,7 @@ Yöntem ve bulgular: [RESEARCH.md](RESEARCH.md).
 
 ## Mobil uygulamalar
 
-Uygulama klasörünü verin. SwiftUI ve Jetpack Compose okur: 4 pt ızgara dışı boşluk (`.padding(13)`, `10.dp`), ölçek dışı köşe,
+Uygulama klasörünü verin. SwiftUI ve Jetpack Compose okur: ölçek dışı boşluk (`spacing` ayarlı değilse 4 pt; `.padding(13)`, `10.dp`), ölçek dışı köşe,
 Dynamic Type'ı yok sayan sabit yazı, çok kalın başlık, mor gradyan, yapay zekâ için `sparkles`, metinde emoji, Her Kelimesi Büyük
 etiket, ağır gölge, büyük bulanıklık, sürekli dönen animasyon ve 44 pt / 48 dp altı dokunma alanı.
 
@@ -228,6 +228,7 @@ Proje kökünde `ai-design-check.json` (ya da `.design-rules.json`):
     "sharedComponents": ["Button", "Badge", "Input", "Card"],
     "looks": { "badge": "StatusBadge", "card": "Tile or SectionCard", "heading": "Heading", "link": "LinkButton" },
     "rules": { "pulse-for-live-only": "off" },
+    "spacing": { "base": 6 },
     "allow": {
         "type-scale": ["src/marketing/hero.tsx:text-[44px]"],
         "glow-in-charts-only": ["src/components/charts/**"]
@@ -240,11 +241,30 @@ Proje kökünde `ai-design-check.json` (ya da `.design-rules.json`):
 | `i18n.files` | JSON sözlükleri. `keysAreSource` ile anahtarlar İngilizce kaynaktır ve onlar da denetlenir. `framework` değiştiremeyeceğiniz anahtarları listeler |
 | `properNouns` | Büyük harfini koruyan adlar |
 | `allow` | Kural başına `"glob"` ya da `"glob:tam eşleşme"` |
+| `spacing` | Boşluk ölçeği: `6`, `[4, 6, 8, 12]` ya da `{ "base": 4, "values": [18], "native": { "base": 8 } }`. Aşağıya bakın |
 | `rules` | Kural başına `"off"`, `"info"`, `"warn"` ya da `"error"` |
 | `componentDirs` | Ham `<button>` ve `<input>` kullanılabilecek yerler |
 | `components` | Ham öğe → yerine kullanılacak ortak bileşen |
 | `sharedComponents` | Görünümü özelliklerden gelen bileşenler; `className` yalnız konumlandırır |
 | `looks` | Elle yazılmış her görünümün sahibi olan bileşen. `false` o türü kapatır |
+
+**Boşluk ölçeği.** `spacing-scale`, değeri aşağıdakilerden okuyabildiği ilkiyle karşılaştırır; rapor hangisini kullandığını
+yazar:
+
+1. Yapılandırma dosyasındaki `spacing`.
+2. Tailwind 4 `@theme`: `--spacing` ızgaradır, `--spacing-*` basamak ekler.
+3. `tailwind.config.*`, metin olarak okunur, asla çalıştırılmaz: `theme.spacing` basamakların yerini alır, `theme.extend.spacing`
+   4 px ızgarasına ekler. İşlev, değişken, yayma (spread) ve preset bu yolla okunamaz.
+4. `:root` değişkenleri: `--spacing` ızgaradır, `--space-*` ve `--spacing-*` 4 px ızgarasına basamak ekler, hiçbirini çıkarmaz.
+5. 4 px ızgarası.
+
+Var olup okunamayan kaynak (`calc()`, `clamp()`, birbirini tutmayan iki dosya, tek sayıyla anlatılamayan kök yazı boyutu) 4 px
+ızgarasını bırakır ve rapora not düşer. Tahmin yürütülmez, sonraki kaynaklar denenmez. Kararı siz vermek için `spacing` ayarlayın.
+`base` olmadan liste verilirse kenar, iç boşluk ve aralıklar listede olmalıdır; genişlik, yükseklik ve konumların yalnız listenin
+ortak bölenine uyması yeter.
+
+SwiftUI ve Compose yapılandırma dosyasındaki `spacing` değerini (web'den farklıysa `native`) ya da 4 pt/dp kullanır. Başka bir şey
+okumaz: Swift ve Kotlin sabitlerinin bakılacak ortak bir yeri yoktur, uygulamanın yanındaki web teması da uygulama hakkında bilgi vermez.
 
 </details>
 

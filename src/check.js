@@ -1,9 +1,10 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { dirname, join, sep } from 'node:path';
+import { basename, dirname, join, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CLASS_FUNCTIONS, blankComments, classUnits, tokens, utility } from './classes.js';
 import { children, parseAttrs, tags, visibleText } from './jsx.js';
 import { LOOKS } from './looks.js';
+import { describeScale, onScale, readScales } from './spacing.js';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 
@@ -54,6 +55,8 @@ export function loadConfig(cwd) {
         ignore: [...DEFAULT_IGNORE, ...(config.ignore ?? [])],
         rules: config.rules ?? {},
         allow: config.allow ?? {},
+        spacing: config.spacing,
+        configFile: file ? basename(file) : CONFIG_FILE,
         i18n: { files: config.i18n?.files ?? [], keysAreSource: config.i18n?.keysAreSource ?? true, framework: config.i18n?.framework ?? [] },
         labels: config.labels ?? true,
         properNouns: [...PROPER_NOUNS, ...(config.properNouns ?? [])],
@@ -106,6 +109,9 @@ export function walk(cwd, start, ignore, files = []) {
 
     return files;
 }
+
+/** The spacing scales this project uses; the whole project is read, whichever paths are being checked. */
+export const spacingScales = (cwd, config = loadConfig(cwd)) => readScales(cwd, config, walk(cwd, '.', config.ignore));
 
 export const extensionOf = (path) => (path.endsWith('.blade.php') ? 'blade.php' : path.split('.').pop());
 
@@ -307,6 +313,9 @@ export function check(cwd, overrides = {}) {
     const on = (id) => severityOf(catalogue.rules.find((rule) => rule.id === id)) !== 'off';
     const findings = [];
     let skip = () => false;
+    // Read on first use: a run that meets no bracket value (the post-edit hook, usually) never walks the project.
+    let scales = config.scales;
+    const spacing = () => (scales ??= spacingScales(cwd, config));
     const report = (id, path, line, value, message) => {
         const rule = catalogue.rules.find((item) => item.id === id);
         const severity = severityOf(rule);
@@ -350,9 +359,9 @@ export function check(cwd, overrides = {}) {
                     // A wrapper just above may carry the style (focus-within: ring on the box around an input).
                     if (rule.check.unlessBefore && new RegExp(rule.check.unlessBefore, 'u').test(source.slice(Math.max(0, unit.index - 1500), unit.index))) continue;
                     for (const match of unit.text.matchAll(new RegExp(rule.check.pattern, 'gu'))) {
-                        // Scale rules: a value on the scale (mt-[24px] on a 4 px grid) and hairlines (1–2 px) pass.
-                        if (rule.check.notMultipleOf && (Number(match[1]) <= 2 || Number(match[1]) % rule.check.notMultipleOf === 0)) continue;
-                        report(rule.id, path, line, match[0].trim(), `${rule.title.en}: ${match[0].trim()}`);
+                        // A value on the project's scale (mt-[24px] on a 4 px grid) and hairlines (1–2 px) pass.
+                        if (rule.check.scale && onScale(spacing().web, Number(match[1]), match[0])) continue;
+                        report(rule.id, path, line, match[0].trim(), rule.check.scale ? `Off the spacing scale, ${describeScale(spacing().web)}: ${match[0].trim()}` : `${rule.title.en}: ${match[0].trim()}`);
                     }
                 }
                 if (repeated) {
@@ -386,6 +395,7 @@ export function check(cwd, overrides = {}) {
             const native = typeof rule.check.native[extension] === 'string' ? { pattern: rule.check.native[extension] } : rule.check.native[extension];
             for (const match of code.matchAll(new RegExp(native.pattern, 'gmu'))) {
                 const number = Number(match[1]);
+                if (native.scale && onScale(spacing().native, number)) continue;
                 if (native.notMultipleOf && (number <= 2 || number % native.notMultipleOf === 0)) continue;
                 if (native.min !== undefined && !(number >= native.min)) continue;
                 if (native.max !== undefined && !(number < native.max)) continue;
@@ -396,7 +406,7 @@ export function check(cwd, overrides = {}) {
                 if (native.unlessAfter && new RegExp(native.unlessAfter, 'u').test(after)) continue;
                 // Only where the context makes it count (a size on something tappable): either side may match.
                 if (native.onlyIf && !((native.onlyIf.before && new RegExp(native.onlyIf.before, 'u').test(before)) || (native.onlyIf.after && new RegExp(native.onlyIf.after, 'u').test(after)))) continue;
-                report(rule.id, path, lineOf(source, match.index), match[0].trim(), `${rule.title.en}: ${match[0].trim()}`);
+                report(rule.id, path, lineOf(source, match.index), match[0].trim(), native.scale ? `Off the spacing scale, ${describeScale(spacing().native, 'pt/dp')}: ${match[0].trim()}` : `${rule.title.en}: ${match[0].trim()}`);
             }
         }
         for (const rule of regexFor) {

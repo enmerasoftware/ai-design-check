@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- `spacing-scale` reads the project's own scale instead of assuming 4 px: `spacing` in the config file, then Tailwind 4
+  `@theme`, then a `tailwind.config.*` read as text and never run, then `:root` variables, then 4 px. The report and
+  `--json` name the scale used. What cannot be read leaves 4 px and a note. SwiftUI and Compose use the config file or 4
+  pt/dp, so nothing changes for them unless you set it. A project on another grid can see new findings on values that fit
+  4 px but not its own scale.
 - Phone browsers: `no-zoom-lock`, `input-text-16`, `dynamic-viewport-height`, `no-hover-only-content` and
   `hover-media-query`. Hover classes in Tailwind are not flagged on their own, since Tailwind 4 already guards them; what
   is flagged is content hidden until hover. `min-height: 100vh` is left alone: the page only scrolls a little further.

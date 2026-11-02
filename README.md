@@ -83,7 +83,7 @@ dashboard designs. Method and findings: [RESEARCH.md](RESEARCH.md).
 
 ## Mobile apps
 
-Point it at the app folder. It reads SwiftUI and Jetpack Compose: spacing off the 4 pt grid (`.padding(13)`, `10.dp`), radii
+Point it at the app folder. It reads SwiftUI and Jetpack Compose: spacing off the scale (4 pt unless `spacing` is set; `.padding(13)`, `10.dp`), radii
 off the scale, fixed text that ignores Dynamic Type, heavy headings, purple gradients, `sparkles` for AI, emoji in strings,
 Title Case labels, heavy shadows, big blurs, looping animations, and tap targets under 44 pt / 48 dp.
 
@@ -229,6 +229,7 @@ npx @enmera/ai-design-check init     # write a config with the defaults
     "sharedComponents": ["Button", "Badge", "Input", "Card"],
     "looks": { "badge": "StatusBadge", "card": "Tile or SectionCard", "heading": "Heading", "link": "LinkButton" },
     "rules": { "pulse-for-live-only": "off" },
+    "spacing": { "base": 6 },
     "allow": {
         "type-scale": ["src/marketing/hero.tsx:text-[44px]"],
         "glow-in-charts-only": ["src/components/charts/**"]
@@ -241,11 +242,30 @@ npx @enmera/ai-design-check init     # write a config with the defaults
 | `i18n.files` | JSON dictionaries. With `keysAreSource` the keys are the English source and are checked too. `framework` lists keys you cannot rename |
 | `properNouns` | Names that keep their capitals |
 | `allow` | Per rule, `"glob"` or `"glob:exact match"` |
+| `spacing` | The spacing scale: `6`, `[4, 6, 8, 12]` or `{ "base": 4, "values": [18], "native": { "base": 8 } }`. See below |
 | `rules` | `"off"`, `"info"`, `"warn"` or `"error"` per rule id |
 | `componentDirs` | Where raw `<button>` and `<input>` are allowed |
 | `components` | Raw element → the shared component to use instead |
 | `sharedComponents` | Components whose look comes from props; `className` may only place them |
 | `looks` | The component that owns each hand-written look. `false` turns one kind off |
+
+**Spacing scale.** `spacing-scale` judges a value against the first of these it can read, and the report names which one it
+used:
+
+1. `spacing` in the config file.
+2. Tailwind 4 `@theme`: `--spacing` is the grid, `--spacing-*` add steps.
+3. `tailwind.config.*`, read as text and never run: `theme.spacing` replaces the steps, `theme.extend.spacing` adds to the
+   4 px grid. A function, a variable, a spread or a preset cannot be read that way.
+4. `:root` variables: `--spacing` is the grid, `--space-*` and `--spacing-*` add steps to the 4 px grid and never remove any.
+5. The 4 px grid.
+
+A source that exists but cannot be read (`calc()`, `clamp()`, two files that disagree, a root font size that is not one
+number) leaves the 4 px grid and a note in the report. It is not guessed, and later sources are not tried. Set `spacing` to
+decide it yourself. With a list and no `base`, margins, paddings and gaps must be on the list; widths, heights and offsets
+only have to fit the list's common divisor.
+
+SwiftUI and Compose use `spacing` from the config file (`native` when it differs from the web) or 4 pt/dp. They read
+nothing else: Swift and Kotlin constants have no shared place to look, and a web theme next to an app says nothing about the app.
 
 </details>
 

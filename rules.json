@@ -1402,33 +1402,33 @@
       "area": "layout",
       "severity": "warn",
       "title": {
-        "en": "Spacing on the 4 px grid",
-        "tr": "Boşluklar 4 px ızgarasında"
+        "en": "Spacing on the project's scale",
+        "tr": "Boşluklar projenin ölçeğinde"
       },
       "rule": {
-        "en": "Arbitrary spacing and sizes in px (mt-[13px], h-[31px], gap-[7px]) sit on the 4 px grid; prefer the theme steps.",
-        "tr": "Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]) 4 px ızgarasına oturur; tema basamakları tercih edilir."
+        "en": "Arbitrary spacing and sizes in px (mt-[13px], h-[31px], gap-[7px]) sit on the project's scale: the one in ai-design-check.json, else the one read from Tailwind or CSS variables, else the 4 px grid. SwiftUI and Compose use the config file or 4 pt/dp. Prefer the theme steps.",
+        "tr": "Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]) projenin ölçeğine oturur: ai-design-check.json'daki, yoksa Tailwind ya da CSS değişkenlerinden okunan, o da yoksa 4 px ızgarası. SwiftUI ve Compose yapılandırma dosyasını ya da 4 pt/dp kullanır. Tema basamakları tercih edilir."
       },
       "why": {
         "en": "Off-grid values are what a model types when it guesses; rows and gaps drift apart by a pixel or two and the screen looks uneven.",
         "tr": "Izgara dışı değerler modelin tahmin ederken yazdığı değerlerdir; satır ve aralıklar bir iki piksel kayar, ekran düzensiz görünür."
       },
       "fix": {
-        "en": "Round to the nearest theme step (mt-3, h-8, gap-2).",
-        "tr": "En yakın tema basamağına yuvarlayın (mt-3, h-8, gap-2)."
+        "en": "Round to the nearest theme step (mt-3, h-8, gap-2). If the value is deliberate and the report names the wrong scale, set \"spacing\" in ai-design-check.json.",
+        "tr": "En yakın tema basamağına yuvarlayın (mt-3, h-8, gap-2). Değer bilinçliyse ve rapordaki ölçek yanlışsa ai-design-check.json içinde \"spacing\" ayarlayın."
       },
       "check": {
         "type": "class",
         "pattern": "(?:^|\\s)(?:[\\w-]+:)*-?(?:[mp][xytrblse]?|gap(?:-[xy])?|space-[xy]|(?:min-|max-)?[hw]|size|top|right|bottom|left|inset(?:-[xy])?|start|end)-\\[(\\d+(?:\\.\\d+)?)px\\]",
-        "notMultipleOf": 4,
+        "scale": "spacing",
         "native": {
           "swift": {
             "pattern": "(?:\\.padding\\(\\s*(?:\\.[a-zA-Z]+\\s*,\\s*|\\[[^\\]]*\\]\\s*,\\s*)?|\\bspacing:\\s*)([0-9.]+)(?=\\s*[,)])",
-            "notMultipleOf": 4
+            "scale": "spacing"
           },
           "kt": {
             "pattern": "(?<=\\b(?:padding|spacedBy)\\([^)]*)\\b([0-9.]+)\\.dp",
-            "notMultipleOf": 4
+            "scale": "spacing"
           }
         }
       }

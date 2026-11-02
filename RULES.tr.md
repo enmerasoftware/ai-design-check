@@ -294,15 +294,15 @@
 
 **Nasıl düzeltilir:** İki üç adım kullanın: grup içi, gruplar arası, bölümler arası. Ekranı açıp bloklar arası boşlukları sayı olarak yazın ve her düzeyi tek değere indirin.
 
-### Boşluklar 4 px ızgarasında
+### Boşluklar projenin ölçeğinde
 
 `spacing-scale` · uyarı · denetlenir
 
-**Kural:** Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]) 4 px ızgarasına oturur; tema basamakları tercih edilir.
+**Kural:** Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]) projenin ölçeğine oturur: ai-design-check.json'daki, yoksa Tailwind ya da CSS değişkenlerinden okunan, o da yoksa 4 px ızgarası. SwiftUI ve Compose yapılandırma dosyasını ya da 4 pt/dp kullanır. Tema basamakları tercih edilir.
 
 **Neden:** Izgara dışı değerler modelin tahmin ederken yazdığı değerlerdir; satır ve aralıklar bir iki piksel kayar, ekran düzensiz görünür.
 
-**Nasıl düzeltilir:** En yakın tema basamağına yuvarlayın (mt-3, h-8, gap-2).
+**Nasıl düzeltilir:** En yakın tema basamağına yuvarlayın (mt-3, h-8, gap-2). Değer bilinçliyse ve rapordaki ölçek yanlışsa ai-design-check.json içinde "spacing" ayarlayın.
 
 ### Kahraman alanında tek ana işlem
 
