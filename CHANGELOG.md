@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.1
 
 - `spacing-scale` reads the project's own scale instead of assuming 4 px: `spacing` in the config file, then Tailwind 4
   `@theme`, then a `tailwind.config.*` read as text and never run, then `:root` variables, then 4 px. The report and
