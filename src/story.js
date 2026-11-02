@@ -7,7 +7,7 @@ import { check, loadRules } from './check.js';
 
 /**
  * Before/after story video: the before screen with every finding marked, a wipe to the after screen while the
- * count falls, and an end card. No dependencies: Chrome is driven over the DevTools protocol (Node's WebSocket)
+ * count falls, and an end card. No dependencies: Chrome is driven over the DevTools protocol (on a pipe)
  * and ffmpeg encodes the frames.
  */
 
@@ -35,41 +35,42 @@ export function findChrome() {
 
 export async function launch(chrome) {
     const profile = mkdtempSync(join(tmpdir(), 'ai-design-check-chrome-'));
-    const proc = spawn(chrome, ['--headless=new', '--remote-debugging-port=0', `--user-data-dir=${profile}`, '--hide-scrollbars', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--allow-file-access-from-files', 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] });
-    const endpoint = await new Promise((done, fail) => {
-        let buffer = '';
-        proc.stderr.on('data', (chunk) => {
-            buffer += chunk;
-            const match = /DevTools listening on (ws:\/\/\S+)/.exec(buffer);
-            if (match) done(match[1]);
-        });
-        proc.on('exit', () => fail(new Error('Chrome exited before it opened the DevTools port')));
-    });
-    const targets = await (await fetch(`http://127.0.0.1:${new URL(endpoint).port}/json/list`)).json();
-    const socket = new WebSocket(targets.find((target) => target.type === 'page').webSocketDebuggerUrl);
-    await new Promise((done, fail) => {
-        socket.onopen = done;
-        socket.onerror = fail;
-    });
+    // DevTools over a pipe, not a WebSocket: Node 20 has no global WebSocket, and there is no port to look up.
+    const proc = spawn(chrome, ['--headless=new', '--remote-debugging-pipe', `--user-data-dir=${profile}`, '--hide-scrollbars', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--allow-file-access-from-files', 'about:blank'], { stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe'] });
+    const [input, output] = [proc.stdio[3], proc.stdio[4]];
 
     let id = 0;
+    let sessionId;
+    let buffer = '';
     const pending = new Map();
     const listeners = new Map();
-    socket.onmessage = ({ data }) => {
-        const message = JSON.parse(data);
-        if (message.id && pending.has(message.id)) {
-            const { done, fail } = pending.get(message.id);
-            pending.delete(message.id);
-            message.error ? fail(new Error(message.error.message)) : done(message.result);
-        } else if (message.method) (listeners.get(message.method) ?? []).splice(0).forEach((listener) => listener(message.params));
+    const abort = (error) => {
+        for (const { fail } of pending.values()) fail(error);
+        pending.clear();
     };
+    proc.on('error', abort);
+    proc.on('exit', () => abort(new Error('Chrome exited before it finished')));
+    input.on('error', () => {}); // A closed pipe also shows up as the exit above.
+    output.setEncoding('utf8');
+    output.on('data', (chunk) => {
+        buffer += chunk;
+        for (let end = buffer.indexOf('\0'); end >= 0; end = buffer.indexOf('\0')) {
+            const message = JSON.parse(buffer.slice(0, end));
+            buffer = buffer.slice(end + 1);
+            if (message.id && pending.has(message.id)) {
+                const { done, fail } = pending.get(message.id);
+                pending.delete(message.id);
+                message.error ? fail(new Error(message.error.message)) : done(message.result);
+            } else if (message.method) (listeners.get(message.method) ?? []).splice(0).forEach((listener) => listener(message.params));
+        }
+    });
     const send = (method, params = {}) => new Promise((done, fail) => {
         pending.set(++id, { done, fail });
-        socket.send(JSON.stringify({ id, method, params }));
+        input.write(`${JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) })}\0`);
     });
     const once = (method, timeout = 20000) => new Promise((done) => {
         listeners.set(method, [...(listeners.get(method) ?? []), done]);
-        setTimeout(done, timeout);
+        setTimeout(done, timeout).unref();
     });
     const evaluate = async (expression) => {
         const result = await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true });
@@ -77,7 +78,37 @@ export async function launch(chrome) {
 
         return result.result.value;
     };
-    await send('Page.enable');
+    const close = async () => {
+        if (proc.exitCode === null && proc.signalCode === null) {
+            const exited = new Promise((done) => proc.once('exit', done));
+            proc.kill();
+            // Chrome's helpers can outlive the main process for a moment (Linux); never let cleanup fail the run.
+            const timer = setTimeout(() => proc.kill('SIGKILL'), 3000);
+            await exited;
+            clearTimeout(timer);
+        }
+        input.destroy();
+        output.destroy();
+        try {
+            rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
+        } catch {
+            // A leftover temp profile is harmless; the OS clears tmp.
+        }
+    };
+
+    // A Chrome left running keeps Node alive for ever, so any failure while starting closes it.
+    const starting = setTimeout(() => abort(new Error('Chrome did not answer within 30 seconds')), 30000);
+    try {
+        let page;
+        while (!(page = (await send('Target.getTargets')).targetInfos.find((target) => target.type === 'page'))) await new Promise((done) => setTimeout(done, 50));
+        ({ sessionId } = await send('Target.attachToTarget', { targetId: page.targetId, flatten: true }));
+        await send('Page.enable');
+    } catch (error) {
+        await close();
+        throw error;
+    } finally {
+        clearTimeout(starting);
+    }
 
     return {
         send,
@@ -89,20 +120,7 @@ export async function launch(chrome) {
             await loaded;
             await new Promise((done) => setTimeout(done, settle)); // CDN styles and fonts
         },
-        async close() {
-            socket.close();
-            const exited = new Promise((done) => proc.once('exit', done));
-            proc.kill();
-            // Chrome's helpers can outlive the main process for a moment (Linux); never let cleanup fail the run.
-            const timer = setTimeout(() => proc.kill('SIGKILL'), 3000);
-            await exited;
-            clearTimeout(timer);
-            try {
-                rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
-            } catch {
-                // A leftover temp profile is harmless; the OS clears tmp.
-            }
-        },
+        close,
     };
 }
 
