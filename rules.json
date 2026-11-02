@@ -644,6 +644,33 @@
       }
     },
     {
+      "id": "hover-media-query",
+      "area": "interaction",
+      "severity": "info",
+      "title": {
+        "en": "Hover styles only where hover exists",
+        "tr": "Üzerine gelme stili yalnız fare olan yerde"
+      },
+      "rule": {
+        "en": "In hand-written CSS, :hover sits inside @media (hover: hover). Tailwind 4 does this by itself.",
+        "tr": "Elle yazılan CSS'te :hover, @media (hover: hover) içinde durur. Tailwind 4 bunu kendisi yapar."
+      },
+      "why": {
+        "en": "After a tap the hover look stays on until the next tap elsewhere, so the button seems stuck.",
+        "tr": "Dokunuştan sonra hover görünümü başka yere dokunana kadar kalır; düğme takılmış gibi görünür."
+      },
+      "fix": {
+        "en": "Wrap the hover rules in @media (hover: hover) and give touch an :active state.",
+        "tr": "Hover kurallarını @media (hover: hover) içine alın, dokunmaya :active durumu verin."
+      },
+      "check": {
+        "type": "class",
+        "css": "[^{}\\s,;]*:hover\\b[^{}]*(?=\\{)",
+        "unlessMedia": "hover\\s*:\\s*hover|any-hover|pointer\\s*:\\s*fine",
+        "cssOnePerFile": true
+      }
+    },
+    {
       "id": "tap-target",
       "area": "accessibility",
       "severity": "warn",
@@ -871,6 +898,95 @@
       },
       "check": {
         "type": "icon-button-name"
+      }
+    },
+    {
+      "id": "no-zoom-lock",
+      "area": "accessibility",
+      "severity": "error",
+      "title": {
+        "en": "Pinch zoom stays on",
+        "tr": "İki parmakla yakınlaştırma açık kalır"
+      },
+      "rule": {
+        "en": "The viewport never sets user-scalable=no or a maximum-scale below 2.",
+        "tr": "Viewport user-scalable=no ya da 2'nin altında maximum-scale içermez."
+      },
+      "why": {
+        "en": "People with low vision zoom to read; a locked page leaves them with nothing. WCAG 1.4.4.",
+        "tr": "Az gören kullanıcı okumak için yakınlaştırır; kilitli sayfada başka yolu kalmaz. WCAG 1.4.4."
+      },
+      "fix": {
+        "en": "Use width=device-width, initial-scale=1 and nothing more. If a field zooms on focus, fix the field (input-text-16).",
+        "tr": "Yalnız width=device-width, initial-scale=1 yazın. Alan odakta yakınlaşıyorsa alanı düzeltin (input-text-16)."
+      },
+      "check": {
+        "type": "regex",
+        "pattern": "user-scalable\\s*=\\s*(?:no|0)\\b|maximum-scale\\s*=\\s*1(?:\\.\\d+)?(?![\\d.])|\\bviewport\\b[^}]{0,300}?(?:\\bmaximumScale:\\s*1(?:\\.\\d+)?(?![\\d.])|\\buserScalable:\\s*false\\b)",
+        "files": [
+          "html",
+          "blade.php",
+          "tsx",
+          "jsx",
+          "ts",
+          "js",
+          "vue",
+          "svelte"
+        ]
+      }
+    },
+    {
+      "id": "input-text-16",
+      "area": "accessibility",
+      "severity": "warn",
+      "title": {
+        "en": "Fields use 16 px text on phones",
+        "tr": "Telefonda alan yazısı 16 px"
+      },
+      "rule": {
+        "en": "Inputs, text areas and selects use text of at least 16 px at phone width; a smaller size may start at a larger breakpoint.",
+        "tr": "Giriş, metin ve seçim alanları telefon genişliğinde en az 16 px yazı kullanır; küçük boyut daha geniş kırılımda başlayabilir."
+      },
+      "why": {
+        "en": "iOS Safari zooms the whole page when a smaller field gets focus, and leaves it zoomed.",
+        "tr": "iOS Safari daha küçük yazılı alana odaklanınca tüm sayfayı yakınlaştırır ve öyle bırakır."
+      },
+      "fix": {
+        "en": "text-base sm:text-sm, or font-size: 16px with the smaller size inside @media (min-width: …). Never lock zoom instead.",
+        "tr": "text-base sm:text-sm ya da font-size: 16px; küçük boyut @media (min-width: …) içinde. Bunun yerine yakınlaştırmayı kilitlemeyin."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?:^|\\s)text-(?:2xs|xs|sm|\\[(?:[0-9]|1[0-5])(?:\\.\\d+)?px\\])(?=\\s|$)",
+        "onlyElements": "^(?:input|textarea|select|Input|Textarea|Select)$",
+        "css": "(?<=^|[\\s,>+~}])(?:input|textarea|select)(?![\\w-])(?![^{}]*(?:::|checkbox|radio|range|color))[^{}]*\\{[^{}]*?font-size\\s*:\\s*(?:(?:[0-9]|1[0-5])(?:\\.\\d+)?px|0?\\.\\d+r?em)",
+        "unlessMedia": "min-width",
+        "unlessTag": "\\btype=[\"'{]*(?:file|checkbox|radio|range|color|hidden)\\b"
+      }
+    },
+    {
+      "id": "no-hover-only-content",
+      "area": "accessibility",
+      "severity": "warn",
+      "title": {
+        "en": "Nothing is hidden until hover",
+        "tr": "Hiçbir şey fareyle üzerine gelene kadar gizli değil"
+      },
+      "rule": {
+        "en": "Actions and information that appear on hover are visible by default on touch screens.",
+        "tr": "Fareyle üzerine gelince görünen işlem ve bilgiler dokunmatik ekranda baştan görünür."
+      },
+      "why": {
+        "en": "A finger has no hover, so the button does not exist for that person.",
+        "tr": "Parmağın üzerine gelme durumu yoktur; o düğme o kişi için hiç yoktur."
+      },
+      "fix": {
+        "en": "Hide only from a larger breakpoint: opacity-100 md:opacity-0 md:group-hover:opacity-100, with focus-within for the keyboard.",
+        "tr": "Yalnız geniş kırılımdan sonra gizleyin: opacity-100 md:opacity-0 md:group-hover:opacity-100; klavye için focus-within ekleyin."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?<=(?:^|\\s)(?:opacity-0|invisible|hidden)\\s(?:.*\\s)?)(?:group-)?hover:(?:opacity-100|visible|block|flex|inline-flex|grid)(?=\\s|$)|(?:^|\\s)(?:group-)?hover:(?:opacity-100|visible|block|flex|inline-flex|grid)(?=\\s(?:.*\\s)?(?:opacity-0|invisible|hidden)(?:\\s|$))"
       }
     },
     {
@@ -1457,6 +1573,58 @@
       }
     },
     {
+      "id": "interface-speed",
+      "area": "motion",
+      "severity": "info",
+      "title": {
+        "en": "Interface responds within 300 ms",
+        "tr": "Arayüz 300 ms içinde yanıt verir"
+      },
+      "rule": {
+        "en": "Hover, press, open and close transitions take 300 ms at most. Entrances on a landing page and stages may take longer.",
+        "tr": "Üzerine gelme, basma, açma ve kapama geçişleri en çok 300 ms sürer. Tanıtım sayfasındaki girişler ve sahneler daha uzun olabilir."
+      },
+      "why": {
+        "en": "People repeat these actions; a slow answer feels like a slow product, however good it looks the first time.",
+        "tr": "İnsanlar bu işlemleri tekrar eder; yavaş yanıt, ilk seferde ne kadar güzel görünürse görünsün yavaş ürün hissi verir."
+      },
+      "fix": {
+        "en": "duration-150 for colour and press, duration-200 to 300 for panels. Ignore the finding with a reason on a real entrance.",
+        "tr": "Renk ve basma için duration-150, panel için duration-200–300. Gerçek bir giriş hareketinde bulguyu gerekçeyle yok sayın."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?<=(?:^|\\s)(?:[\\w-]+:)*(?:group-)?(?:hover|focus|active|focus-visible):\\S+\\s(?:.*\\s)?)duration-(?:3[1-9]\\d|[4-9]\\d{2}|\\d{4,}|\\[(?:3[1-9]\\d|[4-9]\\d{2}|\\d{4,})ms\\]|\\[(?:0?\\.(?:3[1-9]|[4-9])\\d*|[1-9]\\d*(?:\\.\\d+)?)s\\])(?=\\s|$)|(?:^|\\s)duration-(?:3[1-9]\\d|[4-9]\\d{2}|\\d{4,}|\\[(?:3[1-9]\\d|[4-9]\\d{2}|\\d{4,})ms\\]|\\[(?:0?\\.(?:3[1-9]|[4-9])\\d*|[1-9]\\d*(?:\\.\\d+)?)s\\])(?=\\s(?:.*\\s)?(?:[\\w-]+:)*(?:group-)?(?:hover|focus|active|focus-visible):)",
+        "css": "transition\\s*:\\s*(?:[^;{},]*,)*?\\s*(?:[a-z-]+\\s+)?(?:0?\\.(?:3[1-9]|[4-9])\\d*s|[1-9]\\d*(?:\\.\\d+)?s|(?:3[1-9]\\d|[4-9]\\d{2}|\\d{4,})ms)(?![\\w.])|transition-duration\\s*:\\s*(?:0?\\.(?:3[1-9]|[4-9])\\d*s|[1-9]\\d*(?:\\.\\d+)?s|(?:3[1-9]\\d|[4-9]\\d{2}|\\d{4,})ms)(?![\\w.])"
+      }
+    },
+    {
+      "id": "no-endless-loop",
+      "area": "motion",
+      "severity": "info",
+      "title": {
+        "en": "Nothing loops forever without a reason",
+        "tr": "Gerekçesiz sonsuz döngü yok"
+      },
+      "rule": {
+        "en": "A permanent element does not animate forever. A loader may while loading; a live dot follows pulse-for-live-only; a product stage is judged on screen.",
+        "tr": "Kalıcı bir öğe sonsuza dek canlanmaz. Yükleme göstergesi yüklerken dönebilir; canlı nokta pulse-for-live-only kuralına uyar; ürün sahnesi ekranda değerlendirilir."
+      },
+      "why": {
+        "en": "Endless motion pulls the eye from what people are reading, and the eye soon learns to ignore it.",
+        "tr": "Sonsuz hareket gözü okunan yerden çeker, göz de kısa sürede onu görmezden gelmeyi öğrenir."
+      },
+      "fix": {
+        "en": "Play it once on entry, or tie it to a real state; pause it off screen and under reduced motion.",
+        "tr": "Girişte bir kez oynatın ya da gerçek bir duruma bağlayın; ekran dışında ve \"hareketi azalt\" altında durdurun."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?:^|\\s)(?:[\\w-]+:)*animate-\\[(?![^\\]]*(?<![a-z])(?:spin|spinner|loader|loading|skeleton|shimmer|marquee)(?![a-z]))[^\\]]*(?<![a-z])infinite(?![a-z])[^\\]]*\\]",
+        "css": "animation(?:-iteration-count)?\\s*:(?![^;{}]*\\b(?:spin|spinner|loader|loading|skeleton|shimmer|marquee)\\b)[^;{}]*\\binfinite\\b"
+      }
+    },
+    {
       "id": "no-announcement-pill",
       "area": "visual",
       "severity": "warn",
@@ -1991,6 +2159,27 @@
       }
     },
     {
+      "id": "worst-case-data",
+      "area": "data",
+      "severity": "info",
+      "title": {
+        "en": "Designed for the worst data, not the demo",
+        "tr": "Demoya değil, en kötü veriye göre tasarım"
+      },
+      "rule": {
+        "en": "The screen holds with one item (\"1 member\"), none, a very large number and the longest name a customer really has.",
+        "tr": "Ekran tek öğeyle (\"1 üye\"), hiç öğeyle, çok büyük sayıyla ve bir müşterinin gerçekten sahip olduğu en uzun adla da düzgün durur."
+      },
+      "why": {
+        "en": "Sample data has tidy lengths. Real accounts have one member, no orders and a company name of 40 letters.",
+        "tr": "Örnek verinin uzunlukları düzgündür. Gerçek hesapta tek üye, sıfır sipariş ve 40 harflik şirket adı olur."
+      },
+      "fix": {
+        "en": "Run narrow --stress for the layout, then open the screen with one item and with none: grammar and empty states only show with real data.",
+        "tr": "Yerleşim için narrow --stress çalıştırın, sonra ekranı tek öğeyle ve hiç öğesiz açın: dil bilgisi ve boş durumlar yalnız gerçek veriyle görünür."
+      }
+    },
+    {
       "id": "status-system",
       "area": "components",
       "severity": "warn",
@@ -2361,6 +2550,34 @@
       "fix": {
         "en": "Show as many items as fit beside the lead item, and add a link to the full list below.",
         "tr": "Ana öğenin yanına sığacak kadar öğe gösterin, altına tam listeye giden bağlantı ekleyin."
+      }
+    },
+    {
+      "id": "dynamic-viewport-height",
+      "area": "layout",
+      "severity": "warn",
+      "title": {
+        "en": "Full height follows the phone's bars",
+        "tr": "Tam yükseklik telefonun çubuklarına uyar"
+      },
+      "rule": {
+        "en": "A fixed height of 100vh has a dvh or svh partner. On phones vh counts the space under the browser bars. A min-height is fine: the page just scrolls a little further.",
+        "tr": "100vh sabit yüksekliğinin dvh ya da svh karşılığı vardır. Telefonda vh tarayıcı çubuklarının altındaki alanı da sayar. min-height sorun değildir: sayfa biraz daha fazla kayar."
+      },
+      "why": {
+        "en": "The bottom of the screen ends up under the address bar: often the main button of a hero or the input of a chat.",
+        "tr": "Ekranın altı adres çubuğunun altında kalır: çoğu zaman tanıtım alanının ana düğmesi ya da sohbetin giriş kutusu."
+      },
+      "fix": {
+        "en": "h-dvh or min-h-svh; in CSS write height: 100vh; height: 100dvh; so old browsers keep a value.",
+        "tr": "h-dvh ya da min-h-svh; CSS'te height: 100vh; height: 100dvh; yazın, eski tarayıcıda da değer kalsın."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?:^|\\s)(?:max-)?h-(?:screen|\\[(?:calc\\()?100vh[^\\]]*\\])(?=\\s|$)",
+        "unless": "(?:^|\\s)(?:max-)?h-(?:[dsl]vh|\\[(?:calc\\()?100[dsl]vh[^\\]]*\\])(?=\\s|$)",
+        "css": "(?<![\\w-])(?:max-)?height\\s*:[^;{}]*\\b100vh\\b(?![^{}]*\\b100[dsl]vh\\b)",
+        "unlessMedia": "min-width|supports"
       }
     }
   ]

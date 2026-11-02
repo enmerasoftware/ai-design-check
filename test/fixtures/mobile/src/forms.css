@@ -1,0 +1,12 @@
+input, select { font-size: 14px; }
+input::placeholder { font-size: 12px; }
+.input-label { font-size: 12px; }
+@media (min-width: 768px) {
+    textarea { font-size: 14px; }
+}
+a:hover { color: red; }
+button:hover { color: blue; }
+@media (hover: hover) {
+    .card:hover { color: green; }
+}
+/* .commented { height: 100vh; animation: x 1s infinite; } */

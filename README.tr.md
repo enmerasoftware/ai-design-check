@@ -6,7 +6,7 @@
 [![lisans: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [English](README.md)
 
-Claude Code, Cursor ya da Codex ile geliştirenler için: 87 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
+Claude Code, Cursor ya da Codex ile geliştirenler için: 95 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
 denetçi ve ekranı onaran bir ajan becerisi. Web projelerini, SwiftUI ve Jetpack Compose uygulamalarını okur.
 
 ## İki adımda başlayın
@@ -60,19 +60,20 @@ ile sonraki sayıları gösterir. Özellikler, veriler ve metinler yerinde kalı
 
 ## Neleri yakalar
 
-Denetçi 50 kuralı otomatik sınar. Kalan 37 kural ekrana bakmayı gerektirir; *gözden geçirilecek* olarak işaretlenir ve size ve
+Denetçi 57 kuralı otomatik sınar. Kalan 38 kural ekrana bakmayı gerektirir; *gözden geçirilecek* olarak işaretlenir ve size ve
 düzelten beceriye bırakılır. Her kural ne yapılacağını, nedenini ve nasıl düzeltileceğini Türkçe ve İngilizce anlatır:
 [RULES.tr.md](RULES.tr.md).
 
 | Alan | Örnekler |
 |---|---|
 | Erişilebilirlik | Odak halkası yerine başkası konmadan kaldırılmaz, yalnız ikonlu düğmenin adı olur, dokunma alanları |
+| Telefon tarayıcıları | İki parmakla yakınlaştırma açık kalır, alanlarda 16 px yazı, sabit `100vh` yanında `dvh`, üzerine gelmeden görünmeyen içerik yok |
 | Yazı ve biçim | En küçüğü 11 px olan tek yazı ölçeği, düzey başına tek köşe, kart içinde kart yok |
 | Yazım ve metin | Yalnız ilk kelime büyük, aralıklı büyük harfli etiket yok, boş söz yok, ne yaptığını söyleyen düğme, ne yapılacağını söyleyen hata |
 | Bileşenler | Düğme ve form öğeleri ortak bileşenden, dışarıdan biçim yok, tekrarlanan kod bileşene dönüşür |
 | Yerleşim | 4 px ızgarada düzey başına tek boşluk, geniş tablolar sayfayı kaplar, telefonda her hücreye yer |
 | Görsel dil | Emoji yerine çizgi ikon, gradyan yazı ve mor gradyan yok, yan şerit yok, parıltı yalnız grafikte |
-| Hareket | `transition-all` yok, sıçrama yok, hareket azaltma ayarına uyum, nabız yalnız canlı veride |
+| Hareket | `transition-all` yok, sıçrama yok, hareket azaltma ayarına uyum, nabız yalnız canlı veride, yanıt 300 ms içinde, sonsuz döngü yok |
 | Veri | Sayı neyle kıyaslandığını söyler, sabit genişlikte rakamlar, boş durumlar |
 | Yerelleştirme | Dile uygun büyük/küçük harf (Türkçe i/İ), biçimlendirici ile sayılar, gerçek çoğul kuralları |
 | Seçici ve menü | Tek seçici dili, işe göre gruplanmış menü, taşınan adres yönlendirilir |
@@ -174,6 +175,9 @@ npx @enmera/ai-design-check narrow examples/narrow-de.html --width 320
 Sayfayı Chrome'unuzda telefon ve masaüstü genişliğinde açar, yalnız açık sayfada görülenleri bildirir: yana kayma ve nedeni,
 kesilen yazı, sığsın diye küçülen yazı, telefonda gizlenen içerik. En uzun dilinizle çalıştırın; Almanca etiketler çoğu zaman
 İngilizceden %30–40 uzundur. [Bozuk örneği](examples/narrow-de.html) ve [düzeltilmiş halini](examples/narrow-de.fixed.html) deneyin.
+
+`--stress` ile en kötü veriyle yeniden çalışır: uzun adlar, büyük sayılar, %40 uzun metin. Yerleşimi sınar; "1 üye" gibi dil
+bilgisi için ekrana gerçek veriyle bakmak gerekir.
 
 ### `system`: markanızdan tasarım sistemi
 

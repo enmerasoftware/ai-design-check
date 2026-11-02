@@ -404,6 +404,16 @@
 
 **Nasıl düzeltilir:** Ana öğenin yanına sığacak kadar öğe gösterin, altına tam listeye giden bağlantı ekleyin.
 
+### Tam yükseklik telefonun çubuklarına uyar
+
+`dynamic-viewport-height` · uyarı · denetlenir
+
+**Kural:** 100vh sabit yüksekliğinin dvh ya da svh karşılığı vardır. Telefonda vh tarayıcı çubuklarının altındaki alanı da sayar. min-height sorun değildir: sayfa biraz daha fazla kayar.
+
+**Neden:** Ekranın altı adres çubuğunun altında kalır: çoğu zaman tanıtım alanının ana düğmesi ya da sohbetin giriş kutusu.
+
+**Nasıl düzeltilir:** h-dvh ya da min-h-svh; CSS'te height: 100vh; height: 100dvh; yazın, eski tarayıcıda da değer kalsın.
+
 ## Menü
 
 ### Menü işe göre, yer önce kararlaştırılır
@@ -620,6 +630,36 @@
 
 **Nasıl düzeltilir:** Eylemi söyleyen bir aria-label ekleyin ("Kelimeyi sil").
 
+### İki parmakla yakınlaştırma açık kalır
+
+`no-zoom-lock` · hata · denetlenir
+
+**Kural:** Viewport user-scalable=no ya da 2'nin altında maximum-scale içermez.
+
+**Neden:** Az gören kullanıcı okumak için yakınlaştırır; kilitli sayfada başka yolu kalmaz. WCAG 1.4.4.
+
+**Nasıl düzeltilir:** Yalnız width=device-width, initial-scale=1 yazın. Alan odakta yakınlaşıyorsa alanı düzeltin (input-text-16).
+
+### Telefonda alan yazısı 16 px
+
+`input-text-16` · uyarı · denetlenir
+
+**Kural:** Giriş, metin ve seçim alanları telefon genişliğinde en az 16 px yazı kullanır; küçük boyut daha geniş kırılımda başlayabilir.
+
+**Neden:** iOS Safari daha küçük yazılı alana odaklanınca tüm sayfayı yakınlaştırır ve öyle bırakır.
+
+**Nasıl düzeltilir:** text-base sm:text-sm ya da font-size: 16px; küçük boyut @media (min-width: …) içinde. Bunun yerine yakınlaştırmayı kilitlemeyin.
+
+### Hiçbir şey fareyle üzerine gelene kadar gizli değil
+
+`no-hover-only-content` · uyarı · denetlenir
+
+**Kural:** Fareyle üzerine gelince görünen işlem ve bilgiler dokunmatik ekranda baştan görünür.
+
+**Neden:** Parmağın üzerine gelme durumu yoktur; o düğme o kişi için hiç yoktur.
+
+**Nasıl düzeltilir:** Yalnız geniş kırılımdan sonra gizleyin: opacity-100 md:opacity-0 md:group-hover:opacity-100; klavye için focus-within ekleyin.
+
 ## Hareket
 
 ### Nabız yalnız canlı veride
@@ -691,6 +731,26 @@
 **Neden:** Konum ve boşluk değişimi her karede yerleşimi yeniden hesaplatır, yavaş cihazda takılır.
 
 **Nasıl düzeltilir:** translate ve opacity kullanın (transition-transform, transition-opacity).
+
+### Arayüz 300 ms içinde yanıt verir
+
+`interface-speed` · not · denetlenir
+
+**Kural:** Üzerine gelme, basma, açma ve kapama geçişleri en çok 300 ms sürer. Tanıtım sayfasındaki girişler ve sahneler daha uzun olabilir.
+
+**Neden:** İnsanlar bu işlemleri tekrar eder; yavaş yanıt, ilk seferde ne kadar güzel görünürse görünsün yavaş ürün hissi verir.
+
+**Nasıl düzeltilir:** Renk ve basma için duration-150, panel için duration-200–300. Gerçek bir giriş hareketinde bulguyu gerekçeyle yok sayın.
+
+### Gerekçesiz sonsuz döngü yok
+
+`no-endless-loop` · not · denetlenir
+
+**Kural:** Kalıcı bir öğe sonsuza dek canlanmaz. Yükleme göstergesi yüklerken dönebilir; canlı nokta pulse-for-live-only kuralına uyar; ürün sahnesi ekranda değerlendirilir.
+
+**Neden:** Sonsuz hareket gözü okunan yerden çeker, göz de kısa sürede onu görmezden gelmeyi öğrenir.
+
+**Nasıl düzeltilir:** Girişte bir kez oynatın ya da gerçek bir duruma bağlayın; ekran dışında ve "hareketi azalt" altında durdurun.
 
 ## Veri ve sayılar
 
@@ -774,6 +834,16 @@
 
 **Nasıl düzeltilir:** Kesirli kısmı ikincil renkli bir span içine alın; boyut aynı kalsın.
 
+### Demoya değil, en kötü veriye göre tasarım
+
+`worst-case-data` · not · gözden geçirilir
+
+**Kural:** Ekran tek öğeyle ("1 üye"), hiç öğeyle, çok büyük sayıyla ve bir müşterinin gerçekten sahip olduğu en uzun adla da düzgün durur.
+
+**Neden:** Örnek verinin uzunlukları düzgündür. Gerçek hesapta tek üye, sıfır sipariş ve 40 harflik şirket adı olur.
+
+**Nasıl düzeltilir:** Yerleşim için narrow --stress çalıştırın, sonra ekranı tek öğeyle ve hiç öğesiz açın: dil bilgisi ve boş durumlar yalnız gerçek veriyle görünür.
+
 ## Yerelleştirme
 
 ### Büyük-küçük harf dönüşümü dili belirtir
@@ -827,6 +897,16 @@
 **Neden:** Denetim sunucuyu beklerken kıpırdamazsa bozuk hissettirir.
 
 **Nasıl düzeltilir:** İyimser yerel değer, ilerleme çubuğu olmadan arka planda yenileme, sekmelerde önden yükleme.
+
+### Üzerine gelme stili yalnız fare olan yerde
+
+`hover-media-query` · not · denetlenir
+
+**Kural:** Elle yazılan CSS'te :hover, @media (hover: hover) içinde durur. Tailwind 4 bunu kendisi yapar.
+
+**Neden:** Dokunuştan sonra hover görünümü başka yere dokunana kadar kalır; düğme takılmış gibi görünür.
+
+**Nasıl düzeltilir:** Hover kurallarını @media (hover: hover) içine alın, dokunmaya :active durumu verin.
 
 ## Metin
 

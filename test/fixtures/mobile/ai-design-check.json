@@ -1,0 +1,1 @@
+{ "include": ["src"], "rules": { "use-shared-components": "off", "use-shared-looks": "off" } }

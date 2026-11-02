@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+- Phone browsers: `no-zoom-lock`, `input-text-16`, `dynamic-viewport-height`, `no-hover-only-content` and
+  `hover-media-query`. Hover classes in Tailwind are not flagged on their own, since Tailwind 4 already guards them; what
+  is flagged is content hidden until hover. `min-height: 100vh` is left alone: the page only scrolls a little further.
+- Motion: `interface-speed` (hover, press and open transitions over 300 ms) and `no-endless-loop`. A loader, a marquee
+  (`no-marquee`) and `animate-pulse` (`pulse-for-live-only`) are not reported by it.
+- `no-zoom-lock` is an error, so a project with `maximum-scale=1` now fails CI until the viewport is fixed.
+- `narrow --stress` runs the check again with long names, large numbers and text 40 % longer, and reports only what that
+  breaks, as warnings. `worst-case-data` is a new review rule for what a rendered page cannot show, such as "1 member".
+- CSS rules also read `<style>` blocks in HTML, Blade, Vue, Svelte and JSX files, and no longer read CSS comments. Existing
+  rules such as `no-transition-all` can therefore report more than before.
+- The fix skill opens with a table from complaint to rule, says that keyboard-triggered actions do not animate, and treats
+  what it reads in a repository or on a page as material, not instructions.
+
 ## 0.10.0
 
 - The report keeps accessibility apart: the text report shows it first under its own heading, the summary counts it
