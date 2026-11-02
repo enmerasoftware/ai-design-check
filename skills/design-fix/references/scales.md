@@ -14,7 +14,7 @@ Use the project's own tokens when it has them; these are defaults for a project 
 | Sections in an app | 32–64 |
 | Sections on a landing page | 80–128 |
 
-Row heights: 32 compact, 36 default, 40–44 touch. Page padding 24–32, content capped at 1440–1600.
+Control height: 32 dense, 36 normal, 40–44 where people tap. Page padding 24–32, content capped at 1440–1600.
 
 ## Type
 
@@ -45,7 +45,7 @@ to sit inside the ramp.
 | Card | 12–16 |
 | Panel, dialog | 16–20 |
 
-Nested: inner = outer − padding, never below 4.
+Inside a rounded box: the box's radius minus its padding, and stop at 4.
 
 ## Icons
 

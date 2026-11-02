@@ -354,16 +354,16 @@
         "tr": "Boşlukta ritim"
       },
       "rule": {
-        "en": "Related items sit tight, sections breathe. The same gap everywhere has no rhythm.",
-        "tr": "İlgili öğeler sıkı, bölümler arası geniş. Her yerde aynı boşluk ritimsizdir."
+        "en": "Related items sit tight, sections breathe, and gaps of the same level are one value. 16, 20, 17 and 21 px between sections is noise, not rhythm.",
+        "tr": "İlgili öğeler sıkı, bölümler arası geniş; aynı düzeydeki boşluklar tek değerdir. Bölümler arasında 16, 20, 17 ve 21 px gürültüdür, ritim değildir."
       },
       "why": {
-        "en": "Grouping is read from spacing before anything else.",
-        "tr": "Gruplama her şeyden önce boşluktan okunur."
+        "en": "Grouping is read from spacing before anything else, and uneven gaps at one level are what makes generated screens feel unplanned even when nobody can say why.",
+        "tr": "Gruplama her şeyden önce boşluktan okunur; aynı düzeydeki eşitsiz boşluklar, üretilmiş ekranların kimsenin adını koyamadığı plansız hissini verir."
       },
       "fix": {
-        "en": "Use two or three steps: inside a group, between groups, between sections.",
-        "tr": "İki üç adım kullanın: grup içi, gruplar arası, bölümler arası."
+        "en": "Use two or three steps: inside a group, between groups, between sections. Measure the rendered screen, list the gaps between its blocks as numbers, and make each level one value.",
+        "tr": "İki üç adım kullanın: grup içi, gruplar arası, bölümler arası. Ekranı açıp bloklar arası boşlukları sayı olarak yazın ve her düzeyi tek değere indirin."
       }
     },
     {
@@ -1520,7 +1520,7 @@
       "area": "type",
       "severity": "warn",
       "title": {
-        "en": "No negative tracking on small text",
+        "en": "Small text keeps normal tracking",
         "tr": "Küçük metinde dar harf aralığı yok"
       },
       "rule": {
@@ -1727,7 +1727,7 @@
         "tr": "Tek vurgu rengi, anlamı olduğu yerde"
       },
       "rule": {
-        "en": "The accent colour covers a few percent of the screen: the primary action, the selection and one key figure. Surfaces, borders and labels stay neutral.",
+        "en": "The accent colour stays rare: it marks the main action, the current selection and one key figure. Surfaces, borders and labels stay neutral.",
         "tr": "Vurgu rengi ekranın küçük bir bölümünü kaplar: ana işlem, seçim ve bir önemli sayı. Yüzey, kenarlık ve etiketler nötr kalır."
       },
       "why": {
@@ -1769,7 +1769,7 @@
         "tr": "Kahraman alanında tek ana işlem"
       },
       "rule": {
-        "en": "A hero has one primary and at most one secondary action; no third button, no chips or avatar rows stacked under the buttons.",
+        "en": "A hero keeps to a main action and, if needed, one quieter one; no third button, and no chips or avatar rows piled under them.",
         "tr": "Kahraman alanında bir ana ve en çok bir ikincil işlem olur; üçüncü düğme, düğmelerin altına yığılmış çip ya da avatar sırası yok."
       },
       "why": {
@@ -1790,7 +1790,7 @@
         "tr": "Genel görsel değil, ürünü gösterin"
       },
       "rule": {
-        "en": "The main visual is the product itself or one concrete object from its world; no glossy blobs, orbs, robots, glowing brains or stock circuits.",
+        "en": "The main visual shows the product or something real from its line of work; no glossy blobs, orbs, robots, glowing brains or stock circuits.",
         "tr": "Ana görsel ürünün kendisi ya da dünyasından somut bir nesnedir; parlak leke, küre, robot, parlayan beyin ya da hazır devre görseli yok."
       },
       "why": {
@@ -2130,6 +2130,237 @@
       "check": {
         "type": "render",
         "command": "narrow"
+      }
+    },
+    {
+      "id": "one-surface-radius",
+      "area": "shape",
+      "severity": "warn",
+      "title": {
+        "en": "One radius for surfaces of one level",
+        "tr": "Aynı düzeydeki yüzeylere tek köşe"
+      },
+      "rule": {
+        "en": "Cards and images at the same level share one radius. 9, 12, 12 and 10 px on one screen is noise; what sits inside follows nested-radius.",
+        "tr": "Aynı düzeydeki kart ve görseller tek köşe değeri kullanır. Bir ekranda 9, 12, 12 ve 10 px gürültüdür; içeridekiler nested-radius kuralına uyar."
+      },
+      "why": {
+        "en": "Each value passes on its own, so no scale check catches it, but the eye reads the mix as parts from different places.",
+        "tr": "Her değer tek başına geçerlidir, ölçek denetimi yakalamaz; ama göz bu karışımı farklı yerlerden gelmiş parçalar olarak okur."
+      },
+      "fix": {
+        "en": "List the corner radii of the surfaces on the rendered screen as numbers. Choose one for each level and set it through a token.",
+        "tr": "Açık ekrandaki yüzeylerin köşe değerlerini sayı olarak yazın. Her düzey için birini seçip değişkenle verin."
+      }
+    },
+    {
+      "id": "phone-row-room",
+      "area": "layout",
+      "severity": "warn",
+      "title": {
+        "en": "Room for each cell on a phone",
+        "tr": "Telefonda her hücreye yer"
+      },
+      "rule": {
+        "en": "A row on a phone holds as many cells as can show their label and value at normal size, usually two. Five tiny stat tiles across wrap into a grid; none of them is dropped.",
+        "tr": "Telefonda bir satır, etiketini ve değerini normal boyutta gösterebilecek kadar hücre alır; çoğunlukla iki. Yan yana beş küçük gösterge alta geçip ızgara olur; hiçbiri atılmaz."
+      },
+      "why": {
+        "en": "Squeezing a desktop row into 390 px is how labels end up at 9 px and nobody can compare the numbers.",
+        "tr": "Masaüstü satırını 390 px'e sıkıştırınca etiketler 9 px'e düşer, sayılar karşılaştırılamaz."
+      },
+      "fix": {
+        "en": "Use a 2×2 or 2×3 grid and give each cell its label, value and one meter if it needs one.",
+        "tr": "2×2 ya da 2×3 ızgara kullanın; her hücreye etiket, değer ve gerekiyorsa tek gösterge verin."
+      }
+    },
+    {
+      "id": "trim-screen-header",
+      "area": "layout",
+      "severity": "info",
+      "title": {
+        "en": "A screen header does one job",
+        "tr": "Ekran başlığı tek iş yapar"
+      },
+      "rule": {
+        "en": "A phone header has one line of identity and at most two controls. A centred app name, a subtitle, a menu, an account button and a greeting sentence above the content are four headers.",
+        "tr": "Telefonda başlık tek satır kimlik ve en çok iki denetimden oluşur. Ortada uygulama adı, alt yazı, menü, hesap düğmesi ve içerik üstünde selamlama cümlesi dört ayrı başlıktır."
+      },
+      "why": {
+        "en": "Stacked chrome pushes the first useful thing below the middle of the screen and repeats what the person already knows.",
+        "tr": "Üst üste gelen başlıklar ilk işe yarar şeyi ekranın ortasının altına iter ve kişinin zaten bildiğini tekrarlar."
+      },
+      "fix": {
+        "en": "Keep the greeting or the name, not both; a sentence that tells people what the screen is for goes. Move the controls that are left into the same line.",
+        "tr": "Selamlamayı ya da adı bırakın, ikisini değil; ekranın ne işe yaradığını anlatan cümle gider. Kalan denetimleri aynı satıra alın."
+      }
+    },
+    {
+      "id": "main-action-apart-from-tabs",
+      "area": "navigation",
+      "severity": "info",
+      "title": {
+        "en": "The main action is not a tab",
+        "tr": "Ana işlem sekme değildir"
+      },
+      "rule": {
+        "en": "The main action sits apart from the tabs instead of bulging out of the middle of them. A bar that floats over content leaves room for it: the last row can always scroll clear.",
+        "tr": "Ana işlem sekmelerin ortasından taşmaz, onlardan ayrı durur. İçeriğin üstünde yüzen çubuk içeriğe yer bırakır: son satır her zaman açığa kaydırılabilir."
+      },
+      "why": {
+        "en": "A raised centre button in five labelled tabs is the default of every generated app, and a floating bar with no clearance hides the last item.",
+        "tr": "Beş etiketli sekmenin ortasından taşan düğme her üretilmiş uygulamanın varsayılanıdır; payı olmayan yüzen çubuk da son öğeyi gizler."
+      },
+      "fix": {
+        "en": "Put the action in its own button beside the bar or in the screen, and add bottom padding the height of a floating bar. Keep tap targets and labels on the tabs people need.",
+        "tr": "İşlemi çubuğun yanında ya da ekranda kendi düğmesine alın; yüzen çubuk yüksekliğinde alt boşluk ekleyin. Gereken sekmelerde dokunma alanı ve etiket kalsın."
+      }
+    },
+    {
+      "id": "content-is-the-surface",
+      "area": "visual",
+      "severity": "info",
+      "title": {
+        "en": "Let photos carry a feed",
+        "tr": "Akışı fotoğraflar taşısın"
+      },
+      "rule": {
+        "en": "In a feed of photos the photo is the surface: no box around each post, no small image inside a card, no pastel badge on every row.",
+        "tr": "Fotoğraflı akışta yüzey fotoğrafın kendisidir: her gönderinin çevresinde kutu, kart içinde küçük görsel, her satırda pastel rozet yoktur."
+      },
+      "why": {
+        "en": "Cards around every post spend the width on frames and make all content look equally unimportant.",
+        "tr": "Her gönderinin çevresindeki kart genişliği çerçeveye harcar ve tüm içeriği aynı derecede önemsiz gösterir."
+      },
+      "fix": {
+        "en": "Remove the card, let the image take the width, and separate posts with spacing.",
+        "tr": "Kartı kaldırın, görsel genişliği alsın, gönderileri boşlukla ayırın."
+      }
+    },
+    {
+      "id": "one-display-size",
+      "area": "type",
+      "severity": "warn",
+      "title": {
+        "en": "Giant type once a page",
+        "tr": "Dev yazı sayfada bir kez"
+      },
+      "rule": {
+        "en": "One element on a page may be far bigger than the rest, and it is a figure or a short phrase. Section headings stay on a shared scale, about 32–48 px on a landing page.",
+        "tr": "Sayfada yalnız bir öğe diğerlerinden çok büyük olabilir ve bu bir sayı ya da kısa ifadedir. Bölüm başlıkları ortak ölçekte kalır, tanıtım sayfasında yaklaşık 32–48 px."
+      },
+      "why": {
+        "en": "Scale makes an event only by contrast. When every section shouts, the page reads as absurd and the words get harder to read.",
+        "tr": "Büyüklük ancak karşıtlıkla etki yapar. Her bölüm bağırınca sayfa abartılı görünür, yazı da zor okunur."
+      },
+      "fix": {
+        "en": "Write the heading sizes as variables, list the rendered sizes, and bring everything but the one chosen element back onto the scale.",
+        "tr": "Başlık boyutlarını değişken yapın, açık ekrandaki boyutları yazın, seçilen tek öğe dışındakileri ölçeğe indirin."
+      }
+    },
+    {
+      "id": "keep-text-on-brand",
+      "area": "visual",
+      "severity": "warn",
+      "title": {
+        "en": "Text on the brand colour keeps its colour",
+        "tr": "Marka renginde yazı rengi korunur"
+      },
+      "rule": {
+        "en": "Text on a brand-coloured band or button stays as the brand has it, usually white. A contrast number does not turn it black; report the ratio and let the owner decide.",
+        "tr": "Marka rengi bant ya da düğme üstündeki yazı markanın kullandığı gibi kalır, çoğunlukla beyaz. Kontrast sayısı onu siyaha çevirmez; oranı bildirin, kararı sahibi versin."
+      },
+      "why": {
+        "en": "People read the change of colour as a different brand long before they notice the ratio.",
+        "tr": "İnsanlar renk değişimini, oranı fark etmeden çok önce başka bir marka gibi algılar."
+      },
+      "fix": {
+        "en": "Keep the text colour. If small text is too faint, make it larger or heavier, or propose a deeper shade of the band.",
+        "tr": "Yazı rengini koruyun. Küçük yazı zayıf kalıyorsa büyütün ya da kalınlaştırın, veya bandın daha koyu tonunu önerin."
+      }
+    },
+    {
+      "id": "keep-what-works",
+      "area": "visual",
+      "severity": "warn",
+      "title": {
+        "en": "Keep what already works",
+        "tr": "İşe yarayanı koruyun"
+      },
+      "rule": {
+        "en": "List the details the current site gets right before changing them: dividers, icons, background motion, menus. Removing one needs a reason you can state.",
+        "tr": "Değiştirmeden önce sitenin doğru yaptığı ayrıntıları listeleyin: ayırıcılar, ikonlar, arka plan hareketi, menüler. Birini kaldırmak için söylenebilir bir gerekçe gerekir."
+      },
+      "why": {
+        "en": "A redesign that wipes small familiar details feels worse even when each new part is better, and owners notice these first.",
+        "tr": "Küçük tanıdık ayrıntıları silen yeniden tasarım, her yeni parça daha iyi olsa da daha kötü hissettirir; sahipler de önce bunları fark eder."
+      },
+      "fix": {
+        "en": "Compare the old and new screens side by side, also the menus and open states, and restore anything lost without a reason.",
+        "tr": "Eski ve yeni ekranı, menüler ve açık hallerle birlikte yan yana koyun; gerekçesiz kaybolanı geri getirin."
+      }
+    },
+    {
+      "id": "measure-alignment",
+      "area": "layout",
+      "severity": "warn",
+      "title": {
+        "en": "Things side by side share a line",
+        "tr": "Yan yana olanlar aynı hizada"
+      },
+      "rule": {
+        "en": "Text, numbers and buttons on one row share a centre line or a baseline. Check it with numbers on the rendered screen, since a large number beside a button can look wrong by only a few pixels.",
+        "tr": "Bir satırdaki yazı, sayı ve düğmeler ortak orta çizgide ya da taban çizgisindedir. Açık ekranda sayıyla kontrol edin; büyük sayı ile düğme arasındaki birkaç piksel bile göze batar."
+      },
+      "why": {
+        "en": "Misalignment looks like a mistake, and a label stacked above one item is what usually causes it.",
+        "tr": "Hizasızlık hata gibi görünür; çoğunlukla bir öğenin üstüne eklenen etiket buna yol açar."
+      },
+      "fix": {
+        "en": "Align the value with the button, not the value and its label as one block, then measure both centres.",
+        "tr": "Etiketli bloğu değil, değerin kendisini düğmeyle hizalayın; sonra iki orta çizgiyi ölçün."
+      }
+    },
+    {
+      "id": "card-footer-pattern",
+      "area": "layout",
+      "severity": "warn",
+      "title": {
+        "en": "Sibling cards end the same way",
+        "tr": "Kardeş kartlar aynı biçimde biter"
+      },
+      "rule": {
+        "en": "Cards side by side put their tags and actions in the same place: tags directly under the text, the action at the bottom edge on the same side. Longer content does not move them.",
+        "tr": "Yan yana kartlarda etiket ve işlem aynı yerde olur: etiketler metnin hemen altında, işlem alt kenarda aynı tarafta. Uzun içerik onları yerinden oynatmaz."
+      },
+      "why": {
+        "en": "Wrapping tags push actions to different places in each card, and the row stops reading as a set.",
+        "tr": "Alta geçen etiketler işlemleri her kartta başka yere iter ve sıra bir bütün gibi okunmaz."
+      },
+      "fix": {
+        "en": "Make the card a column, pin the action row to the bottom, and let the tags wrap above it.",
+        "tr": "Kartı sütun yapın, işlem satırını alta sabitleyin, etiketler onun üstünde alta geçsin."
+      }
+    },
+    {
+      "id": "balance-columns",
+      "area": "layout",
+      "severity": "info",
+      "title": {
+        "en": "Columns end together",
+        "tr": "Sütunlar birlikte biter"
+      },
+      "rule": {
+        "en": "Two columns side by side end at about the same height, and a list with more behind it links to all of it.",
+        "tr": "Yan yana iki sütun yaklaşık aynı yükseklikte biter; devamı olan liste tümüne bağlantı verir."
+      },
+      "why": {
+        "en": "A list running past its neighbour looks unfinished, and a shortened list without a link hides the rest.",
+        "tr": "Yanındakini geçen liste bitmemiş görünür; bağlantısız kısaltılmış liste de gerisini saklar."
+      },
+      "fix": {
+        "en": "Show as many items as fit beside the lead item, and add a link to the full list below.",
+        "tr": "Ana öğenin yanına sığacak kadar öğe gösterin, altına tam listeye giden bağlantı ekleyin."
       }
     }
   ]

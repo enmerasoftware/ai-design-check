@@ -1,85 +1,21 @@
-# @enmera/ai-design-check
+# ai-design-check
 
+**Find what makes an AI-built interface look generated, fix it, and keep it from coming back.**
+
+[![npm version](https://img.shields.io/npm/v/@enmera/ai-design-check)](https://www.npmjs.com/package/@enmera/ai-design-check)
+[![license: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [Türkçe](README.tr.md)
 
-![A generated dashboard checked, fixed and checked again: 266 findings to 0](examples/story-dashboard.webp)
+For anyone building with Claude Code, Cursor or Codex: 87 design rules, a checker with no dependencies and no API key, and
+an agent skill that repairs the screen. It reads web projects and SwiftUI and Jetpack Compose apps.
 
-Finds and fixes what makes interfaces built with AI coding agents (Claude Code, Cursor, Codex) look generated:
-76 design rules, a zero-dependency checker that marks every finding, and an agent skill that fixes the screen and
-proves it by checking again. For dashboards, admin panels, SaaS screens and landing pages, and for SwiftUI and
-Jetpack Compose apps.
+## Start in two steps
 
-```bash
-npx @enmera/ai-design-check                    # check the project (or: ai-design-check src lang)
-npx skills add enmerasoftware/ai-design-check  # the rules and the fix skill for your agent
-npx @enmera/ai-design-check system --brand "#1E5A63"  # fonts, type and colours that pass contrast
-```
-
-Then ask your agent to "fix the design of this screen". It measures, proposes a direction from your product, fixes
-spacing, colour, icons, copy, type, layout, components and motion in passes, and shows the count before and after.
-Fixing is what most tools stop at; the checker keeps the next agent edit from bringing the slop back.
-
-The rules come from real screens shipped by [Enmera](https://enmera.com.tr) and [Searvia](https://searvia.com):
-what read as "generated", what broke at narrow widths, what people did not understand. They were then compared with 16
-high-rated dashboard designs on Dribbble and Behance: the patterns the strongest work shared became rules (stat card
-anatomy, one card header, one highlighted chart series, flat buttons, surface steps instead of shadows), and where the
-popular shots themselves show the tells (half of them open with "Welcome back 👋") the rule stayed. Method and
-findings: [RESEARCH.md](RESEARCH.md). Each rule says **what**,
-**why** and **how to fix it**, in English and Turkish.
+**1. Check your project.**
 
 ```bash
-npx @enmera/ai-design-check inventory  # how many different buttons, inputs, headings, badges, cards you have
-npx @enmera/ai-design-check rules      # list the rules (--tr for Turkish)
-npx @enmera/ai-design-check init       # write a config with the defaults
-npx @enmera/ai-design-check story before.html after.html  # a square before/after video, like the one above
+npx @enmera/ai-design-check
 ```
-
-No LLM, no API key, no dependencies: it catches measurable defects (a focus ring removed, an icon button with no
-name, a font size off the scale, spacing off the 4 px grid, a raw `<button>` next to your `Button`, emoji as icons,
-"Welcome back, Alex!", a Turkish `toUpperCase()`), and leaves taste to you and the fix skill.
-
-## What it covers
-
-| Area | Examples |
-|---|---|
-| Writing | Sentence case for interface text (Turkish and English), no tracked uppercase labels, labels that fit |
-| Type and shape | One type scale (`text-2xs` = 11 px is the floor), one radius scale, no cards inside cards |
-| Components | Buttons, inputs and selects from shared components, no outside styling of them, repeated markup becomes a component |
-| Accessibility | Focus ring never removed without a replacement, icon-only buttons have a name |
-| Localisation | Locale-aware case changes (Turkish i/İ), numbers through the locale formatter, real plurals, no glued sentences |
-| Selectors | Segmented control for the primary choice, plain sub-tabs on the same row, pill chips only for filters |
-| Layout | Wide tables span the page, uneven cards in a grid masonry, readable line length, spacing rhythm |
-| Navigation | Menu grouped by job, place and URL decided before the feature, moved URLs redirect |
-| Visual language | Line icons instead of emoji, no gradient text or purple gradients, no side stripes, glow only in charts |
-| Motion | No transition-all, no bounce easing, reduced motion, pulse only for live data, no auto-scrolling strips |
-| Data and copy | Numbers carry their comparison, tabular numerals, empty states, buttons that say what they do, errors that say what to do, no buzzwords |
-
-The full list with reasons: [RULES.md](RULES.md).
-
-### Mobile apps
-
-The same rules read SwiftUI and Jetpack Compose: spacing off the 4 pt grid (`.padding(13)`, `10.dp`), radii off the
-scale, fixed `.system(size:)` text that ignores Dynamic Type, `.heavy` and `FontWeight.Black` headings, purple
-gradients, `sparkles` for AI, emoji in strings, Title Case labels, exclamation copy, heavy shadows, big blurs,
-looping animations and tap targets under 44 pt / 48 dp (a small `.frame` on a button label or a `.size()` on a
-`clickable`; padding or an outer frame around a small icon passes). Point it at the app folder:
-
-```bash
-npx @enmera/ai-design-check Cebbin/Views
-```
-
-[![Unslopping a SwiftUI app: the Cebbin home screen before and after](examples/unslop-cebbin-swiftui.webp)](examples/unslop-cebbin-swiftui.mp4)
-
-[Unslopping a SwiftUI app](examples/unslop-cebbin-swiftui.mp4): our own iOS app, Cebbin, live on the App Store. The
-home screen goes through 16 fixes one at a time (spacing, one accent, decoration, copy, hierarchy, layout); every
-frame is the real app on the simulator and the card under it shows the SwiftUI line that changed.
-[The first run](examples/story-cebbin-swiftui.mp4) took the same screen from 23 findings to 0.
-
-## The checker
-
-Plain Node (20+), no dependencies. It reads `.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, Blade, CSS and i18n JSON, and native app code:
-SwiftUI (`.swift`) and Jetpack Compose (`.kt`). It reports rule ids with file and line. Rules that need judgement (layout, selectors, empty states) are marked *review*
-and are left to people and agents.
 
 ```
 src/pages/dashboard.tsx
@@ -91,11 +27,126 @@ lang/tr.json
 2 errors, 1 warning, 0 notes.
 ```
 
-Exit code 1 on errors (`--strict`: also on warnings). `--json` for machines, `--format github` for pull request
-annotations. Class rules read class strings only (`class`, `className`, `cn()`, `clsx()`, `cva()`, `twMerge()`), so
-comments and copy do not match.
+**2. Let your agent fix it.**
 
-### One look per element: `inventory`
+```bash
+npx skills add enmerasoftware/ai-design-check
+```
+
+Then ask: *"fix the design of this screen"*. The agent measures the screen, writes a short brief from your product, repairs
+it, and shows the count before and after. Features, data and words stay.
+
+<p align="center">
+  <img src="examples/before-after-web.webp" width="860" alt="The same dashboard before and after: 266 findings down to 0">
+</p>
+<p align="center"><sub>The same dashboard, before and after. Open <a href="examples/dashboard.html">before</a> and <a href="examples/dashboard.fixed.html">after</a>, or watch <a href="examples/story-dashboard.mp4">the video</a>.</sub></p>
+
+## What's in the package
+
+| Tool | What it answers | Run it |
+|---|---|---|
+| **Checker** | What is wrong, in which file and on which line? | `npx @enmera/ai-design-check` |
+| **Fix skill** | Can an agent repair this screen and prove it? | `npx skills add enmerasoftware/ai-design-check` |
+| **`inventory`** | How many different buttons, inputs, headings and cards do we have? | `npx @enmera/ai-design-check inventory` |
+| **`narrow`** | What breaks on a phone or in a long language? | `npx @enmera/ai-design-check narrow page.html` |
+| **`system`** | What fonts, type and colours should a new product start with? | `npx @enmera/ai-design-check system --brand "#1E5A63"` |
+| **`story`** | Can I share the change as a video? | `npx @enmera/ai-design-check story before.html after.html` |
+
+## What it catches
+
+The checker tests 50 rules automatically. The other 37 need eyes on the screen, so they are marked *review* and left to you
+and the fix skill. Each rule says what to do, why and how to fix it, in English and Turkish: [RULES.md](RULES.md).
+
+| Area | Examples |
+|---|---|
+| Accessibility | Focus rings never removed without a replacement, icon-only buttons have a name, tap targets |
+| Type and shape | One type scale with 11 px as the floor, one radius per level, no cards inside cards |
+| Writing and copy | Sentence case, no tracked uppercase labels, no buzzwords, buttons that say what they do, errors that say what to do |
+| Components | Buttons and inputs from shared components, no outside styling, repeated markup becomes a component |
+| Layout | Spacing on a 4 px grid with one gap per level, wide tables span the page, room for each cell on a phone |
+| Visual language | Line icons instead of emoji, no gradient text or purple gradients, no side stripes, glow only in charts |
+| Motion | No `transition-all`, no bounce, reduced motion respected, pulse only for live data |
+| Data | Numbers carry their comparison, tabular numerals, empty states |
+| Localisation | Locale-aware case changes (Turkish i/İ), numbers through the formatter, real plurals |
+| Selectors and navigation | One selector language, menu grouped by job, moved URLs redirect |
+
+The rules come from screens we shipped at [Enmera](https://enmera.com.tr) and [Searvia](https://searvia.com): what read as
+generated, what broke at narrow widths, what people did not understand. We then compared them with 16 highly rated
+dashboard designs. Method and findings: [RESEARCH.md](RESEARCH.md).
+
+## Mobile apps
+
+Point it at the app folder. It reads SwiftUI and Jetpack Compose: spacing off the 4 pt grid (`.padding(13)`, `10.dp`), radii
+off the scale, fixed text that ignores Dynamic Type, heavy headings, purple gradients, `sparkles` for AI, emoji in strings,
+Title Case labels, heavy shadows, big blurs, looping animations, and tap targets under 44 pt / 48 dp.
+
+```bash
+npx @enmera/ai-design-check Cebbin/Views
+```
+
+<p align="center">
+  <img src="examples/before-after-ios.webp" width="520" alt="The Cebbin iOS home screen before and after">
+</p>
+<p align="center"><sub>Our iOS app Cebbin, live on the App Store, on the simulator with the same data. <a href="examples/redesign-cebbin-swiftui.mp4">Watch the 16 fixes</a>, each with the SwiftUI line behind it, or <a href="examples/story-cebbin-swiftui.mp4">the first run</a> from 23 findings to 0.</sub></p>
+
+## Use it in your project
+
+### Give your agent the rules
+
+The package ships two skills, both installed by `npx skills add enmerasoftware/ai-design-check`:
+
+- **ai-design-check** has the agent read the rules before touching a screen and run the checker afterwards.
+- **ai-design-fix** repairs a screen that already looks generated. It measures gaps and radii, writes a four-line brief (job,
+  claim, proof, keep), works through the screen in order of harm, and reports before and after. It never removes content
+  to lower the count, and never silences a finding without a reason.
+
+Without skills, point your agent's instructions (`CLAUDE.md`, `AGENTS.md`, `.cursor/rules`) at
+`node_modules/@enmera/ai-design-check/RULES.md`.
+
+### Show findings right after each edit
+
+A hook checks the file an agent just changed and hands the findings back to it. In Claude Code's `.claude/settings.json`:
+
+```json
+{
+    "hooks": {
+        "PostToolUse": [
+            { "matcher": "Edit|Write|MultiEdit", "hooks": [{ "type": "command", "command": "npx -y @enmera/ai-design-check hook" }] }
+        ]
+    }
+}
+```
+
+The same command works for any agent hook that passes `tool_input.file_path` or `file_path` as JSON on stdin. A clean file
+exits silently; findings exit 2 on stderr.
+
+### Add it to CI
+
+```yaml
+- run: npx @enmera/ai-design-check
+```
+
+It exits 1 on errors, and on warnings too with `--strict`. `--json` prints for machines, and `--format github` writes pull
+request annotations.
+
+### Start from an existing project
+
+Record today's findings, and from then on only new ones are reported:
+
+```bash
+npx @enmera/ai-design-check --write-baseline
+```
+
+Ignore one place, always with a reason after `--`. An ignore without a reason does not count:
+
+```tsx
+{/* ai-design-check-ignore-next-line type-scale -- hero display size, see DESIGN.md */}
+// ai-design-check-ignore-file use-shared-components -- this file is the Button component
+```
+
+## Commands
+
+### `inventory`: one look per element
 
 ```
 Buttons  726 uses · 149 different looks · 147 without a shared component
@@ -104,27 +155,58 @@ Buttons  726 uses · 149 different looks · 147 without a shared component
 Headings  229 uses · 69 different looks · 229 without a shared component
 ```
 
-Layout classes (width, margin, position) are ignored, so two copies that differ only in where they sit count as one
-look. Use it before a cleanup to see the drift and after to see it gone. `repeated-markup` reports the same long class
-list repeated three or more times, with every place, so it can become one component.
+Use it before a cleanup to see the drift and afterwards to see it gone. Layout classes are ignored, so two copies that differ
+only in where they sit count as one look.
 
-### Existing projects: baseline and ignores
+### `narrow`: phones and long languages
 
 ```bash
-npx @enmera/ai-design-check --write-baseline   # record today's findings in .ai-design-check-baseline.json
-npx @enmera/ai-design-check                    # from now on only new findings are reported
+npx @enmera/ai-design-check narrow examples/narrow-de.html --width 320
 ```
 
-Ignore one place, always with a reason after `--` (an ignore without a reason is not honoured):
+Renders the page in your Chrome at phone and desktop width and reports what only a rendered page shows: sideways scrolling
+and what causes it, text cut off, text shrunk to fit, and content hidden on phones. Run it with your longest language; German
+labels are often 30–40 % longer than English. Try [the broken example](examples/narrow-de.html) and
+[the fixed one](examples/narrow-de.fixed.html).
 
-```tsx
-{/* ai-design-check-ignore-next-line type-scale -- hero display size, see DESIGN.md */}
-// ai-design-check-ignore-file use-shared-components -- this file is the Button component
+### `system`: a design system from your brand
+
+```bash
+npx @enmera/ai-design-check system --character calm --brand "#1E5A63" --kind app --out design-system
 ```
 
-### Configuration
+For a new product or one with no tokens. Give it a character (`calm`, `precise`, `friendly`, `warm`, `bold`, `editorial`,
+`luxurious`, `playful`, `technical`, `trustworthy`), a brand colour and a kind of screen (`dashboard`, `app`, `marketing`,
+`reading`).
 
-`ai-design-check.json` (or the dotfile `.design-rules.json`) in the project root:
+| You get | Details |
+|---|---|
+| Fonts | UI, display, numbers and code, from a library of 50. `fonts --character calm` lists the options |
+| Type scale | Eight roles that map to Dynamic Type and Material 3 |
+| Colours | Light and dark, with every text colour moved until it passes WCAG 2 |
+| Shape | A 4 px spacing scale, radii that nest, control heights, card padding |
+| Files | `tokens.css`, Tailwind `theme.css`, `tokens.json`, `DesignSystem.swift`, `DesignSystem.kt`, `preview.html` |
+
+### `story`: a before/after video
+
+```bash
+npx @enmera/ai-design-check story screen.before.html screen.html --out story.mp4 --music track.mp3 --still frame.png
+```
+
+A square 12 second video: every finding marked one by one, a wipe to the new screen while the count falls, and an end card.
+It takes files or URLs, and needs only your Chrome and ffmpeg.
+
+### Other commands
+
+```bash
+npx @enmera/ai-design-check rules    # list the rules (--tr for Turkish)
+npx @enmera/ai-design-check init     # write a config with the defaults
+```
+
+<details>
+<summary><strong>Configuration</strong></summary>
+
+`ai-design-check.json` (or `.design-rules.json`) in the project root:
 
 ```json
 {
@@ -144,111 +226,43 @@ Ignore one place, always with a reason after `--` (an ignore without a reason is
 }
 ```
 
-- `i18n.files`: JSON dictionaries. With `keysAreSource` the keys are the English source text and are checked too.
-  `framework` lists keys owned by a framework that you cannot rename.
-- `properNouns`: names that keep their capitals ("Google Business Profile" is recognised from the brand list).
-- `allow`: per rule, `"glob"` or `"glob:exact match"`.
-- `rules`: `"off"`, `"info"`, `"warn"` or `"error"` per rule id.
-- `componentDirs`: where raw `<button>`/`<input>` are allowed (the components themselves).
-- `components`: raw element → the shared component to use instead. `sharedComponents`: components whose look comes
-  from props; `className` on them may only place them (width, margin, grid position).
-- `looks`: the component that owns each hand-written look found by `use-shared-looks` (a span styled as a badge, a
-  div styled as a card, a heading with size classes, a link styled as a button). `false` turns one kind off.
+| Key | Meaning |
+|---|---|
+| `i18n.files` | JSON dictionaries. With `keysAreSource` the keys are the English source and are checked too. `framework` lists keys you cannot rename |
+| `properNouns` | Names that keep their capitals |
+| `allow` | Per rule, `"glob"` or `"glob:exact match"` |
+| `rules` | `"off"`, `"info"`, `"warn"` or `"error"` per rule id |
+| `componentDirs` | Where raw `<button>` and `<input>` are allowed |
+| `components` | Raw element → the shared component to use instead |
+| `sharedComponents` | Components whose look comes from props; `className` may only place them |
+| `looks` | The component that owns each hand-written look. `false` turns one kind off |
 
-### In CI
+</details>
 
-```yaml
-- run: npx @enmera/ai-design-check
-```
+<details>
+<summary><strong>What the checker reads</strong></summary>
 
-## For AI coding agents
+`.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, Blade, CSS, i18n JSON, SwiftUI (`.swift`) and Jetpack Compose (`.kt`). It runs on
+plain Node 20+. Class rules read class strings only (`class`, `className`, `cn()`, `clsx()`, `cva()`, `twMerge()`), so comments
+and copy do not match.
 
-The package ships two skills:
+</details>
 
-- **ai-design-check** tells an agent to read the rules before touching UI and to run the checker after.
-- **ai-design-fix** fixes a screen that already looks generated: measure, pick a direction from the product (who,
-  world, one accent, one moment), fix in passes across the whole screen, then check again and report before → after.
-  It keeps features, data and content; it never silences a finding without a reason.
+<details>
+<summary><strong>Adding a rule</strong></summary>
 
-```bash
-npx skills add enmerasoftware/ai-design-check
-```
+Rules live in [`rules.json`](rules.json): `id`, `area`, `severity`, and `title`, `rule`, `why` and `fix` in `en` and `tr`, plus an
+optional `check`:
 
-### Phones and long languages: `narrow`
+- `class`: a pattern on class strings, with `unless`, `exceptElements`, `unlessBefore` and `css`
+- `native`: one pattern per platform under `swift` and `kt`, with `notMultipleOf`, `min`, `max`, `unlessBefore`, `unlessAfter`
+  and `onlyIf`
+- `regex`: a pattern on code with comments excluded, with `flags` and `files`
+- or a structural check
 
-```bash
-npx @enmera/ai-design-check narrow examples/narrow-de.html --width 320
-```
+Run `npm run docs` to regenerate RULES.md and RULES.tr.md, and `npm test` before opening a pull request.
 
-Renders the page at phone width and at desktop width in your Chrome and reports what only a rendered page shows:
-the page scrolling sideways (and which elements push it), text cut off, text made smaller to fit, and content shown on
-desktop but hidden on phones. Run it with your longest locale; German labels are often 30–40 % longer than English.
-[examples/narrow-de.html](examples/narrow-de.html) breaks all four at 320 px,
-[examples/narrow-de.fixed.html](examples/narrow-de.fixed.html) fixes them without hiding content or shrinking text.
-
-### A design system from your brand: `system`
-
-```bash
-npx @enmera/ai-design-check system --character calm --brand "#1E5A63" --kind app --out design-system
-npx @enmera/ai-design-check fonts --character calm   # the pairing and the alternatives
-```
-
-For a new product, or one with no tokens yet. From a character (`calm`, `precise`, `friendly`, `warm`, `bold`,
-`editorial`, `luxurious`, `playful`, `technical`, `trustworthy`), a brand colour and the kind of screen (`dashboard`,
-`app`, `marketing`, `reading`) it decides:
-
-- **Fonts**: a UI, display, numbers and code family from a curated library of 50 (40 Google Fonts, free to bundle in
-  apps; 10 Adobe Fonts, web only). `--ui` and `--display` override, `fonts` lists them all.
-- **Type scale**: eight roles (caption to display, plus stat) with size, weight, line height and letter-spacing; app
-  sizes follow the iOS text styles so they map to Dynamic Type and Material 3.
-- **Colours** for light and dark: surfaces, three text levels, borders, the accent with its hover, ink and soft
-  variants, success, warning, danger, info and chart colours. Every text colour is checked against its background
-  and moved until it passes WCAG 2 (12:1 for body text, 7:1 secondary, 4.5:1 for the rest).
-- **Shape**: a 4 px spacing scale, radii that nest, control heights and card padding.
-
-It writes `tokens.css` (variables with a dark theme), `theme.css` (Tailwind v4 `@theme`), `tokens.json`,
-`DesignSystem.swift`, `DesignSystem.kt` (Compose colour schemes and Typography) and `preview.html`, a page that shows
-every role and component in both themes. `--json` prints the system for an agent instead of writing files.
-
-### Before/after video: `story`
-
-```bash
-npx @enmera/ai-design-check story screen.before.html screen.html --out story.mp4 --music track.mp3 --still frame.png
-```
-
-A square 12 second video for sharing: the before screen with every finding marked one by one, a wipe to the after
-screen while the count falls, and an end card. `--music` lays a track under it, cut to length and faded out. Files or URLs. It drives your installed Chrome over the DevTools
-protocol and encodes with ffmpeg; nothing to install from npm. Try it on [examples/dashboard.html](examples/dashboard.html)
-and [examples/dashboard.fixed.html](examples/dashboard.fixed.html).
-
-Make the agent see findings right after each edit with a hook. Claude Code, in `.claude/settings.json`:
-
-```json
-{
-    "hooks": {
-        "PostToolUse": [
-            { "matcher": "Edit|Write|MultiEdit", "hooks": [{ "type": "command", "command": "npx -y @enmera/ai-design-check hook" }] }
-        ]
-    }
-}
-```
-
-`hook` reads the edited file from the hook input, checks only that file and exits 2 with the findings on stderr, which
-Claude Code hands back to the agent; a clean file exits 0 silently. The same command works for any agent hook that
-passes `tool_input.file_path` or `file_path` as JSON on stdin.
-
-Or point your agent's instructions (`CLAUDE.md`, `AGENTS.md`, `.cursor/rules`) at
-`node_modules/@enmera/ai-design-check/RULES.md`.
-
-## Adding a rule
-
-Rules live in [`rules.json`](rules.json): `id`, `area`, `severity`, and `title` / `rule` / `why` / `fix` in `en` and
-`tr`, plus an optional `check`: `class` (pattern on class strings, with `unless`, `exceptElements`, `unlessBefore`,
-`css`), `native` (one pattern per platform under `swift` and `kt`, with `notMultipleOf`, `min`, `max`, `unlessBefore`,
-`unlessAfter` and `onlyIf`), `regex` (pattern on code, comments excluded, with `flags` and `files`) or a structural check. Run `npm run docs` to regenerate
-RULES.md and RULES.tr.md and `npm test` before opening a pull request.
-
-Inspired in part by [Impeccable](https://github.com/pbakaus/impeccable), [unslop](https://github.com/heydamir/unslop) by Damir Sokolovsky and Anthropic's frontend-design skill.
+</details>
 
 ## License
 
