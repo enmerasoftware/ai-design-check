@@ -1,6 +1,6 @@
 {
   "name": "@enmera/ai-design-check",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "Finds and fixes what makes AI-built interfaces look generated, on the web and in SwiftUI and Jetpack Compose apps: 95 design rules, a zero-dependency checker, a design system generator (fonts, type, colours that pass contrast), an agent fix skill and before/after videos. English and Turkish.",
   "type": "module",
   "bin": {
