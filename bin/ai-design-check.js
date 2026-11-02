@@ -283,7 +283,7 @@ if (!flags.has('--no-baseline') && existsSync(baselineFile)) {
 }
 
 const count = (severity) => findings.filter((item) => item.severity === severity).length;
-const { rules } = loadRules();
+const { rules, areas } = loadRules();
 const review = rules.filter((rule) => !rule.check).length;
 
 if (format === 'json') {
@@ -293,16 +293,25 @@ if (format === 'json') {
     for (const item of findings) print(`::${LEVEL[item.severity]} file=${item.path},line=${item.line},title=${item.rule}::${item.message.replace(/\n/g, ' ')}`);
 } else {
     if (!flags.has('--quiet')) {
-        let current = null;
-        for (const item of findings) {
-            if (item.path !== current) {
-                current = item.path;
-                print(`\n${paint(1, item.path)}`);
+        // Accessibility comes first and on its own: a screen people cannot use is a different problem from one that looks generated.
+        const groups = [
+            [areas.accessibility[lang], findings.filter((item) => item.area === 'accessibility')],
+            [lang === 'tr' ? 'Stil' : 'Style', findings.filter((item) => item.area !== 'accessibility')],
+        ];
+        for (const [title, items] of groups) {
+            if (items.length === 0) continue;
+            print(`\n${paint(1, `${title} (${items.length})`)}`);
+            let current = null;
+            for (const item of items) {
+                if (item.path !== current) {
+                    current = item.path;
+                    print(`${item === items[0] ? '' : '\n'}${paint(1, item.path)}`);
+                }
+                print(`  ${String(item.line).padStart(5)}  ${SEVERITY[item.severity](item.severity.padEnd(5))}  ${item.message}  ${paint(2, item.rule)}`);
             }
-            print(`  ${String(item.line).padStart(5)}  ${SEVERITY[item.severity](item.severity.padEnd(5))}  ${item.message}  ${paint(2, item.rule)}`);
         }
     }
-    const summary = findings.length === 0 ? paint(32, 'No findings.') : `${count('error')} errors, ${count('warn')} warnings, ${count('info')} notes.`;
+    const summary = findings.length === 0 ? paint(32, 'No findings.') : `${findings.filter((item) => item.area === 'accessibility').length} accessibility, ${findings.filter((item) => item.area !== 'accessibility').length} style: ${count('error')} errors, ${count('warn')} warnings, ${count('info')} notes.`;
     print(`\n${summary}${baselined ? ` ${baselined} known findings hidden by the baseline.` : ''} ${paint(2, `${rules.length - review} rules checked automatically; ${review} need a look at the screen (npx @enmera/ai-design-check rules).`)}`);
 }
 

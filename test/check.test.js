@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -150,6 +151,25 @@ test('native apps: SwiftUI and Jetpack Compose', () => {
     assert.deepEqual(of('.kt', 'tap-target'), ['.size(24.dp)', '.size(32.dp)']); // an icon inside a 48 dp IconButton passes
     assert.deepEqual(of('.kt', 'sentence-case'), ['Text(text = "Recent Activity"']);
     for (const rule of ['no-heavy-headings', 'no-ai-gradients', 'no-sparkle-for-ai', 'icons-not-emoji', 'no-greeting-headline', 'radius-scale', 'no-heavy-card-shadow']) assert.equal(of('.kt', rule).length, 1, rule);
+});
+
+test('accessibility is told apart from style', () => {
+    assert.ok(findings.every((item) => item.area));
+    assert.equal(by('focus-ring-removed')[0].area, 'accessibility');
+    assert.equal(by('sentence-case')[0].area, 'writing');
+
+    const { rules } = loadRules();
+    const severity = (id) => rules.find((rule) => rule.id === id).severity;
+    assert.equal(severity('focus-ring-removed'), 'error');
+    assert.equal(severity('no-gradient-buttons'), 'warn');
+    assert.equal(severity('no-ai-gradients'), 'error');
+
+    const bin = join(dirname(fileURLToPath(import.meta.url)), '..', 'bin', 'ai-design-check.js');
+    const { stdout } = spawnSync(process.execPath, [bin], { cwd: app, encoding: 'utf8' });
+    assert.ok(stdout.indexOf('Accessibility (') >= 0 && stdout.indexOf('Accessibility (') < stdout.indexOf('Style ('));
+    assert.ok(stdout.indexOf('focus-ring-removed') < stdout.indexOf('Style ('));
+    assert.ok(stdout.indexOf('sentence-case') > stdout.indexOf('Style ('));
+    assert.match(stdout, /\d+ accessibility, \d+ style: /);
 });
 
 test('glob', () => {

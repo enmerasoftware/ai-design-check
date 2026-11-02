@@ -76,16 +76,6 @@
 
 **Nasıl düzeltilir:** Temaya --text-2xs: 0.6875rem (satır yüksekliği 1rem) ekleyin; 9–11 px → text-2xs, 12 px → text-xs, 13 px → text-sm. Tanıtım sitesinin büyük başlık boyutları izin listesine yazılır.
 
-### Dinamik yazı boyutuna uyan metin stilleri
-
-`dynamic-type` · uyarı · denetlenir
-
-**Kural:** SwiftUI'da metni metin stilleriyle (.body, .headline, .caption) ya da relativeTo ile özel yazı tipiyle verin, sabit .system(size:) ile değil. İkonlar sabit boyut kullanabilir.
-
-**Neden:** Sabit boyut, kullanıcının yazı boyutu ayarını yok sayar: büyük yazıya ihtiyacı olan ekranı okuyamaz ve her ekran kendi gelişigüzel boyutlarına sahip olur.
-
-**Nasıl düzeltilir:** Her boyutu en yakın metin stiline eşleyin (11 caption2, 12 caption, 13 footnote, 15 subheadline, 17 body, 20 title3, 22 title2, 28 title, 34 largeTitle) ve kalınlığı .fontWeight ile verin.
-
 ### Başlıklar normal ile yarı kalın arası
 
 `no-heavy-headings` · uyarı · denetlenir
@@ -590,6 +580,26 @@
 
 ## Erişilebilirlik
 
+### Dinamik yazı boyutuna uyan metin stilleri
+
+`dynamic-type` · uyarı · denetlenir
+
+**Kural:** SwiftUI'da metni metin stilleriyle (.body, .headline, .caption) ya da relativeTo ile özel yazı tipiyle verin, sabit .system(size:) ile değil. İkonlar sabit boyut kullanabilir.
+
+**Neden:** Sabit boyut, kullanıcının yazı boyutu ayarını yok sayar: büyük yazıya ihtiyacı olan ekranı okuyamaz ve her ekran kendi gelişigüzel boyutlarına sahip olur.
+
+**Nasıl düzeltilir:** Her boyutu en yakın metin stiline eşleyin (11 caption2, 12 caption, 13 footnote, 15 subheadline, 17 body, 20 title3, 22 title2, 28 title, 34 largeTitle) ve kalınlığı .fontWeight ile verin.
+
+### Parmağa yetecek dokunma alanı
+
+`tap-target` · uyarı · denetlenir
+
+**Kural:** Dokunulabilen her şey iOS'ta en az 44×44 pt, Android'de 48×48 dp, web'de 24×24 px'tir (olabildiğince 44 px). Küçük ikon boyutunu korur; çevresindeki alan büyür.
+
+**Neden:** Küçük hedef ıskalanır ve yanındakine basılır; özellikle iri parmaklı, eli titreyen ya da hareket eden otobüste tek eliyle kullanan kişilerde. Apple, Material ve WCAG 2.2 (2.5.8) bir alt sınır koyar.
+
+**Nasıl düzeltilir:** SwiftUI: ikonun çerçevesini koruyup .frame(minWidth: 44, minHeight: 44) ya da dolgu ekleyin, ardından .contentShape(Rectangle()). Compose: IconButton (48 dp) ya da Modifier.minimumInteractiveComponentSize() kullanın; .size()'ı tıklanan öğeye değil dolgudan sonraya koyun. Web: ikon düğmelerinde size-11/h-11 ya da ikonun çevresinde dolgu.
+
 ### Odak halkası yerine yenisi konmadan kaldırılmaz
 
 `focus-ring-removed` · hata · denetlenir
@@ -817,16 +827,6 @@
 **Neden:** Denetim sunucuyu beklerken kıpırdamazsa bozuk hissettirir.
 
 **Nasıl düzeltilir:** İyimser yerel değer, ilerleme çubuğu olmadan arka planda yenileme, sekmelerde önden yükleme.
-
-### Parmağa yetecek dokunma alanı
-
-`tap-target` · uyarı · denetlenir
-
-**Kural:** Dokunulabilen her şey iOS'ta en az 44×44 pt, Android'de 48×48 dp, web'de 24×24 px'tir (olabildiğince 44 px). Küçük ikon boyutunu korur; çevresindeki alan büyür.
-
-**Neden:** Küçük hedef ıskalanır ve yanındakine basılır; özellikle iri parmaklı, eli titreyen ya da hareket eden otobüste tek eliyle kullanan kişilerde. Apple, Material ve WCAG 2.2 (2.5.8) bir alt sınır koyar.
-
-**Nasıl düzeltilir:** SwiftUI: ikonun çerçevesini koruyup .frame(minWidth: 44, minHeight: 44) ya da dolgu ekleyin, ardından .contentShape(Rectangle()). Compose: IconButton (48 dp) ya da Modifier.minimumInteractiveComponentSize() kullanın; .size()'ı tıklanan öğeye değil dolgudan sonraya koyun. Web: ikon düğmelerinde size-11/h-11 ya da ikonun çevresinde dolgu.
 
 ## Metin
 

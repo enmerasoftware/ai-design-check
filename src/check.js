@@ -275,7 +275,7 @@ const CLASS_TOKEN = /^!?-?[a-z0-9@[][\w:\-/.[\]%#()&,!*>+~=']*$/;
 export const signature = (text) => [...new Set(tokens(text).filter((token) => CLASS_TOKEN.test(token) && /[-:[]|^(?:flex|grid|block|hidden|inline|border|rounded|shadow|truncate|uppercase|italic|underline|relative|absolute|sticky|fixed)$/.test(token) && !LAYOUT.test(utility(token))))].sort().join(' ');
 
 /**
- * Runs every enabled check. Returns findings ({rule, severity, path, line, value, message}) sorted by path and line.
+ * Runs every enabled check. Returns findings ({rule, area, severity, path, line, value, message}) sorted by path and line.
  * config.rules: { ruleId: "off" | "info" | "warn" | "error" } overrides a rule's severity.
  */
 export function check(cwd, overrides = {}) {
@@ -289,7 +289,7 @@ export function check(cwd, overrides = {}) {
         const rule = catalogue.rules.find((item) => item.id === id);
         const severity = severityOf(rule);
         if (severity === 'off' || allowed(config, id, path, value) || skip(id, line)) return null;
-        const finding = { rule: id, severity, path, line, value, message: message ?? rule.title.en };
+        const finding = { rule: id, area: rule.area, severity, path, line, value, message: message ?? rule.title.en };
         findings.push(finding);
 
         return finding;
