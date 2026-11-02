@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.0
 
 - The report keeps accessibility apart: the text report shows it first under its own heading, the summary counts it
   separately, and every finding in `--json` and from `narrow` carries `area`. `tap-target` and `dynamic-type` now belong
