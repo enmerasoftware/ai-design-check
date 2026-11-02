@@ -1,173 +1,266 @@
-# @enmera/ai-design-check
+# ai-design-check
 
+**Yapay zekâ ile yapılmış arayüzü "üretilmiş" gösteren şeyleri bulur, düzeltir ve geri gelmesini engeller.**
+
+[![npm sürümü](https://img.shields.io/npm/v/@enmera/ai-design-check)](https://www.npmjs.com/package/@enmera/ai-design-check)
+[![lisans: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [English](README.md)
 
-![Yapay zekâ ile yapılmış bir panel: denetlendi, düzeltildi, yeniden denetlendi; 266 bulgudan 0'a](examples/story-dashboard.webp)
+Claude Code, Cursor ya da Codex ile geliştirenler için: 87 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
+denetçi ve ekranı onaran bir ajan becerisi. Web projelerini, SwiftUI ve Jetpack Compose uygulamalarını okur.
 
-Yapay zekâ kodlama ajanlarıyla (Claude Code, Cursor, Codex) yapılan arayüzleri "yapay zekâ yapmış" gibi gösteren
-şeyleri bulur ve düzeltir: 76 tasarım kuralı, her bulguyu işaretleyen bağımlılıksız bir denetçi ve ekranı düzeltip
-yeniden denetleyerek kanıtlayan bir ajan becerisi. Paneller, yönetim ekranları, SaaS ekranları ve tanıtım sayfaları için;
-SwiftUI ve Jetpack Compose uygulamaları için de.
+## İki adımda başlayın
 
-```bash
-npx @enmera/ai-design-check                    # projeyi denetle (ya da: ai-design-check src lang)
-npx skills add enmerasoftware/ai-design-check  # kurallar ve düzelten beceri, ajanınız için
-```
-
-Sonra ajanınıza "bu ekranın tasarımını düzelt" deyin. Ölçer, ürününüzden bir yön önerir; boşluk, renk, ikon, metin,
-yazı, yerleşim, bileşen ve hareketi katman katman düzeltir ve önce/sonra bulgu sayısını gösterir. Denetçi, bir sonraki
-ajan düzenlemesinin aynı kusurları geri getirmesini de engeller.
-
-Kurallar [Enmera](https://enmera.com.tr) ve [Searvia](https://searvia.com)'da canlıya çıkmış gerçek ekranlardan
-çıktı: "üretilmiş" gibi okunanlar, dar ekranda bozulanlar, kullanıcının anlamadıkları. Her kural **ne**, **neden** ve
-**nasıl düzeltilir** sorularını Türkçe ve İngilizce yanıtlar. Ardından Dribbble ve Behance'teki 16 yüksek puanlı panel
-tasarımıyla karşılaştırıldı: en güçlü işlerin ortak örüntüleri kural oldu (gösterge kartı düzeni, tek kart başlığı,
-grafikte tek vurgulu seri, düz düğme, gölge yerine yüzey basamağı); popüler işlerin kendisinde görülen izlerde (yarısı
-"Tekrar hoş geldin 👋" ile açılıyor) kural korundu. Yöntem ve bulgular: [RESEARCH.md](RESEARCH.md).
+**1. Projenizi denetleyin.**
 
 ```bash
-npx @enmera/ai-design-check            # projeyi denetle (ya da: ai-design-check src lang)
-npx @enmera/ai-design-check inventory  # kaç farklı düğme, form öğesi, başlık, rozet, kutu var
-npx @enmera/ai-design-check rules --tr # kuralları listele
-npx @enmera/ai-design-check init       # varsayılan ayar dosyasını yaz
-npx @enmera/ai-design-check story once.html sonra.html  # yukarıdaki gibi kare önce/sonra videosu
+npx @enmera/ai-design-check
 ```
 
-Yapay zekâ yok, API anahtarı yok, bağımlılık yok: ölçülebilir kusurları yakalar (yerine bir şey konmadan kaldırılmış
-odak halkası, adsız ikon düğmesi, ölçek dışı yazı boyutu, 4 px ızgarası dışında boşluk, ortak `Button`un yanında ham `<button>`, ikon yerine
-emoji, "Tekrar hoş geldin, Ali!", Türkçeyi bozan `toUpperCase()`); zevki size ve düzelten beceriye bırakır.
+```
+src/pages/dashboard.tsx
+     42  error  Font sizes from the scale only: text-[10px]  type-scale
+     88  warn   No tracked uppercase labels: tracking-wide uppercase  no-decorative-uppercase
+lang/tr.json
+    812  error  Translation in Title Case: "Sıra Takibi" (Rank tracking)  sentence-case
 
-## Neleri kapsar
-
-| Konu | Örnekler |
-|---|---|
-| Yazım | Arayüz metninde yalnız ilk kelime büyük (Türkçe ve İngilizce), süs amaçlı büyük harf yok, etiket yerine sığar |
-| Yazı ve yüzey | Tek yazı ölçeği (`text-2xs` = 11 px taban), tek köşe ölçeği, kart içinde kart yok |
-| Bileşenler | Düğme, form öğesi ve seçim kutusu ortak bileşenden; onlara dışarıdan görünüm verilmez; tekrarlanan kalıp bileşen olur |
-| Erişilebilirlik | Odak halkası yerine yenisi konmadan kaldırılmaz, yalnız ikonlu düğmenin adı vardır |
-| Yerelleştirme | Dili belirten büyük-küçük harf dönüşümü (Türkçe i/İ), dil biçimleyicisinden sayı, gerçek çoğul, yapıştırılmış cümle yok |
-| Seçiciler | Ana seçim bölmeli seçici, alt sekmeler aynı satırda kutusuz, hap düğme yalnız süzgeçte |
-| Yerleşim | Geniş tablo tam genişlikte, yüksekliği farklı kartlar ızgara tabanlı masonry'de, okunur satır uzunluğu, boşlukta ritim |
-| Menü | İşe göre bölümler, özellikten önce yer ve adres kararı, taşınan adres yönlenir |
-| Görsel dil | Emoji yerine çizgi ikon, gradyan metin ve mor gradyan yok, kenar çizgisi yok, parıltı yalnız grafikte |
-| Hareket | Nabız yalnız canlı veride, kendiliğinden kayan şerit yok |
-| Veri ve metin | Sayı neye göre olduğunu söyler, boş durum, pazarlama klişesi yok |
-
-Gerekçeleriyle tam liste: [RULES.tr.md](RULES.tr.md).
-
-### Mobil uygulamalar
-
-Aynı kurallar SwiftUI ve Jetpack Compose kodunu da okur: 4 pt ızgarasından kaymış boşluk (`.padding(13)`, `10.dp`),
-ölçek dışı köşe yarıçapı, Dynamic Type'ı yok sayan sabit `.system(size:)` yazı, `.heavy` ve `FontWeight.Black` başlıklar,
-mor gradyanlar, yapay zekâ için `sparkles`, metinde emoji, Title Case etiketler, ünlemli metin, ağır gölgeler, büyük
-bulanıklıklar, sonsuz dönen animasyonlar ve 44 pt / 48 dp'den küçük dokunma alanları (düğme etiketinde küçük `.frame`,
-`clickable` üzerinde `.size()`; küçük ikonun çevresindeki dolgu ya da dış çerçeve geçer). Uygulama klasörünü vermen yeter:
-
-```bash
-npx @enmera/ai-design-check Cebbin/Views
+2 errors, 1 warning, 0 notes.
 ```
 
-[![SwiftUI uygulamasında unslop: Cebbin ana ekranı önce ve sonra](examples/unslop-cebbin-swiftui.webp)](examples/unslop-cebbin-swiftui.mp4)
-
-[SwiftUI uygulamasında unslop](examples/unslop-cebbin-swiftui.mp4): App Store'da yayında olan kendi iOS uygulamamız
-Cebbin. Ana ekran 16 düzeltmeden tek tek geçer (boşluk, tek vurgu, süs, metin, hiyerarşi, yerleşim); her kare
-simülatörde çalışan gerçek uygulama, alttaki kart değişen SwiftUI satırını gösterir.
-[İlk deneme](examples/story-cebbin-swiftui.mp4) aynı ekranı 23 bulgudan 0'a indirmişti.
-
-## Denetçi
-
-Bağımlılıksız Node (20+). `.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, Blade, CSS ve çeviri JSON dosyalarını, ayrıca mobil uygulama kodunu
-(SwiftUI `.swift`, Jetpack Compose `.kt`) okur;
-kural kimliğini dosya ve satırla bildirir. Göz gerektiren kurallar (yerleşim, seçiciler, boş durum) *gözden
-geçirilir* olarak işaretlidir; onlara insanlar ve ajanlar bakar.
-
-Hata varsa çıkış kodu 1 (`--strict` ile uyarıda da); makineler için `--json`, çekme isteği açıklamaları için
-`--format github`. Sınıf kuralları yalnız sınıf dizelerini okur (`class`, `className`, `cn()`, `clsx()`, `cva()`,
-`twMerge()`); yorum ve metin eşleşmez.
-
-`inventory` her öğe türünün kaç farklı biçimde yazıldığını sayar (yerleşim sınıfları sayılmaz); temizlikten önce
-kaymayı, sonra kayboluşunu gösterir. Var olan projede `--write-baseline` bugünkü bulguları kaydeder, sonra yalnız
-yeniler bildirilir. Tek bir yeri gerekçesiyle göz ardı etmek için:
-`// ai-design-check-ignore-next-line kural-id -- neden` (gerekçesiz göz ardı geçerli sayılmaz).
-
-### Ayar
-
-Proje kökünde `ai-design-check.json` (ya da nokta dosyası `.design-rules.json`). Örnek ve alanlar için
-[README.md](README.md#configuration).
-
-- `i18n.files`: çeviri sözlükleri. `keysAreSource` ile anahtarlar İngilizce kaynak metindir ve onlar da denetlenir;
-  `framework` çerçevenin sahip olduğu, adı değiştirilemeyen anahtarlardır.
-- `properNouns`: büyük harfini koruyan adlar.
-- `allow`: kural başına `"glob"` ya da `"glob:birebir eşleşme"`.
-- `rules`: kural kimliği başına `"off"`, `"info"`, `"warn"` ya da `"error"`.
-- `componentDirs`: ham öğelerin serbest olduğu yer (bileşenlerin kendisi). `sharedComponents`: görünümü prop'tan gelen
-  bileşenler; `className` onları yalnız yerleştirir.
-- `looks`: `use-shared-looks` kuralının bulduğu her elle yazılmış görünümün sahibi bileşen (rozet gibi span, kart gibi
-  div, boyut sınıflı başlık, düğme gibi bağlantı). `false` o türü kapatır.
-
-## Yapay zekâ ajanları için
-
-Paket iki beceriyle gelir:
-
-- **ai-design-check**: ajana arayüze dokunmadan önce kuralları okumasını, sonra denetçiyi çalıştırmasını söyler.
-- **ai-design-fix**: üretilmiş gibi görünen bir ekranı düzeltir: ölçer, üründen yön seçer (kim, dünya, tek vurgu rengi,
-  tek öne çıkan an), tüm ekranda katman katman düzeltir, yeniden denetleyip önce → sonra sayısını verir. Özellik, veri
-  ve içerik korunur; bulgu gerekçesiz susturulmaz.
+**2. Düzeltmeyi ajanınıza bırakın.**
 
 ```bash
 npx skills add enmerasoftware/ai-design-check
 ```
 
-Ajanın her düzenlemeden hemen sonra bulguları görmesi için kanca: Claude Code'da `.claude/settings.json` içine
-`PostToolUse` kancası olarak `npx -y @enmera/ai-design-check hook` (örnek [README.md](README.md#for-ai-coding-agents)).
-Kanca yalnız düzenlenen dosyayı denetler; bulgu varsa çıkış kodu 2 ile ajana geri verir.
+Sonra şunu yazın: *"bu ekranın tasarımını düzelt"*. Ajan ekranı ölçer, ürününüzden kısa bir özet çıkarır, ekranı onarır ve önce
+ile sonraki sayıları gösterir. Özellikler, veriler ve metinler yerinde kalır.
 
-### Telefon ve uzun diller: `narrow`
+<p align="center">
+  <img src="examples/before-after-web.webp" width="860" alt="Aynı panel önce ve sonra: 266 bulgudan 0'a">
+</p>
+<p align="center"><sub>Aynı panel, önce ve sonra. <a href="examples/dashboard.html">Önceki</a> ve <a href="examples/dashboard.fixed.html">sonraki</a> hali açın ya da <a href="examples/story-dashboard.mp4">videoyu</a> izleyin.</sub></p>
 
-`npx @enmera/ai-design-check narrow sayfa.html --width 320` sayfayı Chrome'da telefon ve masaüstü genişliğinde çizer;
-yalnız çizilmiş sayfada görülenleri bildirir: yana kayan sayfa (ve onu iten öğeler), kesilen metin, sığsın diye
-küçültülen yazı, masaüstünde olup telefonda gizlenen içerik. En uzun dilinizle çalıştırın; Almanca etiketler çoğu
-zaman İngilizceden %30–40 uzundur. [examples/narrow-de.html](examples/narrow-de.html) 320 px'te dördünü de bozar,
-[examples/narrow-de.fixed.html](examples/narrow-de.fixed.html) içerik gizlemeden ve yazı küçültmeden düzeltir.
+## Pakette neler var
 
-### Markandan tasarım sistemi: `system`
+| Araç | Yanıtladığı soru | Çalıştırma |
+|---|---|---|
+| **Denetçi** | Sorun ne, hangi dosyada, hangi satırda? | `npx @enmera/ai-design-check` |
+| **Düzelten beceri** | Ajan bu ekranı onarıp kanıtlayabilir mi? | `npx skills add enmerasoftware/ai-design-check` |
+| **`inventory`** | Kaç farklı düğme, form öğesi, başlık ve kart var? | `npx @enmera/ai-design-check inventory` |
+| **`narrow`** | Telefonda ya da uzun bir dilde ne bozuluyor? | `npx @enmera/ai-design-check narrow sayfa.html` |
+| **`system`** | Yeni bir ürün hangi yazı tipi, ölçek ve renklerle başlamalı? | `npx @enmera/ai-design-check system --brand "#1E5A63"` |
+| **`story`** | Değişikliği video olarak paylaşabilir miyim? | `npx @enmera/ai-design-check story once.html sonra.html` |
+
+## Neleri yakalar
+
+Denetçi 50 kuralı otomatik sınar. Kalan 37 kural ekrana bakmayı gerektirir; *gözden geçirilecek* olarak işaretlenir ve size ve
+düzelten beceriye bırakılır. Her kural ne yapılacağını, nedenini ve nasıl düzeltileceğini Türkçe ve İngilizce anlatır:
+[RULES.tr.md](RULES.tr.md).
+
+| Alan | Örnekler |
+|---|---|
+| Erişilebilirlik | Odak halkası yerine başkası konmadan kaldırılmaz, yalnız ikonlu düğmenin adı olur, dokunma alanları |
+| Yazı ve biçim | En küçüğü 11 px olan tek yazı ölçeği, düzey başına tek köşe, kart içinde kart yok |
+| Yazım ve metin | Yalnız ilk kelime büyük, aralıklı büyük harfli etiket yok, boş söz yok, ne yaptığını söyleyen düğme, ne yapılacağını söyleyen hata |
+| Bileşenler | Düğme ve form öğeleri ortak bileşenden, dışarıdan biçim yok, tekrarlanan kod bileşene dönüşür |
+| Yerleşim | 4 px ızgarada düzey başına tek boşluk, geniş tablolar sayfayı kaplar, telefonda her hücreye yer |
+| Görsel dil | Emoji yerine çizgi ikon, gradyan yazı ve mor gradyan yok, yan şerit yok, parıltı yalnız grafikte |
+| Hareket | `transition-all` yok, sıçrama yok, hareket azaltma ayarına uyum, nabız yalnız canlı veride |
+| Veri | Sayı neyle kıyaslandığını söyler, sabit genişlikte rakamlar, boş durumlar |
+| Yerelleştirme | Dile uygun büyük/küçük harf (Türkçe i/İ), biçimlendirici ile sayılar, gerçek çoğul kuralları |
+| Seçici ve menü | Tek seçici dili, işe göre gruplanmış menü, taşınan adres yönlendirilir |
+
+Kurallar [Enmera](https://enmera.com.tr) ve [Searvia](https://searvia.com)'da canlıya çıkardığımız ekranlardan çıktı: üretilmiş
+gibi görünenler, dar ekranda bozulanlar, kullanıcının anlamadıkları. Ardından yüksek puanlı 16 panel tasarımıyla karşılaştırdık.
+Yöntem ve bulgular: [RESEARCH.md](RESEARCH.md).
+
+## Mobil uygulamalar
+
+Uygulama klasörünü verin. SwiftUI ve Jetpack Compose okur: 4 pt ızgara dışı boşluk (`.padding(13)`, `10.dp`), ölçek dışı köşe,
+Dynamic Type'ı yok sayan sabit yazı, çok kalın başlık, mor gradyan, yapay zekâ için `sparkles`, metinde emoji, Her Kelimesi Büyük
+etiket, ağır gölge, büyük bulanıklık, sürekli dönen animasyon ve 44 pt / 48 dp altı dokunma alanı.
+
+```bash
+npx @enmera/ai-design-check Cebbin/Views
+```
+
+<p align="center">
+  <img src="examples/before-after-ios.webp" width="520" alt="Cebbin iOS ana ekranı önce ve sonra">
+</p>
+<p align="center"><sub>App Store'daki iOS uygulamamız Cebbin; simülatörde, aynı veriyle. <a href="examples/redesign-cebbin-swiftui.mp4">16 düzeltmeyi izleyin</a>, her birinde arkasındaki SwiftUI satırı görünür, ya da 23 bulgudan 0'a inen <a href="examples/story-cebbin-swiftui.mp4">ilk denemeye</a> bakın.</sub></p>
+
+## Projenizde kullanın
+
+### Kuralları ajanınıza verin
+
+Pakette iki beceri var; ikisi de `npx skills add enmerasoftware/ai-design-check` ile kurulur:
+
+- **ai-design-check**: ajan bir ekrana dokunmadan önce kuralları okur, sonra denetçiyi çalıştırır.
+- **ai-design-fix**: üretilmiş görünen ekranı onarır. Boşluk ve köşeleri ölçer, dört satırlık özet yazar (iş, iddia, kanıt,
+  korunacaklar), ekranı en zararlıdan başlayarak elden geçirir, önce ve sonrayı bildirir. Sayıyı düşürmek için içerik silmez,
+  gerekçesiz bulgu susturmaz.
+
+Beceri kullanmıyorsanız ajan talimatlarınızı (`CLAUDE.md`, `AGENTS.md`, `.cursor/rules`)
+`node_modules/@enmera/ai-design-check/RULES.tr.md` dosyasına yönlendirin.
+
+### Her düzenlemeden hemen sonra bulguları gösterin
+
+Kanca, ajanın az önce değiştirdiği dosyayı denetler ve bulguları ona geri verir. Claude Code'da `.claude/settings.json`:
+
+```json
+{
+    "hooks": {
+        "PostToolUse": [
+            { "matcher": "Edit|Write|MultiEdit", "hooks": [{ "type": "command", "command": "npx -y @enmera/ai-design-check hook" }] }
+        ]
+    }
+}
+```
+
+Aynı komut, standart girdiden JSON olarak `tool_input.file_path` ya da `file_path` veren her ajan kancasıyla çalışır. Temiz dosya
+sessizce çıkar; bulgular stderr'e yazılır ve çıkış kodu 2 olur.
+
+### CI'a ekleyin
+
+```yaml
+- run: npx @enmera/ai-design-check
+```
+
+Hatalarda, `--strict` ile uyarılarda da 1 koduyla çıkar. `--json` makineler için yazdırır, `--format github` pull request
+notları üretir.
+
+### Var olan projede başlayın
+
+Bugünkü bulguları kaydedin; bundan sonra yalnız yenileri bildirilir:
+
+```bash
+npx @enmera/ai-design-check --write-baseline
+```
+
+Bir yeri yok saymak için `--` sonrasına mutlaka gerekçe yazın. Gerekçesiz yok sayma geçerli olmaz:
+
+```tsx
+{/* ai-design-check-ignore-next-line type-scale -- tanıtım başlığı boyutu, bkz. DESIGN.md */}
+// ai-design-check-ignore-file use-shared-components -- Button bileşeninin kendisi
+```
+
+## Komutlar
+
+### `inventory`: öğe başına tek görünüm
+
+```
+Buttons  726 uses · 149 different looks · 147 without a shared component
+   115×  <Button variant=outline size=sm>                       src/pages/projects/show.tsx:212
+     9×  <button> bg-brand-400 font-semibold px-4 py-2 rounded-full text-on-brand text-sm   src/pages/home.tsx:91
+Headings  229 uses · 69 different looks · 229 without a shared component
+```
+
+Temizlikten önce dağılmayı, sonra toparlandığını görmek için kullanın. Yerleşim sınıfları sayılmaz; yalnız konumu farklı iki kopya
+tek görünüm sayılır.
+
+### `narrow`: telefon ve uzun diller
+
+```bash
+npx @enmera/ai-design-check narrow examples/narrow-de.html --width 320
+```
+
+Sayfayı Chrome'unuzda telefon ve masaüstü genişliğinde açar, yalnız açık sayfada görülenleri bildirir: yana kayma ve nedeni,
+kesilen yazı, sığsın diye küçülen yazı, telefonda gizlenen içerik. En uzun dilinizle çalıştırın; Almanca etiketler çoğu zaman
+İngilizceden %30–40 uzundur. [Bozuk örneği](examples/narrow-de.html) ve [düzeltilmiş halini](examples/narrow-de.fixed.html) deneyin.
+
+### `system`: markanızdan tasarım sistemi
 
 ```bash
 npx @enmera/ai-design-check system --character calm --brand "#1E5A63" --kind app --out design-system
-npx @enmera/ai-design-check fonts --character calm   # eşleşme ve seçenekler
 ```
 
-Yeni bir ürün ya da henüz token'ı olmayan bir proje için. Bir karakterden (`calm`, `precise`, `friendly`, `warm`,
-`bold`, `editorial`, `luxurious`, `playful`, `technical`, `trustworthy`), bir marka renginden ve ekran türünden
-(`dashboard`, `app`, `marketing`, `reading`) şunlara karar verir:
+Yeni ya da değişkenleri olmayan ürünler için. Bir karakter (`calm`, `precise`, `friendly`, `warm`, `bold`, `editorial`,
+`luxurious`, `playful`, `technical`, `trustworthy`), marka rengi ve ekran türü (`dashboard`, `app`, `marketing`, `reading`) verin.
 
-- **Yazı tipleri**: 50 yazı tipinden seçilmiş arayüz, başlık, rakam ve kod ailesi (40 Google Fonts, uygulamaya
-  gömülebilir; 10 Adobe Fonts, yalnız web). `--ui` ve `--display` ile değiştirilir, `fonts` hepsini listeler.
-- **Yazı ölçeği**: sekiz rol (caption'dan display'e, artı stat) boyut, ağırlık, satır yüksekliği ve harf aralığıyla;
-  uygulama boyutları iOS yazı stillerini izler, böylece Dynamic Type'a ve Material 3'e eşlenir.
-- **Renkler** açık ve koyu tema için: yüzeyler, üç metin düzeyi, kenarlıklar, üzerine gelme, yazı ve açık tonlarıyla
-  vurgu, başarı, uyarı, tehlike, bilgi ve grafik renkleri. Her metin rengi zeminine karşı ölçülür ve WCAG 2'yi geçene
-  dek kaydırılır (gövde metni 12:1, ikincil 7:1, diğerleri 4,5:1).
-- **Biçim**: 4 px boşluk ölçeği, iç içe uyan köşe yarıçapları, kontrol yükseklikleri ve kart iç boşluğu.
+| Çıktı | Ayrıntı |
+|---|---|
+| Yazı tipleri | Arayüz, başlık, sayı ve kod için 50 yazı tipli kitaplıktan. `fonts --character calm` seçenekleri listeler |
+| Yazı ölçeği | Dynamic Type ve Material 3 ile eşleşen sekiz rol |
+| Renkler | Açık ve koyu; her yazı rengi WCAG 2'yi geçene kadar ayarlanır |
+| Biçim | 4 px boşluk ölçeği, iç içe uyumlu köşeler, denetim yükseklikleri, kart iç boşluğu |
+| Dosyalar | `tokens.css`, Tailwind `theme.css`, `tokens.json`, `DesignSystem.swift`, `DesignSystem.kt`, `preview.html` |
 
-`tokens.css` (koyu temalı değişkenler), `theme.css` (Tailwind v4 `@theme`), `tokens.json`, `DesignSystem.swift`,
-`DesignSystem.kt` (Compose renk şemaları ve Typography) ve `preview.html` yazar; önizleme sayfası her rolü ve bileşeni
-iki temada gösterir. `--json` dosya yazmak yerine sistemi ajan için yazdırır.
+### `story`: önce/sonra videosu
 
-### Önce/sonra videosu: `story`
+```bash
+npx @enmera/ai-design-check story screen.before.html screen.html --out story.mp4 --music track.mp3 --still frame.png
+```
 
-`npx @enmera/ai-design-check story once.html sonra.html --out story.mp4 --music parca.mp3` paylaşmak için 12 saniyelik kare bir video
-üretir: önceki ekranda her bulgu tek tek işaretlenir, sayı düşerken sonraki ekrana geçilir, sonda özet kartı; `--music` verilen parçayı videonun süresine kesip sonunda kısar. Dosya ya
-da adres alır; kurulu Chrome'u DevTools protokolüyle sürer ve ffmpeg ile kodlar, npm'den bir şey kurulmaz.
+12 saniyelik kare video: her bulgu tek tek işaretlenir, sayı düşerken yeni ekrana geçilir, sonunda kapanış kartı gelir. Dosya ya da
+adres alır; yalnız Chrome ve ffmpeg ister.
 
-## Kural eklemek
+### Diğer komutlar
 
-Kurallar [`rules.json`](rules.json) dosyasında: `id`, `area`, `severity`, `en` ve `tr` olarak `title` / `rule` /
-`why` / `fix` ve isteğe bağlı `check` (`pattern`, `flags`, `files` ile `regex`). `npm run docs` RULES.md ve
-RULES.tr.md dosyalarını yeniden üretir; çekme isteğinden önce `npm test`.
+```bash
+npx @enmera/ai-design-check rules --tr   # kuralları listele
+npx @enmera/ai-design-check init         # varsayılanlarla ayar dosyası yaz
+```
 
-İlham kaynakları arasında [Impeccable](https://github.com/pbakaus/impeccable), Damir Sokolovsky'nin
-[unslop](https://github.com/heydamir/unslop) becerisi ve Anthropic'in frontend-design becerisi var.
+<details>
+<summary><strong>Ayarlar</strong></summary>
+
+Proje kökünde `ai-design-check.json` (ya da `.design-rules.json`):
+
+```json
+{
+    "include": ["resources/js", "lang"],
+    "ignore": ["resources/js/vendor/**"],
+    "i18n": { "files": ["lang/*.json"], "keysAreSource": true, "framework": ["Reset Password"] },
+    "properNouns": ["Brand Studio", "Core Web Vitals", "Privacy Policy"],
+    "componentDirs": ["**/components/ui/**"],
+    "components": { "button": "Button", "input": "Input" },
+    "sharedComponents": ["Button", "Badge", "Input", "Card"],
+    "looks": { "badge": "StatusBadge", "card": "Tile or SectionCard", "heading": "Heading", "link": "LinkButton" },
+    "rules": { "pulse-for-live-only": "off" },
+    "allow": {
+        "type-scale": ["src/marketing/hero.tsx:text-[44px]"],
+        "glow-in-charts-only": ["src/components/charts/**"]
+    }
+}
+```
+
+| Anahtar | Anlamı |
+|---|---|
+| `i18n.files` | JSON sözlükleri. `keysAreSource` ile anahtarlar İngilizce kaynaktır ve onlar da denetlenir. `framework` değiştiremeyeceğiniz anahtarları listeler |
+| `properNouns` | Büyük harfini koruyan adlar |
+| `allow` | Kural başına `"glob"` ya da `"glob:tam eşleşme"` |
+| `rules` | Kural başına `"off"`, `"info"`, `"warn"` ya da `"error"` |
+| `componentDirs` | Ham `<button>` ve `<input>` kullanılabilecek yerler |
+| `components` | Ham öğe → yerine kullanılacak ortak bileşen |
+| `sharedComponents` | Görünümü özelliklerden gelen bileşenler; `className` yalnız konumlandırır |
+| `looks` | Elle yazılmış her görünümün sahibi olan bileşen. `false` o türü kapatır |
+
+</details>
+
+<details>
+<summary><strong>Denetçinin okuduğu dosyalar</strong></summary>
+
+`.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, Blade, CSS, çeviri JSON'u, SwiftUI (`.swift`) ve Jetpack Compose (`.kt`). Düz Node 20+ ile
+çalışır. Sınıf kuralları yalnız sınıf dizgilerini okur (`class`, `className`, `cn()`, `clsx()`, `cva()`, `twMerge()`), yorum ve
+metinlerle eşleşmez.
+
+</details>
+
+<details>
+<summary><strong>Kural ekleme</strong></summary>
+
+Kurallar [`rules.json`](rules.json) içinde: `id`, `area`, `severity`, `en` ve `tr` altında `title`, `rule`, `why`, `fix` ve isteğe bağlı
+`check`:
+
+- `class`: sınıf dizgisinde desen; `unless`, `exceptElements`, `unlessBefore`, `css` ile
+- `native`: `swift` ve `kt` altında platform başına desen; `notMultipleOf`, `min`, `max`, `unlessBefore`, `unlessAfter`, `onlyIf` ile
+- `regex`: yorumlar hariç kodda desen; `flags` ve `files` ile
+- ya da yapısal denetim
+
+RULES.md ve RULES.tr.md için `npm run docs`, pull request öncesinde `npm test` çalıştırın.
+
+</details>
 
 ## Lisans
 

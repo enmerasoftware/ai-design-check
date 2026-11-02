@@ -106,7 +106,7 @@
 
 **How to fix:** Use font-medium or the secondary text colour.
 
-### No negative tracking on small text
+### Small text keeps normal tracking
 
 `no-tight-small-text` · warning · checked
 
@@ -125,6 +125,16 @@
 **Why:** Phones are read at arm's length and in sunlight; shrinking text to make a layout fit moves the problem to the reader.
 
 **How to fix:** Keep the size and let the layout give: wrap, stack, or move secondary content below.
+
+### Giant type once a page
+
+`one-display-size` · warning · review
+
+**Rule:** One element on a page may be far bigger than the rest, and it is a figure or a short phrase. Section headings stay on a shared scale, about 32–48 px on a landing page.
+
+**Why:** Scale makes an event only by contrast. When every section shouts, the page reads as absurd and the words get harder to read.
+
+**How to fix:** Write the heading sizes as variables, list the rendered sizes, and bring everything but the one chosen element back onto the scale.
 
 ## Corners and surfaces
 
@@ -167,6 +177,16 @@
 **Why:** Every high-rated dashboard we studied separated cards with a light page background and white or raised cards, with almost no shadow; heavy shadows make a grid of cards look like floating stickers.
 
 **How to fix:** Drop the shadow to shadow-sm or none and step the surface (page gray-50, card white; dark: page #0b0d14, card #11141c).
+
+### One radius for surfaces of one level
+
+`one-surface-radius` · warning · review
+
+**Rule:** Cards and images at the same level share one radius. 9, 12, 12 and 10 px on one screen is noise; what sits inside follows nested-radius.
+
+**Why:** Each value passes on its own, so no scale check catches it, but the eye reads the mix as parts from different places.
+
+**How to fix:** List the corner radii of the surfaces on the rendered screen as numbers. Choose one for each level and set it through a token.
 
 ## Components and reuse
 
@@ -278,11 +298,11 @@
 
 `spacing-rhythm` · note · review
 
-**Rule:** Related items sit tight, sections breathe. The same gap everywhere has no rhythm.
+**Rule:** Related items sit tight, sections breathe, and gaps of the same level are one value. 16, 20, 17 and 21 px between sections is noise, not rhythm.
 
-**Why:** Grouping is read from spacing before anything else.
+**Why:** Grouping is read from spacing before anything else, and uneven gaps at one level are what makes generated screens feel unplanned even when nobody can say why.
 
-**How to fix:** Use two or three steps: inside a group, between groups, between sections.
+**How to fix:** Use two or three steps: inside a group, between groups, between sections. Measure the rendered screen, list the gaps between its blocks as numbers, and make each level one value.
 
 ### Spacing on the 4 px grid
 
@@ -298,7 +318,7 @@
 
 `hero-one-action` · warning · review
 
-**Rule:** A hero has one primary and at most one secondary action; no third button, no chips or avatar rows stacked under the buttons.
+**Rule:** A hero keeps to a main action and, if needed, one quieter one; no third button, and no chips or avatar rows piled under them.
 
 **Why:** Each extra action splits attention at the moment the visitor decides whether to stay.
 
@@ -344,6 +364,56 @@
 
 **How to fix:** Show it, shorten it for everyone, or move it lower on the page instead of hiding it.
 
+### Room for each cell on a phone
+
+`phone-row-room` · warning · review
+
+**Rule:** A row on a phone holds as many cells as can show their label and value at normal size, usually two. Five tiny stat tiles across wrap into a grid; none of them is dropped.
+
+**Why:** Squeezing a desktop row into 390 px is how labels end up at 9 px and nobody can compare the numbers.
+
+**How to fix:** Use a 2×2 or 2×3 grid and give each cell its label, value and one meter if it needs one.
+
+### A screen header does one job
+
+`trim-screen-header` · note · review
+
+**Rule:** A phone header has one line of identity and at most two controls. A centred app name, a subtitle, a menu, an account button and a greeting sentence above the content are four headers.
+
+**Why:** Stacked chrome pushes the first useful thing below the middle of the screen and repeats what the person already knows.
+
+**How to fix:** Keep the greeting or the name, not both; a sentence that tells people what the screen is for goes. Move the controls that are left into the same line.
+
+### Things side by side share a line
+
+`measure-alignment` · warning · review
+
+**Rule:** Text, numbers and buttons on one row share a centre line or a baseline. Check it with numbers on the rendered screen, since a large number beside a button can look wrong by only a few pixels.
+
+**Why:** Misalignment looks like a mistake, and a label stacked above one item is what usually causes it.
+
+**How to fix:** Align the value with the button, not the value and its label as one block, then measure both centres.
+
+### Sibling cards end the same way
+
+`card-footer-pattern` · warning · review
+
+**Rule:** Cards side by side put their tags and actions in the same place: tags directly under the text, the action at the bottom edge on the same side. Longer content does not move them.
+
+**Why:** Wrapping tags push actions to different places in each card, and the row stops reading as a set.
+
+**How to fix:** Make the card a column, pin the action row to the bottom, and let the tags wrap above it.
+
+### Columns end together
+
+`balance-columns` · note · review
+
+**Rule:** Two columns side by side end at about the same height, and a list with more behind it links to all of it.
+
+**Why:** A list running past its neighbour looks unfinished, and a shortened list without a link hides the rest.
+
+**How to fix:** Show as many items as fit beside the lead item, and add a link to the full list below.
+
 ## Navigation
 
 ### Menu grouped by job, place decided first
@@ -355,6 +425,16 @@
 **Why:** Without it a menu grows into a flat list of fifty rows where related work sits in four places.
 
 **How to fix:** A moved address answers with 301 (path and query kept); callback URLs registered with outside services never move. Help texts name the same path as the menu.
+
+### The main action is not a tab
+
+`main-action-apart-from-tabs` · note · review
+
+**Rule:** The main action sits apart from the tabs instead of bulging out of the middle of them. A bar that floats over content leaves room for it: the last row can always scroll clear.
+
+**Why:** A raised centre button in five labelled tabs is the default of every generated app, and a floating bar with no clearance hides the last item.
+
+**How to fix:** Put the action in its own button beside the bar or in the screen, and add bottom padding the height of a floating bar. Keep tap targets and labels on the tabs people need.
 
 ## Visual language
 
@@ -452,7 +532,7 @@
 
 `one-accent` · warning · review
 
-**Rule:** The accent colour covers a few percent of the screen: the primary action, the selection and one key figure. Surfaces, borders and labels stay neutral.
+**Rule:** The accent colour stays rare: it marks the main action, the current selection and one key figure. Surfaces, borders and labels stay neutral.
 
 **Why:** When everything is highlighted nothing stands out, and the screen loses the one place the eye should land.
 
@@ -462,7 +542,7 @@
 
 `show-the-product` · warning · review
 
-**Rule:** The main visual is the product itself or one concrete object from its world; no glossy blobs, orbs, robots, glowing brains or stock circuits.
+**Rule:** The main visual shows the product or something real from its line of work; no glossy blobs, orbs, robots, glowing brains or stock circuits.
 
 **Why:** A generic visual could sit on any product page, so it explains nothing and makes the page look like a template.
 
@@ -477,6 +557,36 @@
 **Why:** In the dashboards we studied the strongest work used flat primary buttons; gradient buttons appeared on the AI features of weaker shots and read as decoration, not as the main action.
 
 **How to fix:** Use the primary colour as a flat fill; mark an AI action with a verb, not a gradient.
+
+### Let photos carry a feed
+
+`content-is-the-surface` · note · review
+
+**Rule:** In a feed of photos the photo is the surface: no box around each post, no small image inside a card, no pastel badge on every row.
+
+**Why:** Cards around every post spend the width on frames and make all content look equally unimportant.
+
+**How to fix:** Remove the card, let the image take the width, and separate posts with spacing.
+
+### Text on the brand colour keeps its colour
+
+`keep-text-on-brand` · warning · review
+
+**Rule:** Text on a brand-coloured band or button stays as the brand has it, usually white. A contrast number does not turn it black; report the ratio and let the owner decide.
+
+**Why:** People read the change of colour as a different brand long before they notice the ratio.
+
+**How to fix:** Keep the text colour. If small text is too faint, make it larger or heavier, or propose a deeper shade of the band.
+
+### Keep what already works
+
+`keep-what-works` · warning · review
+
+**Rule:** List the details the current site gets right before changing them: dividers, icons, background motion, menus. Removing one needs a reason you can state.
+
+**Why:** A redesign that wipes small familiar details feels worse even when each new part is better, and owners notice these first.
+
+**How to fix:** Compare the old and new screens side by side, also the menus and open states, and restore anything lost without a reason.
 
 ## Accessibility
 

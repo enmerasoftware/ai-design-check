@@ -1,13 +1,13 @@
 ---
 name: ai-design-fix
-description: "Fixes AI-generated, \"vibecoded\" UI so it reads as designed: audits the screen with the ai-design-check rules and checker, proposes a direction taken from the product, then fixes spacing, surfaces and colour, icons, copy, type, layout, components and motion in that order, and proves the result by re-running the checker. Use when the user asks to fix, clean up, polish, de-slop or redesign a screen, dashboard, landing page or component that looks generated (purple gradients, glows, emoji labels, tracked uppercase, heavy headings, uneven spacing, shouty copy). Works on React, Vue, Svelte, Tailwind, Blade and plain HTML/CSS. Can render a before/after video."
+description: "Repairs AI-built screens that look generated. Measures them with the ai-design-check rules and checker, writes a short brief from the product, then works through usability, truth, copy, numbers, components, order and decoration before building the proof. Checks again and reports the counts before and after. Use when the user asks to fix, clean up or improve the design of a screen, or says it looks generated, vibecoded or sloppy. Keeps features, data and content."
 ---
 
 # Fix a generated-looking screen
 
-The checker finds what can be measured; this skill fixes it and the things only a look at the screen can find. Keep
-the product: features, data, content and the order of sections stay. Change how every size, colour, word and
-effect is chosen. A screen that is clean but could belong to any product is not done.
+The checker finds what can be measured; this skill fixes it and the things only a look at the screen can find. The
+product stays as it is: its features, data, words and section order. What changes is how each size, colour, label and
+effect gets chosen. Tidy is not the goal: if the result could sit on a rival's site, keep going.
 
 ## 1. Measure first
 
@@ -21,59 +21,81 @@ effect is chosen. A screen that is clean but could belong to any product is not 
 
 3. Look at the screen at desktop and phone width (a browser tool, Playwright, or the user's screenshot). The rules
    marked *review* need eyes: `one-accent`, `nested-radius`, `hero-one-action`, `show-the-product`,
-   `no-badge-spam`, `selector-language`, `empty-states`, `legible-contrast`, `readable-measure`, `spacing-rhythm`.
-4. Write the audit in one short list: each problem, where it is, which rule. Group by area, worst first.
+   `no-badge-spam`, `selector-language`, `empty-states`, `legible-contrast`, `readable-measure`, `spacing-rhythm`,
+   `one-surface-radius`, `phone-row-room`, `trim-screen-header`, `main-action-apart-from-tabs`, `content-is-the-surface`.
+4. On the rendered screen, measure what the eye only feels: the gaps between its blocks and the corner radii of its
+   surfaces. Write them as numbers (`gaps 25, 18, 10, 12; radii 10, 8, 4`). Several values at one level is the finding
+   (`spacing-rhythm`, `one-surface-radius`); it is what makes a screen look generated when every rule passes.
+5. Write the audit in one short list: each problem, where it is, which rule. Group by area, worst first.
 
-If the screen is already good, say so and suggest two or three small refinements instead of redesigning it.
+A screen that works needs no redesign. Say that, and offer a couple of small improvements.
 
-## 2. Pick a direction (4 lines, before any edit)
+## 2. Write the brief (4 lines, before any edit)
 
-- **Who and what**: the user and the job of this screen in one sentence.
-- **World**: one place the product belongs to (a ledger, a newsroom, a harbour, a workshop). It picks the neutral
-  ramp (warm, graphite or ink) and the accent.
-- **Accent**: one colour, used on the primary action, the selection and one key figure. Keep a real brand colour;
-  a purple-to-blue glow is not a brand.
-- **One moment**: the single place that carries richness (the main chart, a product view, the headline number).
-  Everything else stays quiet.
+- **Job**: who opens this screen and the one thing they came to do.
+- **Claim**: what the screen promises, in the product's own words.
+- **Proof**: what on the screen shows that claim is true: a working view, a real figure, a real object. This is the one
+  place that gets richness; what surrounds it stays quiet.
+- **Keep**: the logo, colour, typeface, people and words that stay as they are. A purple-to-blue glow is not a brand.
 
-When the project has no tokens yet (no type scale, no colour variables), generate them from the direction instead of
+For a landing page or any screen that has to impress, read [proof.md](references/proof.md) now, and add a card for each
+section before you edit:
+
+| Question | Where the answer comes from |
+|---|---|
+| What does this section say? | The page's own words |
+| Who reads it? | The site and its customers; a shop owner is not a developer, so no terminal or code for them |
+| What should it show? | How that thing actually works. A process shows each step being done; the first idea you had for "software" is probably a cliché |
+| Which colour is it? | The site's existing palette, listed first and assigned so neighbours differ. A new colour needs the owner's yes |
+| What stays from today? | Details that already work: motion, icons, dividers, menus (`keep-what-works`) |
+
+Show the cards to the owner with the brief. Anything you could not find on the site is a question, not a guess.
+
+When the project has no tokens yet (no type scale, no colour variables), generate them from the brief instead of
 inventing values: `npx @enmera/ai-design-check system --character <calm|precise|friendly|warm|bold|editorial|luxurious|playful|technical|trustworthy> --brand "<hex>" --kind <dashboard|app|marketing|reading>`.
 It writes CSS, Tailwind, SwiftUI and Compose tokens whose text colours already pass contrast; `--json` prints them.
 
-For a large change, show the audit and the direction and let the user steer before editing. For a small screen or
+For a large change, show the audit and the brief and let the user steer before editing. For a small screen or
 when the user said "just do it", continue.
 
-## 3. Fix in passes, across the whole screen
+## 3. Work through it in order of harm
 
-Do one layer at a time over every element, not one element at a time. Reuse the project's components and tokens;
-see [scales.md](references/scales.md) for starting values when the project has none.
+Answer one question for every element before you move to the next question. A screen people cannot use or cannot trust
+is worse than one that looks plain, so looks come last. Reuse the project's components and tokens; see
+[scales.md](references/scales.md) for starting values when the project has none.
 
-1. **Spacing**: every arbitrary value onto the 4 px grid (`spacing-scale`), one gap inside groups and a larger one
-   between them, one padding for sibling cards, one row height per list.
-2. **Surfaces and colour**: one neutral surface ramp, hairline borders at 6–10 % of the text colour, depth from
-   surface steps. Remove gradients on surfaces and text (`no-ai-gradients`), glows outside charts
-   (`glow-in-charts-only`), blurred blobs (`no-blur-blobs`), side stripes. The accent appears two or three times.
-3. **Icons**: one line icon set at one size and stroke; emoji and sparkles out (`icons-not-emoji`,
-   `no-sparkle-for-ai`); same icon box width in every row.
-4. **Data**: stat cards read label → value → change with its period (`stat-card-anatomy`); charts keep every series
-   neutral but one and label it on the chart (`chart-highlight-one`, `direct-labels`); dim cents and decimals in the
-   headline figure (`dim-secondary-digits`).
-5. **Copy**: the title names the page, not the user (`no-greeting-headline`); no exclamation marks
-   (`no-exclamation-copy`), no buzzwords, every change says what it is compared with (`numbers-with-context`),
-   buttons say what they do, sentence case, no full stop on labels, short placeholders, plausible sample data.
-6. **Type**: sizes from the scale (`type-scale`), weights 400–600 (`no-heavy-headings`), no tracked uppercase
-   labels, negative tracking only on large display text, tabular figures for numbers, one format per number.
-7. **Layout**: one primary action per page header (`one-primary-action`), one card header pattern (title left, one
-   control right; `card-header-pattern`), one main element leads (the main chart spans most of the width; stat cards are compact and equal
-   height); wide tables span the page; a hero has one primary and at most one secondary action; readable line
-   length.
-8. **Components**: flat buttons (`no-gradient-buttons`), cards on surface steps instead of heavy shadows
-   (`no-heavy-card-shadow`), one status system (`status-system`); buttons, inputs, badges and cards from the shared components (`use-shared-components`,
-   `use-shared-looks`, `no-style-overrides`); radius by size and nested radius; few, quiet badges.
-9. **Motion**: named transitions only, no hover growth, no bounce, pulse only for live data, transform and opacity
-   instead of position; respect reduced motion.
-10. **Visual**: where the screen needs a picture, show the product with real-looking data instead of a generic
-   visual (`show-the-product`).
+1. **Can everyone use it?** Readable contrast (`legible-contrast`), a visible focus ring, tap targets (`tap-target`),
+   keyboard order, reduced motion (`reduced-motion`), and on phones no sideways scrolling or clipped text
+   (`no-horizontal-overflow`, `text-not-clipped`).
+2. **Is it true?** Every figure says what it is compared with (`numbers-with-context`); stat cards read label → value →
+   change with its period (`stat-card-anatomy`); charts keep every series neutral but one and label it on the chart
+   (`chart-highlight-one`, `direct-labels`); cents and decimals dim in the headline figure (`dim-secondary-digits`).
+3. **Does it say what it means?** The title names the page, not the user (`no-greeting-headline`); buttons say what they do;
+   no exclamation marks (`no-exclamation-copy`) or buzzwords; sentence case, no full stop on labels, short placeholders,
+   plausible sample data.
+4. **Do the numbers agree?** Bring the measured gaps and radii to one value per level on the 4 px grid (`spacing-scale`,
+   `spacing-rhythm`, `one-surface-radius`, `nested-radius`): one padding for sibling cards, one row height per list. Type
+   sizes come from the scale (`type-scale`), weights stay 400–600 (`no-heavy-headings`), no tracked uppercase labels,
+   negative tracking only on large display text, tabular figures, one format per number. Giant type appears once a page
+   (`one-display-size`).
+5. **Is it one system?** Buttons, inputs, badges and cards come from the shared components (`use-shared-components`,
+   `use-shared-looks`, `no-style-overrides`); flat buttons (`no-gradient-buttons`), surface steps instead of heavy shadows
+   (`no-heavy-card-shadow`), one status system (`status-system`), one neutral ramp, hairline borders at 6–10 % of the text
+   colour, few and quiet badges. Icons come from one line set, with one size and stroke, in a box of equal width on each row;
+   no emoji or sparkles (`icons-not-emoji`, `no-sparkle-for-ai`).
+6. **Is the order clear?** One primary action per page header (`one-primary-action`), one card header pattern
+   (`card-header-pattern`), one main element leads and stat cards stay compact and equal height; wide tables span the page;
+   a hero keeps to a main action and, if needed, one quieter one (`hero-one-action`); readable line length. On phones: room for each cell
+   (`phone-row-room`), one job for the header (`trim-screen-header`), the main action apart from the tabs
+   (`main-action-apart-from-tabs`). Items on a row share a line (`measure-alignment`), sibling cards end the same way
+   (`card-footer-pattern`), and neighbouring columns end together (`balance-columns`).
+7. **What can go, and what must stay?** Compare with the current screen, open menus included (`keep-what-works`); text on the
+   brand colour keeps its colour (`keep-text-on-brand`). Gradients on surfaces and text (`no-ai-gradients`), glows outside charts (`glow-in-charts-only`), blurred
+   blobs (`no-blur-blobs`), side stripes. The accent appears two or three times. Named transitions only, no hover growth, no
+   bounce, pulse only for live data, transform and opacity instead of position.
+8. **Where is the proof?** Build what the brief named (`show-the-product`), as in [proof.md](references/proof.md). To show
+   five or more items on a landing or product page, build a stage as in [motions.md](references/motions.md), with its
+   working [example](references/motion-gallery.html), once per page.
 
 ## 4. Prove it
 
@@ -100,7 +122,11 @@ see [scales.md](references/scales.md) for starting values when the project has n
 
 ## Rules for this skill
 
-- Never remove features, data or content to make the count go down.
+- Never remove features, data or content to make the count go down. A cleaner screen with a typo, a changed name or a
+  missing number is worse than the one before: compare the words and figures before and after.
+- Never copy a reference. Take what it does and why, then find this product's own form: its wording, order, type,
+  colours and showcase object stay out (`references/proof.md`).
+- Never change the text colour of a filled button to pass contrast; report the ratio instead.
 - Never make text smaller or cut it off to make a layout fit; a fix that does is not a fix.
 - Never silence a finding without a reason in the ignore comment.
 - When a fix is a general lesson (it would apply to the next project too), propose it as a rule for `rules.json`.

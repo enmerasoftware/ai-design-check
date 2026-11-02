@@ -126,6 +126,16 @@
 
 **Nasıl düzeltilir:** Boyutu koruyun, yerleşim esnesin: alta geçirin, üst üste dizin ya da ikincil içeriği aşağı alın.
 
+### Dev yazı sayfada bir kez
+
+`one-display-size` · uyarı · gözden geçirilir
+
+**Kural:** Sayfada yalnız bir öğe diğerlerinden çok büyük olabilir ve bu bir sayı ya da kısa ifadedir. Bölüm başlıkları ortak ölçekte kalır, tanıtım sayfasında yaklaşık 32–48 px.
+
+**Neden:** Büyüklük ancak karşıtlıkla etki yapar. Her bölüm bağırınca sayfa abartılı görünür, yazı da zor okunur.
+
+**Nasıl düzeltilir:** Başlık boyutlarını değişken yapın, açık ekrandaki boyutları yazın, seçilen tek öğe dışındakileri ölçeğe indirin.
+
 ## Köşe ve yüzey
 
 ### Köşe yuvarlaklığı yalnız ölçekten
@@ -167,6 +177,16 @@
 **Neden:** İncelediğimiz yüksek puanlı panellerin hepsi kartları açık sayfa zemini ve beyaz ya da yükseltilmiş kartla ayırdı, gölge neredeyse yoktu; ağır gölge kart ızgarasını yapıştırma etiketler gibi gösterir.
 
 **Nasıl düzeltilir:** Gölgeyi shadow-sm'e indirin ya da kaldırın, yüzeyi basamaklayın (sayfa gray-50, kart beyaz; koyu: sayfa #0b0d14, kart #11141c).
+
+### Aynı düzeydeki yüzeylere tek köşe
+
+`one-surface-radius` · uyarı · gözden geçirilir
+
+**Kural:** Aynı düzeydeki kart ve görseller tek köşe değeri kullanır. Bir ekranda 9, 12, 12 ve 10 px gürültüdür; içeridekiler nested-radius kuralına uyar.
+
+**Neden:** Her değer tek başına geçerlidir, ölçek denetimi yakalamaz; ama göz bu karışımı farklı yerlerden gelmiş parçalar olarak okur.
+
+**Nasıl düzeltilir:** Açık ekrandaki yüzeylerin köşe değerlerini sayı olarak yazın. Her düzey için birini seçip değişkenle verin.
 
 ## Bileşen ve tekrar
 
@@ -278,11 +298,11 @@
 
 `spacing-rhythm` · not · gözden geçirilir
 
-**Kural:** İlgili öğeler sıkı, bölümler arası geniş. Her yerde aynı boşluk ritimsizdir.
+**Kural:** İlgili öğeler sıkı, bölümler arası geniş; aynı düzeydeki boşluklar tek değerdir. Bölümler arasında 16, 20, 17 ve 21 px gürültüdür, ritim değildir.
 
-**Neden:** Gruplama her şeyden önce boşluktan okunur.
+**Neden:** Gruplama her şeyden önce boşluktan okunur; aynı düzeydeki eşitsiz boşluklar, üretilmiş ekranların kimsenin adını koyamadığı plansız hissini verir.
 
-**Nasıl düzeltilir:** İki üç adım kullanın: grup içi, gruplar arası, bölümler arası.
+**Nasıl düzeltilir:** İki üç adım kullanın: grup içi, gruplar arası, bölümler arası. Ekranı açıp bloklar arası boşlukları sayı olarak yazın ve her düzeyi tek değere indirin.
 
 ### Boşluklar 4 px ızgarasında
 
@@ -344,6 +364,56 @@
 
 **Nasıl düzeltilir:** Gösterin, herkes için kısaltın ya da gizlemek yerine sayfada aşağı taşıyın.
 
+### Telefonda her hücreye yer
+
+`phone-row-room` · uyarı · gözden geçirilir
+
+**Kural:** Telefonda bir satır, etiketini ve değerini normal boyutta gösterebilecek kadar hücre alır; çoğunlukla iki. Yan yana beş küçük gösterge alta geçip ızgara olur; hiçbiri atılmaz.
+
+**Neden:** Masaüstü satırını 390 px'e sıkıştırınca etiketler 9 px'e düşer, sayılar karşılaştırılamaz.
+
+**Nasıl düzeltilir:** 2×2 ya da 2×3 ızgara kullanın; her hücreye etiket, değer ve gerekiyorsa tek gösterge verin.
+
+### Ekran başlığı tek iş yapar
+
+`trim-screen-header` · not · gözden geçirilir
+
+**Kural:** Telefonda başlık tek satır kimlik ve en çok iki denetimden oluşur. Ortada uygulama adı, alt yazı, menü, hesap düğmesi ve içerik üstünde selamlama cümlesi dört ayrı başlıktır.
+
+**Neden:** Üst üste gelen başlıklar ilk işe yarar şeyi ekranın ortasının altına iter ve kişinin zaten bildiğini tekrarlar.
+
+**Nasıl düzeltilir:** Selamlamayı ya da adı bırakın, ikisini değil; ekranın ne işe yaradığını anlatan cümle gider. Kalan denetimleri aynı satıra alın.
+
+### Yan yana olanlar aynı hizada
+
+`measure-alignment` · uyarı · gözden geçirilir
+
+**Kural:** Bir satırdaki yazı, sayı ve düğmeler ortak orta çizgide ya da taban çizgisindedir. Açık ekranda sayıyla kontrol edin; büyük sayı ile düğme arasındaki birkaç piksel bile göze batar.
+
+**Neden:** Hizasızlık hata gibi görünür; çoğunlukla bir öğenin üstüne eklenen etiket buna yol açar.
+
+**Nasıl düzeltilir:** Etiketli bloğu değil, değerin kendisini düğmeyle hizalayın; sonra iki orta çizgiyi ölçün.
+
+### Kardeş kartlar aynı biçimde biter
+
+`card-footer-pattern` · uyarı · gözden geçirilir
+
+**Kural:** Yan yana kartlarda etiket ve işlem aynı yerde olur: etiketler metnin hemen altında, işlem alt kenarda aynı tarafta. Uzun içerik onları yerinden oynatmaz.
+
+**Neden:** Alta geçen etiketler işlemleri her kartta başka yere iter ve sıra bir bütün gibi okunmaz.
+
+**Nasıl düzeltilir:** Kartı sütun yapın, işlem satırını alta sabitleyin, etiketler onun üstünde alta geçsin.
+
+### Sütunlar birlikte biter
+
+`balance-columns` · not · gözden geçirilir
+
+**Kural:** Yan yana iki sütun yaklaşık aynı yükseklikte biter; devamı olan liste tümüne bağlantı verir.
+
+**Neden:** Yanındakini geçen liste bitmemiş görünür; bağlantısız kısaltılmış liste de gerisini saklar.
+
+**Nasıl düzeltilir:** Ana öğenin yanına sığacak kadar öğe gösterin, altına tam listeye giden bağlantı ekleyin.
+
 ## Menü
 
 ### Menü işe göre, yer önce kararlaştırılır
@@ -355,6 +425,16 @@
 **Neden:** Yoksa menü, birbiriyle ilgili işlerin dört ayrı yere düştüğü elli satırlık düz bir listeye dönüşür.
 
 **Nasıl düzeltilir:** Taşınan adres 301 ile yönlenir (alt yol ve sorgu korunur); dış servislere kayıtlı geri dönüş adresleri taşınmaz. Yardım metinlerindeki "nerede" yolu menüyle aynı yazılır.
+
+### Ana işlem sekme değildir
+
+`main-action-apart-from-tabs` · not · gözden geçirilir
+
+**Kural:** Ana işlem sekmelerin ortasından taşmaz, onlardan ayrı durur. İçeriğin üstünde yüzen çubuk içeriğe yer bırakır: son satır her zaman açığa kaydırılabilir.
+
+**Neden:** Beş etiketli sekmenin ortasından taşan düğme her üretilmiş uygulamanın varsayılanıdır; payı olmayan yüzen çubuk da son öğeyi gizler.
+
+**Nasıl düzeltilir:** İşlemi çubuğun yanında ya da ekranda kendi düğmesine alın; yüzen çubuk yüksekliğinde alt boşluk ekleyin. Gereken sekmelerde dokunma alanı ve etiket kalsın.
 
 ## Görsel dil
 
@@ -477,6 +557,36 @@
 **Neden:** İncelediğimiz panellerde en güçlü işler düz ana düğme kullandı; gradyan düğme zayıf işlerin yapay zekâ özelliklerinde çıktı ve ana işlem değil süs gibi okundu.
 
 **Nasıl düzeltilir:** Ana rengi düz dolgu olarak kullanın; yapay zekâ işlemini gradyanla değil fiille belirtin.
+
+### Akışı fotoğraflar taşısın
+
+`content-is-the-surface` · not · gözden geçirilir
+
+**Kural:** Fotoğraflı akışta yüzey fotoğrafın kendisidir: her gönderinin çevresinde kutu, kart içinde küçük görsel, her satırda pastel rozet yoktur.
+
+**Neden:** Her gönderinin çevresindeki kart genişliği çerçeveye harcar ve tüm içeriği aynı derecede önemsiz gösterir.
+
+**Nasıl düzeltilir:** Kartı kaldırın, görsel genişliği alsın, gönderileri boşlukla ayırın.
+
+### Marka renginde yazı rengi korunur
+
+`keep-text-on-brand` · uyarı · gözden geçirilir
+
+**Kural:** Marka rengi bant ya da düğme üstündeki yazı markanın kullandığı gibi kalır, çoğunlukla beyaz. Kontrast sayısı onu siyaha çevirmez; oranı bildirin, kararı sahibi versin.
+
+**Neden:** İnsanlar renk değişimini, oranı fark etmeden çok önce başka bir marka gibi algılar.
+
+**Nasıl düzeltilir:** Yazı rengini koruyun. Küçük yazı zayıf kalıyorsa büyütün ya da kalınlaştırın, veya bandın daha koyu tonunu önerin.
+
+### İşe yarayanı koruyun
+
+`keep-what-works` · uyarı · gözden geçirilir
+
+**Kural:** Değiştirmeden önce sitenin doğru yaptığı ayrıntıları listeleyin: ayırıcılar, ikonlar, arka plan hareketi, menüler. Birini kaldırmak için söylenebilir bir gerekçe gerekir.
+
+**Neden:** Küçük tanıdık ayrıntıları silen yeniden tasarım, her yeni parça daha iyi olsa da daha kötü hissettirir; sahipler de önce bunları fark eder.
+
+**Nasıl düzeltilir:** Eski ve yeni ekranı, menüler ve açık hallerle birlikte yan yana koyun; gerekçesiz kaybolanı geri getirin.
 
 ## Erişilebilirlik
 

@@ -19,7 +19,7 @@
 
 ## 0.7.1
 
-- Example: "Unslopping a SwiftUI app" (`examples/unslop-cebbin-swiftui.mp4`), the Cebbin iOS home screen through 16
+- Example: "Redesigning a SwiftUI app" (`examples/redesign-cebbin-swiftui.mp4`), the Cebbin iOS home screen through 16
   fixes one at a time, with the SwiftUI line behind each change.
 - The package and both READMEs say it reads SwiftUI and Jetpack Compose apps; the Turkish README has the mobile section.
 
