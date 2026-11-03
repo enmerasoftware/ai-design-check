@@ -167,7 +167,7 @@ test('the report names the scale in every format', () => {
     project({ 'a.css': '@theme { --spacing: 6px; }', 'V.swift': 'VStack(spacing: 13) {}' }, (cwd) => {
         const text = run(cwd);
         assert.match(text, /Spacing scale: 6 px grid \(a\.css, @theme\)\./);
-        assert.match(text, /Spacing scale for SwiftUI and Compose: 4 pt\/dp grid \(default; app code is not read for a scale\)\./);
+        assert.match(text, /Spacing scale for app code: 4 pt\/dp grid \(default; app code is not read for a scale\)\./);
         assert.match(text, /Off the spacing scale, 6 px grid \(a\.css, @theme\): mt-\[13px\]/);
         const { spacing, findings } = JSON.parse(run(cwd, '--json'));
         assert.deepEqual([spacing.web.base, spacing.web.source, spacing.native.source], [6, 'a.css, @theme', 'default']);

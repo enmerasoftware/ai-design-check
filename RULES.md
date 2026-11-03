@@ -298,7 +298,7 @@
 
 `spacing-scale` · warning · checked
 
-**Rule:** Arbitrary spacing and sizes in px (mt-[13px], h-[31px], gap-[7px]) sit on the project's scale: the one in ai-design-check.json, else the one read from Tailwind or CSS variables, else the 4 px grid. SwiftUI and Compose use the config file or 4 pt/dp. Prefer the theme steps.
+**Rule:** Arbitrary spacing and sizes in px (mt-[13px], h-[31px], gap-[7px]) sit on the project's scale: the one in ai-design-check.json, else the one read from Tailwind or CSS variables, else the 4 px grid. App code (SwiftUI, Compose, Flutter, React Native) uses the config file or 4 pt/dp. Prefer the theme steps.
 
 **Why:** Off-grid values are what a model types when it guesses; rows and gaps drift apart by a pixel or two and the screen looks uneven.
 

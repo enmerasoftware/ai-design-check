@@ -7,9 +7,10 @@
 [Türkçe](README.tr.md)
 
 For anyone building with Claude Code, Cursor or Codex: 95 design rules, a checker with no dependencies and no API key, and
-an agent skill that repairs the screen. It reads web projects and SwiftUI and Jetpack Compose apps.
+an agent skill that repairs the screen. It reads web projects (React, Vue, Svelte, Laravel Blade, HTML) and SwiftUI, Jetpack
+Compose, Flutter and React Native apps. Finding needs no agent, and neither do the mechanical fixes.
 
-## Start in two steps
+## Start in three steps
 
 **1. Check your project.**
 
@@ -33,7 +34,16 @@ lang/tr.json
 1 accessibility, 3 style: 3 errors, 1 warnings, 0 notes.
 ```
 
-**2. Let your agent fix it.**
+**2. Fix what has one answer, with no agent.**
+
+```bash
+npx @enmera/ai-design-check --fix --dry-run
+```
+
+This lists the changes; drop `--dry-run` to make them. Spacing and corners move to the nearest step of your scale, and very
+heavy type becomes bold. Tap sizes, colours, emoji, words and hierarchy stay in the report, since they take a decision.
+
+**3. Let your agent fix the rest.**
 
 ```bash
 npx skills add enmerasoftware/ai-design-check
@@ -264,8 +274,9 @@ number) leaves the 4 px grid and a note in the report. It is not guessed, and la
 decide it yourself. With a list and no `base`, margins, paddings and gaps must be on the list; widths, heights and offsets
 only have to fit the list's common divisor.
 
-SwiftUI and Compose use `spacing` from the config file (`native` when it differs from the web) or 4 pt/dp. They read
-nothing else: Swift and Kotlin constants have no shared place to look, and a web theme next to an app says nothing about the app.
+App code (SwiftUI, Compose, Flutter, React Native) uses `spacing` from the config file (`native` when it differs from the web)
+or 4 pt/dp. It reads nothing else: constants in app code have no shared place to look, and a web theme next to an app says
+nothing about the app.
 
 </details>
 

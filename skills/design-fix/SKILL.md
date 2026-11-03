@@ -35,7 +35,11 @@ When the user names a symptom, begin where it points, then carry on from step 1.
    npx @enmera/ai-design-check path/to/screen.tsx --json
    ```
 
-3. Look at the screen at desktop and phone width (a browser tool, Playwright, or the user's screenshot). The rules
+3. Take the mechanical part off the list first: `npx @enmera/ai-design-check path/to/screen.tsx --fix` moves spacing and
+   corners to the nearest step and very heavy type to bold, with no judgement. Read the changes it prints, then keep going
+   on what remains. Run the first count before this, so the report shows the whole change.
+
+4. Look at the screen at desktop and phone width (a browser tool, Playwright, or the user's screenshot). The rules
    marked *review* need eyes: `one-accent`, `nested-radius`, `hero-one-action`, `show-the-product`,
    `no-badge-spam`, `selector-language`, `empty-states`, `legible-contrast`, `readable-measure`, `spacing-rhythm`,
    `one-surface-radius`, `phone-row-room`, `trim-screen-header`, `main-action-apart-from-tabs`, `content-is-the-surface`,

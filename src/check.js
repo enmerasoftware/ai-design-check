@@ -17,7 +17,7 @@ export const CONFIG_FILE = 'ai-design-check.json';
 /** Also read: the neutral dotfile and the name used by @enmera/design 0.1. */
 export const CONFIG_FILES = [CONFIG_FILE, '.design-rules.json', 'enmera-design.json'];
 
-const DEFAULT_IGNORE = ['**/node_modules/**', '**/vendor/**', '**/dist/**', '**/build/**', '**/public/build/**', '**/.git/**', '**/storage/**', '**/*.min.*', '**/Pods/**', '**/DerivedData/**', '**/.build/**', '**/.gradle/**', '**/generated/**'];
+const DEFAULT_IGNORE = ['**/node_modules/**', '**/vendor/**', '**/dist/**', '**/build/**', '**/public/build/**', '**/.git/**', '**/storage/**', '**/*.min.*', '**/Pods/**', '**/DerivedData/**', '**/.build/**', '**/.gradle/**', '**/generated/**', '**/.dart_tool/**', '**/*.g.dart', '**/*.freezed.dart', '**/*Tests.swift', '**/*Test.kt', '**/*Tests.kt', '**/*_test.dart', '**/*.test.*', '**/*.spec.*', '**/__tests__/**'];
 
 /** Names that keep their capitals inside a sentence-case label. Projects add their own in config.properNouns. */
 const PROPER_NOUNS = [
@@ -43,8 +43,13 @@ const SMALL = new Set(['a', 'an', 'the', 'and', 'or', 'for', 'of', 'on', 'in', '
 
 const MARKUP = ['tsx', 'jsx', 'vue', 'svelte', 'html', 'blade.php'];
 const JSX = ['tsx', 'jsx'];
-/** Native app code: SwiftUI (swift) and Jetpack Compose (kt) read through each rule's check.native patterns. */
-const NATIVE = ['swift', 'kt'];
+/** App code read through each rule's check.native patterns: SwiftUI (swift), Jetpack Compose (kt), Flutter (dart). React Native files are "rn". */
+const NATIVE = ['swift', 'kt', 'dart'];
+const SCRIPT = ['tsx', 'jsx', 'ts', 'js'];
+const REACT_NATIVE = /\bfrom\s+['"]react-native['"]|\brequire\(\s*['"]react-native['"]\s*\)/;
+/** Interface code no rule reads yet: the report names it instead of calling the project clean. */
+const UNREAD = /\.(php|astro|ejs|erb|twig|hbs|liquid|njk|cshtml|razor|m|mm|java)$/;
+const LAYOUT_XML = /(?:^|\/)res\/layout[^/]*\/[^/]+\.(xml)$/;
 
 export function loadConfig(cwd) {
     const file = CONFIG_FILES.map((name) => join(cwd, name)).find((path) => existsSync(path));
@@ -259,6 +264,29 @@ function checkIconButtons(path, source, report) {
     }
 }
 
+const TOUCHABLES = ['Pressable', 'TouchableOpacity', 'TouchableHighlight', 'TouchableWithoutFeedback'];
+
+/** React Native: a touchable's size usually sits in a StyleSheet further down, so the style is followed by name. */
+function checkTouchables(path, source, report) {
+    const sheets = new Map();
+    for (const sheet of source.matchAll(/\b(\w+)\s*=\s*StyleSheet\.create\(\s*\{([\s\S]*?)\n?\}\s*\)/g)) {
+        for (const style of sheet[2].matchAll(/\b(\w+)\s*:\s*\{([^{}]*)\}/g)) sheets.set(`${sheet[1]}.${style[1]}`, style[2]);
+    }
+    for (const tag of tags(source, TOUCHABLES)) {
+        const line = lineOf(source, tag.start);
+        const inner = children(source, tag);
+        const named = /\baccessibilityLabel\s*=/.test(tag.attrs);
+        if (!named && !/\{\s*\.\.\./.test(tag.attrs) && inner && /<(?:[A-Z]\w*Icons?|Ionicons|Feather|Entypo|FontAwesome\w*)\b/.test(inner) && visibleText(inner) === '') report('icon-button-name', path, line, tag.name, `Icon-only <${tag.name}> has no accessibilityLabel`);
+        if (/\bhitSlop\s*=/.test(tag.attrs)) continue;
+        const inline = [...tag.attrs.matchAll(/style=\{\{([^{}]*)\}\}/g)].map((match) => match[1]);
+        const fromSheet = [...tag.attrs.matchAll(/\b(\w+\.\w+)\b/g)].map((match) => sheets.get(match[1])).filter(Boolean);
+        for (const body of [...inline, ...fromSheet]) {
+            const small = /\b(?:height|minHeight)\s*:\s*([0-9.]+)/.exec(body);
+            if (small && Number(small[1]) < 44) report('tap-target', path, line, small[0], `Touchable shorter than 44 pt: ${small[0]}`);
+        }
+    }
+}
+
 function checkSharedComponents(config, path, source, report) {
     if (matches(config.componentDirs, path)) return;
     for (const tag of tags(source, Object.keys(config.components))) {
@@ -338,11 +366,13 @@ export function check(cwd, overrides = {}) {
         const isI18n = config.i18n.files.length > 0 && matches(config.i18n.files, path);
         const markup = MARKUP.includes(extension);
         const regexFor = regexRules.filter((rule) => rule.check.files.includes(extension) && !(isI18n && !['no-buzzwords', 'error-copy', 'ellipsis-character'].includes(rule.id)));
-        const nativeFor = NATIVE.includes(extension) ? active.filter((rule) => rule.check.native?.[extension]) : [];
-        if (!markup && extension !== 'css' && regexFor.length === 0 && nativeFor.length === 0 && !isI18n) continue;
+        if (!markup && extension !== 'css' && regexFor.length === 0 && !NATIVE.includes(extension) && !isI18n) continue;
 
         const source = readFileSync(join(cwd, path), 'utf8');
         skip = ignores(source);
+        const reactNative = SCRIPT.includes(extension) && REACT_NATIVE.test(source);
+        const platform = reactNative ? 'rn' : extension;
+        const nativeFor = NATIVE.includes(extension) || reactNative ? active.filter((rule) => rule.check.native?.[platform]) : [];
 
         if (markup) {
             for (const unit of classUnits(source, config.classFunctions)) {
@@ -391,9 +421,9 @@ export function check(cwd, overrides = {}) {
         // Code rules read code and copy, not comments (inline ignores were read above, before blanking).
         const code = ['tsx', 'jsx', 'ts', 'js', 'vue', 'svelte', 'css', ...NATIVE].includes(extension) ? blankComments(source, extension !== 'css') : source;
         // Native rules: one pattern per platform; group 1 is the number when the rule checks a scale or a limit.
-        for (const rule of nativeFor) {
-            const native = typeof rule.check.native[extension] === 'string' ? { pattern: rule.check.native[extension] } : rule.check.native[extension];
-            for (const match of code.matchAll(new RegExp(native.pattern, 'gmu'))) {
+        for (const rule of nativeFor) for (const entry of [rule.check.native[platform]].flat()) {
+            const native = typeof entry === 'string' ? { pattern: entry } : entry;
+            for (const match of code.matchAll(new RegExp(native.pattern, `gmu${native.flags ?? ''}`))) {
                 const number = Number(match[1]);
                 if (native.scale && onScale(spacing().native, number)) continue;
                 if (native.notMultipleOf && (number <= 2 || number % native.notMultipleOf === 0)) continue;
@@ -406,7 +436,10 @@ export function check(cwd, overrides = {}) {
                 if (native.unlessAfter && new RegExp(native.unlessAfter, 'u').test(after)) continue;
                 // Only where the context makes it count (a size on something tappable): either side may match.
                 if (native.onlyIf && !((native.onlyIf.before && new RegExp(native.onlyIf.before, 'u').test(before)) || (native.onlyIf.after && new RegExp(native.onlyIf.after, 'u').test(after)))) continue;
-                report(rule.id, path, lineOf(source, match.index), match[0].trim(), native.scale ? `Off the spacing scale, ${describeScale(spacing().native, 'pt/dp')}: ${match[0].trim()}` : `${rule.title.en}: ${match[0].trim()}`);
+                // A corner of half the box's width is a circle, not a guess.
+                if (native.unlessCircle && new RegExp(`\\b(?:width|height|size)\\s*[:=(]\\s*${number * 2}\\b`).test(before.slice(-120) + after.slice(0, 120))) continue;
+                const finding = report(rule.id, path, lineOf(source, match.index), match[0].trim(), native.scale ? `Off the spacing scale, ${describeScale(spacing().native, 'pt/dp')}: ${match[0].trim()}` : `${rule.title.en}: ${match[0].trim()}`);
+                if (finding) Object.defineProperty(finding, 'offset', { value: match.index });
             }
         }
         for (const rule of regexFor) {
@@ -421,6 +454,7 @@ export function check(cwd, overrides = {}) {
         }
         if (on('sentence-case') && isI18n) checkI18n(config, path, source, report);
         if (on('sentence-case') && config.labels && ['tsx', 'jsx', 'vue', 'svelte'].includes(extension)) checkLabels(config, path, source, report);
+        if (reactNative && JSX.includes(extension)) checkTouchables(path, code, report);
         if (JSX.includes(extension)) {
             if (on('icon-button-name')) checkIconButtons(path, source, report);
             if (on('use-shared-components')) checkSharedComponents(config, path, source, report);
@@ -442,6 +476,21 @@ export function check(cwd, overrides = {}) {
     }
 
     return findings.sort((a, b) => a.path.localeCompare(b.path) || a.line - b.line);
+}
+
+/** How much of the project the rules can read: { read, unread: { extension: count } }. */
+export function coverage(cwd, overrides = {}) {
+    const config = { ...loadConfig(cwd), ...overrides };
+    const files = [...new Set(config.include.flatMap((start) => walk(cwd, start, config.ignore)))];
+    const unread = {};
+    let read = 0;
+    for (const path of files) {
+        const other = (UNREAD.test(path) && !path.endsWith('.blade.php') ? UNREAD : LAYOUT_XML).exec(path)?.[1];
+        if (other) unread[other] = (unread[other] ?? 0) + 1;
+        else if ([...MARKUP, ...NATIVE, ...SCRIPT, 'css'].includes(extensionOf(path))) read++;
+    }
+
+    return { read, unread };
 }
 
 /** Baseline: per file and rule, how many findings already existed. Only findings beyond those counts are reported. */

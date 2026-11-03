@@ -89,6 +89,10 @@
           "kt": {
             "pattern": "(?:\\bText\\(\\s*(?:text\\s*=\\s*)?|\\b(?:title|label)\\s*=\\s*)\"([^\"\\\\$\\n]{3,40})\"",
             "titleCase": true
+          },
+          "dart": {
+            "pattern": "\\bText\\(\\s*['\"]([^'\"\\\\$\\n]{3,40})['\"]",
+            "titleCase": true
           }
         }
       }
@@ -116,7 +120,25 @@
       "check": {
         "type": "class",
         "pattern": "(?:\\buppercase\\b[^\"'`]*\\btracking-(?:wide|wider|widest|\\[0?\\.\\d+em\\])|\\btracking-(?:wide|wider|widest|\\[0?\\.\\d+em\\])[^\"'`]*\\buppercase\\b)",
-        "markup": "class(?:Name)?=[\"'][^\"']*\\btracking-(?:wide|wider|widest|\\[0?\\.\\d+em\\])[^\"']*[\"'][^>]*>\\s*(\\p{Lu}[\\p{Lu}\\d&/ -]{3,})\\s*<"
+        "markup": "class(?:Name)?=[\"'][^\"']*\\btracking-(?:wide|wider|widest|\\[0?\\.\\d+em\\])[^\"']*[\"'][^>]*>\\s*(\\p{Lu}[\\p{Lu}\\d&/ -]{3,})\\s*<",
+        "native": {
+          "swift": [
+            "\\bText\\(\\s*\"\\p{Lu}{2,}(?:\\s+\\p{Lu}{2,})+\"",
+            "\\.textCase\\(\\.uppercase\\)(?:\\s*\\.\\w+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*\\.(?:tracking|kerning)\\(|\\.(?:tracking|kerning)\\([^()\\n]*\\)(?:\\s*\\.\\w+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*\\.textCase\\(\\.uppercase\\)"
+          ],
+          "kt": [
+            "\\bText\\(\\s*(?:text\\s*=\\s*)?\"\\p{Lu}{2,}(?:\\s+\\p{Lu}{2,})+\"",
+            "\\.uppercase\\(\\)[^\\n]{0,120}?\\bletterSpacing"
+          ],
+          "dart": [
+            "\\bText\\(\\s*['\"]\\p{Lu}{2,}(?:\\s+\\p{Lu}{2,})+['\"]",
+            "\\.toUpperCase\\(\\)[^;]{0,120}?\\bletterSpacing"
+          ],
+          "rn": [
+            "<Text\\b[^<>]*>\\s*\\p{Lu}{2,}(?:\\s+\\p{Lu}{2,})+\\s*</Text>",
+            "textTransform:\\s*['\"]uppercase['\"][^{}]*\\bletterSpacing|\\bletterSpacing[^{}]*textTransform:\\s*['\"]uppercase['\"]"
+          ]
+        }
       }
     },
     {
@@ -166,6 +188,14 @@
         "native": {
           "kt": {
             "pattern": "\\bfontSize\\s*=\\s*([0-9.]+)\\.sp"
+          },
+          "rn": {
+            "pattern": "\\bfontSize\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)",
+            "max": 11
+          },
+          "dart": {
+            "pattern": "\\bfontSize\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)",
+            "max": 11
           }
         }
       }
@@ -196,7 +226,9 @@
           "swift": {
             "pattern": "\\.font\\(\\s*\\.system\\(\\s*size:\\s*([0-9.]+)(?![^)\\n]*relativeTo)",
             "unlessBefore": "Image\\((?:systemName:)?[^)\\n]*\\)\\s*(?:\\.[a-zA-Z]+\\([^()\\n]*\\)\\s*){0,3}$"
-          }
+          },
+          "rn": "allowFontScaling=\\{\\s*false\\s*\\}",
+          "dart": "textScaler:\\s*TextScaler\\.noScaling|textScaleFactor:\\s*1(?:\\.0)?\\b"
         }
       }
     },
@@ -226,11 +258,27 @@
         "native": {
           "swift": {
             "pattern": "cornerRadius(?::\\s*|\\(\\s*)([0-9.]+)",
-            "notMultipleOf": 4
+            "notMultipleOf": 4,
+            "max": 100,
+            "unlessCircle": true
           },
           "kt": {
             "pattern": "RoundedCornerShape\\(\\s*(?:size\\s*=\\s*)?([0-9.]+)\\.dp",
-            "notMultipleOf": 4
+            "notMultipleOf": 4,
+            "max": 100,
+            "unlessCircle": true
+          },
+          "rn": {
+            "pattern": "\\bborder(?:(?:Top|Bottom)(?:Left|Right|Start|End))?Radius\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)",
+            "notMultipleOf": 4,
+            "max": 100,
+            "unlessCircle": true
+          },
+          "dart": {
+            "pattern": "(?:\\bBorderRadius|\\bRadius)\\.circular\\(\\s*([0-9]+(?:\\.[0-9]+)?)",
+            "notMultipleOf": 4,
+            "max": 100,
+            "unlessCircle": true
           }
         }
       }
@@ -421,7 +469,8 @@
         ],
         "native": {
           "swift": "\"(?:[^\"\\\\\\n]|\\\\.)*[\\u{1F300}-\\u{1FAFF}\\u{2705}\\u{2714}\\u{2728}\\u{2B50}\\u{26A1}\\u{2764}](?:[^\"\\\\\\n]|\\\\.)*\"",
-          "kt": "\"(?:[^\"\\\\\\n]|\\\\.)*[\\u{1F300}-\\u{1FAFF}\\u{2705}\\u{2714}\\u{2728}\\u{2B50}\\u{26A1}\\u{2764}](?:[^\"\\\\\\n]|\\\\.)*\""
+          "kt": "\"(?:[^\"\\\\\\n]|\\\\.)*[\\u{1F300}-\\u{1FAFF}\\u{2705}\\u{2714}\\u{2728}\\u{2B50}\\u{26A1}\\u{2764}](?:[^\"\\\\\\n]|\\\\.)*\"",
+          "dart": "(?:\"(?:[^\"\\\\\\n]|\\\\.)*?(?:[\\u{1F300}-\\u{1FAFF}\\u{2705}\\u{2714}\\u{2728}\\u{2B50}\\u{26A1}\\u{2764}])(?:[^\"\\\\\\n]|\\\\.)*?\"|'(?:[^'\\\\\\n]|\\\\.)*?(?:[\\u{1F300}-\\u{1FAFF}\\u{2705}\\u{2714}\\u{2728}\\u{2B50}\\u{26A1}\\u{2764}])(?:[^'\\\\\\n]|\\\\.)*?')"
         }
       }
     },
@@ -450,7 +499,12 @@
         "pattern": "(?:\\bbg-clip-text\\b|\\b(?:from|via|to)-(?:purple|violet|fuchsia|indigo)-[0-9]{2,3}\\b)",
         "native": {
           "swift": "(?:Linear|Angular|Radial)Gradient\\([\\s\\S]{0,240}?\\.(?:purple|indigo|pink)\\b|Text\\([^\\n]*\\)\\s*(?:\\.[a-zA-Z]+\\([^()\\n]*\\)\\s*){0,4}\\.foregroundStyle\\(\\s*(?:Linear|Angular|Radial)Gradient",
-          "kt": "Brush\\.(?:linear|horizontal|vertical|sweep|radial)Gradient\\([\\s\\S]{0,240}?(?:Purple|Violet|Magenta|Indigo|Pink)"
+          "kt": "Brush\\.(?:linear|horizontal|vertical|sweep|radial)Gradient\\([\\s\\S]{0,240}?(?:Purple|Violet|Magenta|Indigo|Pink)",
+          "rn": {
+            "pattern": "<(?:Linear|Radial)Gradient\\b[\\s\\S]{0,240}?(?:purple|violet|indigo|fuchsia|#(?:7c3aed|8b5cf6|a855f7|6366f1|4f46e5|d946ef|ec4899|6d28d9|9333ea))",
+            "flags": "i"
+          },
+          "dart": "(?:Linear|Radial|Sweep)Gradient\\([\\s\\S]{0,240}?Colors\\.(?:purple|deepPurple|indigo|pink)(?:Accent)?\\b"
         }
       }
     },
@@ -529,7 +583,9 @@
         "pattern": "\\banimate-(?:ping|pulse)\\b",
         "native": {
           "swift": "\\.repeatForever\\(",
-          "kt": "\\binfiniteRepeatable\\("
+          "kt": "\\binfiniteRepeatable\\(",
+          "rn": "\\bAnimated\\.loop\\(|\\bwithRepeat\\(",
+          "dart": "\\.repeat\\("
         }
       }
     },
@@ -711,7 +767,18 @@
               "before": "(?:\\.(?:clickable|toggleable|selectable)\\b(?:\\s*\\([^()]*\\))?(?:\\s*\\{[^{}]*\\})?|\\bIconButton\\((?:[^()]|\\([^()]*\\))*?modifier\\s*=\\s*Modifier)(?:\\s*\\.\\w+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*$",
               "after": "^(?:\\s*\\.\\w+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*\\.(?:clickable|toggleable|selectable)\\b"
             }
-          }
+          },
+          "dart": [
+            "MaterialTapTargetSize\\.shrinkWrap",
+            {
+              "pattern": "\\bSizedBox\\(\\s*(?:width:\\s*[0-9.]+\\s*,\\s*)?height:\\s*([0-9]+(?:\\.[0-9]+)?)\\s*,\\s*child:\\s*(?:const\\s+)?(?:Elevated|Outlined|Filled|Text|Icon)?Button\\b",
+              "max": 48
+            },
+            {
+              "pattern": "\\b(?:GestureDetector|InkWell)\\((?:[^()]|\\(\\))*?child:\\s*(?:const\\s+)?(?:Container|SizedBox)\\(\\s*(?:width:\\s*[0-9.]+\\s*,\\s*)?height:\\s*([0-9]+(?:\\.[0-9]+)?)",
+              "max": 48
+            }
+          ]
         }
       }
     },
@@ -747,7 +814,21 @@
           "html",
           "json",
           "md"
-        ]
+        ],
+        "native": {
+          "swift": {
+            "pattern": "\"(?:[^\"\\\\\\n]|\\\\.)*?(?:\\b(?:streamline[sd]?|empower(?:s|ing)?|supercharge[sd]?|seamless(?:ly)?|cutting-edge|next-generation|world-class|revolutioni[sz]e[sd]?|game-chang(?:er|ing))\\b|yeni nesil|devrim niteliğinde|sınırları zorlayan|kusursuz deneyim)(?:[^\"\\\\\\n]|\\\\.)*?\"",
+            "flags": "i"
+          },
+          "kt": {
+            "pattern": "\"(?:[^\"\\\\\\n]|\\\\.)*?(?:\\b(?:streamline[sd]?|empower(?:s|ing)?|supercharge[sd]?|seamless(?:ly)?|cutting-edge|next-generation|world-class|revolutioni[sz]e[sd]?|game-chang(?:er|ing))\\b|yeni nesil|devrim niteliğinde|sınırları zorlayan|kusursuz deneyim)(?:[^\"\\\\\\n]|\\\\.)*?\"",
+            "flags": "i"
+          },
+          "dart": {
+            "pattern": "(?:\"(?:[^\"\\\\\\n]|\\\\.)*?(?:\\b(?:streamline[sd]?|empower(?:s|ing)?|supercharge[sd]?|seamless(?:ly)?|cutting-edge|next-generation|world-class|revolutioni[sz]e[sd]?|game-chang(?:er|ing))\\b|yeni nesil|devrim niteliğinde|sınırları zorlayan|kusursuz deneyim)(?:[^\"\\\\\\n]|\\\\.)*?\"|'(?:[^'\\\\\\n]|\\\\.)*?(?:\\b(?:streamline[sd]?|empower(?:s|ing)?|supercharge[sd]?|seamless(?:ly)?|cutting-edge|next-generation|world-class|revolutioni[sz]e[sd]?|game-chang(?:er|ing))\\b|yeni nesil|devrim niteliğinde|sınırları zorlayan|kusursuz deneyim)(?:[^'\\\\\\n]|\\\\.)*?')",
+            "flags": "i"
+          }
+        }
       }
     },
     {
@@ -897,7 +978,18 @@
         "tr": "Eylemi söyleyen bir aria-label ekleyin (\"Kelimeyi sil\")."
       },
       "check": {
-        "type": "icon-button-name"
+        "type": "icon-button-name",
+        "native": {
+          "swift": {
+            "pattern": "\\bButton\\s*(?:\\((?:[^()]|\\([^()]*\\))*\\))?\\s*(?:\\{[^{}]*\\}\\s*label:\\s*)?\\{\\s*Image\\(systemName:\\s*\"[^\"]*\"\\)(?:\\s*\\.\\w+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*\\}",
+            "unlessAfter": "^(?:\\s*\\.\\w+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*\\.accessibilityLabel\\("
+          },
+          "kt": "\\bIconButton\\((?:[^()]|\\([^()]*\\))*\\)\\s*\\{\\s*Icon\\((?:[^()]|\\([^()]*\\))*contentDescription\\s*=\\s*null",
+          "dart": {
+            "pattern": "\\bIconButton(?:\\.\\w+)?\\(",
+            "unlessAfter": "^(?:(?!IconButton)[\\s\\S]){0,200}?\\btooltip:"
+          }
+        }
       }
     },
     {
@@ -1193,7 +1285,9 @@
         "css": "cubic-bezier\\(\\s*[\\d.]+\\s*,\\s*(?:-[\\d.]+|1\\.\\d*[1-9])|cubic-bezier\\(\\s*[\\d.]+\\s*,\\s*[\\d.-]+\\s*,\\s*[\\d.]+\\s*,\\s*(?:-[\\d.]+|1\\.\\d*[1-9])",
         "native": {
           "swift": "\\.(?:bouncy|interpolatingSpring)\\b|\\bbounce:\\s*0?\\.[3-9]",
-          "kt": "DampingRatio(?:HighBouncy|MediumBouncy)\\b"
+          "kt": "DampingRatio(?:HighBouncy|MediumBouncy)\\b",
+          "rn": "Easing\\.(?:bounce|elastic)\\b|\\bbounciness:\\s*[1-9]",
+          "dart": "Curves\\.(?:bounce|elastic)\\w*"
         }
       }
     },
@@ -1248,7 +1342,22 @@
           "svelte",
           "html",
           "blade.php"
-        ]
+        ],
+        "native": {
+          "swift": "\\bButton\\(\\s*\"(?:Submit|OK|Ok|Click here|Tamam|Gönder|Buraya tıklayın|Tıklayın)\"",
+          "kt": {
+            "pattern": "\\bText\\(\\s*(?:text\\s*=\\s*)?\"(?:Submit|OK|Ok|Click here|Tamam|Gönder|Buraya tıklayın|Tıklayın)\"",
+            "onlyIf": {
+              "before": "\\bButton\\((?:[^()]|\\([^()]*\\))*\\)\\s*\\{\\s*$"
+            }
+          },
+          "dart": {
+            "pattern": "\\bchild:\\s*(?:const\\s+)?Text\\(\\s*['\"](?:Submit|OK|Ok|Click here|Tamam|Gönder|Buraya tıklayın|Tıklayın)['\"]",
+            "onlyIf": {
+              "before": "Button\\([^;]*$"
+            }
+          }
+        }
       }
     },
     {
@@ -1283,7 +1392,21 @@
           "html",
           "blade.php",
           "json"
-        ]
+        ],
+        "native": {
+          "swift": {
+            "pattern": "\"(?:[^\"\\\\\\n]|\\\\.)*?(?:\\b(?:Oops|Whoops|Something went wrong|An error (?:has )?occurred|Invalid input)\\b|Bir şeyler ters gitti|Bir hata oluştu|Hay aksi)(?:[^\"\\\\\\n]|\\\\.)*?\"",
+            "flags": "i"
+          },
+          "kt": {
+            "pattern": "\"(?:[^\"\\\\\\n]|\\\\.)*?(?:\\b(?:Oops|Whoops|Something went wrong|An error (?:has )?occurred|Invalid input)\\b|Bir şeyler ters gitti|Bir hata oluştu|Hay aksi)(?:[^\"\\\\\\n]|\\\\.)*?\"",
+            "flags": "i"
+          },
+          "dart": {
+            "pattern": "(?:\"(?:[^\"\\\\\\n]|\\\\.)*?(?:\\b(?:Oops|Whoops|Something went wrong|An error (?:has )?occurred|Invalid input)\\b|Bir şeyler ters gitti|Bir hata oluştu|Hay aksi)(?:[^\"\\\\\\n]|\\\\.)*?\"|'(?:[^'\\\\\\n]|\\\\.)*?(?:\\b(?:Oops|Whoops|Something went wrong|An error (?:has )?occurred|Invalid input)\\b|Bir şeyler ters gitti|Bir hata oluştu|Hay aksi)(?:[^'\\\\\\n]|\\\\.)*?')",
+            "flags": "i"
+          }
+        }
       }
     },
     {
@@ -1318,7 +1441,21 @@
           "html",
           "blade.php",
           "json"
-        ]
+        ],
+        "native": {
+          "swift": {
+            "pattern": "\"(?:[^\"\\\\\\n]|\\\\.)*?(?:(?<=[\\p{L}])\\.\\.\\.(?=['\"`<\\s]))(?:[^\"\\\\\\n]|\\\\.)*?\"",
+            "flags": ""
+          },
+          "kt": {
+            "pattern": "\"(?:[^\"\\\\\\n]|\\\\.)*?(?:(?<=[\\p{L}])\\.\\.\\.(?=['\"`<\\s]))(?:[^\"\\\\\\n]|\\\\.)*?\"",
+            "flags": ""
+          },
+          "dart": {
+            "pattern": "(?:\"(?:[^\"\\\\\\n]|\\\\.)*?(?:(?<=[\\p{L}])\\.\\.\\.(?=['\"`<\\s]))(?:[^\"\\\\\\n]|\\\\.)*?\"|'(?:[^'\\\\\\n]|\\\\.)*?(?:(?<=[\\p{L}])\\.\\.\\.(?=['\"`<\\s]))(?:[^'\\\\\\n]|\\\\.)*?')",
+            "flags": ""
+          }
+        }
       }
     },
     {
@@ -1368,7 +1505,9 @@
         "css": "font-weight\\s*:\\s*(?:800|900)\\b",
         "native": {
           "swift": "\\.fontWeight\\(\\s*\\.(?:heavy|black)\\s*\\)|\\bweight:\\s*\\.(?:heavy|black)\\b",
-          "kt": "FontWeight\\.(?:ExtraBold|Black)\\b"
+          "kt": "FontWeight\\.(?:ExtraBold|Black)\\b",
+          "rn": "\\bfontWeight\\s*:\\s*(?:'[89]00'|\"[89]00\"|[89]00\\b)",
+          "dart": "FontWeight\\.w[89]00\\b"
         }
       }
     },
@@ -1406,8 +1545,8 @@
         "tr": "Boşluklar projenin ölçeğinde"
       },
       "rule": {
-        "en": "Arbitrary spacing and sizes in px (mt-[13px], h-[31px], gap-[7px]) sit on the project's scale: the one in ai-design-check.json, else the one read from Tailwind or CSS variables, else the 4 px grid. SwiftUI and Compose use the config file or 4 pt/dp. Prefer the theme steps.",
-        "tr": "Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]) projenin ölçeğine oturur: ai-design-check.json'daki, yoksa Tailwind ya da CSS değişkenlerinden okunan, o da yoksa 4 px ızgarası. SwiftUI ve Compose yapılandırma dosyasını ya da 4 pt/dp kullanır. Tema basamakları tercih edilir."
+        "en": "Arbitrary spacing and sizes in px (mt-[13px], h-[31px], gap-[7px]) sit on the project's scale: the one in ai-design-check.json, else the one read from Tailwind or CSS variables, else the 4 px grid. App code (SwiftUI, Compose, Flutter, React Native) uses the config file or 4 pt/dp. Prefer the theme steps.",
+        "tr": "Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]) projenin ölçeğine oturur: ai-design-check.json'daki, yoksa Tailwind ya da CSS değişkenlerinden okunan, o da yoksa 4 px ızgarası. Uygulama kodu (SwiftUI, Compose, Flutter, React Native) yapılandırma dosyasını ya da 4 pt/dp kullanır. Tema basamakları tercih edilir."
       },
       "why": {
         "en": "Off-grid values are what a model types when it guesses; rows and gaps drift apart by a pixel or two and the screen looks uneven.",
@@ -1429,7 +1568,25 @@
           "kt": {
             "pattern": "(?<=\\b(?:padding|spacedBy)\\([^)]*)\\b([0-9.]+)\\.dp",
             "scale": "spacing"
-          }
+          },
+          "rn": {
+            "pattern": "\\b(?:(?:padding|margin)(?:Top|Bottom|Left|Right|Horizontal|Vertical|Start|End)?|gap|rowGap|columnGap)\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)(?=\\s*[,}\\n])",
+            "scale": "spacing"
+          },
+          "dart": [
+            {
+              "pattern": "(?<=\\bEdgeInsets(?:Directional)?\\.\\w+\\([^)]*)(?<![\\w.])([0-9]+(?:\\.[0-9]+)?)\\b",
+              "scale": "spacing"
+            },
+            {
+              "pattern": "\\bspacing:\\s*([0-9]+(?:\\.[0-9]+)?)(?=\\s*[,)])",
+              "scale": "spacing"
+            },
+            {
+              "pattern": "\\bSizedBox\\(\\s*(?:height|width):\\s*([0-9]+(?:\\.[0-9]+)?)\\s*\\)",
+              "scale": "spacing"
+            }
+          ]
         }
       }
     },
@@ -1468,7 +1625,8 @@
         ],
         "native": {
           "swift": "\"(?:[^\"\\\\\\n]|\\\\.)*?\\p{L}!+(?:\\s(?:[^\"\\\\\\n]|\\\\.)*)?\"",
-          "kt": "\"(?:[^\"\\\\\\n]|\\\\.)*?\\p{L}!+(?:\\s(?:[^\"\\\\\\n]|\\\\.)*)?\""
+          "kt": "\"(?:[^\"\\\\\\n]|\\\\.)*?\\p{L}!+(?:\\s(?:[^\"\\\\\\n]|\\\\.)*)?\"",
+          "dart": "(?:\"(?:[^\"\\\\\\n]|\\\\.)*?(?:\\p{L}!+(?:\\s|$))(?:[^\"\\\\\\n]|\\\\.)*?\"|'(?:[^'\\\\\\n]|\\\\.)*?(?:\\p{L}!+(?:\\s|$))(?:[^'\\\\\\n]|\\\\.)*?')"
         }
       }
     },
@@ -1507,7 +1665,8 @@
         ],
         "native": {
           "swift": "\"(?:Welcome back|Good (?:morning|afternoon|evening)|Hey there|Hi there|Tekrar hoş geldin|Günaydın|İyi (?:geceler|akşamlar|günler)|Merhaba)(?=[\\s,!.\"\\\\])",
-          "kt": "\"(?:Welcome back|Good (?:morning|afternoon|evening)|Hey there|Hi there|Tekrar hoş geldin|Günaydın|İyi (?:geceler|akşamlar|günler)|Merhaba)(?=[\\s,!.\"\\\\$])"
+          "kt": "\"(?:Welcome back|Good (?:morning|afternoon|evening)|Hey there|Hi there|Tekrar hoş geldin|Günaydın|İyi (?:geceler|akşamlar|günler)|Merhaba)(?=[\\s,!.\"\\\\$])",
+          "dart": "['\"](?:Welcome back|Good (?:morning|afternoon|evening)|Hey there|Hi there|Tekrar hoş geldin|Günaydın|İyi (?:geceler|akşamlar|günler)|Merhaba)(?=[\\s,!.'\"\\\\$])"
         }
       }
     },
@@ -1543,7 +1702,21 @@
           "html",
           "blade.php",
           "json"
-        ]
+        ],
+        "native": {
+          "swift": {
+            "pattern": "\"(?:[^\"\\\\\\n]|\\\\.)*?(?:\\b(?:Trusted|Loved|Used|Chosen) by (?:over |more than )?[\\d.,]+\\s*[kKmM]?\\+|(?:⭐|★){4,})(?:[^\"\\\\\\n]|\\\\.)*?\"",
+            "flags": "i"
+          },
+          "kt": {
+            "pattern": "\"(?:[^\"\\\\\\n]|\\\\.)*?(?:\\b(?:Trusted|Loved|Used|Chosen) by (?:over |more than )?[\\d.,]+\\s*[kKmM]?\\+|(?:⭐|★){4,})(?:[^\"\\\\\\n]|\\\\.)*?\"",
+            "flags": "i"
+          },
+          "dart": {
+            "pattern": "(?:\"(?:[^\"\\\\\\n]|\\\\.)*?(?:\\b(?:Trusted|Loved|Used|Chosen) by (?:over |more than )?[\\d.,]+\\s*[kKmM]?\\+|(?:⭐|★){4,})(?:[^\"\\\\\\n]|\\\\.)*?\"|'(?:[^'\\\\\\n]|\\\\.)*?(?:\\b(?:Trusted|Loved|Used|Chosen) by (?:over |more than )?[\\d.,]+\\s*[kKmM]?\\+|(?:⭐|★){4,})(?:[^'\\\\\\n]|\\\\.)*?')",
+            "flags": "i"
+          }
+        }
       }
     },
     {
@@ -1808,7 +1981,8 @@
         ],
         "native": {
           "swift": "systemName:\\s*\"(?:sparkles?|wand\\.and\\.stars(?:\\.inverse)?|sparkle\\.magnifyingglass)\"",
-          "kt": "Icons\\.\\w+\\.AutoAwesome\\b"
+          "kt": "Icons\\.\\w+\\.AutoAwesome\\b",
+          "dart": "Icons\\.auto_awesome\\w*"
         }
       }
     },
@@ -1847,7 +2021,8 @@
         ],
         "native": {
           "swift": "\"[^\"\\n]*(?:Lorem ipsum|John Doe|Jane Doe)[^\"\\n]*\"",
-          "kt": "\"[^\"\\n]*(?:Lorem ipsum|John Doe|Jane Doe)[^\"\\n]*\""
+          "kt": "\"[^\"\\n]*(?:Lorem ipsum|John Doe|Jane Doe)[^\"\\n]*\"",
+          "dart": "(?:\"(?:[^\"\\\\\\n]|\\\\.)*?(?:Lorem ipsum|John Doe|Jane Doe)(?:[^\"\\\\\\n]|\\\\.)*?\"|'(?:[^'\\\\\\n]|\\\\.)*?(?:Lorem ipsum|John Doe|Jane Doe)(?:[^'\\\\\\n]|\\\\.)*?')"
         }
       }
     },
@@ -1881,6 +2056,14 @@
           },
           "kt": {
             "pattern": "\\.blur\\(\\s*(?:radius\\s*=\\s*)?([0-9.]+)\\.dp",
+            "min": 20
+          },
+          "rn": {
+            "pattern": "\\bfilter\\s*:\\s*['\"]blur\\(([0-9]+(?:\\.[0-9]+)?)",
+            "min": 20
+          },
+          "dart": {
+            "pattern": "ImageFilter\\.blur\\(\\s*sigmaX:\\s*([0-9]+(?:\\.[0-9]+)?)",
             "min": 20
           }
         }
@@ -2049,7 +2232,27 @@
           "kt": {
             "pattern": "(?:\\.shadow\\(\\s*(?:elevation\\s*=\\s*)?|\\belevation\\s*=\\s*)([0-9.]+)\\.dp",
             "min": 8
-          }
+          },
+          "rn": [
+            {
+              "pattern": "\\bshadowRadius\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)",
+              "min": 12
+            },
+            {
+              "pattern": "\\belevation\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)",
+              "min": 8
+            }
+          ],
+          "dart": [
+            {
+              "pattern": "\\bblurRadius\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)",
+              "min": 12
+            },
+            {
+              "pattern": "\\belevation\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)",
+              "min": 8
+            }
+          ]
         }
       }
     },
