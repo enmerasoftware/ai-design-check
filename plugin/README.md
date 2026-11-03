@@ -18,5 +18,5 @@ Install in Claude Code:
 Then ask: *"fix the design of this screen"*.
 
 The skills call the [`@enmera/ai-design-check`](https://www.npmjs.com/package/@enmera/ai-design-check) checker through `npx`. It
-runs on your machine, needs no account, model or API key, and sends nothing anywhere. Code, rules and docs:
+runs on your machine, needs no account, model or API key, and sends nothing anywhere. The skills need an agent that can read your project and run commands, such as Claude Code. Code, rules and docs:
 https://github.com/enmerasoftware/ai-design-check

@@ -1,10 +1,28 @@
 {
   "name": "ai-design-check",
+  "displayName": "AI Design Check",
   "version": "0.11.0",
   "description": "Find and fix what makes an AI-built interface look generated, on the web and in SwiftUI, Compose, Flutter and React Native apps. 137 rules, a checker that needs no model, and a skill that repairs the screen and proves it.",
-  "author": { "name": "Enmera Software", "email": "info@enmera.com.tr", "url": "https://github.com/enmerasoftware" },
+  "author": {
+    "name": "Enmera Software",
+    "email": "info@enmera.com.tr",
+    "url": "https://github.com/enmerasoftware"
+  },
   "homepage": "https://github.com/enmerasoftware/ai-design-check",
   "repository": "https://github.com/enmerasoftware/ai-design-check",
   "license": "MIT",
-  "keywords": ["design", "ui", "accessibility", "flutter", "swiftui", "jetpack-compose", "react-native", "tailwind"]
+  "keywords": [
+    "design",
+    "ui",
+    "accessibility",
+    "flutter",
+    "swiftui",
+    "jetpack-compose",
+    "react-native",
+    "tailwind"
+  ],
+  "documentationUrl": "https://github.com/enmerasoftware/ai-design-check#readme",
+  "supportUrl": "https://github.com/enmerasoftware/ai-design-check/issues",
+  "privacyPolicyUrl": "https://github.com/enmerasoftware/ai-design-check/blob/main/PRIVACY.md",
+  "termsOfServiceUrl": "https://github.com/enmerasoftware/ai-design-check/blob/main/LICENSE"
 }
