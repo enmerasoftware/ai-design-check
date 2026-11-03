@@ -33,6 +33,13 @@ export function findChrome() {
     return null;
 }
 
+/** What the styles add up to right now: text sizes, heights, and how much CSS the page has. */
+const STYLE_PRINT = `(() => {
+    let total = 0;
+    for (const el of document.querySelectorAll('body *')) total += parseFloat(getComputedStyle(el).fontSize) || 0;
+    return [total, document.documentElement.scrollHeight, document.styleSheets.length, [...document.querySelectorAll('style')].reduce((sum, el) => sum + el.textContent.length, 0)].join();
+})()`;
+
 export async function launch(chrome) {
     const profile = mkdtempSync(join(tmpdir(), 'ai-design-check-chrome-'));
     // DevTools over a pipe, not a WebSocket: Node 20 has no global WebSocket, and there is no port to look up.
@@ -131,6 +138,14 @@ export async function launch(chrome) {
             await send('Page.navigate', { url });
             await loaded;
             await new Promise((done) => setTimeout(done, settle)); // CDN styles and fonts
+            // A fixed wait loses to a slow machine: go on only when the styles have stopped changing, within reason.
+            let last = null;
+            for (let tries = 0; tries < 16; tries++) {
+                const now = await evaluate(STYLE_PRINT);
+                if (now === last) break;
+                last = now;
+                await new Promise((done) => setTimeout(done, 300));
+            }
         },
         close,
     };
