@@ -302,6 +302,11 @@
       "fix": {
         "en": "Flatten: a divider or a muted background block instead of a second border and shadow.",
         "tr": "Düzleştirin: ikinci kenarlık ve gölge yerine ayraç ya da hafif zeminli blok."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
       }
     },
     {
@@ -391,6 +396,11 @@
       "fix": {
         "en": "Cap the paragraph width, not the card.",
         "tr": "Kartı değil paragrafı daraltın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
       }
     },
     {
@@ -412,6 +422,11 @@
       "fix": {
         "en": "Use two or three steps: inside a group, between groups, between sections. Measure the rendered screen, list the gaps between its blocks as numbers, and make each level one value.",
         "tr": "İki üç adım kullanın: grup içi, gruplar arası, bölümler arası. Ekranı açıp bloklar arası boşlukları sayı olarak yazın ve her düzeyi tek değere indirin."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
       }
     },
     {
@@ -505,7 +520,8 @@
             "flags": "i"
           },
           "dart": "(?:Linear|Radial|Sweep)Gradient\\([\\s\\S]{0,240}?Colors\\.(?:purple|deepPurple|indigo|pink)(?:Accent)?\\b"
-        }
+        },
+        "scan": true
       }
     },
     {
@@ -530,7 +546,8 @@
       },
       "check": {
         "type": "class",
-        "pattern": "\\bborder-(?:l|s|r|e)-(?:2|4|8)\\b"
+        "pattern": "\\bborder-(?:l|s|r|e)-(?:2|4|8)\\b",
+        "scan": true
       }
     },
     {
@@ -555,7 +572,8 @@
       },
       "check": {
         "type": "class",
-        "pattern": "\\b(?:drop-)?shadow-\\[0_0_[1-9][0-9]*(?:px|rem)"
+        "pattern": "\\b(?:drop-)?shadow-\\[0_0_[1-9][0-9]*(?:px|rem)",
+        "scan": true
       }
     },
     {
@@ -586,7 +604,8 @@
           "kt": "\\binfiniteRepeatable\\(",
           "rn": "\\bAnimated\\.loop\\(|\\bwithRepeat\\(",
           "dart": "\\.repeat\\("
-        }
+        },
+        "scan": true
       }
     },
     {
@@ -612,7 +631,8 @@
       "check": {
         "type": "class",
         "pattern": "(?:^|\\s)(?:[\\w-]+:)*animate-marquee(?=\\s|$)",
-        "css": "@keyframes\\s+marquee|<marquee\\b"
+        "css": "@keyframes\\s+marquee|<marquee\\b",
+        "scan": true
       }
     },
     {
@@ -676,6 +696,11 @@
       "fix": {
         "en": "Use a darker shade of the background colour or near-white.",
         "tr": "Zemin renginin koyu tonunu ya da beyaza yakın rengi kullanın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
       }
     },
     {
@@ -1288,7 +1313,8 @@
           "kt": "DampingRatio(?:HighBouncy|MediumBouncy)\\b",
           "rn": "Easing\\.(?:bounce|elastic)\\b|\\bbounciness:\\s*[1-9]",
           "dart": "Curves\\.(?:bounce|elastic)\\w*"
-        }
+        },
+        "scan": true
       }
     },
     {
@@ -1477,6 +1503,11 @@
       "fix": {
         "en": "Lead with the real content (a number, a screenshot, an example) instead of an icon.",
         "tr": "İkon yerine gerçek içerikle başlayın (bir sayı, bir ekran görüntüsü, bir örnek)."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
       }
     },
     {
@@ -2446,7 +2477,8 @@
       },
       "check": {
         "type": "render",
-        "command": "narrow"
+        "command": "narrow",
+        "scan": true
       }
     },
     {
@@ -2471,7 +2503,8 @@
       },
       "check": {
         "type": "render",
-        "command": "narrow"
+        "command": "narrow",
+        "scan": true
       }
     },
     {
@@ -2781,6 +2814,1139 @@
         "unless": "(?:^|\\s)(?:max-)?h-(?:[dsl]vh|\\[(?:calc\\()?100[dsl]vh[^\\]]*\\])(?=\\s|$)",
         "css": "(?<![\\w-])(?:max-)?height\\s*:[^;{}]*\\b100vh\\b(?![^{}]*\\b100[dsl]vh\\b)",
         "unlessMedia": "min-width|supports"
+      }
+    },
+    {
+      "id": "no-overused-font",
+      "area": "type",
+      "severity": "info",
+      "title": {
+        "en": "A font chosen, not defaulted",
+        "tr": "Varsayılan değil, seçilmiş yazı tipi"
+      },
+      "rule": {
+        "en": "The main font is not one of the faces every generated page reaches for (Inter, Roboto, Geist, Fraunces, Space Grotesk and the like), unless the brand owns it.",
+        "tr": "Ana yazı tipi, her üretilmiş sayfanın uzandığı yazı tiplerinden biri değildir (Inter, Roboto, Geist, Fraunces, Space Grotesk ve benzeri); marka kendi yazı tipi olarak seçtiyse başka."
+      },
+      "why": {
+        "en": "A default face tells the visitor nobody decided.",
+        "tr": "Varsayılan yazı tipi, kimsenin karar vermediğini söyler."
+      },
+      "fix": {
+        "en": "Pick one with `system --character`, or allow it in the config when it is the brand font.",
+        "tr": "system --character ile seçin; marka yazı tipiyse yapılandırmada izin verin."
+      },
+      "check": {
+        "type": "regex",
+        "files": [
+          "css",
+          "html",
+          "blade.php"
+        ],
+        "pattern": "font-family:\\s*['\"]?(?:Inter|Roboto|Fraunces|Geist|Plus Jakarta Sans|Space Grotesk|DM Sans|Poppins|Open Sans)\\b|fonts\\.googleapis\\.com/css2?\\?family=(?:Inter|Roboto|Fraunces|Geist|Plus\\+Jakarta\\+Sans|Space\\+Grotesk|DM\\+Sans|Poppins|Open\\+Sans)\\b",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-default-cream",
+      "area": "visual",
+      "severity": "info",
+      "title": {
+        "en": "A background chosen, not defaulted",
+        "tr": "Varsayılan değil, seçilmiş zemin"
+      },
+      "rule": {
+        "en": "The page ground is not the warm cream or beige that generated pages reach for by reflex. Small cream areas are fine; the whole page needs a reason.",
+        "tr": "Sayfa zemini, üretilmiş sayfaların refleksle seçtiği sıcak krem ya da bej değildir. Küçük krem alanlar sorun değil; tüm sayfa için gerekçe gerekir."
+      },
+      "why": {
+        "en": "It has become the new safe default, so it says as little as white used to.",
+        "tr": "Yeni güvenli varsayılan oldu; beyazın eskiden söylediği kadar az şey söylüyor."
+      },
+      "fix": {
+        "en": "Take the ground from the brand, or keep it if the brand really is that colour.",
+        "tr": "Zemini markadan alın; marka gerçekten o renkse koruyun."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-neon-on-dark",
+      "area": "visual",
+      "severity": "warn",
+      "title": {
+        "en": "No neon cyan on dark",
+        "tr": "Koyu zeminde neon camgöbeği yok"
+      },
+      "rule": {
+        "en": "Saturated cyan text on a near-black ground is used at most once.",
+        "tr": "Neredeyse siyah zeminde doygun camgöbeği yazı en çok bir kez kullanılır."
+      },
+      "why": {
+        "en": "Next to purple gradients it is the most recognisable generated palette.",
+        "tr": "Mor geçişlerle birlikte en tanınan üretilmiş paletlerden biridir."
+      },
+      "fix": {
+        "en": "Use the brand accent, or a light neutral for text.",
+        "tr": "Marka vurgusunu ya da yazı için açık nötr rengi kullanın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "flat-type-scale",
+      "area": "type",
+      "severity": "warn",
+      "title": {
+        "en": "Headings stand above the text",
+        "tr": "Başlıklar metnin üstünde durur"
+      },
+      "rule": {
+        "en": "The largest heading is at least 1.25 times the body size.",
+        "tr": "En büyük başlık, gövde yazısının en az 1,25 katıdır."
+      },
+      "why": {
+        "en": "With no size step the eye has nowhere to start.",
+        "tr": "Boyut basamağı yoksa göz nereden başlayacağını bilemez."
+      },
+      "fix": {
+        "en": "Add one stronger step at the top of the page.",
+        "tr": "Sayfanın başına daha güçlü bir basamak ekleyin."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-giant-sentence",
+      "area": "type",
+      "severity": "warn",
+      "title": {
+        "en": "No full sentence at display size",
+        "tr": "Dev boyutta tam cümle yok"
+      },
+      "rule": {
+        "en": "A headline of eight words or more stays under 64 px and under 60% of the first screen.",
+        "tr": "Sekiz kelime ya da daha uzun başlık 64 px altında ve ilk ekranın %60'ından kısa kalır."
+      },
+      "why": {
+        "en": "It fills the first screen and leaves no room for what the page offers.",
+        "tr": "İlk ekranı doldurur, sayfanın sunduğuna yer bırakmaz."
+      },
+      "fix": {
+        "en": "Shorten the headline or lower its size.",
+        "tr": "Başlığı kısaltın ya da boyutunu düşürün."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-italic-serif-hero",
+      "area": "type",
+      "severity": "warn",
+      "title": {
+        "en": "No italic serif hero",
+        "tr": "İtalik serif ana başlık yok"
+      },
+      "rule": {
+        "en": "The main headline is not set in a large italic serif, whole or with one italic word as an accent.",
+        "tr": "Ana başlık, tamamı ya da vurgu için tek italik kelimesiyle, büyük italik serif yazılmaz."
+      },
+      "why": {
+        "en": "It reads as taste on one page and has become the uniform of generated landing pages.",
+        "tr": "Tek sayfada zarif görünür; üretilmiş açılış sayfalarının üniforması oldu."
+      },
+      "fix": {
+        "en": "Set it roman; carry the emphasis with weight, position or the words.",
+        "tr": "Dik yazın; vurguyu kalınlık, konum ya da kelimelerle verin."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?:\\bfont-serif\\b[^\"'`]*\\bitalic\\b|\\bitalic\\b[^\"'`]*\\bfont-serif\\b)",
+        "onlyElements": "^h1$",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-eyebrow-label",
+      "area": "writing",
+      "severity": "warn",
+      "title": {
+        "en": "No eyebrow label above a heading",
+        "tr": "Başlık üstünde küçük etiket yok"
+      },
+      "rule": {
+        "en": "A tiny tracked or capitalised label does not sit on its own line right above a heading.",
+        "tr": "Harf aralıklı ya da büyük harfli minik etiket, başlığın hemen üstünde kendi satırında durmaz."
+      },
+      "why": {
+        "en": "The heading carries its own weight; the label is scaffolding left in place.",
+        "tr": "Başlık kendi ağırlığını taşır; etiket sökülmemiş iskeledir."
+      },
+      "fix": {
+        "en": "Delete it, or work its information into the sentence below.",
+        "tr": "Silin ya da bilgisini alttaki cümleye katın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-section-numbers",
+      "area": "visual",
+      "severity": "info",
+      "title": {
+        "en": "No numbered section labels",
+        "tr": "Numaralı bölüm etiketi yok"
+      },
+      "rule": {
+        "en": "Small 01, 02, 03 labels do not ride next to section headings unless the order is the point.",
+        "tr": "Sıra önemli değilse küçük 01, 02, 03 etiketleri bölüm başlıklarının yanında durmaz."
+      },
+      "why": {
+        "en": "The page is numbering its own chapters instead of earning its structure.",
+        "tr": "Sayfa yapısını kurmak yerine kendi bölümlerini numaralıyor."
+      },
+      "fix": {
+        "en": "Remove them; keep numbers for real steps.",
+        "tr": "Kaldırın; numarayı gerçek adımlara saklayın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-em-dash-saturation",
+      "area": "writing",
+      "severity": "info",
+      "title": {
+        "en": "No wall of em dashes",
+        "tr": "Uzun çizgi yığını yok"
+      },
+      "rule": {
+        "en": "Eight or more em dashes at about one per 500 characters are rewritten.",
+        "tr": "Yaklaşık 500 karakterde bir olmak üzere sekiz ya da daha çok uzun çizgi yeniden yazılır."
+      },
+      "why": {
+        "en": "One is punctuation; a page of them is a generated cadence.",
+        "tr": "Biri noktalama işaretidir; sayfa dolusu üretilmiş metin ritmidir."
+      },
+      "fix": {
+        "en": "Use full stops and commas.",
+        "tr": "Nokta ve virgül kullanın."
+      },
+      "check": {
+        "type": "regex",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html",
+          "blade.php",
+          "md"
+        ],
+        "pattern": "—",
+        "minPerFile": 8,
+        "scan": true
+      }
+    },
+    {
+      "id": "no-aphorism-cadence",
+      "area": "writing",
+      "severity": "info",
+      "title": {
+        "en": "No slogan cadence",
+        "tr": "Slogan ritmi yok"
+      },
+      "rule": {
+        "en": "Sections do not keep landing on \"X. No Y.\" or \"Not a feature. A platform.\"; once is fine, three times is a tic.",
+        "tr": "Bölümler sürekli \"X. Y yok.\" ya da \"Özellik değil. Platform.\" biçiminde bitmez; bir kez sorun değil, üç kez tiktir."
+      },
+      "why": {
+        "en": "A manufactured contrast says nothing the reader can check.",
+        "tr": "Yapay zıtlık, okurun doğrulayabileceği bir şey söylemez."
+      },
+      "fix": {
+        "en": "Say what the product does, with a number or a fact.",
+        "tr": "Ürünün ne yaptığını sayı ya da bilgiyle söyleyin."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-theater-copy",
+      "area": "writing",
+      "severity": "info",
+      "title": {
+        "en": "No \"theater\" framing",
+        "tr": "\"Tiyatro\" kalıbı yok"
+      },
+      "rule": {
+        "en": "Do not dismiss something as \"security theater\" or \"productivity theater\".",
+        "tr": "Bir şeyi \"güvenlik tiyatrosu\" ya da \"verimlilik tiyatrosu\" diye geçiştirmeyin."
+      },
+      "why": {
+        "en": "It is a recurring generated tic, and it skips the argument.",
+        "tr": "Sık tekrarlanan üretilmiş bir tiktir ve asıl savı atlar."
+      },
+      "fix": {
+        "en": "Say plainly what the thing does or does not do.",
+        "tr": "O şeyin ne yapıp ne yapmadığını açıkça söyleyin."
+      },
+      "check": {
+        "type": "regex",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html",
+          "blade.php",
+          "md",
+          "json"
+        ],
+        "flags": "i",
+        "pattern": "\\b(?:compliance|security|productivity|privacy|safety|engineering|process) theat(?:er|re)\\b|\\b(?:güvenlik|verimlilik|uyum) tiyatrosu\\b",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-crushed-tracking",
+      "area": "type",
+      "severity": "warn",
+      "title": {
+        "en": "No crushed letter spacing",
+        "tr": "Ezilmiş harf aralığı yok"
+      },
+      "rule": {
+        "en": "Letter spacing stays above -0.05em.",
+        "tr": "Harf aralığı -0,05em'in üzerinde kalır."
+      },
+      "why": {
+        "en": "Past that point letters lose their shapes.",
+        "tr": "Bu sınırın ötesinde harfler biçimini kaybeder."
+      },
+      "fix": {
+        "en": "Tighten display type by a little, not by a lot.",
+        "tr": "Büyük başlıkları az sıkıştırın."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "\\btracking-\\[-0?\\.(?:0[6-9]|[1-9])\\d*em\\]",
+        "css": "letter-spacing:\\s*-0?\\.(?:0[6-9]|[1-9])\\d*em",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-wide-tracking-body",
+      "area": "type",
+      "severity": "warn",
+      "title": {
+        "en": "No wide tracking on running text",
+        "tr": "Akan metinde geniş harf aralığı yok"
+      },
+      "rule": {
+        "en": "Running text in small letters keeps letter spacing at or under 0.05em; wide tracking is for short capitalised labels.",
+        "tr": "Küçük harfli akan metinde harf aralığı en çok 0,05em'dir; geniş aralık kısa büyük harfli etiketler içindir."
+      },
+      "why": {
+        "en": "It breaks up word shapes and slows reading.",
+        "tr": "Kelime biçimlerini bozar, okumayı yavaşlatır."
+      },
+      "fix": {
+        "en": "Remove the tracking from running text.",
+        "tr": "Akan metinden harf aralığını kaldırın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-border-and-wide-shadow",
+      "area": "visual",
+      "severity": "info",
+      "title": {
+        "en": "Not a whole row of hairline and wide shadow",
+        "tr": "Tüm satırda ince çizgi ve geniş gölge yok"
+      },
+      "rule": {
+        "en": "A row of cards does not all wear a hairline border and a wide diffuse shadow. One floating panel may.",
+        "tr": "Bir kart satırının tamamı ince çizgi ve geniş yayılan gölge taşımaz. Tek yüzen panel taşıyabilir."
+      },
+      "why": {
+        "en": "On a whole row it is a default, not a decision.",
+        "tr": "Tüm satırda karar değil varsayılandır."
+      },
+      "fix": {
+        "en": "Keep the border or the shadow, not both.",
+        "tr": "Çizgiyi ya da gölgeyi koruyun, ikisini birden değil."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-radial-halo",
+      "area": "visual",
+      "severity": "warn",
+      "title": {
+        "en": "No radial glow behind content",
+        "tr": "İçeriğin arkasında dairesel parıltı yok"
+      },
+      "rule": {
+        "en": "A saturated radial gradient fading to transparent is not used as a background spotlight or cloud.",
+        "tr": "Saydama doğru solan doygun dairesel geçiş, arka planda spot ışığı ya da bulut olarak kullanılmaz."
+      },
+      "why": {
+        "en": "It is the gradient version of a glow shadow, and floats over the copy.",
+        "tr": "Parıltılı gölgenin geçiş hâlidir, metnin üstünde süzülür."
+      },
+      "fix": {
+        "en": "Remove it; give the section a plain ground from the palette.",
+        "tr": "Kaldırın; bölüme paletten düz zemin verin."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "\\bbg-\\[radial-gradient",
+        "css": "radial-gradient\\([^;{}]*transparent",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-stripe-surface",
+      "area": "visual",
+      "severity": "info",
+      "title": {
+        "en": "No decorative stripes",
+        "tr": "Süs amaçlı çizgili yüzey yok"
+      },
+      "rule": {
+        "en": "Repeating-gradient stripes do not decorate a surface.",
+        "tr": "Tekrarlanan geçişli çizgiler yüzey süsü olarak kullanılmaz."
+      },
+      "why": {
+        "en": "A recurring generated signature.",
+        "tr": "Sık görülen üretilmiş imzadır."
+      },
+      "fix": {
+        "en": "Leave the surface plain or use a deliberate texture.",
+        "tr": "Yüzeyi düz bırakın ya da bilinçli doku kullanın."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "\\bbg-\\[repeating-(?:linear|radial)-gradient",
+        "css": "repeating-(?:linear|radial)-gradient\\(",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-grid-wallpaper",
+      "area": "visual",
+      "severity": "info",
+      "title": {
+        "en": "No grid-line wallpaper",
+        "tr": "Izgara çizgili duvar kâğıdı yok"
+      },
+      "rule": {
+        "en": "A grid of hairlines tiled from two gradients is not a background, unless the product is a canvas, map or blueprint.",
+        "tr": "İki geçişten döşenen ince çizgili ızgara arka plan olmaz; ürün tuval, harita ya da plan değilse."
+      },
+      "why": {
+        "en": "It borrows technical credibility and adds nothing.",
+        "tr": "Teknik itibar ödünç alır, bir şey katmaz."
+      },
+      "fix": {
+        "en": "Remove it.",
+        "tr": "Kaldırın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-blob-clip-path",
+      "area": "visual",
+      "severity": "info",
+      "title": {
+        "en": "No torn edges drawn with clip-path",
+        "tr": "clip-path ile çizilmiş yırtık kenar yok"
+      },
+      "rule": {
+        "en": "A clip-path with a dozen vertices or a curved path does not stand in for a blob, torn edge or silhouette.",
+        "tr": "Çok köşeli ya da eğri clip-path; damla, yırtık kenar ya da silueti taklit etmez."
+      },
+      "why": {
+        "en": "It reads as the cheap version of the effect.",
+        "tr": "Efektin ucuz sürümü gibi görünür."
+      },
+      "fix": {
+        "en": "Use a real asset, or a clean edge.",
+        "tr": "Gerçek görsel ya da temiz kenar kullanın."
+      },
+      "check": {
+        "type": "class",
+        "css": "clip-path:\\s*(?:path\\(|polygon\\((?:[^;{},]*,){11})",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-buried-image",
+      "area": "visual",
+      "severity": "warn",
+      "title": {
+        "en": "No picture buried under a wash",
+        "tr": "Örtü altında kalan görsel yok"
+      },
+      "rule": {
+        "en": "A background picture is not under a near-opaque gradient, and an image is not at near-zero opacity.",
+        "tr": "Arka plan görseli neredeyse opak geçiş altında, görsel de neredeyse sıfır saydamlıkta olmaz."
+      },
+      "why": {
+        "en": "It never reaches the screen, yet ships and costs loading time.",
+        "tr": "Ekrana hiç ulaşmaz ama yüklenir, zaman harcar."
+      },
+      "fix": {
+        "en": "Show it properly or remove it.",
+        "tr": "Düzgün gösterin ya da kaldırın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-hard-offset-shadow",
+      "area": "visual",
+      "severity": "info",
+      "title": {
+        "en": "A hard offset shadow is a decision",
+        "tr": "Sert kaymalı gölge bir karardır"
+      },
+      "rule": {
+        "en": "A visible unblurred shadow moved by 4 px or more fits a deliberate neobrutalist direction only.",
+        "tr": "Bulanıklığı olmayan, 4 px ya da daha çok kaymış gölge yalnız bilinçli yeni-brütalist yöne uyar."
+      },
+      "why": {
+        "en": "Without that direction it looks borrowed.",
+        "tr": "O yön yoksa ödünç alınmış görünür."
+      },
+      "fix": {
+        "en": "Check it fits the design; otherwise soften or remove it.",
+        "tr": "Tasarıma uyduğunu kontrol edin; uymuyorsa yumuşatın ya da kaldırın."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "\\bshadow-\\[-?[4-9]\\d*px_-?\\d+px_0(?:px)?_",
+        "css": "box-shadow:\\s*-?(?:[4-9]|\\d{2,})px\\s+-?\\d+px\\s+0(?:px)?\\s+[^0-9]",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-blinking-cursor",
+      "area": "motion",
+      "severity": "info",
+      "title": {
+        "en": "No decorative blinking cursor",
+        "tr": "Süs amaçlı yanıp sönen imleç yok"
+      },
+      "rule": {
+        "en": "A blinking caret is not animated into a page where there is nothing to type.",
+        "tr": "Yazılacak yer olmayan sayfada yanıp sönen imleç canlandırılmaz."
+      },
+      "why": {
+        "en": "It borrows the look of a terminal to simulate activity.",
+        "tr": "Etkinlik taklidi için terminal görünümünü ödünç alır."
+      },
+      "fix": {
+        "en": "Remove it. Real fields draw their own caret.",
+        "tr": "Kaldırın. Gerçek alanlar kendi imlecini çizer."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-clipart-svg",
+      "area": "visual",
+      "severity": "info",
+      "title": {
+        "en": "No clip art built from shapes",
+        "tr": "Şekillerden kurulu çizim parçası yok"
+      },
+      "rule": {
+        "en": "A large inline SVG does not build a scene from a pile of primitive shapes. Diagrams, data and drawings of how the product works are fine.",
+        "tr": "Büyük satır içi SVG, yığınla basit şekilden sahne kurmaz. Şemalar, veri ve ürünün nasıl çalıştığını gösteren çizimler sorun değildir."
+      },
+      "why": {
+        "en": "It reads as placeholder art, not illustration.",
+        "tr": "Çizim değil, yer tutucu sanat gibi görünür."
+      },
+      "fix": {
+        "en": "Show something real, or draw what the product does and label it.",
+        "tr": "Gerçek bir şey gösterin ya da ürünün yaptığını çizip etiketleyin."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "image-not-broken",
+      "area": "visual",
+      "severity": "error",
+      "title": {
+        "en": "No broken images",
+        "tr": "Kırık görsel yok"
+      },
+      "rule": {
+        "en": "Every image loads, and none has an empty or placeholder source.",
+        "tr": "Her görsel yüklenir; hiçbirinin kaynağı boş ya da yer tutucu değildir."
+      },
+      "why": {
+        "en": "A broken box undoes the rest of the page.",
+        "tr": "Kırık kutu sayfanın kalanını boşa çıkarır."
+      },
+      "fix": {
+        "en": "Use a real image or remove the tag.",
+        "tr": "Gerçek görsel kullanın ya da etiketi kaldırın."
+      },
+      "check": {
+        "type": "regex",
+        "files": [
+          "tsx",
+          "jsx",
+          "vue",
+          "svelte",
+          "html",
+          "blade.php"
+        ],
+        "pattern": "<img\\b[^>]*\\bsrc=(?:\"\"|''|\"#\"|'#'|\"(?:placeholder|image|photo)\\.(?:png|jpe?g|webp)\")",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-script-errors",
+      "area": "interaction",
+      "severity": "error",
+      "title": {
+        "en": "No script errors on load",
+        "tr": "Yüklenirken betik hatası yok"
+      },
+      "rule": {
+        "en": "No script throws an uncaught error while the page loads.",
+        "tr": "Sayfa yüklenirken hiçbir betik yakalanmamış hata vermez."
+      },
+      "why": {
+        "en": "Broken JavaScript silently kills reveals and controls, and can leave a page blank.",
+        "tr": "Bozuk JavaScript gösterimleri ve denetimleri sessizce durdurur, sayfayı boş bırakabilir."
+      },
+      "fix": {
+        "en": "Fix the error named in the report.",
+        "tr": "Raporda adı geçen hatayı düzeltin."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-invisible-content",
+      "area": "visual",
+      "severity": "error",
+      "title": {
+        "en": "Content is visible at rest",
+        "tr": "İçerik durağan hâlde görünür"
+      },
+      "rule": {
+        "en": "More than a fifth of the text is not at zero opacity once every reveal has had its chance.",
+        "tr": "Tüm gösterimler çalıştıktan sonra metnin beşte birinden fazlası sıfır saydamlıkta kalmaz."
+      },
+      "why": {
+        "en": "That is a reveal that failed: the content shipped and nobody can see it.",
+        "tr": "Bu, başarısız gösterimdir: içerik yayında ama kimse göremiyor."
+      },
+      "fix": {
+        "en": "Make the visible state the default and animate towards it.",
+        "tr": "Görünür hâli varsayılan yapın, ona doğru canlandırın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-flush-cards",
+      "area": "layout",
+      "severity": "warn",
+      "title": {
+        "en": "Cards do not touch the scroller edge",
+        "tr": "Kartlar kaydırıcı kenarına değmez"
+      },
+      "rule": {
+        "en": "Cards in a horizontal scroller keep a gutter at rest.",
+        "tr": "Yatay kaydırıcıdaki kartlar durağan hâlde kenar boşluğu bırakır."
+      },
+      "why": {
+        "en": "Their edges and corners get cut off.",
+        "tr": "Kenarları ve köşeleri kesilir."
+      },
+      "fix": {
+        "en": "Pad the scroller, with scroll-padding to match.",
+        "tr": "Kaydırıcıya iç boşluk verin, scroll-padding ile eşleştirin."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "text-not-covered",
+      "area": "visual",
+      "severity": "error",
+      "title": {
+        "en": "Nothing covers the text",
+        "tr": "Metnin üstünü hiçbir şey kapatmaz"
+      },
+      "rule": {
+        "en": "No opaque element is painted over text.",
+        "tr": "Metnin üstüne opak bir öğe boyanmaz."
+      },
+      "why": {
+        "en": "Words under a box cannot be read.",
+        "tr": "Kutu altındaki kelimeler okunamaz."
+      },
+      "fix": {
+        "en": "Move the layer beside the text, or fix its stacking.",
+        "tr": "Katmanı metnin yanına alın ya da sıralamasını düzeltin."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-lopsided-fold",
+      "area": "layout",
+      "severity": "info",
+      "title": {
+        "en": "Columns in the first screen stay close",
+        "tr": "İlk ekrandaki sütunlar yakın kalır"
+      },
+      "rule": {
+        "en": "A column beside the headline does not run far past the fold while its neighbour fits one screen.",
+        "tr": "Başlığın yanındaki sütun, komşusu tek ekrana sığarken ekranın çok altına uzamaz."
+      },
+      "why": {
+        "en": "The short column floats in empty space.",
+        "tr": "Kısa sütun boşlukta asılı kalır."
+      },
+      "fix": {
+        "en": "Balance them, or stack them.",
+        "tr": "Dengeleyin ya da alt alta alın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-gray-on-color",
+      "area": "visual",
+      "severity": "warn",
+      "title": {
+        "en": "No gray text on colour",
+        "tr": "Renkli zeminde gri yazı yok"
+      },
+      "rule": {
+        "en": "Text on a coloured ground is not a neutral gray.",
+        "tr": "Renkli zemindeki yazı nötr gri olmaz."
+      },
+      "why": {
+        "en": "It looks washed out even when the ratio passes.",
+        "tr": "Oran geçse bile soluk görünür."
+      },
+      "fix": {
+        "en": "Use white, or a tint of the ground.",
+        "tr": "Beyaz ya da zeminin açık tonunu kullanın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-cramped-padding",
+      "area": "layout",
+      "severity": "warn",
+      "title": {
+        "en": "Room inside a box",
+        "tr": "Kutu içinde yer"
+      },
+      "rule": {
+        "en": "Text in a filled or bordered box keeps at least 3 px from its edge.",
+        "tr": "Dolgulu ya da çerçeveli kutudaki metin kenardan en az 3 px uzak durur."
+      },
+      "why": {
+        "en": "Text touching its box looks like a mistake and is harder to read.",
+        "tr": "Kutuya değen metin hata gibi görünür ve zor okunur."
+      },
+      "fix": {
+        "en": "Add padding from the scale.",
+        "tr": "Ölçekten iç boşluk ekleyin."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "text-off-viewport-edge",
+      "area": "layout",
+      "severity": "warn",
+      "title": {
+        "en": "Text keeps off the screen edge",
+        "tr": "Metin ekran kenarından uzak durur"
+      },
+      "rule": {
+        "en": "Paragraphs stay 16 px from the screen edge, 12 px on phones.",
+        "tr": "Paragraflar ekran kenarından 16 px, telefonda 12 px uzak durur."
+      },
+      "why": {
+        "en": "Flush text is hard to find and looks unfinished.",
+        "tr": "Kenara yapışık metin zor okunur, bitmemiş görünür."
+      },
+      "fix": {
+        "en": "Put it in a container with side padding.",
+        "tr": "Yan boşluklu bir kaba alın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-tight-leading",
+      "area": "type",
+      "severity": "warn",
+      "title": {
+        "en": "Lines have room",
+        "tr": "Satırların yeri var"
+      },
+      "rule": {
+        "en": "Multi-line text under 32 px has a line height of at least 1.3.",
+        "tr": "32 px altındaki çok satırlı metnin satır yüksekliği en az 1,3'tür."
+      },
+      "why": {
+        "en": "Tight lines make the eye lose its place.",
+        "tr": "Sıkışık satırda göz yerini kaybeder."
+      },
+      "fix": {
+        "en": "Use 1.5 to 1.7 for running text.",
+        "tr": "Akan metinde 1,5 ile 1,7 kullanın."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?:\\bleading-(?:none|\\[1(?:\\.[0-2]\\d*)?\\])\\b[^\"'`]*\\btext-(?:xs|sm|base)\\b|\\btext-(?:xs|sm|base)\\b[^\"'`]*\\bleading-(?:none|\\[1(?:\\.[0-2]\\d*)?\\])\\b)",
+        "scan": true
+      }
+    },
+    {
+      "id": "heading-order",
+      "area": "accessibility",
+      "severity": "warn",
+      "title": {
+        "en": "Heading levels do not skip",
+        "tr": "Başlık düzeyi atlanmaz"
+      },
+      "rule": {
+        "en": "Headings go down one level at a time: no h1 then h3.",
+        "tr": "Başlıklar birer düzey iner: h1'den sonra h3 gelmez."
+      },
+      "why": {
+        "en": "Screen readers navigate by this outline.",
+        "tr": "Ekran okuyucular bu yapıyla gezinir."
+      },
+      "fix": {
+        "en": "Fix the level, and style it with CSS.",
+        "tr": "Düzeyi düzeltin, görünümü CSS ile verin."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "heading-spacing",
+      "area": "layout",
+      "severity": "info",
+      "title": {
+        "en": "A heading sits with what it introduces",
+        "tr": "Başlık tanıttığı içeriğe yakın durur"
+      },
+      "rule": {
+        "en": "The space above a heading is larger than the space below it.",
+        "tr": "Başlığın üstündeki boşluk altındakinden büyüktür."
+      },
+      "why": {
+        "en": "Otherwise it seems to belong to the block before it.",
+        "tr": "Yoksa önceki bloğa aitmiş gibi görünür."
+      },
+      "fix": {
+        "en": "Move space from below the heading to above it.",
+        "tr": "Başlığın altındaki boşluğu üstüne taşıyın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-justified-text",
+      "area": "type",
+      "severity": "warn",
+      "title": {
+        "en": "No justified text without hyphens",
+        "tr": "Hecelemesiz iki yana yaslı metin yok"
+      },
+      "rule": {
+        "en": "Text is not justified unless hyphenation is on.",
+        "tr": "Heceleme açık değilse metin iki yana yaslanmaz."
+      },
+      "why": {
+        "en": "Rivers of white run down a narrow column.",
+        "tr": "Dar sütunda dikey beyaz nehirler oluşur."
+      },
+      "fix": {
+        "en": "Align left, or use hyphens: auto with the right lang.",
+        "tr": "Sola yaslayın ya da doğru lang ile hyphens: auto kullanın."
+      },
+      "check": {
+        "type": "class",
+        "pattern": "(?:^|\\s)(?:[\\w-]+:)*text-justify(?=\\s|$)",
+        "unless": "\\bhyphens-auto\\b",
+        "css": "text-align:\\s*justify",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-straggler",
+      "area": "type",
+      "severity": "info",
+      "title": {
+        "en": "No single word on the last line",
+        "tr": "Son satırda tek kelime yok"
+      },
+      "rule": {
+        "en": "A paragraph does not end with one word alone on its last line.",
+        "tr": "Paragraf son satırında tek kelimeyle bitmez."
+      },
+      "why": {
+        "en": "It leaves a hole under the block.",
+        "tr": "Bloğun altında delik bırakır."
+      },
+      "fix": {
+        "en": "Set text-wrap: pretty.",
+        "tr": "text-wrap: pretty kullanın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "balanced-headings",
+      "area": "type",
+      "severity": "info",
+      "title": {
+        "en": "Headings wrap evenly",
+        "tr": "Başlıklar dengeli kırılır"
+      },
+      "rule": {
+        "en": "A heading on two or more lines does not end on a much shorter line.",
+        "tr": "İki ya da daha çok satırlı başlık çok daha kısa bir satırla bitmez."
+      },
+      "why": {
+        "en": "A lone word under a heading looks like an accident.",
+        "tr": "Başlığın altındaki yalnız kelime kaza gibi görünür."
+      },
+      "fix": {
+        "en": "Set text-wrap: balance, or rewrite it to fit.",
+        "tr": "text-wrap: balance kullanın ya da sığacak şekilde yeniden yazın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-tiny-text",
+      "area": "type",
+      "severity": "warn",
+      "title": {
+        "en": "No tiny text",
+        "tr": "Minik yazı yok"
+      },
+      "rule": {
+        "en": "Text is at least 12 px; links, buttons and table cells at least 11 px.",
+        "tr": "Yazı en az 12 px; bağlantı, düğme ve tablo hücresi en az 11 px'tir."
+      },
+      "why": {
+        "en": "Under that it is a legibility failure, whatever the screen.",
+        "tr": "Bunun altı, ekran ne olursa olsun okunamazlıktır."
+      },
+      "fix": {
+        "en": "Raise it to the smallest step of the scale.",
+        "tr": "Ölçeğin en küçük basamağına çıkarın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-all-caps-sentences",
+      "area": "type",
+      "severity": "warn",
+      "title": {
+        "en": "No sentences in capitals",
+        "tr": "Büyük harfle cümle yok"
+      },
+      "rule": {
+        "en": "A run of eight words or more is not set in capitals.",
+        "tr": "Sekiz kelime ya da daha uzun metin büyük harfle yazılmaz."
+      },
+      "why": {
+        "en": "We read words by their shape, and capitals remove it.",
+        "tr": "Kelimeleri biçiminden okuruz; büyük harf bunu siler."
+      },
+      "fix": {
+        "en": "Keep capitals for short labels.",
+        "tr": "Büyük harfi kısa etiketlere bırakın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-repeated-label",
+      "area": "writing",
+      "severity": "info",
+      "title": {
+        "en": "One card says a thing once",
+        "tr": "Kart bir şeyi bir kez söyler"
+      },
+      "rule": {
+        "en": "The same text does not appear three or more times inside one card.",
+        "tr": "Aynı metin tek kartta üç ya da daha çok kez geçmez."
+      },
+      "why": {
+        "en": "A status wired into every slot of a template is noise.",
+        "tr": "Şablonun her yuvasına bağlanmış durum gürültüdür."
+      },
+      "fix": {
+        "en": "Say it once, where it counts.",
+        "tr": "Önemli olduğu yerde bir kez söyleyin."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-clipped-popover",
+      "area": "layout",
+      "severity": "info",
+      "title": {
+        "en": "A clipping box does not cut what it holds",
+        "tr": "Kırpan kutu içindekini kesmez"
+      },
+      "rule": {
+        "en": "A box with overflow hidden does not cut off a positioned child such as a menu or tooltip.",
+        "tr": "overflow hidden kutusu menü ya da ipucu gibi konumlandırılmış çocuğu kesmez."
+      },
+      "why": {
+        "en": "Menus and tooltips need to escape their box.",
+        "tr": "Menü ve ipuçları kutusundan taşabilmelidir."
+      },
+      "fix": {
+        "en": "Let the overflow show, or move the layer out.",
+        "tr": "Taşmaya izin verin ya da katmanı dışarı alın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "design-system-drift",
+      "area": "visual",
+      "severity": "info",
+      "title": {
+        "en": "The page uses its design system",
+        "tr": "Sayfa kendi tasarım sistemini kullanır"
+      },
+      "rule": {
+        "en": "With \"designSystem\" in the config (fonts, sizes, radii, colors), the page uses nothing outside those lists.",
+        "tr": "Yapılandırmada \"designSystem\" (fonts, sizes, radii, colors) varsa sayfa bu listelerin dışına çıkmaz."
+      },
+      "why": {
+        "en": "Small drifts are how a system stops being one.",
+        "tr": "Küçük sapmalar bir sistemin sistem olmaktan çıkma biçimidir."
+      },
+      "fix": {
+        "en": "Use a listed value, or add the new one on purpose.",
+        "tr": "Listedeki değeri kullanın ya da yenisini bilerek ekleyin."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
       }
     }
   ]

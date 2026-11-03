@@ -1,6 +1,20 @@
 # Changelog
 
-## Unreleased
+## 0.11.0
+
+- `scan <url>`: checks the running page at desktop and phone width in your Chrome, with no model and no API key. Real
+  contrast, sizes, what covers what, broken images, script errors, content that never appears and the tells only a browser
+  sees.
+- 42 new rules, 137 in all: fonts and grounds taken by default, flat type, giant sentences, italic serif heroes, eyebrow
+  labels, section numbers, em-dash walls, slogan cadence, radial halos, stripes, grid wallpaper, buried pictures, hard
+  shadows, tiny text, tight lines, justified text, stragglers, heading order and rhythm, and more. Several run on source too.
+  `legible-contrast`, `no-nested-cards`, `spacing-rhythm`, `readable-measure` and `no-icon-tile-stack` are now measured
+  instead of left for review. Many are adapted from [Impeccable](https://github.com/pbakaus/impeccable); see NOTICE.md.
+- `redesign <url>`: your agent studies the page, its code and its subject and writes one card per section, checked against
+  the measured page; the numbered fixes and the cards are applied pass by pass on a new git branch, and a pass that loses
+  content, adds rule errors or looks worse is thrown away. `--plan` stops at the cards, `--brief` builds them. Claude Code
+  and Codex.
+- Plugin packages for Claude and Codex.
 
 - Flutter and React Native are read. `.dart` files, and style objects and StyleSheets in files that import `react-native`,
   go through the same rules as SwiftUI and Compose: spacing, corners, type size, heavy weights and shadows, blur, purple

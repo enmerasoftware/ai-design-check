@@ -64,6 +64,56 @@
 
 **How to fix:** Let the text wrap; if it truly must be one line, keep the full text in a title and in the detail view.
 
+### No eyebrow label above a heading
+
+`no-eyebrow-label` · warning · checked
+
+**Rule:** A tiny tracked or capitalised label does not sit on its own line right above a heading.
+
+**Why:** The heading carries its own weight; the label is scaffolding left in place.
+
+**How to fix:** Delete it, or work its information into the sentence below.
+
+### No wall of em dashes
+
+`no-em-dash-saturation` · note · checked
+
+**Rule:** Eight or more em dashes at about one per 500 characters are rewritten.
+
+**Why:** One is punctuation; a page of them is a generated cadence.
+
+**How to fix:** Use full stops and commas.
+
+### No slogan cadence
+
+`no-aphorism-cadence` · note · checked
+
+**Rule:** Sections do not keep landing on "X. No Y." or "Not a feature. A platform."; once is fine, three times is a tic.
+
+**Why:** A manufactured contrast says nothing the reader can check.
+
+**How to fix:** Say what the product does, with a number or a fact.
+
+### No "theater" framing
+
+`no-theater-copy` · note · checked
+
+**Rule:** Do not dismiss something as "security theater" or "productivity theater".
+
+**Why:** It is a recurring generated tic, and it skips the argument.
+
+**How to fix:** Say plainly what the thing does or does not do.
+
+### One card says a thing once
+
+`no-repeated-label` · note · checked
+
+**Rule:** The same text does not appear three or more times inside one card.
+
+**Why:** A status wired into every slot of a template is noise.
+
+**How to fix:** Say it once, where it counts.
+
 ## Type scale
 
 ### Font sizes from the scale only
@@ -126,6 +176,126 @@
 
 **How to fix:** Write the heading sizes as variables, list the rendered sizes, and bring everything but the one chosen element back onto the scale.
 
+### A font chosen, not defaulted
+
+`no-overused-font` · note · checked
+
+**Rule:** The main font is not one of the faces every generated page reaches for (Inter, Roboto, Geist, Fraunces, Space Grotesk and the like), unless the brand owns it.
+
+**Why:** A default face tells the visitor nobody decided.
+
+**How to fix:** Pick one with `system --character`, or allow it in the config when it is the brand font.
+
+### Headings stand above the text
+
+`flat-type-scale` · warning · checked
+
+**Rule:** The largest heading is at least 1.25 times the body size.
+
+**Why:** With no size step the eye has nowhere to start.
+
+**How to fix:** Add one stronger step at the top of the page.
+
+### No full sentence at display size
+
+`no-giant-sentence` · warning · checked
+
+**Rule:** A headline of eight words or more stays under 64 px and under 60% of the first screen.
+
+**Why:** It fills the first screen and leaves no room for what the page offers.
+
+**How to fix:** Shorten the headline or lower its size.
+
+### No italic serif hero
+
+`no-italic-serif-hero` · warning · checked
+
+**Rule:** The main headline is not set in a large italic serif, whole or with one italic word as an accent.
+
+**Why:** It reads as taste on one page and has become the uniform of generated landing pages.
+
+**How to fix:** Set it roman; carry the emphasis with weight, position or the words.
+
+### No crushed letter spacing
+
+`no-crushed-tracking` · warning · checked
+
+**Rule:** Letter spacing stays above -0.05em.
+
+**Why:** Past that point letters lose their shapes.
+
+**How to fix:** Tighten display type by a little, not by a lot.
+
+### No wide tracking on running text
+
+`no-wide-tracking-body` · warning · checked
+
+**Rule:** Running text in small letters keeps letter spacing at or under 0.05em; wide tracking is for short capitalised labels.
+
+**Why:** It breaks up word shapes and slows reading.
+
+**How to fix:** Remove the tracking from running text.
+
+### Lines have room
+
+`no-tight-leading` · warning · checked
+
+**Rule:** Multi-line text under 32 px has a line height of at least 1.3.
+
+**Why:** Tight lines make the eye lose its place.
+
+**How to fix:** Use 1.5 to 1.7 for running text.
+
+### No justified text without hyphens
+
+`no-justified-text` · warning · checked
+
+**Rule:** Text is not justified unless hyphenation is on.
+
+**Why:** Rivers of white run down a narrow column.
+
+**How to fix:** Align left, or use hyphens: auto with the right lang.
+
+### No single word on the last line
+
+`no-straggler` · note · checked
+
+**Rule:** A paragraph does not end with one word alone on its last line.
+
+**Why:** It leaves a hole under the block.
+
+**How to fix:** Set text-wrap: pretty.
+
+### Headings wrap evenly
+
+`balanced-headings` · note · checked
+
+**Rule:** A heading on two or more lines does not end on a much shorter line.
+
+**Why:** A lone word under a heading looks like an accident.
+
+**How to fix:** Set text-wrap: balance, or rewrite it to fit.
+
+### No tiny text
+
+`no-tiny-text` · warning · checked
+
+**Rule:** Text is at least 12 px; links, buttons and table cells at least 11 px.
+
+**Why:** Under that it is a legibility failure, whatever the screen.
+
+**How to fix:** Raise it to the smallest step of the scale.
+
+### No sentences in capitals
+
+`no-all-caps-sentences` · warning · checked
+
+**Rule:** A run of eight words or more is not set in capitals.
+
+**Why:** We read words by their shape, and capitals remove it.
+
+**How to fix:** Keep capitals for short labels.
+
 ## Corners and surfaces
 
 ### Corner radii from the scale only
@@ -140,7 +310,7 @@
 
 ### No cards inside cards
 
-`no-nested-cards` · warning · review
+`no-nested-cards` · warning · checked
 
 **Rule:** Group inside a card with spacing, type and dividers, not another bordered card.
 
@@ -276,7 +446,7 @@
 
 ### Readable line length and leading
 
-`readable-measure` · warning · review
+`readable-measure` · warning · checked
 
 **Rule:** Running text stays under about 80 characters per line (max-w-prose / max-w-3xl) with line height of at least 1.3; headings have more space above than below.
 
@@ -286,7 +456,7 @@
 
 ### Spacing with rhythm
 
-`spacing-rhythm` · note · review
+`spacing-rhythm` · note · checked
 
 **Rule:** Related items sit tight, sections breathe, and gaps of the same level are one value. 16, 20, 17 and 21 px between sections is noise, not rhythm.
 
@@ -414,6 +584,66 @@
 
 **How to fix:** h-dvh or min-h-svh; in CSS write height: 100vh; height: 100dvh; so old browsers keep a value.
 
+### Cards do not touch the scroller edge
+
+`no-flush-cards` · warning · checked
+
+**Rule:** Cards in a horizontal scroller keep a gutter at rest.
+
+**Why:** Their edges and corners get cut off.
+
+**How to fix:** Pad the scroller, with scroll-padding to match.
+
+### Columns in the first screen stay close
+
+`no-lopsided-fold` · note · checked
+
+**Rule:** A column beside the headline does not run far past the fold while its neighbour fits one screen.
+
+**Why:** The short column floats in empty space.
+
+**How to fix:** Balance them, or stack them.
+
+### Room inside a box
+
+`no-cramped-padding` · warning · checked
+
+**Rule:** Text in a filled or bordered box keeps at least 3 px from its edge.
+
+**Why:** Text touching its box looks like a mistake and is harder to read.
+
+**How to fix:** Add padding from the scale.
+
+### Text keeps off the screen edge
+
+`text-off-viewport-edge` · warning · checked
+
+**Rule:** Paragraphs stay 16 px from the screen edge, 12 px on phones.
+
+**Why:** Flush text is hard to find and looks unfinished.
+
+**How to fix:** Put it in a container with side padding.
+
+### A heading sits with what it introduces
+
+`heading-spacing` · note · checked
+
+**Rule:** The space above a heading is larger than the space below it.
+
+**Why:** Otherwise it seems to belong to the block before it.
+
+**How to fix:** Move space from below the heading to above it.
+
+### A clipping box does not cut what it holds
+
+`no-clipped-popover` · note · checked
+
+**Rule:** A box with overflow hidden does not cut off a positioned child such as a menu or tooltip.
+
+**Why:** Menus and tooltips need to escape their box.
+
+**How to fix:** Let the overflow show, or move the layer out.
+
 ## Navigation
 
 ### Menu grouped by job, place decided first
@@ -480,7 +710,7 @@
 
 ### Legible contrast
 
-`legible-contrast` · warning · review
+`legible-contrast` · warning · checked
 
 **Rule:** Text meets WCAG AA (4.5:1, large text 3:1); no grey text on coloured backgrounds.
 
@@ -490,7 +720,7 @@
 
 ### No icon tile above every heading
 
-`no-icon-tile-stack` · warning · review
+`no-icon-tile-stack` · warning · checked
 
 **Rule:** A grid of identical cards each with a rounded icon tile, a heading and two lines of text is a template, not a layout. Use the icon inline or not at all, and vary what leads.
 
@@ -588,6 +818,166 @@
 
 **How to fix:** Compare the old and new screens side by side, also the menus and open states, and restore anything lost without a reason.
 
+### A background chosen, not defaulted
+
+`no-default-cream` · note · checked
+
+**Rule:** The page ground is not the warm cream or beige that generated pages reach for by reflex. Small cream areas are fine; the whole page needs a reason.
+
+**Why:** It has become the new safe default, so it says as little as white used to.
+
+**How to fix:** Take the ground from the brand, or keep it if the brand really is that colour.
+
+### No neon cyan on dark
+
+`no-neon-on-dark` · warning · checked
+
+**Rule:** Saturated cyan text on a near-black ground is used at most once.
+
+**Why:** Next to purple gradients it is the most recognisable generated palette.
+
+**How to fix:** Use the brand accent, or a light neutral for text.
+
+### No numbered section labels
+
+`no-section-numbers` · note · checked
+
+**Rule:** Small 01, 02, 03 labels do not ride next to section headings unless the order is the point.
+
+**Why:** The page is numbering its own chapters instead of earning its structure.
+
+**How to fix:** Remove them; keep numbers for real steps.
+
+### Not a whole row of hairline and wide shadow
+
+`no-border-and-wide-shadow` · note · checked
+
+**Rule:** A row of cards does not all wear a hairline border and a wide diffuse shadow. One floating panel may.
+
+**Why:** On a whole row it is a default, not a decision.
+
+**How to fix:** Keep the border or the shadow, not both.
+
+### No radial glow behind content
+
+`no-radial-halo` · warning · checked
+
+**Rule:** A saturated radial gradient fading to transparent is not used as a background spotlight or cloud.
+
+**Why:** It is the gradient version of a glow shadow, and floats over the copy.
+
+**How to fix:** Remove it; give the section a plain ground from the palette.
+
+### No decorative stripes
+
+`no-stripe-surface` · note · checked
+
+**Rule:** Repeating-gradient stripes do not decorate a surface.
+
+**Why:** A recurring generated signature.
+
+**How to fix:** Leave the surface plain or use a deliberate texture.
+
+### No grid-line wallpaper
+
+`no-grid-wallpaper` · note · checked
+
+**Rule:** A grid of hairlines tiled from two gradients is not a background, unless the product is a canvas, map or blueprint.
+
+**Why:** It borrows technical credibility and adds nothing.
+
+**How to fix:** Remove it.
+
+### No torn edges drawn with clip-path
+
+`no-blob-clip-path` · note · checked
+
+**Rule:** A clip-path with a dozen vertices or a curved path does not stand in for a blob, torn edge or silhouette.
+
+**Why:** It reads as the cheap version of the effect.
+
+**How to fix:** Use a real asset, or a clean edge.
+
+### No picture buried under a wash
+
+`no-buried-image` · warning · checked
+
+**Rule:** A background picture is not under a near-opaque gradient, and an image is not at near-zero opacity.
+
+**Why:** It never reaches the screen, yet ships and costs loading time.
+
+**How to fix:** Show it properly or remove it.
+
+### A hard offset shadow is a decision
+
+`no-hard-offset-shadow` · note · checked
+
+**Rule:** A visible unblurred shadow moved by 4 px or more fits a deliberate neobrutalist direction only.
+
+**Why:** Without that direction it looks borrowed.
+
+**How to fix:** Check it fits the design; otherwise soften or remove it.
+
+### No clip art built from shapes
+
+`no-clipart-svg` · note · checked
+
+**Rule:** A large inline SVG does not build a scene from a pile of primitive shapes. Diagrams, data and drawings of how the product works are fine.
+
+**Why:** It reads as placeholder art, not illustration.
+
+**How to fix:** Show something real, or draw what the product does and label it.
+
+### No broken images
+
+`image-not-broken` · error · checked
+
+**Rule:** Every image loads, and none has an empty or placeholder source.
+
+**Why:** A broken box undoes the rest of the page.
+
+**How to fix:** Use a real image or remove the tag.
+
+### Content is visible at rest
+
+`no-invisible-content` · error · checked
+
+**Rule:** More than a fifth of the text is not at zero opacity once every reveal has had its chance.
+
+**Why:** That is a reveal that failed: the content shipped and nobody can see it.
+
+**How to fix:** Make the visible state the default and animate towards it.
+
+### Nothing covers the text
+
+`text-not-covered` · error · checked
+
+**Rule:** No opaque element is painted over text.
+
+**Why:** Words under a box cannot be read.
+
+**How to fix:** Move the layer beside the text, or fix its stacking.
+
+### No gray text on colour
+
+`no-gray-on-color` · warning · checked
+
+**Rule:** Text on a coloured ground is not a neutral gray.
+
+**Why:** It looks washed out even when the ratio passes.
+
+**How to fix:** Use white, or a tint of the ground.
+
+### The page uses its design system
+
+`design-system-drift` · note · checked
+
+**Rule:** With "designSystem" in the config (fonts, sizes, radii, colors), the page uses nothing outside those lists.
+
+**Why:** Small drifts are how a system stops being one.
+
+**How to fix:** Use a listed value, or add the new one on purpose.
+
 ## Accessibility
 
 ### Text styles that follow Dynamic Type
@@ -659,6 +1049,16 @@
 **Why:** A finger has no hover, so the button does not exist for that person.
 
 **How to fix:** Hide only from a larger breakpoint: opacity-100 md:opacity-0 md:group-hover:opacity-100, with focus-within for the keyboard.
+
+### Heading levels do not skip
+
+`heading-order` · warning · checked
+
+**Rule:** Headings go down one level at a time: no h1 then h3.
+
+**Why:** Screen readers navigate by this outline.
+
+**How to fix:** Fix the level, and style it with CSS.
 
 ## Motion
 
@@ -751,6 +1151,16 @@
 **Why:** Endless motion pulls the eye from what people are reading, and the eye soon learns to ignore it.
 
 **How to fix:** Play it once on entry, or tie it to a real state; pause it off screen and under reduced motion.
+
+### No decorative blinking cursor
+
+`no-blinking-cursor` · note · checked
+
+**Rule:** A blinking caret is not animated into a page where there is nothing to type.
+
+**Why:** It borrows the look of a terminal to simulate activity.
+
+**How to fix:** Remove it. Real fields draw their own caret.
 
 ## Data and numbers
 
@@ -907,6 +1317,16 @@
 **Why:** After a tap the hover look stays on until the next tap elsewhere, so the button seems stuck.
 
 **How to fix:** Wrap the hover rules in @media (hover: hover) and give touch an :active state.
+
+### No script errors on load
+
+`no-script-errors` · error · checked
+
+**Rule:** No script throws an uncaught error while the page loads.
+
+**Why:** Broken JavaScript silently kills reveals and controls, and can leave a page blank.
+
+**How to fix:** Fix the error named in the report.
 
 ## Copy
 

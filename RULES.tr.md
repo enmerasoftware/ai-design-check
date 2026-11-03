@@ -64,6 +64,56 @@
 
 **Nasıl düzeltilir:** Metni alt satıra geçirin; gerçekten tek satır olmalıysa tam metni title'da ve ayrıntı görünümünde tutun.
 
+### Başlık üstünde küçük etiket yok
+
+`no-eyebrow-label` · uyarı · denetlenir
+
+**Kural:** Harf aralıklı ya da büyük harfli minik etiket, başlığın hemen üstünde kendi satırında durmaz.
+
+**Neden:** Başlık kendi ağırlığını taşır; etiket sökülmemiş iskeledir.
+
+**Nasıl düzeltilir:** Silin ya da bilgisini alttaki cümleye katın.
+
+### Uzun çizgi yığını yok
+
+`no-em-dash-saturation` · not · denetlenir
+
+**Kural:** Yaklaşık 500 karakterde bir olmak üzere sekiz ya da daha çok uzun çizgi yeniden yazılır.
+
+**Neden:** Biri noktalama işaretidir; sayfa dolusu üretilmiş metin ritmidir.
+
+**Nasıl düzeltilir:** Nokta ve virgül kullanın.
+
+### Slogan ritmi yok
+
+`no-aphorism-cadence` · not · denetlenir
+
+**Kural:** Bölümler sürekli "X. Y yok." ya da "Özellik değil. Platform." biçiminde bitmez; bir kez sorun değil, üç kez tiktir.
+
+**Neden:** Yapay zıtlık, okurun doğrulayabileceği bir şey söylemez.
+
+**Nasıl düzeltilir:** Ürünün ne yaptığını sayı ya da bilgiyle söyleyin.
+
+### "Tiyatro" kalıbı yok
+
+`no-theater-copy` · not · denetlenir
+
+**Kural:** Bir şeyi "güvenlik tiyatrosu" ya da "verimlilik tiyatrosu" diye geçiştirmeyin.
+
+**Neden:** Sık tekrarlanan üretilmiş bir tiktir ve asıl savı atlar.
+
+**Nasıl düzeltilir:** O şeyin ne yapıp ne yapmadığını açıkça söyleyin.
+
+### Kart bir şeyi bir kez söyler
+
+`no-repeated-label` · not · denetlenir
+
+**Kural:** Aynı metin tek kartta üç ya da daha çok kez geçmez.
+
+**Neden:** Şablonun her yuvasına bağlanmış durum gürültüdür.
+
+**Nasıl düzeltilir:** Önemli olduğu yerde bir kez söyleyin.
+
 ## Yazı ölçeği
 
 ### Yazı boyutu yalnız ölçekten
@@ -126,6 +176,126 @@
 
 **Nasıl düzeltilir:** Başlık boyutlarını değişken yapın, açık ekrandaki boyutları yazın, seçilen tek öğe dışındakileri ölçeğe indirin.
 
+### Varsayılan değil, seçilmiş yazı tipi
+
+`no-overused-font` · not · denetlenir
+
+**Kural:** Ana yazı tipi, her üretilmiş sayfanın uzandığı yazı tiplerinden biri değildir (Inter, Roboto, Geist, Fraunces, Space Grotesk ve benzeri); marka kendi yazı tipi olarak seçtiyse başka.
+
+**Neden:** Varsayılan yazı tipi, kimsenin karar vermediğini söyler.
+
+**Nasıl düzeltilir:** system --character ile seçin; marka yazı tipiyse yapılandırmada izin verin.
+
+### Başlıklar metnin üstünde durur
+
+`flat-type-scale` · uyarı · denetlenir
+
+**Kural:** En büyük başlık, gövde yazısının en az 1,25 katıdır.
+
+**Neden:** Boyut basamağı yoksa göz nereden başlayacağını bilemez.
+
+**Nasıl düzeltilir:** Sayfanın başına daha güçlü bir basamak ekleyin.
+
+### Dev boyutta tam cümle yok
+
+`no-giant-sentence` · uyarı · denetlenir
+
+**Kural:** Sekiz kelime ya da daha uzun başlık 64 px altında ve ilk ekranın %60'ından kısa kalır.
+
+**Neden:** İlk ekranı doldurur, sayfanın sunduğuna yer bırakmaz.
+
+**Nasıl düzeltilir:** Başlığı kısaltın ya da boyutunu düşürün.
+
+### İtalik serif ana başlık yok
+
+`no-italic-serif-hero` · uyarı · denetlenir
+
+**Kural:** Ana başlık, tamamı ya da vurgu için tek italik kelimesiyle, büyük italik serif yazılmaz.
+
+**Neden:** Tek sayfada zarif görünür; üretilmiş açılış sayfalarının üniforması oldu.
+
+**Nasıl düzeltilir:** Dik yazın; vurguyu kalınlık, konum ya da kelimelerle verin.
+
+### Ezilmiş harf aralığı yok
+
+`no-crushed-tracking` · uyarı · denetlenir
+
+**Kural:** Harf aralığı -0,05em'in üzerinde kalır.
+
+**Neden:** Bu sınırın ötesinde harfler biçimini kaybeder.
+
+**Nasıl düzeltilir:** Büyük başlıkları az sıkıştırın.
+
+### Akan metinde geniş harf aralığı yok
+
+`no-wide-tracking-body` · uyarı · denetlenir
+
+**Kural:** Küçük harfli akan metinde harf aralığı en çok 0,05em'dir; geniş aralık kısa büyük harfli etiketler içindir.
+
+**Neden:** Kelime biçimlerini bozar, okumayı yavaşlatır.
+
+**Nasıl düzeltilir:** Akan metinden harf aralığını kaldırın.
+
+### Satırların yeri var
+
+`no-tight-leading` · uyarı · denetlenir
+
+**Kural:** 32 px altındaki çok satırlı metnin satır yüksekliği en az 1,3'tür.
+
+**Neden:** Sıkışık satırda göz yerini kaybeder.
+
+**Nasıl düzeltilir:** Akan metinde 1,5 ile 1,7 kullanın.
+
+### Hecelemesiz iki yana yaslı metin yok
+
+`no-justified-text` · uyarı · denetlenir
+
+**Kural:** Heceleme açık değilse metin iki yana yaslanmaz.
+
+**Neden:** Dar sütunda dikey beyaz nehirler oluşur.
+
+**Nasıl düzeltilir:** Sola yaslayın ya da doğru lang ile hyphens: auto kullanın.
+
+### Son satırda tek kelime yok
+
+`no-straggler` · not · denetlenir
+
+**Kural:** Paragraf son satırında tek kelimeyle bitmez.
+
+**Neden:** Bloğun altında delik bırakır.
+
+**Nasıl düzeltilir:** text-wrap: pretty kullanın.
+
+### Başlıklar dengeli kırılır
+
+`balanced-headings` · not · denetlenir
+
+**Kural:** İki ya da daha çok satırlı başlık çok daha kısa bir satırla bitmez.
+
+**Neden:** Başlığın altındaki yalnız kelime kaza gibi görünür.
+
+**Nasıl düzeltilir:** text-wrap: balance kullanın ya da sığacak şekilde yeniden yazın.
+
+### Minik yazı yok
+
+`no-tiny-text` · uyarı · denetlenir
+
+**Kural:** Yazı en az 12 px; bağlantı, düğme ve tablo hücresi en az 11 px'tir.
+
+**Neden:** Bunun altı, ekran ne olursa olsun okunamazlıktır.
+
+**Nasıl düzeltilir:** Ölçeğin en küçük basamağına çıkarın.
+
+### Büyük harfle cümle yok
+
+`no-all-caps-sentences` · uyarı · denetlenir
+
+**Kural:** Sekiz kelime ya da daha uzun metin büyük harfle yazılmaz.
+
+**Neden:** Kelimeleri biçiminden okuruz; büyük harf bunu siler.
+
+**Nasıl düzeltilir:** Büyük harfi kısa etiketlere bırakın.
+
 ## Köşe ve yüzey
 
 ### Köşe yuvarlaklığı yalnız ölçekten
@@ -140,7 +310,7 @@
 
 ### Kart içinde kart yok
 
-`no-nested-cards` · uyarı · gözden geçirilir
+`no-nested-cards` · uyarı · denetlenir
 
 **Kural:** Kartın içindeki gruplar boşluk, yazı ve ayraçla ayrılır; içe ikinci bir çerçeveli kart konmaz.
 
@@ -276,7 +446,7 @@
 
 ### Okunur satır uzunluğu ve aralığı
 
-`readable-measure` · uyarı · gözden geçirilir
+`readable-measure` · uyarı · denetlenir
 
 **Kural:** Akan metin satırda yaklaşık 80 karakteri geçmez (max-w-prose / max-w-3xl), satır aralığı en az 1,3; başlığın üstündeki boşluk altındakinden büyüktür.
 
@@ -286,7 +456,7 @@
 
 ### Boşlukta ritim
 
-`spacing-rhythm` · not · gözden geçirilir
+`spacing-rhythm` · not · denetlenir
 
 **Kural:** İlgili öğeler sıkı, bölümler arası geniş; aynı düzeydeki boşluklar tek değerdir. Bölümler arasında 16, 20, 17 ve 21 px gürültüdür, ritim değildir.
 
@@ -414,6 +584,66 @@
 
 **Nasıl düzeltilir:** h-dvh ya da min-h-svh; CSS'te height: 100vh; height: 100dvh; yazın, eski tarayıcıda da değer kalsın.
 
+### Kartlar kaydırıcı kenarına değmez
+
+`no-flush-cards` · uyarı · denetlenir
+
+**Kural:** Yatay kaydırıcıdaki kartlar durağan hâlde kenar boşluğu bırakır.
+
+**Neden:** Kenarları ve köşeleri kesilir.
+
+**Nasıl düzeltilir:** Kaydırıcıya iç boşluk verin, scroll-padding ile eşleştirin.
+
+### İlk ekrandaki sütunlar yakın kalır
+
+`no-lopsided-fold` · not · denetlenir
+
+**Kural:** Başlığın yanındaki sütun, komşusu tek ekrana sığarken ekranın çok altına uzamaz.
+
+**Neden:** Kısa sütun boşlukta asılı kalır.
+
+**Nasıl düzeltilir:** Dengeleyin ya da alt alta alın.
+
+### Kutu içinde yer
+
+`no-cramped-padding` · uyarı · denetlenir
+
+**Kural:** Dolgulu ya da çerçeveli kutudaki metin kenardan en az 3 px uzak durur.
+
+**Neden:** Kutuya değen metin hata gibi görünür ve zor okunur.
+
+**Nasıl düzeltilir:** Ölçekten iç boşluk ekleyin.
+
+### Metin ekran kenarından uzak durur
+
+`text-off-viewport-edge` · uyarı · denetlenir
+
+**Kural:** Paragraflar ekran kenarından 16 px, telefonda 12 px uzak durur.
+
+**Neden:** Kenara yapışık metin zor okunur, bitmemiş görünür.
+
+**Nasıl düzeltilir:** Yan boşluklu bir kaba alın.
+
+### Başlık tanıttığı içeriğe yakın durur
+
+`heading-spacing` · not · denetlenir
+
+**Kural:** Başlığın üstündeki boşluk altındakinden büyüktür.
+
+**Neden:** Yoksa önceki bloğa aitmiş gibi görünür.
+
+**Nasıl düzeltilir:** Başlığın altındaki boşluğu üstüne taşıyın.
+
+### Kırpan kutu içindekini kesmez
+
+`no-clipped-popover` · not · denetlenir
+
+**Kural:** overflow hidden kutusu menü ya da ipucu gibi konumlandırılmış çocuğu kesmez.
+
+**Neden:** Menü ve ipuçları kutusundan taşabilmelidir.
+
+**Nasıl düzeltilir:** Taşmaya izin verin ya da katmanı dışarı alın.
+
 ## Menü
 
 ### Menü işe göre, yer önce kararlaştırılır
@@ -480,7 +710,7 @@
 
 ### Okunur kontrast
 
-`legible-contrast` · uyarı · gözden geçirilir
+`legible-contrast` · uyarı · denetlenir
 
 **Kural:** Metin WCAG AA'yı karşılar (4,5:1, büyük metin 3:1); renkli zeminde gri metin yok.
 
@@ -490,7 +720,7 @@
 
 ### Her başlığın üstünde ikon kutusu yok
 
-`no-icon-tile-stack` · uyarı · gözden geçirilir
+`no-icon-tile-stack` · uyarı · denetlenir
 
 **Kural:** Her birinde yuvarlak ikon kutusu, başlık ve iki satır metin olan aynı kartlardan ızgara bir şablondur, yerleşim değildir. İkonu satır içinde kullanın ya da hiç kullanmayın; öne çıkanı değiştirin.
 
@@ -588,6 +818,166 @@
 
 **Nasıl düzeltilir:** Eski ve yeni ekranı, menüler ve açık hallerle birlikte yan yana koyun; gerekçesiz kaybolanı geri getirin.
 
+### Varsayılan değil, seçilmiş zemin
+
+`no-default-cream` · not · denetlenir
+
+**Kural:** Sayfa zemini, üretilmiş sayfaların refleksle seçtiği sıcak krem ya da bej değildir. Küçük krem alanlar sorun değil; tüm sayfa için gerekçe gerekir.
+
+**Neden:** Yeni güvenli varsayılan oldu; beyazın eskiden söylediği kadar az şey söylüyor.
+
+**Nasıl düzeltilir:** Zemini markadan alın; marka gerçekten o renkse koruyun.
+
+### Koyu zeminde neon camgöbeği yok
+
+`no-neon-on-dark` · uyarı · denetlenir
+
+**Kural:** Neredeyse siyah zeminde doygun camgöbeği yazı en çok bir kez kullanılır.
+
+**Neden:** Mor geçişlerle birlikte en tanınan üretilmiş paletlerden biridir.
+
+**Nasıl düzeltilir:** Marka vurgusunu ya da yazı için açık nötr rengi kullanın.
+
+### Numaralı bölüm etiketi yok
+
+`no-section-numbers` · not · denetlenir
+
+**Kural:** Sıra önemli değilse küçük 01, 02, 03 etiketleri bölüm başlıklarının yanında durmaz.
+
+**Neden:** Sayfa yapısını kurmak yerine kendi bölümlerini numaralıyor.
+
+**Nasıl düzeltilir:** Kaldırın; numarayı gerçek adımlara saklayın.
+
+### Tüm satırda ince çizgi ve geniş gölge yok
+
+`no-border-and-wide-shadow` · not · denetlenir
+
+**Kural:** Bir kart satırının tamamı ince çizgi ve geniş yayılan gölge taşımaz. Tek yüzen panel taşıyabilir.
+
+**Neden:** Tüm satırda karar değil varsayılandır.
+
+**Nasıl düzeltilir:** Çizgiyi ya da gölgeyi koruyun, ikisini birden değil.
+
+### İçeriğin arkasında dairesel parıltı yok
+
+`no-radial-halo` · uyarı · denetlenir
+
+**Kural:** Saydama doğru solan doygun dairesel geçiş, arka planda spot ışığı ya da bulut olarak kullanılmaz.
+
+**Neden:** Parıltılı gölgenin geçiş hâlidir, metnin üstünde süzülür.
+
+**Nasıl düzeltilir:** Kaldırın; bölüme paletten düz zemin verin.
+
+### Süs amaçlı çizgili yüzey yok
+
+`no-stripe-surface` · not · denetlenir
+
+**Kural:** Tekrarlanan geçişli çizgiler yüzey süsü olarak kullanılmaz.
+
+**Neden:** Sık görülen üretilmiş imzadır.
+
+**Nasıl düzeltilir:** Yüzeyi düz bırakın ya da bilinçli doku kullanın.
+
+### Izgara çizgili duvar kâğıdı yok
+
+`no-grid-wallpaper` · not · denetlenir
+
+**Kural:** İki geçişten döşenen ince çizgili ızgara arka plan olmaz; ürün tuval, harita ya da plan değilse.
+
+**Neden:** Teknik itibar ödünç alır, bir şey katmaz.
+
+**Nasıl düzeltilir:** Kaldırın.
+
+### clip-path ile çizilmiş yırtık kenar yok
+
+`no-blob-clip-path` · not · denetlenir
+
+**Kural:** Çok köşeli ya da eğri clip-path; damla, yırtık kenar ya da silueti taklit etmez.
+
+**Neden:** Efektin ucuz sürümü gibi görünür.
+
+**Nasıl düzeltilir:** Gerçek görsel ya da temiz kenar kullanın.
+
+### Örtü altında kalan görsel yok
+
+`no-buried-image` · uyarı · denetlenir
+
+**Kural:** Arka plan görseli neredeyse opak geçiş altında, görsel de neredeyse sıfır saydamlıkta olmaz.
+
+**Neden:** Ekrana hiç ulaşmaz ama yüklenir, zaman harcar.
+
+**Nasıl düzeltilir:** Düzgün gösterin ya da kaldırın.
+
+### Sert kaymalı gölge bir karardır
+
+`no-hard-offset-shadow` · not · denetlenir
+
+**Kural:** Bulanıklığı olmayan, 4 px ya da daha çok kaymış gölge yalnız bilinçli yeni-brütalist yöne uyar.
+
+**Neden:** O yön yoksa ödünç alınmış görünür.
+
+**Nasıl düzeltilir:** Tasarıma uyduğunu kontrol edin; uymuyorsa yumuşatın ya da kaldırın.
+
+### Şekillerden kurulu çizim parçası yok
+
+`no-clipart-svg` · not · denetlenir
+
+**Kural:** Büyük satır içi SVG, yığınla basit şekilden sahne kurmaz. Şemalar, veri ve ürünün nasıl çalıştığını gösteren çizimler sorun değildir.
+
+**Neden:** Çizim değil, yer tutucu sanat gibi görünür.
+
+**Nasıl düzeltilir:** Gerçek bir şey gösterin ya da ürünün yaptığını çizip etiketleyin.
+
+### Kırık görsel yok
+
+`image-not-broken` · hata · denetlenir
+
+**Kural:** Her görsel yüklenir; hiçbirinin kaynağı boş ya da yer tutucu değildir.
+
+**Neden:** Kırık kutu sayfanın kalanını boşa çıkarır.
+
+**Nasıl düzeltilir:** Gerçek görsel kullanın ya da etiketi kaldırın.
+
+### İçerik durağan hâlde görünür
+
+`no-invisible-content` · hata · denetlenir
+
+**Kural:** Tüm gösterimler çalıştıktan sonra metnin beşte birinden fazlası sıfır saydamlıkta kalmaz.
+
+**Neden:** Bu, başarısız gösterimdir: içerik yayında ama kimse göremiyor.
+
+**Nasıl düzeltilir:** Görünür hâli varsayılan yapın, ona doğru canlandırın.
+
+### Metnin üstünü hiçbir şey kapatmaz
+
+`text-not-covered` · hata · denetlenir
+
+**Kural:** Metnin üstüne opak bir öğe boyanmaz.
+
+**Neden:** Kutu altındaki kelimeler okunamaz.
+
+**Nasıl düzeltilir:** Katmanı metnin yanına alın ya da sıralamasını düzeltin.
+
+### Renkli zeminde gri yazı yok
+
+`no-gray-on-color` · uyarı · denetlenir
+
+**Kural:** Renkli zemindeki yazı nötr gri olmaz.
+
+**Neden:** Oran geçse bile soluk görünür.
+
+**Nasıl düzeltilir:** Beyaz ya da zeminin açık tonunu kullanın.
+
+### Sayfa kendi tasarım sistemini kullanır
+
+`design-system-drift` · not · denetlenir
+
+**Kural:** Yapılandırmada "designSystem" (fonts, sizes, radii, colors) varsa sayfa bu listelerin dışına çıkmaz.
+
+**Neden:** Küçük sapmalar bir sistemin sistem olmaktan çıkma biçimidir.
+
+**Nasıl düzeltilir:** Listedeki değeri kullanın ya da yenisini bilerek ekleyin.
+
 ## Erişilebilirlik
 
 ### Dinamik yazı boyutuna uyan metin stilleri
@@ -659,6 +1049,16 @@
 **Neden:** Parmağın üzerine gelme durumu yoktur; o düğme o kişi için hiç yoktur.
 
 **Nasıl düzeltilir:** Yalnız geniş kırılımdan sonra gizleyin: opacity-100 md:opacity-0 md:group-hover:opacity-100; klavye için focus-within ekleyin.
+
+### Başlık düzeyi atlanmaz
+
+`heading-order` · uyarı · denetlenir
+
+**Kural:** Başlıklar birer düzey iner: h1'den sonra h3 gelmez.
+
+**Neden:** Ekran okuyucular bu yapıyla gezinir.
+
+**Nasıl düzeltilir:** Düzeyi düzeltin, görünümü CSS ile verin.
 
 ## Hareket
 
@@ -751,6 +1151,16 @@
 **Neden:** Sonsuz hareket gözü okunan yerden çeker, göz de kısa sürede onu görmezden gelmeyi öğrenir.
 
 **Nasıl düzeltilir:** Girişte bir kez oynatın ya da gerçek bir duruma bağlayın; ekran dışında ve "hareketi azalt" altında durdurun.
+
+### Süs amaçlı yanıp sönen imleç yok
+
+`no-blinking-cursor` · not · denetlenir
+
+**Kural:** Yazılacak yer olmayan sayfada yanıp sönen imleç canlandırılmaz.
+
+**Neden:** Etkinlik taklidi için terminal görünümünü ödünç alır.
+
+**Nasıl düzeltilir:** Kaldırın. Gerçek alanlar kendi imlecini çizer.
 
 ## Veri ve sayılar
 
@@ -907,6 +1317,16 @@
 **Neden:** Dokunuştan sonra hover görünümü başka yere dokunana kadar kalır; düğme takılmış gibi görünür.
 
 **Nasıl düzeltilir:** Hover kurallarını @media (hover: hover) içine alın, dokunmaya :active durumu verin.
+
+### Yüklenirken betik hatası yok
+
+`no-script-errors` · hata · denetlenir
+
+**Kural:** Sayfa yüklenirken hiçbir betik yakalanmamış hata vermez.
+
+**Neden:** Bozuk JavaScript gösterimleri ve denetimleri sessizce durdurur, sayfayı boş bırakabilir.
+
+**Nasıl düzeltilir:** Raporda adı geçen hatayı düzeltin.
 
 ## Metin
 

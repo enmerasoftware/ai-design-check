@@ -1,0 +1,17 @@
+{
+  "name": "ai-design-check",
+  "owner": {
+    "name": "Enmera Software",
+    "email": "info@enmera.com.tr"
+  },
+  "plugins": [
+    {
+      "name": "ai-design-check",
+      "source": "./",
+      "description": "Find and fix what makes an AI-built interface look generated, on the web and in mobile apps."
+    }
+  ],
+  "metadata": {
+    "description": "Design rules and a repair skill for interfaces built with AI agents."
+  }
+}

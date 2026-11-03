@@ -6,7 +6,7 @@
 [![lisans: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [English](README.md)
 
-Claude Code, Cursor ya da Codex ile geliştirenler için: 95 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
+Claude Code, Cursor ya da Codex ile geliştirenler için: 137 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
 denetçi ve ekranı onaran bir ajan becerisi. Web projelerini (React, Vue, Svelte, Laravel Blade, HTML) ve SwiftUI, Jetpack
 Compose, Flutter, React Native uygulamalarını okur. Bulmak için ajan gerekmez, mekanik düzeltmeler için de gerekmez.
 
@@ -63,6 +63,8 @@ ile sonraki sayıları gösterir. Özellikler, veriler ve metinler yerinde kalı
 |---|---|---|
 | **Denetçi** | Sorun ne, hangi dosyada, hangi satırda? | `npx @enmera/ai-design-check` |
 | **Düzelten beceri** | Ajan bu ekranı onarıp kanıtlayabilir mi? | `npx skills add enmerasoftware/ai-design-check` |
+| **`scan`** | Çalışan sayfa gerçekte ne gösteriyor? Kontrast, boyut, neyin neyi kapattığı, betik hataları | `npx @enmera/ai-design-check scan http://localhost:3000` |
+| **`redesign`** | Ajanım bu sayfayı inceleyip her adımı kanıtlayarak bir dalda yeniden yapabilir mi? | `npx @enmera/ai-design-check redesign http://localhost:3000` |
 | **`inventory`** | Kaç farklı düğme, form öğesi, başlık ve kart var? | `npx @enmera/ai-design-check inventory` |
 | **`narrow`** | Telefonda ya da uzun bir dilde ne bozuluyor? | `npx @enmera/ai-design-check narrow sayfa.html` |
 | **`system`** | Yeni bir ürün hangi yazı tipi, ölçek ve renklerle başlamalı? | `npx @enmera/ai-design-check system --brand "#1E5A63"` |
@@ -70,7 +72,7 @@ ile sonraki sayıları gösterir. Özellikler, veriler ve metinler yerinde kalı
 
 ## Neleri yakalar
 
-Denetçi 57 kuralı otomatik sınar. Kalan 38 kural ekrana bakmayı gerektirir; *gözden geçirilecek* olarak işaretlenir ve size ve
+65 kural kodunuzu, 55 kural çalışan sayfayı (`scan`) okur, bir kısmı ikisini de. Kalan 33 kural ekrana bakmayı gerektirir; *gözden geçirilecek* olarak işaretlenir ve size ve
 düzelten beceriye bırakılır. Her kural ne yapılacağını, nedenini ve nasıl düzeltileceğini Türkçe ve İngilizce anlatır:
 [RULES.tr.md](RULES.tr.md).
 
@@ -92,6 +94,19 @@ Kurallar [Enmera](https://enmera.com.tr) ve [Searvia](https://searvia.com)'da ca
 gibi görünenler, dar ekranda bozulanlar, kullanıcının anlamadıkları. Ardından yüksek puanlı 16 panel tasarımıyla karşılaştırdık.
 Yöntem ve bulgular: [RESEARCH.md](RESEARCH.md).
 
+## Çalışan sayfa ve yeniden tasarım
+
+`scan` sayfayı Chrome'unuzda masaüstü ve telefon genişliğinde açar; model ve API anahtarı gerekmez. Kaynak kodun
+gösteremediğini okur: gerçek kontrast, boyutlar, neyin neyi kapattığı, kırık görseller, betik hataları, hiç görünmeyen
+içerik. Pull request için `--format github` ekleyin. Yapılandırmada `designSystem` (`fonts`, `sizes`, `radii`, `colors`)
+varsa sistemden sapanları da adıyla söyler.
+
+`redesign` ajanınıza (Claude Code ya da Codex) ihtiyaç duyan tek kısımdır, çünkü sayfanın ne göstermesi gerektiğine karar
+vermek muhakeme ister. Ajan ekran görüntülerini, kodu ve konuyu inceler; her bölüm için bir kart yazar: ne söylediği, neyin
+yanlış olduğu, kendi içeriğinden çıkan fikir, sitenizden kullandığı renkler. Kartlar ölçülen sayfaya karşı denetlenir. Sonra
+ölçülmüş düzeltmeler ve kartlar yeni bir git dalında geçiş geçiş uygulanır; içerik kaybeden, kural hatası ekleyen ya da daha
+kötü görünen geçiş atılır. `--plan` kartlardan sonra durur, okuyup düzenlersiniz; `--brief` onları uygular.
+
 ## Mobil uygulamalar
 
 Uygulama klasörünü verin. SwiftUI ve Jetpack Compose okur: ölçek dışı boşluk (`spacing` ayarlı değilse 4 pt; `.padding(13)`, `10.dp`), ölçek dışı köşe,
@@ -110,6 +125,9 @@ npx @enmera/ai-design-check Cebbin/Views
 ## Projenizde kullanın
 
 ### Kuralları ajanınıza verin
+
+Claude Code'da aynı beceriler eklenti olarak da kurulur: `/plugin marketplace add enmerasoftware/ai-design-check`, ardından
+`/plugin install ai-design-check@ai-design-check`.
 
 Pakette iki beceri var; ikisi de `npx skills add enmerasoftware/ai-design-check` ile kurulur:
 
