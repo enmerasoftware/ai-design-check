@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "ai-design-check",
-      "source": "./",
+      "source": "./plugin",
       "description": "Find and fix what makes an AI-built interface look generated, on the web and in mobile apps."
     }
   ],

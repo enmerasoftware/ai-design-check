@@ -1,5 +1,5 @@
 // RULES.md and RULES.tr.md are generated from rules.json. `--check` fails when they are out of date (CI).
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -49,6 +49,8 @@ function render(lang) {
 }
 
 const outputs = { 'RULES.md': render('en'), 'RULES.tr.md': render('tr') };
+// The Claude plugin is a clean folder of its own: the directory scans everything in it, so tests, videos and the CLI stay out.
+for (const skill of ['design/SKILL.md', 'design-fix/SKILL.md', 'design-fix/references/proof.md', 'design-fix/references/motions.md', 'design-fix/references/motion-gallery.html', 'design-fix/references/scales.md']) outputs[`plugin/skills/${skill}`] = readFileSync(join(root, 'skills', skill), 'utf8');
 let stale = false;
 
 for (const [file, content] of Object.entries(outputs)) {
@@ -63,6 +65,7 @@ for (const [file, content] of Object.entries(outputs)) {
             stale = true;
         }
     } else {
+        mkdirSync(dirname(path), { recursive: true });
         writeFileSync(path, content);
     }
 }

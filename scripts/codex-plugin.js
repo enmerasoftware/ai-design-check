@@ -10,7 +10,7 @@ const out = join(root, 'build', 'ai-design-check');
 rmSync(join(root, 'build'), { recursive: true, force: true });
 mkdirSync(join(out, 'assets'), { recursive: true });
 cpSync(join(root, 'skills'), join(out, 'skills'), { recursive: true });
-cpSync(join(root, 'assets', 'logo.svg'), join(out, 'assets', 'logo.svg'));
+cpSync(join(root, 'assets', 'logo.png'), join(out, 'assets', 'logo.png'));
 cpSync(join(root, 'RULES.md'), join(out, 'RULES.md'));
 cpSync(join(root, 'LICENSE'), join(out, 'LICENSE'));
 writeFileSync(join(out, 'plugin.json'), `${JSON.stringify({
@@ -34,8 +34,8 @@ writeFileSync(join(out, 'plugin.json'), `${JSON.stringify({
                 websiteURL: 'https://github.com/enmerasoftware/ai-design-check',
                 defaultPrompt: ['Fix the design of this screen', 'Check this project for what looks AI generated', 'Scan my running page at http://localhost:3000'],
                 brandColor: '#123A40',
-                logo: './assets/logo.svg',
-                composerIcon: './assets/logo.svg',
+                logo: './assets/logo.png',
+                composerIcon: './assets/logo.png',
             },
         },
     },
