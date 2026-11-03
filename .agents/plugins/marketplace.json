@@ -1,0 +1,12 @@
+{
+  "name": "ai-design-check",
+  "interface": { "displayName": "AI Design Check" },
+  "plugins": [
+    {
+      "name": "ai-design-check",
+      "source": { "source": "local", "path": "./plugin" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
+    }
+  ]
+}

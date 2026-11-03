@@ -127,7 +127,7 @@ npx @enmera/ai-design-check Cebbin/Views
 ### Kuralları ajanınıza verin
 
 Claude Code'da aynı beceriler eklenti olarak da kurulur: `/plugin marketplace add enmerasoftware/ai-design-check`, ardından
-`/plugin install ai-design-check@ai-design-check`.
+`/plugin install ai-design-check@ai-design-check`. Codex'te: `codex plugin marketplace add enmerasoftware/ai-design-check`.
 
 Pakette iki beceri var; ikisi de `npx skills add enmerasoftware/ai-design-check` ile kurulur:
 
