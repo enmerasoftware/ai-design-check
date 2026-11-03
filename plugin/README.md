@@ -15,6 +15,12 @@ Install in Claude Code:
 /plugin install ai-design-check --marketplace enmerasoftware/ai-design-check
 ```
 
+In Codex:
+
+```
+codex plugin marketplace add enmerasoftware/ai-design-check
+```
+
 Then ask: *"fix the design of this screen"*.
 
 The skills call the [`@enmera/ai-design-check`](https://www.npmjs.com/package/@enmera/ai-design-check) checker through `npx`. It

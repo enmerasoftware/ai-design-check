@@ -133,7 +133,7 @@ The package ships two skills, both installed by `npx skills add enmerasoftware/a
   to lower the count, and never silences a finding without a reason.
 
 In Claude Code the same skills install as a plugin: `/plugin marketplace add enmerasoftware/ai-design-check`, then
-`/plugin install ai-design-check@ai-design-check`.
+`/plugin install ai-design-check@ai-design-check`. In Codex: `codex plugin marketplace add enmerasoftware/ai-design-check`.
 
 Without skills, point your agent's instructions (`CLAUDE.md`, `AGENTS.md`, `.cursor/rules`) at
 `node_modules/@enmera/ai-design-check/RULES.md`.
