@@ -19,6 +19,9 @@ Usage
   npx @enmera/ai-design-check story <before> <after> [--out story.mp4] [--still frame.png] [--title name] [--music track.mp3]
                                                  Square before/after video with every finding marked (files or URLs;
                                                  needs Chrome and ffmpeg, nothing else)
+  npx @enmera/ai-design-check scan <url>         Check the running page at desktop and phone width: real contrast, sizes,
+                                                 what covers what, script errors, and the tells only a browser sees
+                                                 (needs Chrome; no model, no API key)
   npx @enmera/ai-design-check narrow <file|url> [--width 320] [--stress]
                                                  Render at phone width and report sideways scrolling, cut-off text,
                                                  text shrunk to fit and content hidden on phones (needs Chrome);
@@ -27,6 +30,14 @@ Usage
                                                  Generate a design system: fonts, type scale, light and dark colors that
                                                  pass contrast, radius and spacing, as CSS, Tailwind, JSON, SwiftUI,
                                                  Compose and a preview page (--ui/--display pick fonts, --source any)
+  npx @enmera/ai-design-check redesign <url> [--agent claude|codex|none] [--plan] [--brief brief.json] [--build "npm run build"] [--path /] [--only type,color,craft]
+                                                 Your coding agent studies the running page, its code and its subject and
+                                                 writes one card per section; the numbered fixes (type, colour, rhythm,
+                                                 details, phone) and the cards are then applied pass by pass on a new git
+                                                 branch. A pass that loses content or does not improve the page is thrown
+                                                 away. Needs Chrome and git; web pages only. --plan: stop after the cards
+                                                 so you can read and edit them, then --brief to build them.
+                                                 --agent none: the plan and the prompts, nothing run
   npx @enmera/ai-design-check fonts [--character calm]
                                                  The characters and the font library behind system
 
@@ -57,12 +68,12 @@ const valueOf = (name) => {
 
     return index >= 0 ? args[index + 1] : undefined;
 };
-const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story', 'narrow', 'system', 'fonts'];
-const positional = args.filter((arg, index) => !arg.startsWith('--') && !['--format', '--out', '--still', '--title', '--music', '--width', '--character', '--brand', '--kind', '--ui', '--display', '--source'].includes(args[index - 1]));
+const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story', 'narrow', 'system', 'fonts', 'redesign', 'scan'];
+const positional = args.filter((arg, index) => !arg.startsWith('--') && !['--format', '--out', '--still', '--title', '--music', '--width', '--character', '--brand', '--kind', '--ui', '--display', '--source', '--path', '--agent', '--build', '--only', '--brief'].includes(args[index - 1]));
 // "ai-design-check src lang" is a check of those paths; the command word is optional.
 const [command, ...named] = COMMANDS.includes(positional[0]) ? positional : ['check', ...positional];
 // "./src/a.tsx" and absolute paths name the same file as "src/a.tsx"; the walker and the globs expect the last form.
-const rest = named.map((path) => relative(process.cwd(), resolve(path)).split(sep).join('/') || '.');
+const rest = named.map((path) => (/^(?:https?|data|file):/.test(path) ? path : relative(process.cwd(), resolve(path)).split(sep).join('/') || '.'));
 const format = flags.has('--json') ? 'json' : (valueOf('format') ?? 'text');
 const lang = flags.has('--tr') ? 'tr' : 'en';
 const cwd = process.cwd();
@@ -103,6 +114,34 @@ if (command === 'story') {
         const result = await story(named[0], named[1], { out: valueOf('out'), still: valueOf('still'), title: valueOf('title'), music: valueOf('music') });
         print(`${result.before} → ${result.after} findings, ${result.marked} marked on screen. Wrote ${relative(cwd, result.out)}`);
         done(0);
+    } catch (error) {
+        console.error(error.message);
+        done(1);
+    }
+}
+
+if (command === 'scan') {
+    const target = named[0];
+    if (!target) {
+        console.error('Usage: ai-design-check scan <url of the running page> [--format text|json|github] [--strict]');
+        done(1);
+    }
+    const { scan } = await import('../src/scan.js');
+    try {
+        const results = await scan(target, { config: loadConfig(cwd) });
+        const total = (severity) => results.filter((item) => item.severity === severity).length;
+        if (format === 'json') print(JSON.stringify({ findings: results, errors: total('error'), warnings: total('warn'), notes: total('info') }, null, 2));
+        else if (format === 'github') for (const item of results) print(`::${{ error: 'error', warn: 'warning', info: 'notice' }[item.severity]} title=${item.rule}::${item.message.replace(/\n/g, ' ')}`);
+        else {
+            const groups = [[loadRules().areas.accessibility[lang], results.filter((item) => item.area === 'accessibility' || item.rule === 'legible-contrast')], [lang === 'tr' ? 'Stil' : 'Style', results.filter((item) => item.area !== 'accessibility' && item.rule !== 'legible-contrast')]];
+            for (const [title, items] of groups) {
+                if (items.length === 0) continue;
+                print(`\n${paint(1, `${title} (${items.length})`)}`);
+                for (const item of items) print(`  ${SEVERITY[item.severity](item.severity.padEnd(5))}  ${item.message}  ${paint(2, item.rule)}${item.width < 768 ? paint(2, ` (${item.width} px)`) : ''}`);
+            }
+            print(`\n${results.length === 0 ? paint(32, 'No findings.') : `${total('error')} errors, ${total('warn')} warnings, ${total('info')} notes.`} ${paint(2, target)}`);
+        }
+        done(total('error') > 0 || (flags.has('--strict') && total('warn') > 0) ? 1 : 0);
     } catch (error) {
         console.error(error.message);
         done(1);
@@ -172,6 +211,54 @@ if (command === 'system') {
         print(`  Contrast  lowest text pair ${low('light').toFixed(2)} light, ${low('dark').toFixed(2)} dark (WCAG 2, 4.5 for text)`);
         print(`  Radius    ${Object.entries(system.shape.radius).filter(([name]) => name !== 'full').map(([name, value]) => `${name} ${value}`).join(' · ')}`);
         print(`\nWrote ${Object.keys(files).join(', ')} to ${relative(cwd, out) || '.'}. Open preview.html to see both themes.`);
+        done(0);
+    } catch (error) {
+        console.error(error.message);
+        done(1);
+    }
+}
+
+if (command === 'redesign') {
+    const { redesign } = await import('../src/redesign/run.js');
+    const url = named[0];
+    if (!url || !/^https?:\/\//.test(url)) {
+        console.error('Usage: ai-design-check redesign <url of the running page, e.g. http://localhost:8000> [--agent claude|codex|none] [--plan] [--brief brief.json] [--build "npm run build"]\nApps have no page to open: use the checker, --fix and the fix skill.');
+        done(1);
+    }
+    try {
+        const result = await redesign({
+            cwd, url, path: valueOf('path') ?? new URL(url).pathname, agent: valueOf('agent') ?? 'claude', build: valueOf('build'),
+            only: valueOf('only')?.split(','), kind: valueOf('kind') ?? 'marketing', plan: flags.has('--plan'), briefFile: valueOf('brief'), log: (line) => console.error(line),
+        });
+        if (format === 'json') {
+            print(JSON.stringify(result, null, 2));
+            done(0);
+        }
+        const { diagnosis, study } = result;
+        if (diagnosis.sound && !result.passes.length && (!study || study.leaveAlone)) {
+            print(`The page is sound: nothing to change.${study?.reason ? ` ${study.reason}` : ''}`);
+            done(0);
+        }
+        print(`Plan (${result.out}/DESIGN.md):`);
+        for (const pass of diagnosis.passes) {
+            print(`  ${pass.name}`);
+            for (const item of pass.items) print(`    ${paint(1, item.id)}  ${item.decision}`, paint(2, `\n      now: ${item.evidence}`));
+        }
+        if (study?.sections) {
+            print(`\nSection cards (${result.out}/BRIEF.md):`);
+            for (const section of study.sections) print(`  ${paint(1, section.heading)}  ${section.idea}`);
+        }
+        if (result.studyProblems) print(`\nNo section ideas, the study did not pass its check:\n${result.studyProblems.map((item) => `  ${item}`).join('\n')}`);
+        if (!result.passes.length) {
+            print(flags.has('--plan') && study?.sections
+                ? `\nNo changes made. Edit ${result.out}/brief.json if you like, then: npx @enmera/ai-design-check redesign ${url} --brief ${result.out}/brief.json`
+                : `\nNo changes made. Prompts: ${result.out}/study.md and ${result.out}/pass-*.md (give them to your agent, or run with --agent claude).`);
+            done(0);
+        }
+        print('');
+        for (const pass of result.passes) print(`  ${pass.kept ? paint(32, 'kept') : paint(31, 'thrown away')}  ${pass.name}${pass.problems ? `: ${pass.problems.join('; ')}` : ''}`);
+        print(`\nBefore ${JSON.stringify(result.before)}\nAfter  ${JSON.stringify(result.after)}`);
+        print(`\nBranch ${result.branch}. Screenshots and logs in ${result.out}. To undo everything: git checkout ${result.start} && git branch -D ${result.branch}`);
         done(0);
     } catch (error) {
         console.error(error.message);
@@ -337,7 +424,7 @@ if (format === 'json') {
     }
     if (list) print(paint(2, `\nNot read, no rule covers them yet: ${list}.`));
     const summary = findings.length === 0 ? paint(32, 'No findings.') : `${findings.filter((item) => item.area === 'accessibility').length} accessibility, ${findings.filter((item) => item.area !== 'accessibility').length} style: ${count('error')} errors, ${count('warn')} warnings, ${count('info')} notes.`;
-    print(`\n${summary}${baselined ? ` ${baselined} known findings hidden by the baseline.` : ''} ${paint(2, `${rules.length - review} rules checked automatically; ${review} need a look at the screen (npx @enmera/ai-design-check rules).`)}`);
+    print(`\n${summary}${baselined ? ` ${baselined} known findings hidden by the baseline.` : ''} ${paint(2, `${rules.filter((rule) => rule.check && rule.check.type !== 'render').length} rules read the code; scan <url> reads the running page; ${review} need a look at the screen (npx @enmera/ai-design-check rules).`)}`);
 }
 
 if (format !== 'text' && seen.read === 0 && Object.keys(seen.unread).length > 0) done(2);

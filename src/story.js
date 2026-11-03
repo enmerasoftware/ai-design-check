@@ -113,6 +113,18 @@ export async function launch(chrome) {
     return {
         send,
         evaluate,
+        /** Every event of one kind until the returned function is called. */
+        on(method, listener) {
+            let live = true;
+            const again = (params) => {
+                if (!live) return;
+                listener(params);
+                listeners.set(method, [...(listeners.get(method) ?? []), again]);
+            };
+            listeners.set(method, [...(listeners.get(method) ?? []), again]);
+
+            return () => { live = false; };
+        },
         async open(url, { width, height, settle = 1200, mobile = false }) {
             await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: mobile ? 2 : 1, mobile });
             const loaded = once('Page.loadEventFired');

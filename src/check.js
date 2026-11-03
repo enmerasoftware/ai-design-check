@@ -445,7 +445,9 @@ export function check(cwd, overrides = {}) {
         for (const rule of regexFor) {
             const pattern = new RegExp(rule.check.pattern, `g${rule.check.flags ?? ''}`.replace(/(.)(?=.*\1)/g, ''));
             const seen = new Set();
-            for (const match of code.matchAll(pattern)) {
+            const matched = [...code.matchAll(pattern)];
+            if (rule.check.minPerFile && matched.length < rule.check.minPerFile) continue;
+            for (const match of matched) {
                 const line = lineOf(source, match.index);
                 if (seen.has(line)) continue; // one finding per line and rule
                 seen.add(line);
