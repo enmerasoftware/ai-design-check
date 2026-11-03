@@ -113,3 +113,10 @@ test('scan: see-through text counts as what it looks like', { skip }, async () =
     assert.ok((await rulesOf(page('<p style="color:rgba(0,0,0,.3)">Faint words by alpha here</p>'))).includes('legible-contrast'));
     assert.ok((await rulesOf(page('<button disabled style="opacity:.4;background:#0d6efd;color:#fff;border:0;padding:12px">Faint submit</button>'))).includes('legible-contrast'));
 });
+
+test('a page is measured once its styles have landed, not at a fixed moment', { skip }, async () => {
+    // Styles arriving just after the wait, as a CDN stylesheet does on a slow machine.
+    const html = page('<p id="p">Words</p><script>setTimeout(() => { const s = document.createElement("style"); s.textContent = "#p{font-size:14px}"; document.head.append(s); }, 1400)</script>');
+    await browser.open(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`, { width: 1280, height: 800 });
+    assert.equal(await browser.evaluate('getComputedStyle(document.getElementById("p")).fontSize'), '14px');
+});
