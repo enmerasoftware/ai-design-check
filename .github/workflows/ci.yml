@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, ci-windows]
   pull_request:
 
 permissions:
@@ -10,12 +10,16 @@ permissions:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest]
         node: [20, 22, 24]
+        include:
+          - os: windows-latest
+            node: 22
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
