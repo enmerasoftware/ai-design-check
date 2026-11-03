@@ -60,7 +60,8 @@ for (const [file, content] of Object.entries(outputs)) {
         current = readFileSync(path, 'utf8');
     } catch {}
     if (process.argv.includes('--check')) {
-        if (current !== content) {
+        // A Windows checkout may hold CRLF; that is not a stale file.
+        if (current?.replace(/\r\n/g, '\n') !== content.replace(/\r\n/g, '\n')) {
             console.error(`${file} is out of date: run npm run docs.`);
             stale = true;
         }
