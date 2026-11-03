@@ -104,8 +104,8 @@ export function scanPage(designSystem) {
         if (spacing < -0.05) hit('no-crushed-tracking', label, `Letter spacing ${spacing.toFixed(2)}em: ${label}`);
         if (spacing > 0.05 && value.length >= 20 && style.textTransform !== 'uppercase' && value !== value.toUpperCase()) hit('no-wide-tracking-body', label);
         const height = px(style.lineHeight) || size * 1.2;
-        const rows = Math.round(rect.height / height);
-        if (rows >= 2 && value.length >= 30) {
+        const rows = value.length >= 30 && rect.height >= height * 1.5 ? lines(el).length : 1;
+        if (rows >= 2) {
             if (height / size < 1.28 && size < 32 && value.length >= 60 && style.display !== 'inline' && !/^H[1-6]$/.test(tag)) hit('no-tight-leading', label, `Line height ${(height / size).toFixed(2)}: ${label}`);
             if (value.length / rows > 85 && !['PRE', 'CODE'].includes(tag)) hit('readable-measure', label, `About ${Math.round(value.length / rows)} characters a line: ${label}`);
         }
@@ -262,8 +262,8 @@ export function scanPage(designSystem) {
             if (/repeating-(linear|radial)-gradient/.test(image) && rect.width >= 200 && rect.height >= 100) hit('no-stripe-surface', tag.toLowerCase());
             if ((image.match(/linear-gradient/g) ?? []).length >= 2 && /\d+px/.test(style.backgroundSize) && rect.width >= 200 && rect.height >= 150 && !/repeating/.test(image)) hit('no-grid-wallpaper', `${tag.toLowerCase()}: ${style.backgroundSize}`);
             if (/url\(/.test(image) && /gradient/.test(image.split('url(')[0])) {
-                const wash = (image.split('url(')[0].match(/rgba?\([^)]*\)/g) ?? []).map(parse).filter(Boolean);
-                if (wash.length && wash.every((stop) => stop.a >= 0.9)) hit('no-buried-image', `${tag.toLowerCase()}: picture under a solid wash`);
+                const stops = (image.split('url(')[0].match(/rgba?\([^)]*\)/g) ?? []).map(parse);
+                if (stops.length && stops.every((stop) => stop && stop.a >= 0.9)) hit('no-buried-image', `${tag.toLowerCase()}: picture under a solid wash`);
             }
         }
         if ((style.webkitBackgroundClip === 'text' || style.backgroundClip === 'text') && /gradient/.test(style.backgroundImage)) hit('no-ai-gradients', `gradient text: ${short(text(el))}`);
@@ -290,7 +290,7 @@ export function scanPage(designSystem) {
                 if (inner.position !== 'absolute') continue;
                 const box = child.getBoundingClientRect();
                 const out = Math.max(box.bottom - rect.bottom, box.right - rect.right, rect.left - box.left, rect.top - box.top);
-                if (out >= 8 && box.width >= 60 && box.height >= 24 && text(child) && out < box.height && inner.transform === 'none') hit('no-clipped-popover', short(text(child)));
+                if (out >= 8 && box.width >= 60 && box.height >= 24 && text(child) && out < Math.max(box.width, box.height) && inner.transform === 'none') hit('no-clipped-popover', short(text(child)));
             }
         }
         if (tag === 'svg' && rect.width >= 280 && rect.height >= 180) {
@@ -346,7 +346,7 @@ export function scanPage(designSystem) {
     const topFont = Object.entries(fonts).sort((a, b) => b[1] - a[1])[0]?.[0];
     if (/^(Inter|Roboto|Fraunces|Geist|Plus Jakarta Sans|Space Grotesk|DM Sans|Poppins|Open Sans)\b/.test(topFont ?? '')) hit('no-overused-font', topFont);
     const page = parse(getComputedStyle(document.body).backgroundColor) ?? parse(getComputedStyle(document.documentElement).backgroundColor);
-    if (page && lum(page) > 0.8 && hue(page) >= 30 && hue(page) <= 65 && chroma(page) >= 0.015 && chroma(page) <= 0.12) hit('no-default-cream', hex(page));
+    if (page && lum(page) > 0.7 && hue(page) >= 30 && hue(page) <= 65 && chroma(page) >= 0.015 && chroma(page) <= 0.12) hit('no-default-cream', hex(page));
     if (document.documentElement.scrollWidth > vw + 1) hit('no-horizontal-overflow', `${document.documentElement.scrollWidth} px at ${vw} px`);
     for (const img of document.images) {
         if (!img.getAttribute('src') || (img.complete && !img.naturalWidth && getComputedStyle(img).display !== 'none')) hit('image-not-broken', img.getAttribute('src')?.slice(0, 80) || '(empty src)');

@@ -132,7 +132,7 @@ export async function launch(chrome) {
 
             return () => { live = false; };
         },
-        async open(url, { width, height, settle = 1200, mobile = false }) {
+        async open(url, { width, height, settle = 1200, mobile = false, steady = true }) {
             await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: mobile ? 2 : 1, mobile });
             const loaded = once('Page.loadEventFired');
             await send('Page.navigate', { url });
@@ -140,7 +140,7 @@ export async function launch(chrome) {
             await new Promise((done) => setTimeout(done, settle)); // CDN styles and fonts
             // A fixed wait loses to a slow machine: go on only when the styles have stopped changing, within reason.
             let last = null;
-            for (let tries = 0; tries < 16; tries++) {
+            for (let tries = 0; steady && tries < 16; tries++) {
                 const now = await evaluate(STYLE_PRINT);
                 if (now === last) break;
                 last = now;

@@ -424,7 +424,7 @@ if (format === 'json') {
     }
     if (list) print(paint(2, `\nNot read, no rule covers them yet: ${list}.`));
     const summary = findings.length === 0 ? paint(32, 'No findings.') : `${findings.filter((item) => item.area === 'accessibility').length} accessibility, ${findings.filter((item) => item.area !== 'accessibility').length} style: ${count('error')} errors, ${count('warn')} warnings, ${count('info')} notes.`;
-    print(`\n${summary}${baselined ? ` ${baselined} known findings hidden by the baseline.` : ''} ${paint(2, `${rules.filter((rule) => rule.check && rule.check.type !== 'render').length} rules read the code; scan <url> reads the running page; ${review} need a look at the screen (npx @enmera/ai-design-check rules).`)}`);
+    print(`\n${summary}${baselined ? ` ${baselined} known findings hidden by the baseline.` : ''} ${paint(2, `${rules.filter((rule) => rule.check && (rule.check.type !== 'render' || rule.check.native)).length} rules read the code; scan <url> reads the running page; ${review} need a look at the screen (npx @enmera/ai-design-check rules).`)}`);
 }
 
 if (format !== 'text' && seen.read === 0 && Object.keys(seen.unread).length > 0) done(2);

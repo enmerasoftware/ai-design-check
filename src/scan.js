@@ -8,15 +8,15 @@ import { findChrome, launch } from './story.js';
  */
 
 /** One page at one width. browser: from launch(). */
-export async function scanWith(browser, url, { width = 1440, config = {} } = {}) {
+export async function scanWith(browser, url, { width = 1440, config = {}, quick = false } = {}) {
     const mobile = width < 768;
     const errors = [];
     await browser.send('Runtime.enable');
     const stop = browser.on('Runtime.exceptionThrown', ({ exceptionDetails }) => errors.push(exceptionDetails.exception?.description?.split('\n')[0] ?? exceptionDetails.text));
     try {
-        await browser.open(url, { width, height: mobile ? 844 : 900, mobile, settle: 300 });
+        await browser.open(url, { width, height: mobile ? 844 : 900, mobile, settle: quick ? 0 : 300, steady: !quick });
         // Lazy images and on-scroll reveals get their chance before anything counts as hidden.
-        await browser.evaluate('(async () => { document.documentElement.style.scrollBehavior = "auto"; for (let y = 0; y < document.documentElement.scrollHeight; y += innerHeight / 2) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 40)); } scrollTo(0, 0); await document.fonts.ready; await new Promise((r) => setTimeout(r, 200)); })()');
+        await browser.evaluate('(async () => { document.documentElement.style.scrollBehavior = "auto"; for (let y = 0; y < document.documentElement.scrollHeight; y += innerHeight / 2) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 40)); } scrollTo(0, 0); await document.fonts.ready; await new Promise((r) => setTimeout(r, ' + (quick ? 0 : 200) + ')); })()');
         const hits = await browser.evaluate(`(${scanPage.toString()})(${JSON.stringify(config.designSystem ?? null)})`);
         await new Promise((done) => setTimeout(done, 50));
         for (const error of errors) hits.push({ rule: 'no-script-errors', value: error, message: `Script error on load: ${error}` });

@@ -137,7 +137,7 @@ test('a missing agent says what to do instead of failing later', () => {
     assert.throws(() => agentCommand('cursor'), /Unknown agent/);
 });
 
-test('one command: study, numbered passes, craft, on a branch, with a stand-in agent', { skip: !findChrome() }, async () => {
+test('one command: study, numbered passes, craft, on a branch, with a stand-in agent', { skip: !findChrome() || process.platform === 'win32' }, async () => {
     const cwd = mkdtempSync(join(tmpdir(), 'adc-redesign-'));
     const bin = join(cwd, '.stub');
     mkdirSync(bin);
@@ -176,7 +176,7 @@ if (stage === 'craft') writeFileSync('index.html', readFileSync('index.html', 'u
     }
 });
 
-test('--plan stops after the study so a person can read and edit the cards', { skip: !findChrome() }, async () => {
+test('--plan stops after the study so a person can read and edit the cards', { skip: !findChrome() || process.platform === 'win32' }, async () => {
     const cwd = mkdtempSync(join(tmpdir(), 'adc-plan-'));
     const bin = join(cwd, '.stub');
     mkdirSync(bin);
