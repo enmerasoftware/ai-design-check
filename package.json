@@ -24,7 +24,8 @@
     "CHANGELOG.md",
     "LICENSE",
     "RESEARCH.md",
-    "NOTICE.md"
+    "NOTICE.md",
+    "PRIVACY.md"
   ],
   "engines": {
     "node": ">=20"
