@@ -197,8 +197,16 @@ export function readScales(cwd, { spacing: raw, configFile }, files) {
     return {
         web: web ?? projectScale(cwd, files),
         native,
-        present: { web: files.some((path) => /\.(?:tsx|jsx|vue|svelte|html|blade\.php)$/.test(path)), native: files.some((path) => /\.(?:swift|kt)$/.test(path)) },
+        present: { web: files.some((path) => /\.(?:tsx|jsx|vue|svelte|html|blade\.php)$/.test(path)), native: files.some((path) => /\.(?:swift|kt|dart)$/.test(path)) || readsReactNative(cwd) },
     };
+}
+
+function readsReactNative(cwd) {
+    try {
+        return /"react-native"\s*:/.test(readFileSync(join(cwd, 'package.json'), 'utf8'));
+    } catch {
+        return false;
+    }
 }
 
 /** Built CSS (a published vendor bundle, say) carries its framework's defaults, not this project's decision. */
@@ -232,6 +240,19 @@ export function onScale(scale, value, token = 'p-[') {
     return !SPACING_UTILITY.test(token) && multipleOf(value, greatestDivisor(scale.values));
 }
 
+/** The closest value the scale allows; a tie goes up. */
+export function nearestOnScale(scale, value) {
+    const steps = [...scale.values];
+    if (scale.base) steps.push(Math.floor(value / scale.base) * scale.base, Math.ceil(value / scale.base) * scale.base);
+    if (steps.length === 0) return value;
+
+    return steps.reduce((best, step) => {
+        const gap = Math.abs(step - value) - Math.abs(best - value);
+
+        return gap < 0 || (gap === 0 && step > best) ? step : best;
+    });
+}
+
 export function describeScale(scale, unit = 'px') {
     const list = scale.values.join(', ');
     const steps = scale.base ? `${scale.base} ${unit} grid${list ? ` plus ${list} ${unit}` : ''}` : `${list} ${unit}`;
@@ -244,7 +265,7 @@ export function scaleLines({ web, native, present }) {
     const nativeSource = native.source === 'default' ? { ...native, source: 'default; app code is not read for a scale' } : native;
     const lines = [];
     if (present.web) lines.push(`Spacing scale: ${describeScale(web)}.`, ...(web.note ? [`  ${web.note}.`] : []));
-    if (present.native) lines.push(`Spacing scale for SwiftUI and Compose: ${describeScale(nativeSource, 'pt/dp')}.`, ...(native.note && native.note !== web.note ? [`  ${native.note}.`] : []));
+    if (present.native) lines.push(`Spacing scale for app code: ${describeScale(nativeSource, 'pt/dp')}.`, ...(native.note && native.note !== web.note ? [`  ${native.note}.`] : []));
 
     return lines;
 }

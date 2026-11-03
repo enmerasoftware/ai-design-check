@@ -7,9 +7,10 @@
 [English](README.md)
 
 Claude Code, Cursor ya da Codex ile geliştirenler için: 95 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
-denetçi ve ekranı onaran bir ajan becerisi. Web projelerini, SwiftUI ve Jetpack Compose uygulamalarını okur.
+denetçi ve ekranı onaran bir ajan becerisi. Web projelerini (React, Vue, Svelte, Laravel Blade, HTML) ve SwiftUI, Jetpack
+Compose, Flutter, React Native uygulamalarını okur. Bulmak için ajan gerekmez, mekanik düzeltmeler için de gerekmez.
 
-## İki adımda başlayın
+## Üç adımda başlayın
 
 **1. Projenizi denetleyin.**
 
@@ -33,7 +34,16 @@ lang/tr.json
 1 accessibility, 3 style: 3 errors, 1 warnings, 0 notes.
 ```
 
-**2. Düzeltmeyi ajanınıza bırakın.**
+**2. Tek cevabı olanı ajansız düzeltin.**
+
+```bash
+npx @enmera/ai-design-check --fix --dry-run
+```
+
+Bu komut değişiklikleri listeler; yazmak için `--dry-run` bayrağını kaldırın. Boşluk ve köşeler ölçeğinizin en yakın
+basamağına gider, çok kalın yazı kalına iner. Dokunma alanı, renk, emoji, metin ve hiyerarşi karar istediği için raporda kalır.
+
+**3. Kalanı ajanınıza bırakın.**
 
 ```bash
 npx skills add enmerasoftware/ai-design-check
@@ -263,8 +273,9 @@ Var olup okunamayan kaynak (`calc()`, `clamp()`, birbirini tutmayan iki dosya, t
 `base` olmadan liste verilirse kenar, iç boşluk ve aralıklar listede olmalıdır; genişlik, yükseklik ve konumların yalnız listenin
 ortak bölenine uyması yeter.
 
-SwiftUI ve Compose yapılandırma dosyasındaki `spacing` değerini (web'den farklıysa `native`) ya da 4 pt/dp kullanır. Başka bir şey
-okumaz: Swift ve Kotlin sabitlerinin bakılacak ortak bir yeri yoktur, uygulamanın yanındaki web teması da uygulama hakkında bilgi vermez.
+Uygulama kodu (SwiftUI, Compose, Flutter, React Native) yapılandırma dosyasındaki `spacing` değerini (web'den farklıysa `native`)
+ya da 4 pt/dp kullanır. Başka bir şey okumaz: uygulama kodundaki sabitlerin bakılacak ortak bir yeri yoktur, uygulamanın
+yanındaki web teması da uygulama hakkında bir şey söylemez.
 
 </details>
 

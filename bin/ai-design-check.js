@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { existsSync, mkdirSync, readFileSync, writeFileSync, writeSync } from 'node:fs';
 import { join, relative, resolve, sep } from 'node:path';
-import { CONFIG_FILE, applyBaseline, check, loadConfig, loadRules, spacingScales, toBaseline } from '../src/check.js';
+import { CONFIG_FILE, applyBaseline, check, coverage, loadConfig, loadRules, spacingScales, toBaseline } from '../src/check.js';
+import { applyFixes } from '../src/fix.js';
 import { inventory } from '../src/inventory.js';
 import { scaleLines } from '../src/spacing.js';
 
@@ -34,6 +35,9 @@ Options
   --json                      Same as --format json
   --strict                    Exit 1 on warnings too (default: errors only)
   --quiet                     Only the summary line
+  --fix                       Change what has one mechanical answer, no agent needed: spacing and corners to the nearest
+                              step of the scale (a tie goes up), very heavy type to bold. The rest stays in the report
+  --dry-run                   With --fix: list the changes, write nothing
   --write-baseline            Record current findings in ${BASELINE}; later runs report only new ones
   --no-baseline               Ignore the baseline file
   --tr                        Turkish rule texts
@@ -270,6 +274,11 @@ if (command !== 'check') {
 
 const scales = loadConfig(cwd).rules['spacing-scale'] === 'off' ? null : spacingScales(cwd);
 let findings = check(cwd, { ...(rest.length > 0 ? { include: rest } : {}), ...(scales ? { scales } : {}) });
+const include = rest.length > 0 ? { include: rest } : {};
+const seen = coverage(cwd, include);
+const dryRun = flags.has('--dry-run');
+const fixes = flags.has('--fix') ? applyFixes(cwd, findings, scales ?? spacingScales(cwd), { write: !dryRun }) : null;
+if (fixes?.length && !dryRun) findings = check(cwd, { ...include, ...(scales ? { scales } : {}) });
 const baselineFile = join(cwd, BASELINE);
 
 if (flags.has('--write-baseline')) {
@@ -290,7 +299,7 @@ const { rules, areas } = loadRules();
 const review = rules.filter((rule) => !rule.check).length;
 
 if (format === 'json') {
-    print(JSON.stringify({ findings, errors: count('error'), warnings: count('warn'), notes: count('info'), baselined, reviewRules: review, ...(scales ? { spacing: { web: scales.web, native: scales.native } } : {}) }, null, 2));
+    print(JSON.stringify({ findings, errors: count('error'), warnings: count('warn'), notes: count('info'), baselined, reviewRules: review, unread: seen.unread, ...(fixes ? { fixes } : {}), ...(scales ? { spacing: { web: scales.web, native: scales.native } } : {}) }, null, 2));
 } else if (format === 'github') {
     const LEVEL = { error: 'error', warn: 'warning', info: 'notice' };
     for (const item of findings) print(`::${LEVEL[item.severity]} file=${item.path},line=${item.line},title=${item.rule}::${item.message.replace(/\n/g, ' ')}`);
@@ -316,8 +325,20 @@ if (format === 'json') {
         }
     }
     if (scales && !flags.has('--quiet')) print(`\n${paint(2, scaleLines(scales).join('\n'))}`);
+    if (fixes) {
+        for (const item of fixes) print(`  ${`${item.path}:${item.line}`.padEnd(32)} ${item.from} → ${item.to}  ${paint(2, item.rule)}`);
+        const made = `${fixes.length} change${fixes.length === 1 ? '' : 's'}`;
+        print(paint(1, `\n${fixes.length === 0 ? 'Nothing to fix.' : dryRun ? `${made} would be made (--dry-run, nothing written).` : `${made} made. Check them with git diff.`}`));
+    }
+    const list = Object.entries(seen.unread).map(([extension, total]) => `${total} .${extension} file${total === 1 ? '' : 's'}`).join(', ');
+    if (list && seen.read === 0) {
+        print(`\nNothing checked: ${list}. No rule reads these yet, so this says nothing about their design.`);
+        done(2);
+    }
+    if (list) print(paint(2, `\nNot read, no rule covers them yet: ${list}.`));
     const summary = findings.length === 0 ? paint(32, 'No findings.') : `${findings.filter((item) => item.area === 'accessibility').length} accessibility, ${findings.filter((item) => item.area !== 'accessibility').length} style: ${count('error')} errors, ${count('warn')} warnings, ${count('info')} notes.`;
     print(`\n${summary}${baselined ? ` ${baselined} known findings hidden by the baseline.` : ''} ${paint(2, `${rules.length - review} rules checked automatically; ${review} need a look at the screen (npx @enmera/ai-design-check rules).`)}`);
 }
 
+if (format !== 'text' && seen.read === 0 && Object.keys(seen.unread).length > 0) done(2);
 done(count('error') > 0 || (flags.has('--strict') && count('warn') > 0) ? 1 : 0);

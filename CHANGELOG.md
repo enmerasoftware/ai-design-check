@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+- Flutter and React Native are read. `.dart` files, and style objects and StyleSheets in files that import `react-native`,
+  go through the same rules as SwiftUI and Compose: spacing, corners, type size, heavy weights and shadows, blur, purple
+  gradients, bounce, loops, tap size, unnamed icon buttons, fixed text scale and copy. A touchable is measured through its
+  StyleSheet entry.
+- `--fix` changes what has one mechanical answer, with no agent: spacing and corners to the nearest step of the scale (a tie
+  goes up), very heavy type to bold, on the web and in every app language. `--fix --dry-run` lists the changes and writes
+  nothing. Widths and heights, tap sizes, colours, emoji, words and hierarchy stay in the report. A project that renames its
+  Tailwind radius steps keeps its bracket radii.
+- A project the rules cannot read is no longer reported as clean. Interface code with no rules (`.php`, `.astro`, `.erb`,
+  `.twig`, Android layout XML and others) is named in the report and in `--json` as `unread`; when nothing else was read the
+  run says "Nothing checked" and exits 2.
+- SwiftUI and Compose gain `error-copy`, `ellipsis-character`, `no-buzzwords`, `no-unsourced-proof`,
+  `no-decorative-uppercase`, `specific-action-labels` and `icon-button-name`.
+- `radius-scale` in SwiftUI and Compose no longer reports a pill (100 or more) or a circle (half the box's size).
+- Test files and generated Dart code are not read.
+
 ## 0.10.1
 
 - `spacing-scale` reads the project's own scale instead of assuming 4 px: `spacing` in the config file, then Tailwind 4

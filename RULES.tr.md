@@ -298,7 +298,7 @@
 
 `spacing-scale` · uyarı · denetlenir
 
-**Kural:** Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]) projenin ölçeğine oturur: ai-design-check.json'daki, yoksa Tailwind ya da CSS değişkenlerinden okunan, o da yoksa 4 px ızgarası. SwiftUI ve Compose yapılandırma dosyasını ya da 4 pt/dp kullanır. Tema basamakları tercih edilir.
+**Kural:** Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]) projenin ölçeğine oturur: ai-design-check.json'daki, yoksa Tailwind ya da CSS değişkenlerinden okunan, o da yoksa 4 px ızgarası. Uygulama kodu (SwiftUI, Compose, Flutter, React Native) yapılandırma dosyasını ya da 4 pt/dp kullanır. Tema basamakları tercih edilir.
 
 **Neden:** Izgara dışı değerler modelin tahmin ederken yazdığı değerlerdir; satır ve aralıklar bir iki piksel kayar, ekran düzensiz görünür.
 
