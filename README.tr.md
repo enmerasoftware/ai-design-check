@@ -72,7 +72,7 @@ ile sonraki sayıları gösterir. Özellikler, veriler ve metinler yerinde kalı
 
 ## Neleri yakalar
 
-65 kural kodunuzu, 55 kural çalışan sayfayı (`scan`) okur, bir kısmı ikisini de. Kalan 33 kural ekrana bakmayı gerektirir; *gözden geçirilecek* olarak işaretlenir ve size ve
+67 kural kodunuzu (33 tanesi uygulama kodunu da), 55 kural çalışan sayfayı (`scan`) okur, bir kısmı ikisini de. Kalan 33 kural ekrana bakmayı gerektirir; *gözden geçirilecek* olarak işaretlenir ve size ve
 düzelten beceriye bırakılır. Her kural ne yapılacağını, nedenini ve nasıl düzeltileceğini Türkçe ve İngilizce anlatır:
 [RULES.tr.md](RULES.tr.md).
 

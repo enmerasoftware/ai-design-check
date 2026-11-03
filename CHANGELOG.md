@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.12.0
+
+- Every rule `scan` runs now has at least four shapes it must flag and five close ones it must leave alone. Writing them found
+  real errors, now fixed: a gradient fading to transparent over a picture counted as a solid wash, a clipped popover wider than
+  it is tall was missed, pale beige grounds were missed, and lines were counted by height instead of being measured.
+- A page is measured once its styles have landed, not after a fixed wait. On a slow machine `narrow` and `scan` could read a page
+  before its CDN stylesheet applied and report text that "shrinks". The same wait now also covers `redesign` and `story`.
+- See-through text counts as what it looks like, and smooth scrolling no longer misplaces the contrast measure.
+- `no-justified-text`, `no-crushed-tracking`, `no-overused-font`, `no-tiny-text`, `image-not-broken`, `no-theater-copy`,
+  `no-all-caps-sentences`, `no-radial-halo` and `no-hard-offset-shadow` also read app code, where the platform has an equivalent.
+  33 rules now reach SwiftUI, Compose, Flutter or React Native.
+- CI runs on Windows too. `redesign` is not yet tested there.
+
 ## 0.11.0
 
 - `scan <url>`: checks the running page at desktop and phone width in your Chrome, with no model and no API key. Real

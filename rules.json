@@ -2844,7 +2844,16 @@
           "blade.php"
         ],
         "pattern": "font-family:\\s*['\"]?(?:Inter|Roboto|Fraunces|Geist|Plus Jakarta Sans|Space Grotesk|DM Sans|Poppins|Open Sans)\\b|fonts\\.googleapis\\.com/css2?\\?family=(?:Inter|Roboto|Fraunces|Geist|Plus\\+Jakarta\\+Sans|Space\\+Grotesk|DM\\+Sans|Poppins|Open\\+Sans)\\b",
-        "scan": true
+        "scan": true,
+        "native": {
+          "swift": "\\.custom\\(\\s*\"(?:Inter|Roboto|Fraunces|Geist|Plus Jakarta Sans|Space Grotesk|DM Sans|Poppins|Open Sans)[^\"]*\"",
+          "kt": "\\bR\\.font\\.(?:inter|roboto|fraunces|geist|plus_?jakarta_?sans|space_?grotesk|dm_?sans|poppins|open_?sans)\\b",
+          "dart": [
+            "\\bfontFamily:\\s*['\"](?:Inter|Roboto|Fraunces|Geist|Plus Jakarta Sans|Space Grotesk|DM Sans|Poppins|Open Sans)['\"]",
+            "\\bGoogleFonts\\.(?:inter|roboto|fraunces|geist|plusJakartaSans|spaceGrotesk|dmSans|poppins|openSans)\\b"
+          ],
+          "rn": "\\bfontFamily\\s*:\\s*['\"](?:Inter|Roboto|Fraunces|Geist|Plus Jakarta Sans|Space Grotesk|DM Sans|Poppins|Open Sans)[^'\"]*['\"]"
+        }
       }
     },
     {
@@ -3126,7 +3135,21 @@
         ],
         "flags": "i",
         "pattern": "\\b(?:compliance|security|productivity|privacy|safety|engineering|process) theat(?:er|re)\\b|\\b(?:güvenlik|verimlilik|uyum) tiyatrosu\\b",
-        "scan": true
+        "scan": true,
+        "native": {
+          "swift": {
+            "pattern": "\"[^\"\\n]*(?:\\b(?:compliance|security|productivity|privacy|safety|engineering|process) theat(?:er|re)\\b|\\b(?:güvenlik|verimlilik|uyum) tiyatrosu\\b)[^\"\\n]*\"",
+            "flags": "i"
+          },
+          "kt": {
+            "pattern": "\"[^\"\\n]*(?:\\b(?:compliance|security|productivity|privacy|safety|engineering|process) theat(?:er|re)\\b|\\b(?:güvenlik|verimlilik|uyum) tiyatrosu\\b)[^\"\\n]*\"",
+            "flags": "i"
+          },
+          "dart": {
+            "pattern": "['\"][^'\"\\n]*(?:\\b(?:compliance|security|productivity|privacy|safety|engineering|process) theat(?:er|re)\\b|\\b(?:güvenlik|verimlilik|uyum) tiyatrosu\\b)[^'\"\\n]*['\"]",
+            "flags": "i"
+          }
+        }
       }
     },
     {
@@ -3153,7 +3176,25 @@
         "type": "class",
         "pattern": "\\btracking-\\[-0?\\.(?:0[6-9]|[1-9])\\d*em\\]",
         "css": "letter-spacing:\\s*-0?\\.(?:0[6-9]|[1-9])\\d*em",
-        "scan": true
+        "scan": true,
+        "native": {
+          "swift": {
+            "pattern": "\\.(?:tracking|kerning)\\(\\s*-([0-9]+(?:\\.[0-9]+)?)",
+            "min": 2
+          },
+          "kt": {
+            "pattern": "\\bletterSpacing\\s*=\\s*\\(?-([0-9]+(?:\\.[0-9]+)?)\\)?\\.sp",
+            "min": 2
+          },
+          "dart": {
+            "pattern": "\\bletterSpacing:\\s*-([0-9]+(?:\\.[0-9]+)?)",
+            "min": 2
+          },
+          "rn": {
+            "pattern": "\\bletterSpacing\\s*:\\s*-([0-9]+(?:\\.[0-9]+)?)",
+            "min": 2
+          }
+        }
       }
     },
     {
@@ -3232,7 +3273,13 @@
         "type": "class",
         "pattern": "\\bbg-\\[radial-gradient",
         "css": "radial-gradient\\([^;{}]*transparent",
-        "scan": true
+        "scan": true,
+        "native": {
+          "swift": "RadialGradient\\([\\s\\S]{0,200}?\\.clear\\b",
+          "kt": "Brush\\.radialGradient\\([\\s\\S]{0,200}?Color\\.Transparent\\b",
+          "dart": "RadialGradient\\([\\s\\S]{0,200}?Colors\\.transparent\\b",
+          "rn": "<RadialGradient\\b[\\s\\S]{0,200}?['\"]transparent['\"]"
+        }
       }
     },
     {
@@ -3364,7 +3411,11 @@
         "type": "class",
         "pattern": "\\bshadow-\\[-?[4-9]\\d*px_-?\\d+px_0(?:px)?_",
         "css": "box-shadow:\\s*-?(?:[4-9]|\\d{2,})px\\s+-?\\d+px\\s+0(?:px)?\\s+[^0-9]",
-        "scan": true
+        "scan": true,
+        "native": {
+          "swift": "\\.shadow\\((?:color:[^,\\n]*,\\s*)?radius:\\s*0\\s*,\\s*(?:x:\\s*-?(?:[4-9]|\\d{2,})|x:\\s*-?\\d+\\s*,\\s*y:\\s*-?(?:[4-9]|\\d{2,})|y:\\s*-?(?:[4-9]|\\d{2,}))",
+          "rn": "shadowOffset\\s*:\\s*\\{[^{}]*(?:width|height)\\s*:\\s*-?(?:[4-9]|\\d{2,})[^{}]*\\}[^{}]*\\bshadowRadius\\s*:\\s*0\\b"
+        }
       }
     },
     {
@@ -3450,7 +3501,12 @@
           "blade.php"
         ],
         "pattern": "<img\\b[^>]*\\bsrc=(?:\"\"|''|\"#\"|'#'|\"(?:placeholder|image|photo)\\.(?:png|jpe?g|webp)\")",
-        "scan": true
+        "scan": true,
+        "native": {
+          "swift": "\\bImage\\(\\s*\"\"\\s*\\)",
+          "dart": "\\bImage\\.(?:network|asset)\\(\\s*(?:''|\"\")",
+          "rn": "\\buri\\s*:\\s*(?:''|\"\")"
+        }
       }
     },
     {
@@ -3764,7 +3820,12 @@
         "pattern": "(?:^|\\s)(?:[\\w-]+:)*text-justify(?=\\s|$)",
         "unless": "\\bhyphens-auto\\b",
         "css": "text-align:\\s*justify",
-        "scan": true
+        "scan": true,
+        "native": {
+          "kt": "TextAlign\\.Justify\\b",
+          "dart": "TextAlign\\.justify\\b",
+          "rn": "\\btextAlign\\s*:\\s*['\"]justify['\"]"
+        }
       }
     },
     {
@@ -3842,7 +3903,18 @@
       "check": {
         "type": "render",
         "command": "scan",
-        "scan": true
+        "scan": true,
+        "native": {
+          "swift": {
+            "pattern": "\\.font\\(\\s*\\.system\\(\\s*size:\\s*([0-9]+(?:\\.[0-9]+)?)",
+            "max": 11,
+            "unlessBefore": "Image\\((?:systemName:)?[^)\\n]*\\)\\s*(?:\\.[a-zA-Z]+\\([^()\\n]*\\)\\s*){0,3}$"
+          },
+          "kt": {
+            "pattern": "\\bfontSize\\s*=\\s*([0-9]+(?:\\.[0-9]+)?)\\.sp",
+            "max": 11
+          }
+        }
       }
     },
     {
@@ -3868,7 +3940,13 @@
       "check": {
         "type": "render",
         "command": "scan",
-        "scan": true
+        "scan": true,
+        "native": {
+          "swift": "\\bText\\(\\s*\"(?:\\p{Lu}+\\s+){7,}\\p{Lu}+\"",
+          "kt": "\\bText\\(\\s*(?:text\\s*=\\s*)?\"(?:\\p{Lu}+\\s+){7,}\\p{Lu}+\"",
+          "dart": "\\bText\\(\\s*['\"](?:\\p{Lu}+\\s+){7,}\\p{Lu}+['\"]",
+          "rn": "<Text\\b[^<>]*>\\s*(?:\\p{Lu}+\\s+){7,}\\p{Lu}+\\s*</Text>"
+        }
       }
     },
     {

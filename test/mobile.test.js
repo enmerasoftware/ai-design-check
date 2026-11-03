@@ -102,3 +102,21 @@ test('an escaped quote does not end a Dart string', () => {
         rmSync(project, { recursive: true, force: true });
     }
 });
+
+test('the newer rules reach app code too', () => {
+    const project = mkdtempSync(join(tmpdir(), 'adc-new-'));
+    try {
+        writeFileSync(join(project, 'A.swift'), 'Text("a").tracking(-3)\nText("b").font(.custom("Inter", size: 16))\nText("c").font(.system(size: 9))\nImage("")\nText("Stop this security theater")\nText("WE ARE THE BEST TEAM IN THE WHOLE TOWN")\nRadialGradient(colors: [.blue, .clear], center: .center, startRadius: 0, endRadius: 200)\nCard().shadow(color: .black, radius: 0, x: 6, y: 6)\n// passes\nImage(systemName: "x").font(.system(size: 8))\nText("d").tracking(-0.5)\nText("e").font(.custom("Rubik", size: 16))\nText("f").font(.system(size: 13))\nImage("logo")\nText("The city theater")\nText("SHORT")\nRadialGradient(colors: [.blue, .red], center: .center, startRadius: 0, endRadius: 200)\nCard().shadow(color: .black, radius: 8, x: 6, y: 6)\n');
+        writeFileSync(join(project, 'B.kt'), 'Text("a", textAlign = TextAlign.Justify)\nText("b", letterSpacing = (-3).sp)\nText("c", fontSize = 9.sp, fontFamily = FontFamily(Font(R.font.inter)))\nText("Stop this security theater")\nBrush.radialGradient(listOf(Blue, Color.Transparent))\n// passes\nText("d", textAlign = TextAlign.Start)\nText("e", letterSpacing = 1.sp)\nText("f", fontFamily = FontFamily(Font(R.font.rubik)))\n');
+        writeFileSync(join(project, 'c.dart'), "Text('a', textAlign: TextAlign.justify, style: TextStyle(letterSpacing: -3, fontFamily: 'Inter'));\nGoogleFonts.poppins();\nImage.network('');\nText('Stop this security theater');\nRadialGradient(colors: [Colors.blue, Colors.transparent]);\nText('WE ARE THE BEST TEAM IN THE WHOLE TOWN');\n// passes\nText('b', textAlign: TextAlign.start, style: TextStyle(letterSpacing: 1, fontFamily: 'Rubik'));\nGoogleFonts.rubik();\nImage.network('https://x.test/a.png');\n");
+        writeFileSync(join(project, 'd.tsx'), "import { View } from 'react-native';\nconst s = { a: { textAlign: 'justify', letterSpacing: -3, fontFamily: 'Inter' }, b: { shadowOffset: { width: 6, height: 6 }, shadowRadius: 0 } };\nexport const A = () => <Image source={{ uri: '' }} />;\nconst p = <RadialGradient colors={['#00f', 'transparent']} />;\n// passes\nconst t = { a: { textAlign: 'left', letterSpacing: 1, fontFamily: 'Rubik' }, b: { shadowOffset: { width: 6, height: 6 }, shadowRadius: 8 } };\nconst u = <Image source={{ uri: 'https://x.test/a.png' }} />;\n");
+        const found = check(project);
+        const counts = (file) => Object.fromEntries(['no-justified-text', 'no-crushed-tracking', 'no-overused-font', 'no-tiny-text', 'image-not-broken', 'no-theater-copy', 'no-all-caps-sentences', 'no-radial-halo', 'no-hard-offset-shadow'].map((rule) => [rule, values(found, rule, file).length]).filter(([, total]) => total));
+        assert.deepEqual(counts('A.swift'), { 'no-crushed-tracking': 1, 'no-overused-font': 1, 'no-tiny-text': 1, 'image-not-broken': 1, 'no-theater-copy': 1, 'no-all-caps-sentences': 1, 'no-radial-halo': 1, 'no-hard-offset-shadow': 1 });
+        assert.deepEqual(counts('B.kt'), { 'no-justified-text': 1, 'no-crushed-tracking': 1, 'no-overused-font': 1, 'no-tiny-text': 1, 'no-theater-copy': 1, 'no-radial-halo': 1 });
+        assert.deepEqual(counts('c.dart'), { 'no-justified-text': 1, 'no-crushed-tracking': 1, 'no-overused-font': 2, 'image-not-broken': 1, 'no-theater-copy': 1, 'no-all-caps-sentences': 1, 'no-radial-halo': 1 });
+        assert.deepEqual(counts('d.tsx'), { 'no-justified-text': 1, 'no-crushed-tracking': 1, 'no-overused-font': 1, 'image-not-broken': 1, 'no-radial-halo': 1, 'no-hard-offset-shadow': 1 });
+    } finally {
+        rmSync(project, { recursive: true, force: true });
+    }
+});

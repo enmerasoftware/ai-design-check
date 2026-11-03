@@ -72,7 +72,7 @@ it, and shows the count before and after. Features, data and words stay.
 
 ## What it catches
 
-65 rules read your code and 55 read the running page (`scan`), some of them both. The other 33 need eyes on the screen, so they
+67 rules read your code (33 of them in app code too) and 55 read the running page (`scan`), some of them both. The other 33 need eyes on the screen, so they
 are marked *review* and left to you and the fix skill. Each rule says what to do, why and how to fix it, in English and Turkish: [RULES.md](RULES.md).
 
 | Area | Examples |
