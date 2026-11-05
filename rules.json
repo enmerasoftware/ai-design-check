@@ -1837,8 +1837,8 @@
         "tr": "Başlık üstünde duyuru hapı yok"
       },
       "rule": {
-        "en": "No \"✨ Introducing X 2.0\" pill above a hero headline unless it links to real, recent news; then it is a quiet text link.",
-        "tr": "Kahraman başlığının üstünde \"✨ Introducing X 2.0\" hapı yok; gerçek ve yeni bir habere gidiyorsa sade bir metin bağlantısıdır."
+        "en": "No small pill or badge (\"✨ Introducing X 2.0\", \"Now in beta\") above a hero headline unless it links to real, recent news; then it is a quiet text link.",
+        "tr": "Kahraman başlığının üstünde küçük hap ya da rozet (\"✨ Introducing X 2.0\", \"Şimdi betada\") yok; gerçek ve yeni bir habere gidiyorsa sade bir metin bağlantısıdır."
       },
       "why": {
         "en": "It is the most copied hero template; the eye lands on it before the headline and finds nothing.",
@@ -1859,7 +1859,112 @@
           "svelte",
           "html",
           "blade.php"
-        ]
+        ],
+        "scan": true
+      }
+    },
+    {
+      "id": "no-accent-word",
+      "area": "visual",
+      "severity": "warn",
+      "title": {
+        "en": "No accent word in the headline",
+        "tr": "Başlıkta renkle ayrılmış kelime yok"
+      },
+      "rule": {
+        "en": "The main headline is one colour: no word or short run is picked out in an accent colour or in gradient text.",
+        "tr": "Ana başlık tek renktir: hiçbir kelime ya da kısa söz öbeği vurgu rengiyle ya da gradyan metinle ayrılmaz."
+      },
+      "why": {
+        "en": "It is the most repeated hero recipe of generated pages: 8 of the 12 generated pages we measured had it, 1 of the 12 designed ones.",
+        "tr": "Üretilmiş sayfaların en çok tekrarlanan kahraman tarifidir: ölçtüğümüz 12 üretilmiş sayfanın 8'inde, 12 tasarlanmış sayfanın 1'inde vardı."
+      },
+      "fix": {
+        "en": "Set the headline in one colour and let the words carry the emphasis.",
+        "tr": "Başlığı tek renkle yazın; vurguyu kelimeler taşısın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-colored-shadow",
+      "area": "visual",
+      "severity": "warn",
+      "title": {
+        "en": "No coloured shadows",
+        "tr": "Renkli gölge yok"
+      },
+      "rule": {
+        "en": "Cards, buttons and pictures cast a neutral shadow; it is not tinted with the brand or accent colour.",
+        "tr": "Kart, düğme ve görseller nötr gölge düşürür; gölge marka ya da vurgu rengine boyanmaz."
+      },
+      "why": {
+        "en": "8 of the 12 generated pages we measured had a coloured shadow and none of the 12 designed ones; it reads as glow, not depth.",
+        "tr": "Ölçtüğümüz 12 üretilmiş sayfanın 8'inde renkli gölge vardı, 12 tasarlanmış sayfanın hiçbirinde yoktu; derinlik değil parıltı gibi okunur."
+      },
+      "fix": {
+        "en": "Use a neutral shadow (black at low opacity) or a border, and keep the colour for the fill.",
+        "tr": "Nötr gölge (düşük opaklıkta siyah) ya da kenarlık kullanın; rengi dolguya saklayın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-arrow-suffix",
+      "area": "writing",
+      "severity": "info",
+      "title": {
+        "en": "No arrow on every call to action",
+        "tr": "Her çağrıda ok yok"
+      },
+      "rule": {
+        "en": "Buttons and links do not end in an arrow (→, ›, » or an arrow icon) as a habit; one such link is fine.",
+        "tr": "Düğme ve bağlantılar alışkanlık olarak okla (→, ›, » ya da ok ikonu) bitmez; tek bir bağlantıda sorun yok."
+      },
+      "why": {
+        "en": "The label already says where it goes; an arrow on every action is a generated-page habit.",
+        "tr": "Etiket nereye gittiğini zaten söyler; her işlemdeki ok üretilmiş sayfa alışkanlığıdır."
+      },
+      "fix": {
+        "en": "Remove the arrows; keep one only where it marks moving on, such as the next step.",
+        "tr": "Okları kaldırın; yalnız sonraki adım gibi ilerlemeyi gösterdiği yerde bırakın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
+      "id": "no-middle-dot-lists",
+      "area": "writing",
+      "severity": "info",
+      "title": {
+        "en": "No lists strung on middle dots",
+        "tr": "Orta noktayla dizilmiş liste yok"
+      },
+      "rule": {
+        "en": "Short lines do not string three or more items on · or • (\"Fast · Private · Free\"); a footer line and a dated byline are fine.",
+        "tr": "Kısa satırlar üç ya da daha çok öğeyi · ya da • ile dizmez (\"Hızlı · Gizli · Ücretsiz\"); alt bilgi satırı ve tarihli yazar satırı sorun değil."
+      },
+      "why": {
+        "en": "Three words on dots say less than a sentence would; the shape is a generated-page habit.",
+        "tr": "Noktalarla dizilmiş üç kelime bir cümleden azını söyler; bu biçim üretilmiş sayfa alışkanlığıdır."
+      },
+      "fix": {
+        "en": "Write it as one sentence, or keep the one item that matters.",
+        "tr": "Tek cümle olarak yazın ya da önemli olan tek öğeyi bırakın."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
       }
     },
     {
