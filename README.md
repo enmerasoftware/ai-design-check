@@ -4,7 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@enmera/ai-design-check)](https://www.npmjs.com/package/@enmera/ai-design-check)
 [![license: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
-[Türkçe](README.tr.md)
+[Türkçe](README.tr.md) · [日本語](README.ja.md)
 
 For anyone building with Claude Code, Cursor or Codex: 137 design rules, a checker with no dependencies and no API key, and
 an agent skill that repairs the screen. It reads web projects (React, Vue, Svelte, Laravel Blade, HTML) and SwiftUI, Jetpack

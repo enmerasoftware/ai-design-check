@@ -4,7 +4,7 @@
 
 [![npm sürümü](https://img.shields.io/npm/v/@enmera/ai-design-check)](https://www.npmjs.com/package/@enmera/ai-design-check)
 [![lisans: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
-[English](README.md)
+[English](README.md) · [日本語](README.ja.md)
 
 Claude Code, Cursor ya da Codex ile geliştirenler için: 137 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
 denetçi ve ekranı onaran bir ajan becerisi. Web projelerini (React, Vue, Svelte, Laravel Blade, HTML) ve SwiftUI, Jetpack
