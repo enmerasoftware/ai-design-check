@@ -5,34 +5,30 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /**
- * Has a command-line agent write the benchmark's pages from the same prompts as the rest of the set.
+ * Has Codex write the benchmark's pages from the same prompts as the rest of the set.
  *
- *   node bench/generate.js <folder> <codex|gemini> <model> [--command path]
+ *   node bench/generate.js <folder> <model> [--command path]
  *
- * Each page is written by a fresh run in an empty folder, with the user's own instructions and plugins left out where
- * the agent allows it, into <folder>/<model>/<brief>-<framework>.html. Pages already there are kept, so it can resume.
+ * Each page is written by a fresh run in an empty folder, with the user's own instructions and plugins left out, into <folder>/<model>/<brief>-<framework>.html. Pages already there are kept, so it can resume.
  */
 
-const [folder, agent, model] = process.argv.slice(2);
-if (!folder || !['codex', 'gemini'].includes(agent) || !model) {
-    console.error('Usage: node bench/generate.js <folder> <codex|gemini> <model> [--command path]');
+const [folder, model] = process.argv.slice(2);
+if (!folder || !model) {
+    console.error('Usage: node bench/generate.js <folder> <model> [--command path]');
     process.exit(2);
 }
 const at = process.argv.indexOf('--command');
-const command = at > 0 ? process.argv[at + 1] : agent;
+const command = at > 0 ? process.argv[at + 1] : 'codex';
 
 const index = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'pages', 'index.json'), 'utf8'));
 const jobs = [...new Map(index.map((page) => [`${page.brief}-${page.framework}`, page.prompt])).entries()];
 const out = join(resolve(folder), model);
 mkdirSync(out, { recursive: true });
 
-const ARGS = {
-    codex: (prompt) => ['exec', '--ephemeral', '--skip-git-repo-check', '--ignore-user-config', '--ignore-rules', '-s', 'workspace-write', '-m', model, '-c', 'model_reasoning_effort="medium"', prompt],
-    gemini: (prompt) => ['--model', model, '--approval-mode', 'auto_edit', '--prompt', prompt],
-};
+const args = (prompt) => ['exec', '--ephemeral', '--skip-git-repo-check', '--ignore-user-config', '--ignore-rules', '-s', 'workspace-write', '-m', model, '-c', 'model_reasoning_effort="medium"', prompt];
 
 const write = (prompt, cwd) => new Promise((done) => {
-    const child = execFile(command, ARGS[agent](`${prompt}\n\nWrite the finished page to page.html in the current folder and do nothing else.`), { cwd, timeout: 15 * 60 * 1000, maxBuffer: 64 * 1024 * 1024 }, (error, stdout, stderr) => done({ error, stderr }));
+    const child = execFile(command, args(`${prompt}\n\nWrite the finished page to page.html in the current folder and do nothing else.`), { cwd, timeout: 15 * 60 * 1000, maxBuffer: 64 * 1024 * 1024 }, (error, stdout, stderr) => done({ error, stderr }));
     child.stdin.end(); // codex exec reads stdin until it closes
 });
 

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ada Lindqvist is an independent product designer making digital experiences feel clear, useful, and a little more human.">
+  <meta name="theme-color" content="#f7f7ef">
+  <title>Ada Lindqvist — Independent product designer</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme { --color-paper: #f7f7ef; --color-ink: #25271f; --color-acid: #d9ed83; --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+    @layer base { body { @apply bg-paper text-ink antialiased; } ::selection { background: #d9ed83; color: #25271f; } a, button { -webkit-tap-highlight-color: transparent; } a:focus-visible, button:focus-visible { outline: 2px solid #536832; outline-offset: 6px; } }
+    .project-art { transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+    .project-link:hover .project-art { transform: scale(1.025); }
+    .grain { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23000' opacity='.04' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E"); }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-16">
+    <header class="flex h-25 items-center justify-between border-b border-ink/20 sm:h-28">
+      <a href="#" aria-label="Ada Lindqvist home" class="text-[19px] font-semibold tracking-[-.7px]">ada lindqvist<span class="ml-1 text-[#687b37]">✳</span></a>
+      <nav aria-label="Main navigation" class="flex gap-6 text-[13px] sm:gap-10">
+        <a href="#work" class="underline-offset-5 hover:underline">Work <span class="ml-1 text-ink/45">03</span></a>
+        <a href="#about" class="underline-offset-5 hover:underline">About</a>
+        <a href="#contact" class="underline-offset-5 hover:underline">Contact <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="relative pb-16 pt-14 sm:pb-22 sm:pt-20 lg:pt-24" aria-labelledby="intro">
+        <div class="mb-9 flex items-center gap-2 text-[11px] uppercase tracking-[.12em]"><span class="relative flex size-2"><span class="absolute inline-flex size-full rounded-full bg-[#6b8246]/25"></span><span class="relative inline-flex size-2 rounded-full bg-[#6b8246]"></span></span> Independent product designer · Stockholm, SE</div>
+        <h1 id="intro" class="max-w-[1050px] text-[clamp(3.5rem,7.5vw,7.4rem)] leading-[.99] font-normal tracking-[-.065em]">Thoughtful design.<br>More <span class="font-serif italic tracking-[-.075em]">human</span> experiences.</h1>
+        <div class="mt-10 flex flex-col justify-between gap-8 sm:mt-13 sm:flex-row sm:items-end">
+          <p class="max-w-[420px] text-[17px] leading-relaxed tracking-[-.25px] text-ink/70">Hi, I’m Ada. I help ambitious teams turn complex problems into clear, considered digital products.</p>
+          <a href="#work" class="group flex w-fit items-center gap-6 text-[13px]">A few things I’ve helped shape <span class="flex size-10 items-center justify-center rounded-full border border-ink/30 text-xl transition-colors group-hover:bg-acid" aria-hidden="true">↓</span></a>
+        </div>
+      </section>
+
+      <section id="work" class="scroll-mt-8 border-t border-ink/25 pt-5" aria-labelledby="work-heading">
+        <div class="mb-8 flex items-center justify-between text-[11px] uppercase tracking-[.12em]"><h2 id="work-heading">Selected work <span class="ml-2 text-ink/45">2023—2025</span></h2><span class="text-ink/50">A little clarity goes a long way</span></div>
+        <div class="grid gap-x-7 gap-y-12 md:grid-cols-2">
+          <article class="md:col-span-2">
+            <a href="#project-form" class="project-link group block" aria-label="View Form project details">
+              <div class="grain relative flex min-h-[350px] items-center justify-center overflow-hidden rounded-[3px] bg-[#dce5d8] px-6 py-12 sm:h-[550px] sm:px-14">
+                <span class="absolute left-6 top-6 rounded-full border border-[#52684e]/25 px-3 py-1 text-[10px] uppercase tracking-wider text-[#4d6048]">01 / Making money feel simple</span>
+                <div class="project-art relative mt-8 w-full max-w-[850px] rounded-lg bg-[#fbfcf8] shadow-[0_30px_65px_-25px_#3e573b65]">
+                  <div class="flex h-11 items-center justify-between border-b border-[#e7e9e0] px-5"><div class="text-xl font-semibold tracking-[-1px] text-[#364a35]">form<span class="text-[#85a276]">.</span></div><div class="flex items-center gap-5 text-[8px] text-[#7e8778]"><span>Help & support</span><span class="flex size-5 items-center justify-center rounded-full bg-[#e5eadf] text-[#344a31]">AL</span></div></div>
+                  <div class="flex min-h-[285px] sm:min-h-[345px]">
+                    <aside class="hidden w-[145px] shrink-0 border-r border-[#e7e9e0] p-4 text-[9px] sm:block"><p class="mb-5 text-[8px] text-[#9b9f94]">YOUR SPACE</p><div class="rounded bg-[#eaf0e1] px-3 py-2 text-[#3f5636]">◫ &nbsp; Overview</div><div class="px-3 py-3 text-[#898e82]">⇄ &nbsp; Transactions</div><div class="px-3 py-2 text-[#898e82]">▤ &nbsp; Accounts</div><div class="px-3 py-3 text-[#898e82]">◎ &nbsp; Savings goals</div><div class="mt-14 border-t border-[#e7e9e0] px-3 pt-4 text-[#898e82]">⚙ &nbsp; Settings</div></aside>
+                    <div class="w-full p-5 sm:p-7"><div class="flex justify-between"><div><p class="text-[9px] text-[#919687]">MONDAY, MAY 19</p><h3 class="mt-1 text-xl tracking-[-.7px] sm:text-2xl">A little more peace of mind.</h3></div><span class="hidden h-fit rounded-full border border-[#e2e6da] px-3 py-1 text-[8px] sm:block">This month ⌄</span></div>
+                      <div class="mt-5 grid grid-cols-3 gap-3"><div class="rounded bg-[#edf2e5] p-3"><p class="text-[8px] text-[#79866b]">Total balance</p><p class="mt-2 text-lg tracking-tight sm:text-2xl">€12,480<span class="text-[#9aa88b]">.00</span></p><p class="mt-2 text-[7px] text-[#72895a]">↗ 8.2% this month</p></div><div class="rounded border border-[#e7e9e0] p-3"><p class="text-[8px] text-[#909685]">Money in</p><p class="mt-2 text-lg tracking-tight sm:text-2xl">€4,250<span class="text-[#b3b7aa]">.00</span></p><p class="mt-2 text-[7px] text-[#909685]">Looking good this month</p></div><div class="rounded border border-[#e7e9e0] p-3"><p class="text-[8px] text-[#909685]">Money out</p><p class="mt-2 text-lg tracking-tight sm:text-2xl">€1,840<span class="text-[#b3b7aa]">.50</span></p><p class="mt-2 text-[7px] text-[#909685]">Right where you planned</p></div></div>
+                      <div class="mt-5 grid grid-cols-[1.6fr_1fr] gap-5"><div><div class="flex justify-between text-[9px]"><span>Your cash flow</span><span class="text-[#929984]">↗ In a good place</span></div><svg viewBox="0 0 340 100" class="mt-3 w-full" aria-label="Cash flow trending upwards" role="img"><defs><linearGradient id="chart" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#9db77d" stop-opacity=".3"/><stop offset="1" stop-color="#9db77d" stop-opacity="0"/></linearGradient></defs><path d="M0 20H340M0 50H340M0 80H340" stroke="#ebeee4" fill="none"/><path d="M0 85C25 84 24 67 50 71S80 62 105 66S130 35 160 44S190 50 215 30S240 40 265 23S300 28 340 7V100H0Z" fill="url(#chart)"/><path d="M0 85C25 84 24 67 50 71S80 62 105 66S130 35 160 44S190 50 215 30S240 40 265 23S300 28 340 7" stroke="#708e53" stroke-width="2" fill="none"/></svg><div class="flex justify-between text-[6px] text-[#a3a897]"><span>MAY 1</span><span>MAY 7</span><span>MAY 14</span><span>MAY 21</span><span>MAY 31</span></div></div><div class="border-l border-[#e7e9e0] pl-4"><p class="text-[9px]">Little goals, big possibilities</p><div class="mt-4 flex items-center gap-2"><span class="flex size-7 items-center justify-center rounded-full bg-[#f4e9d4] text-sm">☀</span><div class="text-[8px]">Summer in Portugal<p class="mt-1 text-[7px] text-[#9a9f91]">€1,250 of €2,000</p></div></div><div class="mt-3 h-1 rounded bg-[#e8ece0]"><div class="h-1 w-3/5 rounded bg-[#9ab47b]"></div></div><p class="mt-3 text-[7px] text-[#89947c]">A little closer every day.</p></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="project-form" class="flex scroll-mt-10 items-start justify-between gap-4 pt-5"><div><h3 class="text-xl tracking-[-.5px]">Form <span class="ml-2 font-normal text-ink/50">A calmer kind of banking</span></h3><p class="mt-2 text-xs text-ink/55">Product strategy · UX/UI design · Design system</p></div><span class="flex size-9 shrink-0 items-center justify-center rounded-full border border-ink/25 transition-colors group-hover:bg-acid" aria-hidden="true">↗</span></div>
+            </a>
+            <p class="mt-3 max-w-2xl text-[13px] leading-relaxed text-ink/60">From scattered numbers to a clear picture. A personal finance experience that helps people feel confident about their everyday money.</p>
+          </article>
+
+          <article>
+            <a href="#project-common" class="project-link group block" aria-label="View Common Ground project details">
+              <div class="grain relative flex h-[410px] items-center justify-center overflow-hidden rounded-[3px] bg-[#e6a17e] sm:h-[450px]">
+                <div class="project-art relative flex h-[345px] w-[218px] rotate-[-9deg] flex-col rounded-[25px] border-[5px] border-[#f3dfcd] bg-[#fffaf1] p-4 shadow-[15px_25px_35px_#8f442d35]">
+                  <div class="flex justify-between text-[7px]"><span>9:41</span><span>••• ▰</span></div><div class="mt-5 flex items-center justify-between text-[#4a4935]"><span class="text-[13px] font-semibold tracking-[-.6px]">common ground<span class="text-[#b56f4a]">®</span></span><span>☰</span></div><p class="mt-6 text-[7px] uppercase tracking-widest text-[#9b8e77]">Good food. Good company.</p><h3 class="mt-2 font-serif text-[32px] leading-[.95] tracking-[-1.2px] text-[#5b563d]">A seat at<br>your table.</h3><div class="relative mt-4 h-23 overflow-hidden rounded-[3px] bg-[#d8d2aa]"><div class="absolute -bottom-9 left-4 size-32 rounded-full border-[12px] border-[#d4cba9] bg-[#f7eed5] shadow-lg"><div class="absolute left-4 top-3 h-12 w-14 rotate-12 rounded-[50%] bg-[#858e4e]"></div><div class="absolute left-8 top-7 size-9 rounded-full bg-[#c7864a]"></div><div class="absolute left-3 top-8 size-7 rounded-full bg-[#a7a95d]"></div></div><div class="absolute -right-4 top-3 h-19 w-8 rotate-[-25deg] rounded-full bg-[#838850]"></div></div><div class="mt-3 flex items-center justify-between rounded-full bg-[#555e3f] px-3 py-2 text-[7px] text-white"><span>Find your next gathering</span><span>↗</span></div>
+                </div>
+                <div class="absolute bottom-7 right-6 w-26 rotate-12 rounded-sm bg-[#f3e8b9] px-3 py-5 text-center text-[11px] leading-tight text-[#6c6747] shadow-lg"><span class="mb-2 block text-3xl">✳</span>Better<br>together.</div>
+              </div>
+              <div id="project-common" class="flex scroll-mt-10 items-start justify-between gap-3 pt-5"><div><h3 class="text-xl tracking-[-.5px]">Common Ground</h3><p class="mt-1 text-[14px] text-ink/60">Bringing people to the table</p><p class="mt-3 text-xs text-ink/50">Brand experience · Product design · 2024</p></div><span class="flex size-9 items-center justify-center rounded-full border border-ink/25 transition-colors group-hover:bg-acid" aria-hidden="true">↗</span></div>
+            </a>
+            <p class="mt-3 text-[13px] leading-relaxed text-ink/60">Helping neighbors connect over home-cooked meals, from finding a gathering to saving a seat.</p>
+          </article>
+
+          <article>
+            <a href="#project-north" class="project-link group block" aria-label="View Northstar project details">
+              <div class="grain relative flex h-[410px] items-center justify-center overflow-hidden rounded-[3px] bg-[#c8d3ed] px-6 sm:h-[450px]">
+                <div class="project-art w-[430px] -rotate-[7deg] rounded-lg border border-white/60 bg-[#fafbff] shadow-[15px_25px_45px_#4c609c35]">
+                  <div class="flex h-10 items-center justify-between border-b border-[#e9eaf3] px-4"><span class="text-[12px] font-semibold tracking-tight text-[#424b89]">✳ northstar</span><span class="text-[7px] text-[#969bb5]">Your space to move forward</span><span class="size-4 rounded-full bg-[#d8ddf0]"></span></div>
+                  <div class="p-5"><p class="text-[7px] uppercase tracking-widest text-[#9198b1]">Make room for what matters</p><h3 class="mt-1 text-xl tracking-[-.6px] text-[#353e67]">Small steps. Real progress.</h3><div class="mt-4 grid grid-cols-3 gap-2"><div class="rounded bg-[#e9edf9] p-2"><p class="text-[7px] text-[#6a749a]">In focus</p><p class="mt-2 text-lg text-[#4c5885]">03 <span class="text-[6px]">priorities</span></p></div><div class="rounded bg-[#edf0e7] p-2"><p class="text-[7px] text-[#7d876c]">Finding your rhythm</p><p class="mt-2 text-lg text-[#6c7c54]">12 <span class="text-[6px]">day streak</span></p></div><div class="rounded bg-[#f5ece5] p-2"><p class="text-[7px] text-[#a19080]">A moment for you</p><p class="mt-2 text-lg text-[#a18a76]">↗ <span class="text-[6px]">Looking ahead</span></p></div></div><div class="mt-5 flex justify-between text-[9px] text-[#4e5879]"><span>This week, with intention</span><span class="text-[7px] text-[#929ab3]">May 19 — 25 ⌄</span></div><div class="mt-3 grid grid-cols-5 gap-2 text-center text-[7px] text-[#7c86a7]"><div class="rounded bg-[#f1f3f9] px-1 py-2">MON<br><span class="mt-1 block text-xs">19</span><div class="mt-3 rounded bg-[#dce4cb] p-2 text-left text-[6px] text-[#778465]">A little fresh air<br>09:00 — 09:30</div></div><div class="rounded bg-[#edf0fa] px-1 py-2">TUE<br><span class="mt-1 block text-xs">20</span><div class="mt-5 rounded bg-[#dbe0f3] p-2 text-left text-[6px]">Deep work<br>10:00 — 12:00</div></div><div class="rounded bg-[#f1f3f9] px-1 py-2">WED<br><span class="mt-1 block text-xs">21</span><div class="mt-2 rounded bg-[#ede0d3] p-2 text-left text-[6px] text-[#9c8672]">Coffee with Alex<br>09:00 — 10:00</div></div><div class="rounded bg-[#f1f3f9] px-1 py-2">THU<br><span class="mt-1 block text-xs">22</span><div class="mt-7 rounded bg-[#dce4cb] p-2 text-left text-[6px] text-[#778465]">Time to reset<br>12:00 — 12:30</div></div><div class="rounded bg-[#f1f3f9] px-1 py-2">FRI<br><span class="mt-1 block text-xs">23</span><div class="mt-4 rounded bg-[#dbe0f3] p-2 text-left text-[6px]">Weekly reflection<br>11:00 — 11:30</div></div></div></div>
+                </div>
+              </div>
+              <div id="project-north" class="flex scroll-mt-10 items-start justify-between gap-3 pt-5"><div><h3 class="text-xl tracking-[-.5px]">Northstar</h3><p class="mt-1 text-[14px] text-ink/60">A little direction for your everyday</p><p class="mt-3 text-xs text-ink/50">Research · Product design · 2023</p></div><span class="flex size-9 items-center justify-center rounded-full border border-ink/25 transition-colors group-hover:bg-acid" aria-hidden="true">↗</span></div>
+            </a>
+            <p class="mt-3 text-[13px] leading-relaxed text-ink/60">An intentional planning tool that makes space for personal goals, daily rituals, and the things in between.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="about" class="my-20 grid scroll-mt-10 gap-10 border-t border-ink/25 pt-7 sm:my-28 lg:grid-cols-[1fr_2fr] lg:gap-20" aria-labelledby="about-heading">
+        <div><h2 id="about-heading" class="text-[11px] uppercase tracking-[.12em]">A bit about me</h2><div aria-hidden="true" class="mt-8 flex size-29 rotate-[-12deg] items-center justify-center rounded-full border border-ink/20 bg-acid text-[76px] leading-none">✳</div></div>
+        <div><h3 class="max-w-[750px] text-[clamp(1.9rem,3.4vw,3.3rem)] leading-[1.12] tracking-[-.045em]">A curious mind.<br>A soft spot for the details.</h3><div class="mt-7 grid gap-5 text-[15px] leading-[1.8] text-ink/65 sm:grid-cols-2 sm:gap-10"><p>I’m Ada, an independent product designer based in Stockholm. I work with thoughtful people to make digital experiences feel more intuitive, useful, and human.</p><p>My practice moves between the big picture and the tiny details: asking better questions, finding the right direction, and making it all feel right. Away from my desk, you’ll find me on a long walk or in search of a very good cinnamon bun.</p></div><div class="mt-8 flex flex-wrap gap-2 text-[11px] text-ink/65"><span class="rounded-full border border-ink/20 px-3 py-2">Product strategy</span><span class="rounded-full border border-ink/20 px-3 py-2">UX research</span><span class="rounded-full border border-ink/20 px-3 py-2">Interface design</span><span class="rounded-full border border-ink/20 px-3 py-2">Design systems</span></div></div>
+      </section>
+
+      <section id="contact" class="relative mb-10 scroll-mt-10 overflow-hidden rounded-[3px] bg-acid px-7 py-12 sm:px-12 sm:py-16" aria-labelledby="contact-heading">
+        <div class="flex items-center gap-2 text-[10px] uppercase tracking-[.12em]"><span class="size-1.5 rounded-full bg-[#536531]"></span> Available for select freelance projects</div>
+        <div class="mt-7 flex flex-col justify-between gap-8 sm:flex-row sm:items-end"><div><h2 id="contact-heading" class="text-[clamp(3rem,6vw,6rem)] leading-[1.02] tracking-[-.06em]">Good things start<br>with a conversation.</h2><p class="mt-6 max-w-md text-[14px] leading-relaxed text-ink/70">Have a project in mind, a question, or a good coffee recommendation? I’d love to hear from you.</p></div><a href="mailto:hello@adalindqvist.com" class="group flex size-20 shrink-0 items-center justify-center rounded-full bg-ink text-4xl text-acid transition-transform hover:rotate-[-10deg] sm:size-25" aria-label="Email Ada"><span aria-hidden="true">↗</span></a></div>
+        <a href="mailto:hello@adalindqvist.com" class="mt-8 inline-block border-b border-ink/50 pb-1 text-base tracking-[-.4px] hover:border-ink sm:text-xl">hello@adalindqvist.com</a>
+      </section>
+    </main>
+    <footer class="flex flex-col justify-between gap-5 border-t border-ink/20 py-7 text-[11px] text-ink/55 sm:flex-row sm:items-center"><p>© <span id="year">2026</span> Ada Lindqvist</p><p>Made with care, in Stockholm. <span class="ml-1 text-ink/80">✳</span></p><a href="#" class="text-ink underline-offset-4 hover:underline">Back to top <span class="ml-2" aria-hidden="true">↑</span></a></footer>
+  </div>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

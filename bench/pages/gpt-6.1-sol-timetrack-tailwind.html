@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f3eb">
+  <meta name="description" content="Tallyhoo is the refreshingly simple time tracker for freelance designers. Track your flow, see where your time goes, and make every hour count.">
+  <title>Tallyhoo — Good work takes time. Make yours count.</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme { --color-paper: #f5f3eb; --color-ink: #292b23; --color-orange: #f1673b; --font-sans: 'Arial', 'Helvetica Neue', sans-serif; }
+    html { scroll-behavior: smooth; }
+    body { -webkit-font-smoothing: antialiased; }
+    ::selection { background: #f1673b; color: white; }
+    .grid-paper { background-image: linear-gradient(#292b2308 1px, transparent 1px), linear-gradient(90deg, #292b2308 1px, transparent 1px); background-size: 32px 32px; }
+    .display { letter-spacing: -.065em; line-height: 1.02; }
+    .app-shadow { box-shadow: 0 25px 65px -30px #44492d50, 0 2px 4px #292b2307; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid #718360; outline-offset: 5px; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+  </style>
+</head>
+<body class="bg-paper text-ink font-sans">
+  <svg xmlns="http://www.w3.org/2000/svg" class="absolute h-0 w-0" aria-hidden="true"><defs><symbol id="spark" viewBox="0 0 40 40"><path d="M20 2v36M2 20h36M7.3 7.3l25.4 25.4M7.3 32.7 32.7 7.3" fill="none" stroke="currentColor" stroke-width="7"/></symbol><symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="check" viewBox="0 0 20 20"><path d="m5 10 3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol></defs></svg>
+  <header class="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-16">
+    <nav aria-label="Main navigation" class="flex h-24 items-center justify-between border-b border-ink/15">
+      <a href="#" aria-label="Tallyhoo home" class="flex items-center gap-2.5 text-[29px] font-bold tracking-[-1.5px]"><svg class="h-7 w-7 text-orange"><use href="#spark"/></svg>tallyhoo<span class="-ml-2 self-start pt-2 text-xs">®</span></a>
+      <div class="hidden items-center gap-9 text-[13px] font-medium md:flex"><a class="transition hover:text-orange" href="#features">Why Tallyhoo</a><a class="transition hover:text-orange" href="#how-it-works">How it works</a><a class="transition hover:text-orange" href="#pricing">Pricing</a></div>
+      <a href="#get-started" class="group flex items-center gap-5 rounded-full border border-ink px-5 py-3 text-xs font-semibold transition hover:bg-ink hover:text-paper">Find your flow<svg class="h-4 w-4 transition group-hover:translate-x-1"><use href="#arrow"/></svg></a>
+    </nav>
+  </header>
+  <main>
+    <section class="mx-auto grid max-w-[1440px] gap-12 px-6 pb-16 pt-14 sm:px-10 md:pt-20 lg:grid-cols-[1fr_1.06fr] lg:gap-4 lg:px-16 lg:pb-24 lg:pt-24">
+      <div class="relative z-10 lg:pb-6">
+        <p class="mb-7 flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[.19em]"><span class="h-2 w-2 rounded-full bg-orange"></span>A little structure. A lot more flow.</p>
+        <h1 class="display max-w-xl text-[clamp(64px,6.3vw,93px)] font-normal">Good work<br>takes time.<br><span class="text-orange">Make yours<br class="hidden lg:block"> count.</span></h1>
+        <p class="mb-8 mt-7 max-w-[345px] text-[15px] leading-7 text-ink/65">You make beautiful things. We make tracking your time feel effortless. Meet the time tracker made for freelance designers.</p>
+        <a href="#get-started" class="group inline-flex items-center gap-7 rounded-full bg-ink py-4 pl-6 pr-5 text-[13px] font-medium text-paper transition hover:bg-orange">Start your free trial<svg class="h-5 w-5 transition group-hover:translate-x-1"><use href="#arrow"/></svg></a>
+        <p class="mt-4 text-[10px] tracking-wide text-ink/50">14 days on us. No credit card. No pressure.</p>
+      </div>
+      <div class="grid-paper relative flex min-h-[440px] items-center justify-center rounded-[22px] border border-ink/5 px-4 py-12 sm:px-8 lg:-mr-4 lg:mt-1 lg:min-h-[560px]">
+        <div class="absolute right-6 top-5 flex items-center gap-2 text-[9px] uppercase tracking-[.16em] text-ink/40"><span class="h-1.5 w-1.5 rounded-full bg-[#8c9b74]"></span>Less admin. More making.</div>
+        <div class="app-shadow relative w-full max-w-[465px] -rotate-2 overflow-hidden rounded-xl border border-ink/10 bg-[#fdfcf8]">
+          <div class="flex items-center justify-between border-b border-ink/10 px-5 py-4"><div class="flex items-center gap-1.5 text-sm font-bold tracking-tight"><svg class="h-4 w-4 text-orange"><use href="#spark"/></svg>tallyhoo</div><span class="flex items-center gap-2 text-[9px] text-ink/60">Your workspace <span class="flex h-6 w-6 items-center justify-center rounded-full bg-[#e4e9d9] text-[8px] font-semibold text-ink">JD</span></span></div>
+          <div class="p-5 sm:p-6">
+            <div class="mb-5 flex items-start justify-between"><div><p class="text-[10px] text-ink/50">Monday, May 19</p><h2 class="mt-1 text-lg tracking-tight">Hey Jamie, let's make things.</h2></div><span class="text-lg text-orange">✳</span></div>
+            <div class="rounded-lg bg-orange p-5 text-ink">
+              <div class="flex items-center justify-between text-[10px]"><span class="flex items-center gap-2"><span class="relative flex h-2 w-2"><span id="timer-dot" class="absolute inline-flex h-full w-full rounded-full bg-ink/70"></span></span><span id="timer-status">IN YOUR FLOW</span></span><span class="rounded-full border border-ink/25 px-2 py-0.5 text-[8px]">BILLABLE</span></div>
+              <div class="mt-5 flex items-center justify-between"><div id="timer" class="font-mono text-[42px] leading-none tracking-[-3px] sm:text-[52px]" role="timer" aria-label="Elapsed time">01:24:38</div><button id="timer-toggle" type="button" aria-label="Pause timer" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-ink text-paper transition hover:bg-ink/80"><svg id="timer-icon" class="h-4 w-4" viewBox="0 0 16 16" fill="currentColor"><path d="M4 3h3v10H4zm5 0h3v10H9z"/></svg></button></div>
+              <div class="mt-5 border-t border-ink/20 pt-3"><p class="text-xs font-semibold">Brand identity exploration</p><p class="mt-1 text-[10px] text-ink/65">Studio North <span class="px-1">/</span> Visual identity</p></div>
+            </div>
+            <div class="mb-3 mt-6 flex items-center justify-between"><h3 class="text-[11px] font-semibold">Earlier today</h3><span class="text-[9px] text-ink/45">2h 45m total</span></div>
+            <div class="flex items-center gap-3 border-b border-ink/10 py-3"><span class="h-7 w-1 rounded-full bg-[#9ba788]"></span><div class="flex-1"><p class="text-[10px] font-medium">Website wireframes</p><p class="mt-1 text-[9px] text-ink/45">Forma Studio · Website</p></div><span class="font-mono text-[11px]">1h 45m</span><span class="text-xs text-ink/40">↗</span></div>
+            <div class="flex items-center gap-3 py-3"><span class="h-7 w-1 rounded-full bg-[#d0b9df]"></span><div class="flex-1"><p class="text-[10px] font-medium">A little creative housekeeping</p><p class="mt-1 text-[9px] text-ink/45">Personal · Admin</p></div><span class="font-mono text-[11px]">1h 00m</span><span class="text-xs text-ink/40">↗</span></div>
+          </div>
+        </div>
+        <div class="absolute -bottom-3 right-3 rotate-6 rounded-lg border border-ink/10 bg-[#e7eddb] px-5 py-4 shadow-lg sm:bottom-3 sm:right-0 lg:bottom-10 lg:-right-4"><div class="flex items-center gap-2 text-[10px]"><svg class="h-4 w-4"><use href="#check"/></svg>A good week, in the making.</div><p class="mt-2 text-[27px] tracking-tight">24.5 <span class="text-xs tracking-normal text-ink/55">hours well spent</span></p><div class="mt-2 flex h-5 items-end gap-1.5" aria-hidden="true"><span class="h-2 w-6 rounded-sm bg-[#879974]"></span><span class="h-4 w-6 rounded-sm bg-[#879974]"></span><span class="h-3 w-6 rounded-sm bg-[#879974]"></span><span class="h-5 w-6 rounded-sm bg-[#879974]"></span><span class="h-3 w-6 rounded-sm bg-[#879974]/30"></span></div></div>
+        <span class="absolute -left-2 bottom-8 hidden -rotate-12 font-serif text-sm italic text-ink/55 lg:block">Your time, beautifully accounted for.</span>
+      </div>
+    </section>
+    <section aria-label="Our community" class="border-y border-ink/15">
+      <div class="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-7 px-6 py-7 sm:px-10 lg:flex-row lg:px-16"><p class="max-w-44 text-center text-[11px] leading-5 text-ink/55 lg:text-left">For independent minds.<br>And the studios they call home.</p><div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 text-xl font-semibold tracking-tight text-ink/65 sm:gap-x-14"><span class="font-serif text-2xl italic">Layers</span><span class="tracking-[-1.5px]">offscript<span class="text-orange">®</span></span><span class="text-sm tracking-[.2em]">STUDIO KOTO</span><span class="font-serif font-normal">goodside<span class="text-xs">✳</span></span><span class="text-lg tracking-[-1px]">&friends</span></div></div>
+    </section>
+    <section id="features" class="mx-auto max-w-[1440px] px-6 py-20 sm:px-10 lg:px-16 lg:py-24">
+      <div class="flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p class="mb-5 text-[10px] font-bold uppercase tracking-[.18em] text-ink/50">Made for the way you make</p><h2 class="display text-4xl sm:text-5xl">Less clock-watching.<br>More creative living.</h2></div><p class="max-w-[310px] text-sm leading-6 text-ink/60">Your best ideas don't happen in spreadsheets. Get the clarity you need, then get back to what you love.</p></div>
+      <div class="mt-12 grid gap-5 md:grid-cols-3">
+        <article class="rounded-xl bg-[#e7ebde] p-7"><div class="mb-10 flex h-11 w-11 items-center justify-center rounded-full border border-ink/20"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="13" r="8"/><path d="M12 8v5l3 2M9 2h6"/></svg></div><span class="text-[10px] text-ink/45">01 / FIND YOUR FLOW</span><h3 class="mt-3 text-xl tracking-tight">One click. You're in.</h3><p class="mt-3 max-w-xs text-[13px] leading-6 text-ink/60">Hit play and let your ideas run. A simple, quiet timer that stays out of your creative way.</p></article>
+        <article class="rounded-xl bg-[#ece6ee] p-7"><div class="mb-10 flex h-11 w-11 items-center justify-center rounded-full border border-ink/20"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 20V12h4v8m2 0V7h4v13m2 0V3h4v17M2 20h20"/></svg></div><span class="text-[10px] text-ink/45">02 / SEE THE BIG PICTURE</span><h3 class="mt-3 text-xl tracking-tight">A little clarity goes a long way.</h3><p class="mt-3 max-w-xs text-[13px] leading-6 text-ink/60">See where your hours go, which projects pay off, and where to make a little room for yourself.</p></article>
+        <article class="rounded-xl bg-[#f1e5d6] p-7"><div class="mb-10 flex h-11 w-11 items-center justify-center rounded-full border border-ink/20"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6m-6 4h6m-6 4h3"/></svg></div><span class="text-[10px] text-ink/45">03 / KNOW YOUR WORTH</span><h3 class="mt-3 text-xl tracking-tight">Every hour, accounted for.</h3><p class="mt-3 max-w-xs text-[13px] leading-6 text-ink/60">Turn tracked time into clean, client-ready reports. Less second-guessing. More confident billing.</p></article>
+      </div>
+    </section>
+    <section id="how-it-works" class="border-y border-ink/15 bg-[#edece3] px-6 py-16 sm:px-10">
+      <div class="mx-auto grid max-w-[1120px] gap-10 md:grid-cols-2 md:gap-20"><div><p class="mb-5 text-[10px] font-bold uppercase tracking-[.18em] text-ink/50">A lighter kind of routine</p><h2 class="display text-4xl sm:text-5xl">From first idea<br>to final invoice.</h2><p class="mt-5 max-w-sm text-sm leading-7 text-ink/60">No elaborate setup. No new system to learn. Just a small, good habit that makes freelance life easier.</p></div><ol class="divide-y divide-ink/15"><li class="flex gap-5 pb-6"><span class="pt-1 font-mono text-xs text-orange">01</span><div><h3 class="text-lg">Make space for your projects.</h3><p class="mt-2 text-sm leading-6 text-ink/60">Add a client, name your project, set your hourly rate.</p></div></li><li class="flex gap-5 py-6"><span class="pt-1 font-mono text-xs text-orange">02</span><div><h3 class="text-lg">Press play. Do your thing.</h3><p class="mt-2 text-sm leading-6 text-ink/60">Track as you go, or add time later. Life happens.</p></div></li><li class="flex gap-5 pt-6"><span class="pt-1 font-mono text-xs text-orange">03</span><div><h3 class="text-lg">Wrap up with a clear picture.</h3><p class="mt-2 text-sm leading-6 text-ink/60">Review your week and share a report with your client.</p></div></li></ol></div>
+    </section>
+    <section class="mx-auto max-w-3xl px-6 py-20 text-center"><svg class="mx-auto mb-7 h-9 w-9 text-orange"><use href="#spark"/></svg><blockquote class="font-serif text-2xl leading-snug sm:text-3xl">“I used to get to Friday and wonder where the week went. Now I know — and I finally charge for all of it.”</blockquote><p class="mt-6 text-xs font-semibold">Alex Morgan <span class="mx-2 text-ink/30">/</span><span class="font-normal text-ink/55">Independent brand designer</span></p></section>
+    <section id="pricing" class="mx-auto max-w-[1120px] px-6 pb-20 sm:px-10"><div class="grid gap-10 rounded-2xl bg-ink p-8 text-paper sm:p-12 md:grid-cols-2 md:items-center"><div><p class="mb-5 text-[10px] uppercase tracking-[.2em] text-paper/50">Small price. Big peace of mind.</p><h2 class="display text-4xl sm:text-5xl">One plan.<br>Room for all your ideas.</h2><p class="mt-5 max-w-xs text-sm leading-6 text-paper/60">Everything you need to make time work for you. A simple monthly price, just like it should be.</p></div><div class="rounded-xl border border-paper/20 p-7"><div class="flex items-baseline gap-2"><span class="text-5xl tracking-[-3px]">$9</span><span class="text-xs text-paper/50">/ month, billed monthly</span></div><ul class="my-6 space-y-3 text-xs text-paper/80"><li class="flex gap-2"><svg class="h-4 w-4 text-[#bdcfa5]"><use href="#check"/></svg>Unlimited clients and projects</li><li class="flex gap-2"><svg class="h-4 w-4 text-[#bdcfa5]"><use href="#check"/></svg>Simple timers and manual time entries</li><li class="flex gap-2"><svg class="h-4 w-4 text-[#bdcfa5]"><use href="#check"/></svg>Clear insights and shareable reports</li><li class="flex gap-2"><svg class="h-4 w-4 text-[#bdcfa5]"><use href="#check"/></svg>Cancel whenever you need to</li></ul><a href="#get-started" class="flex items-center justify-between rounded-full bg-orange px-5 py-3.5 text-xs font-semibold text-ink transition hover:bg-[#ff8057]">Give yourself a little more time<svg class="h-4 w-4"><use href="#arrow"/></svg></a></div></div></section>
+    <section id="get-started" class="border-t border-ink/15 px-6 py-16 text-center sm:py-20"><p class="mb-5 text-[10px] font-bold uppercase tracking-[.18em] text-ink/50">Your next good habit starts here</p><h2 class="display text-4xl sm:text-6xl">Make time for better.</h2><p class="mx-auto mt-5 max-w-sm text-sm leading-6 text-ink/60">Join the early access list. We'll send you an invitation to your free 14-day trial when your workspace is ready.</p><form id="signup-form" class="mx-auto mt-7 flex max-w-md flex-col gap-2 sm:flex-row"><label for="email" class="sr-only">Email address</label><input id="email" name="email" type="email" autocomplete="email" placeholder="Your email address" required class="min-w-0 flex-1 rounded-full border border-ink/25 bg-transparent px-5 py-3.5 text-sm placeholder:text-ink/40"><button type="submit" class="rounded-full bg-ink px-6 py-3.5 text-xs font-semibold text-paper transition hover:bg-orange">Join the list <span class="ml-2" aria-hidden="true">↗</span></button></form><p id="signup-message" role="status" class="mx-auto mt-4 max-w-md text-xs leading-5 text-ink/50">A little hello from us. Never a crowded inbox.</p></section>
+  </main>
+  <footer class="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-5 border-t border-ink/15 px-6 py-7 sm:flex-row sm:px-10 lg:px-16"><a href="#" class="flex items-center gap-2 text-xl font-bold tracking-[-1px]"><svg class="h-5 w-5 text-orange"><use href="#spark"/></svg>tallyhoo</a><p class="text-[10px] text-ink/50">Made with care, for people who make.</p><p class="text-[10px] text-ink/40">© <span id="year">2026</span> Tallyhoo. All your time is yours.</p></footer>
+  <script>
+    (() => {
+      const timer = document.getElementById('timer');
+      const toggle = document.getElementById('timer-toggle');
+      const status = document.getElementById('timer-status');
+      const icon = document.getElementById('timer-icon');
+      let running = true;
+      let elapsed = 5078;
+      let startedAt = Date.now();
+      function renderTimer() {
+        const seconds = elapsed + (running ? Math.floor((Date.now() - startedAt) / 1000) : 0);
+        timer.textContent = [Math.floor(seconds / 3600), Math.floor(seconds / 60) % 60, seconds % 60].map(n => String(n).padStart(2, '0')).join(':');
+      }
+      toggle.addEventListener('click', () => {
+        if (running) elapsed += Math.floor((Date.now() - startedAt) / 1000);
+        else startedAt = Date.now();
+        running = !running;
+        toggle.setAttribute('aria-label', running ? 'Pause timer' : 'Resume timer');
+        status.textContent = running ? 'IN YOUR FLOW' : 'TAKE A BREATHER';
+        icon.innerHTML = running ? '<path d="M4 3h3v10H4zm5 0h3v10H9z"/>' : '<path d="m5 2 9 6-9 6z"/>';
+        renderTimer();
+      });
+      setInterval(renderTimer, 1000);
+      document.getElementById('year').textContent = new Date().getFullYear();
+      document.getElementById('signup-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const message = document.getElementById('signup-message');
+        try {
+          localStorage.setItem('tallyhoo-early-access-email', email);
+          message.textContent = 'Your interest is saved on this device. Email invitations aren’t connected yet — check back soon.';
+        } catch {
+          message.textContent = 'Email invitations aren’t connected yet. Please check back soon to join Tallyhoo.';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

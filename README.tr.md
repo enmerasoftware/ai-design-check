@@ -94,10 +94,11 @@ Kurallar [Enmera](https://enmera.com.tr) ve [Searvia](https://searvia.com)'da ca
 gibi görünenler, dar ekranda bozulanlar, kullanıcının anlamadıkları. Ardından yüksek puanlı 16 panel tasarımıyla karşılaştırdık.
 Yöntem ve bulgular: [RESEARCH.md](RESEARCH.md).
 
-**Ne kadar iyi ayırıyor?** [BENCHMARK.md](BENCHMARK.md) her kuralı, dört Claude modelinin Tailwind ve Bootstrap ile ürettiği 48
-sayfada ve insanların tasarladığı 34 sitede çalıştırır. Bazı kurallar iki grubu açıkça ayırır: telefonda yapay zekâ
-sayfalarının %38'i yana kayar, insan sitelerinin hiçbiri kaymaz; krem zemin %33'e karşı %3 görülür. Mor gradyan gibi
-bazıları artık ayırmıyor; bu kuralların önem seviyesi bu kanıta göre belirlendi.
+**Ne kadar iyi ayırıyor?** [BENCHMARK.md](BENCHMARK.md) her kuralı, dört Claude ve iki GPT modelinin Tailwind ve Bootstrap ile
+ürettiği 72 sayfada ve insanların tasarladığı 34 sitede çalıştırır. Bazı kurallar iki grubu açıkça ayırır: krem zemin yapay
+zekâ sayfalarının %40'ında, sitelerin %3'ünde görülür; telefonda yapay zekâ sayfalarının %35'i yana kayar, insan
+sitelerinin hiçbiri kaymaz. GPT ile Claude farklı izler bırakır: GPT her sayfada küçük yazı kullanır, sayfaların %88'inde
+başlıkların harf aralığını sıkıştırır. Mor gradyan gibi bazıları artık ayırmıyor; bu kuralların önem seviyesi bu kanıta göre belirlendi.
 
 ## Çalışan sayfa ve yeniden tasarım
 

@@ -45,6 +45,8 @@ const today = () => new Date().toISOString().slice(0, 10);
 const digest = (path) => createHash('sha256').update(readFileSync(path)).digest('hex').slice(0, 12);
 const sum = (counts) => Object.values(counts).reduce((total, n) => total + n, 0);
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+/** opus → Opus, gpt-6.1-sol → GPT-6.1 Sol. */
+const modelName = (model) => model.startsWith('gpt-') ? `GPT-${model.slice(4).replace(/-(\w)/g, (_, letter) => ` ${letter.toUpperCase()}`)}` : model[0].toUpperCase() + model.slice(1);
 const said = (result) => (result.rules ? plural(sum(result.rules), 'finding') : `not measured (${result.failed})`) + (result.seconds === undefined ? '' : `, ${result.seconds} s`);
 
 /** Findings as { rule: count }, sorted so that results.json diffs stay readable. */
@@ -309,7 +311,7 @@ function report(results, catalogue) {
         [`${FRAMEWORKS[framework] ?? framework}, AI pages`, pages.filter((page) => page.framework === framework)],
         [`${FRAMEWORKS[framework] ?? framework}, human sites`, sites.filter((site) => site.framework === framework)],
     ]).filter(([, entries]) => entries.length > 0), true);
-    split('AI pages by model', 'Model', present('model', pages).map((model) => [model[0].toUpperCase() + model.slice(1), pages.filter((page) => page.model === model)]), true);
+    split('AI pages by model', 'Model', present('model', pages).map((model) => [modelName(model), pages.filter((page) => page.model === model)]), true);
     split('Human sites by category', 'Category', present('category', sites).map((category) => [CATEGORIES[category] ?? category, sites.filter((site) => site.category === category)]), false);
 
     const missed = [

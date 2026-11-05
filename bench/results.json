@@ -1,6 +1,6 @@
 {
   "date": "2026-11-05",
-  "tool": "0.14.0",
+  "tool": "0.14.1",
   "rulesHash": "f9002ceca6af",
   "node": "v25.4.0",
   "chrome": "Google Chrome 156.0.8078.80",
@@ -27,7 +27,7 @@
           "no-section-numbers": 1,
           "no-straggler": 3
         },
-        "seconds": 8
+        "seconds": 10
       }
     },
     {
@@ -51,7 +51,7 @@
           "no-horizontal-overflow": 1,
           "no-straggler": 1
         },
-        "seconds": 10
+        "seconds": 9
       }
     },
     {
@@ -72,7 +72,7 @@
           "no-nested-cards": 1,
           "no-straggler": 1
         },
-        "seconds": 9
+        "seconds": 10
       }
     },
     {
@@ -93,7 +93,7 @@
           "no-side-stripe": 1,
           "no-straggler": 3
         },
-        "seconds": 9
+        "seconds": 10
       }
     },
     {
@@ -117,7 +117,7 @@
           "no-straggler": 1,
           "text-not-covered": 1
         },
-        "seconds": 8
+        "seconds": 9
       }
     },
     {
@@ -135,7 +135,7 @@
           "no-repeated-label": 1,
           "no-tiny-text": 1
         },
-        "seconds": 7
+        "seconds": 8
       }
     },
     {
@@ -154,7 +154,7 @@
           "legible-contrast": 1,
           "no-straggler": 1
         },
-        "seconds": 8
+        "seconds": 7
       }
     },
     {
@@ -195,7 +195,7 @@
           "no-default-cream": 1,
           "no-straggler": 2
         },
-        "seconds": 10
+        "seconds": 9
       }
     },
     {
@@ -215,7 +215,7 @@
           "no-horizontal-overflow": 1,
           "no-straggler": 1
         },
-        "seconds": 9
+        "seconds": 10
       }
     },
     {
@@ -239,7 +239,7 @@
           "no-default-cream": 1,
           "no-straggler": 2
         },
-        "seconds": 10
+        "seconds": 14
       }
     },
     {
@@ -377,7 +377,7 @@
           "no-straggler": 2,
           "no-tiny-text": 2
         },
-        "seconds": 9
+        "seconds": 8
       }
     },
     {
@@ -437,7 +437,7 @@
           "legible-contrast": 4,
           "no-straggler": 1
         },
-        "seconds": 10
+        "seconds": 8
       }
     },
     {
@@ -480,7 +480,7 @@
         "rules": {
           "no-default-cream": 1
         },
-        "seconds": 10
+        "seconds": 8
       }
     },
     {
@@ -501,7 +501,7 @@
           "no-default-cream": 1,
           "no-horizontal-overflow": 1
         },
-        "seconds": 9
+        "seconds": 8
       }
     },
     {
@@ -522,7 +522,7 @@
           "no-default-cream": 1,
           "no-straggler": 4
         },
-        "seconds": 8
+        "seconds": 13
       }
     },
     {
@@ -578,7 +578,7 @@
           "no-straggler": 2,
           "pulse-for-live-only": 1
         },
-        "seconds": 10
+        "seconds": 12
       }
     },
     {
@@ -670,7 +670,7 @@
           "no-straggler": 4,
           "readable-measure": 1
         },
-        "seconds": 10
+        "seconds": 11
       }
     },
     {
@@ -693,7 +693,7 @@
           "balanced-headings": 1,
           "legible-contrast": 5
         },
-        "seconds": 8
+        "seconds": 7
       }
     },
     {
@@ -717,7 +717,7 @@
           "no-nested-cards": 4,
           "no-tiny-text": 4
         },
-        "seconds": 8
+        "seconds": 11
       }
     },
     {
@@ -739,7 +739,7 @@
           "no-eyebrow-label": 1,
           "no-straggler": 3
         },
-        "seconds": 10
+        "seconds": 9
       }
     },
     {
@@ -763,7 +763,7 @@
           "no-nested-cards": 2,
           "no-straggler": 3
         },
-        "seconds": 10
+        "seconds": 8
       }
     },
     {
@@ -816,7 +816,7 @@
           "no-radial-halo": 1,
           "no-straggler": 1
         },
-        "seconds": 10
+        "seconds": 9
       }
     },
     {
@@ -838,7 +838,7 @@
           "legible-contrast": 1,
           "no-straggler": 1
         },
-        "seconds": 9
+        "seconds": 8
       }
     },
     {
@@ -862,7 +862,7 @@
           "no-horizontal-overflow": 1,
           "no-straggler": 1
         },
-        "seconds": 8
+        "seconds": 7
       }
     },
     {
@@ -891,7 +891,7 @@
           "no-straggler": 3,
           "text-not-covered": 1
         },
-        "seconds": 12
+        "seconds": 9
       }
     },
     {
@@ -920,7 +920,7 @@
           "no-neon-on-dark": 1,
           "no-straggler": 5
         },
-        "seconds": 10
+        "seconds": 9
       }
     },
     {
@@ -948,7 +948,7 @@
           "no-nested-cards": 1,
           "no-straggler": 5
         },
-        "seconds": 11
+        "seconds": 10
       }
     },
     {
@@ -977,7 +977,7 @@
           "no-nested-cards": 1,
           "no-straggler": 6
         },
-        "seconds": 9
+        "seconds": 10
       }
     },
     {
@@ -1004,7 +1004,7 @@
           "no-straggler": 1,
           "text-not-covered": 1
         },
-        "seconds": 9
+        "seconds": 7
       }
     },
     {
@@ -1052,7 +1052,7 @@
           "no-straggler": 2,
           "readable-measure": 1
         },
-        "seconds": 10
+        "seconds": 13
       }
     },
     {
@@ -1075,7 +1075,7 @@
           "no-horizontal-overflow": 1,
           "no-tight-leading": 1
         },
-        "seconds": 8
+        "seconds": 9
       }
     },
     {
@@ -1123,7 +1123,7 @@
           "no-icon-tile-stack": 1,
           "no-straggler": 1
         },
-        "seconds": 9
+        "seconds": 8
       }
     },
     {
@@ -1146,7 +1146,7 @@
           "no-middle-dot-lists": 4,
           "no-straggler": 1
         },
-        "seconds": 10
+        "seconds": 9
       }
     },
     {
@@ -1170,7 +1170,816 @@
           "no-middle-dot-lists": 4,
           "no-straggler": 3
         },
+        "seconds": 8
+      }
+    },
+    {
+      "file": "gpt-6.1-sol-timetrack-tailwind.html",
+      "model": "gpt-6.1-sol",
+      "framework": "tailwind",
+      "brief": "timetrack",
+      "hash": "121f8f34e5ea",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "input-text-16": 1,
+          "no-crushed-tracking": 1,
+          "no-decorative-uppercase": 7,
+          "no-italic-emphasis": 2,
+          "no-tight-small-text": 1,
+          "radius-scale": 1,
+          "repeated-markup": 1,
+          "spacing-scale": 3,
+          "type-scale": 38
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "heading-spacing": 1,
+          "legible-contrast": 44,
+          "no-accent-word": 1,
+          "no-crushed-tracking": 12,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 8,
+          "no-grid-wallpaper": 1,
+          "no-nested-cards": 2,
+          "no-straggler": 2,
+          "no-tiny-text": 12,
+          "text-not-covered": 1
+        },
+        "seconds": 13
+      }
+    },
+    {
+      "file": "gpt-6.1-sol-timetrack-bootstrap.html",
+      "model": "gpt-6.1-sol",
+      "framework": "bootstrap",
+      "brief": "timetrack",
+      "hash": "eb42dccf79db",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-decorative-uppercase": 1,
+          "no-exclamation-copy": 1,
+          "no-hard-offset-shadow": 1,
+          "no-heavy-headings": 2,
+          "no-unsourced-proof": 1,
+          "radius-scale": 4,
+          "spacing-scale": 61
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 47,
+          "no-crushed-tracking": 13,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 3,
+          "no-giant-sentence": 1,
+          "no-hard-offset-shadow": 1,
+          "no-horizontal-overflow": 1,
+          "no-icon-tile-stack": 1,
+          "no-nested-cards": 1,
+          "no-tiny-text": 12,
+          "text-not-covered": 2,
+          "text-off-viewport-edge": 4
+        },
         "seconds": 10
+      }
+    },
+    {
+      "file": "gpt-6.1-sol-aiwriter-tailwind.html",
+      "model": "gpt-6.1-sol",
+      "framework": "tailwind",
+      "brief": "aiwriter",
+      "hash": "32e8a35ae209",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-exclamation-copy": 1,
+          "no-italic-emphasis": 2,
+          "repeated-markup": 1,
+          "spacing-scale": 2,
+          "type-scale": 51
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 2,
+          "heading-spacing": 1,
+          "legible-contrast": 24,
+          "no-announcement-pill": 1,
+          "no-crushed-tracking": 1,
+          "no-eyebrow-label": 7,
+          "no-italic-serif-hero": 1,
+          "no-nested-cards": 3,
+          "no-straggler": 2,
+          "no-tiny-text": 12
+        },
+        "seconds": 13
+      }
+    },
+    {
+      "file": "gpt-6.1-sol-aiwriter-bootstrap.html",
+      "model": "gpt-6.1-sol",
+      "framework": "bootstrap",
+      "brief": "aiwriter",
+      "hash": "7d21a600525a",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-decorative-uppercase": 1,
+          "no-exclamation-copy": 1,
+          "radius-scale": 4,
+          "spacing-scale": 65
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "legible-contrast": 19,
+          "no-crushed-tracking": 2,
+          "no-eyebrow-label": 2,
+          "no-horizontal-overflow": 1,
+          "no-icon-tile-stack": 1,
+          "no-italic-serif-hero": 1,
+          "no-nested-cards": 2,
+          "no-straggler": 2,
+          "no-tiny-text": 11,
+          "text-off-viewport-edge": 1
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "gpt-6.1-sol-dashboard-tailwind.html",
+      "model": "gpt-6.1-sol",
+      "framework": "tailwind",
+      "brief": "dashboard",
+      "hash": "2f4d172baa2c",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "ellipsis-character": 1,
+          "focus-ring-removed": 2,
+          "input-text-16": 6,
+          "no-decorative-uppercase": 1,
+          "no-greeting-headline": 1,
+          "short-placeholders": 1,
+          "spacing-scale": 1,
+          "type-scale": 46
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 41,
+          "no-overused-font": 1,
+          "no-script-errors": 1,
+          "no-tiny-text": 17
+        },
+        "seconds": 11
+      }
+    },
+    {
+      "file": "gpt-6.1-sol-dashboard-bootstrap.html",
+      "model": "gpt-6.1-sol",
+      "framework": "bootstrap",
+      "brief": "dashboard",
+      "hash": "49caafdb6e73",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-greeting-headline": 1,
+          "no-overused-font": 1,
+          "radius-scale": 4,
+          "spacing-scale": 114
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 65,
+          "no-crushed-tracking": 3,
+          "no-eyebrow-label": 1,
+          "no-horizontal-overflow": 1,
+          "no-nested-cards": 12,
+          "no-overused-font": 1,
+          "no-repeated-label": 2,
+          "no-straggler": 1,
+          "no-tiny-text": 15
+        },
+        "seconds": 28
+      }
+    },
+    {
+      "file": "gpt-6.1-sol-pricing-tailwind.html",
+      "model": "gpt-6.1-sol",
+      "framework": "tailwind",
+      "brief": "pricing",
+      "hash": "690a3249cf17",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 2,
+          "no-radial-halo": 1,
+          "repeated-markup": 1,
+          "type-scale": 33
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "legible-contrast": 27,
+          "no-crushed-tracking": 2,
+          "no-eyebrow-label": 3,
+          "no-icon-tile-stack": 1,
+          "no-straggler": 2,
+          "no-tiny-text": 12,
+          "readable-measure": 2
+        },
+        "seconds": 13
+      }
+    },
+    {
+      "file": "gpt-6.1-sol-pricing-bootstrap.html",
+      "model": "gpt-6.1-sol",
+      "framework": "bootstrap",
+      "brief": "pricing",
+      "hash": "48ca5ac89b2b",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-decorative-uppercase": 1,
+          "radius-scale": 3,
+          "spacing-scale": 45
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 5,
+          "legible-contrast": 15,
+          "no-eyebrow-label": 2,
+          "no-horizontal-overflow": 1,
+          "no-icon-tile-stack": 1,
+          "no-tiny-text": 11,
+          "readable-measure": 1
+        },
+        "seconds": 11
+      }
+    },
+    {
+      "file": "gpt-6.1-sol-bakery-tailwind.html",
+      "model": "gpt-6.1-sol",
+      "framework": "tailwind",
+      "brief": "bakery",
+      "hash": "447782c90949",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-crushed-tracking": 3,
+          "no-decorative-uppercase": 3,
+          "no-italic-emphasis": 6,
+          "radius-scale": 2,
+          "spacing-scale": 2,
+          "type-scale": 14
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "legible-contrast": 3,
+          "no-all-caps-sentences": 1,
+          "no-crushed-tracking": 5,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 4,
+          "no-italic-serif-hero": 1,
+          "no-straggler": 1,
+          "no-tiny-text": 12,
+          "readable-measure": 1
+        },
+        "seconds": 14
+      }
+    },
+    {
+      "file": "gpt-6.1-sol-bakery-bootstrap.html",
+      "model": "gpt-6.1-sol",
+      "framework": "bootstrap",
+      "brief": "bakery",
+      "hash": "4189520a446d",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-decorative-uppercase": 4,
+          "spacing-scale": 37
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 8,
+          "no-all-caps-sentences": 1,
+          "no-crushed-tracking": 4,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 3,
+          "no-italic-serif-hero": 1,
+          "no-straggler": 1,
+          "no-tiny-text": 13,
+          "no-wide-tracking-body": 1
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "gpt-6.1-sol-portfolio-tailwind.html",
+      "model": "gpt-6.1-sol",
+      "framework": "tailwind",
+      "brief": "portfolio",
+      "hash": "4d821e88a296",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "interface-speed": 1,
+          "no-crushed-tracking": 3,
+          "no-decorative-uppercase": 7,
+          "no-em-dash-saturation": 3,
+          "no-hover-scale": 1,
+          "no-italic-emphasis": 1,
+          "no-tight-small-text": 1,
+          "radius-scale": 2,
+          "repeated-markup": 1,
+          "spacing-scale": 15,
+          "type-scale": 59
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "heading-spacing": 1,
+          "legible-contrast": 64,
+          "no-colored-shadow": 2,
+          "no-crushed-tracking": 3,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 3,
+          "no-horizontal-overflow": 1,
+          "no-italic-serif-hero": 1,
+          "no-middle-dot-lists": 1,
+          "no-nested-cards": 3,
+          "no-straggler": 2,
+          "no-tiny-text": 18,
+          "text-off-viewport-edge": 3
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "gpt-6.1-sol-portfolio-bootstrap.html",
+      "model": "gpt-6.1-sol",
+      "framework": "bootstrap",
+      "brief": "portfolio",
+      "hash": "a94fd6726ec3",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-crushed-tracking": 2,
+          "no-decorative-uppercase": 1,
+          "no-hard-offset-shadow": 1,
+          "no-layout-animation": 1,
+          "radius-scale": 4,
+          "spacing-scale": 58
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 32,
+          "no-all-caps-sentences": 2,
+          "no-crushed-tracking": 5,
+          "no-default-cream": 1,
+          "no-hard-offset-shadow": 1,
+          "no-middle-dot-lists": 2,
+          "no-nested-cards": 3,
+          "no-straggler": 2,
+          "no-tiny-text": 13
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "gpt-6.1-terra-timetrack-tailwind.html",
+      "model": "gpt-6.1-terra",
+      "framework": "tailwind",
+      "brief": "timetrack",
+      "hash": "72b04b80f38f",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-crushed-tracking": 3,
+          "no-decorative-uppercase": 5,
+          "no-exclamation-copy": 1,
+          "no-greeting-headline": 1,
+          "no-heavy-headings": 2,
+          "no-italic-emphasis": 3,
+          "no-overused-font": 1,
+          "radius-scale": 2,
+          "spacing-scale": 2,
+          "type-scale": 6
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 21,
+          "no-all-caps-sentences": 1,
+          "no-announcement-pill": 1,
+          "no-crushed-tracking": 10,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 2,
+          "no-grid-wallpaper": 1,
+          "no-italic-serif-hero": 1,
+          "no-nested-cards": 2,
+          "no-overused-font": 1,
+          "no-straggler": 2,
+          "no-tiny-text": 4,
+          "text-not-covered": 1,
+          "text-off-viewport-edge": 1
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "gpt-6.1-terra-timetrack-bootstrap.html",
+      "model": "gpt-6.1-terra",
+      "framework": "bootstrap",
+      "brief": "timetrack",
+      "hash": "5082d1290802",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-crushed-tracking": 4,
+          "no-decorative-uppercase": 1,
+          "no-heavy-headings": 5,
+          "no-overused-font": 1,
+          "radius-scale": 5,
+          "spacing-scale": 35
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 25,
+          "no-all-caps-sentences": 1,
+          "no-crushed-tracking": 7,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 3,
+          "no-icon-tile-stack": 1,
+          "no-italic-serif-hero": 1,
+          "no-overused-font": 1,
+          "no-straggler": 3,
+          "no-tiny-text": 12,
+          "text-not-covered": 4
+        },
+        "seconds": 14
+      }
+    },
+    {
+      "file": "gpt-6.1-terra-aiwriter-tailwind.html",
+      "model": "gpt-6.1-terra",
+      "framework": "tailwind",
+      "brief": "aiwriter",
+      "hash": "1acdc9560af7",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-blur-blobs": 2,
+          "no-decorative-uppercase": 6,
+          "no-exclamation-copy": 3,
+          "no-heavy-headings": 4,
+          "no-overused-font": 2,
+          "no-unsourced-proof": 1,
+          "radius-scale": 3,
+          "spacing-scale": 6,
+          "type-scale": 33
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "heading-spacing": 1,
+          "legible-contrast": 39,
+          "no-accent-word": 1,
+          "no-announcement-pill": 1,
+          "no-arrow-suffix": 1,
+          "no-crushed-tracking": 7,
+          "no-eyebrow-label": 3,
+          "no-grid-wallpaper": 1,
+          "no-nested-cards": 2,
+          "no-overused-font": 1,
+          "no-straggler": 1,
+          "no-tiny-text": 12
+        },
+        "seconds": 14
+      }
+    },
+    {
+      "file": "gpt-6.1-terra-aiwriter-bootstrap.html",
+      "model": "gpt-6.1-terra",
+      "framework": "bootstrap",
+      "brief": "aiwriter",
+      "hash": "9e6de9be3075",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-crushed-tracking": 1,
+          "no-decorative-uppercase": 5,
+          "no-exclamation-copy": 1,
+          "no-greeting-headline": 1,
+          "no-heavy-headings": 5,
+          "no-overused-font": 1,
+          "radius-scale": 5,
+          "spacing-scale": 38
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 28,
+          "no-crushed-tracking": 7,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 3,
+          "no-italic-serif-hero": 1,
+          "no-nested-cards": 1,
+          "no-overused-font": 1,
+          "no-straggler": 5,
+          "no-tiny-text": 12,
+          "text-not-covered": 1
+        },
+        "seconds": 12
+      }
+    },
+    {
+      "file": "gpt-6.1-terra-dashboard-tailwind.html",
+      "model": "gpt-6.1-terra",
+      "framework": "tailwind",
+      "brief": "dashboard",
+      "hash": "9b46c524ebbb",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 3,
+          "no-greeting-headline": 1,
+          "no-heavy-headings": 10,
+          "no-overused-font": 2,
+          "repeated-markup": 6,
+          "spacing-scale": 19,
+          "type-scale": 63
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 67,
+          "no-arrow-suffix": 1,
+          "no-crushed-tracking": 2,
+          "no-eyebrow-label": 1,
+          "no-overused-font": 1,
+          "no-repeated-label": 2,
+          "no-straggler": 1,
+          "no-tiny-text": 16
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "gpt-6.1-terra-dashboard-bootstrap.html",
+      "model": "gpt-6.1-terra",
+      "framework": "bootstrap",
+      "brief": "dashboard",
+      "hash": "94632a1d126e",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-decorative-uppercase": 1,
+          "no-greeting-headline": 1,
+          "no-overused-font": 1,
+          "radius-scale": 4,
+          "spacing-scale": 63
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 49,
+          "no-eyebrow-label": 1,
+          "no-overused-font": 1,
+          "no-repeated-label": 1,
+          "no-tiny-text": 13
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "gpt-6.1-terra-pricing-tailwind.html",
+      "model": "gpt-6.1-terra",
+      "framework": "tailwind",
+      "brief": "pricing",
+      "hash": "8a1868d338ee",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 7,
+          "no-heavy-headings": 12,
+          "no-overused-font": 2,
+          "repeated-markup": 2,
+          "spacing-scale": 3,
+          "type-scale": 17
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 30,
+          "no-announcement-pill": 1,
+          "no-arrow-suffix": 1,
+          "no-crushed-tracking": 2,
+          "no-eyebrow-label": 5,
+          "no-overused-font": 1,
+          "no-straggler": 3,
+          "no-tiny-text": 3
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "gpt-6.1-terra-pricing-bootstrap.html",
+      "model": "gpt-6.1-terra",
+      "framework": "bootstrap",
+      "brief": "pricing",
+      "hash": "0d81f330c4ad",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-crushed-tracking": 3,
+          "no-decorative-uppercase": 3,
+          "no-heavy-headings": 3,
+          "no-overused-font": 1,
+          "radius-scale": 1,
+          "spacing-scale": 32
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 18,
+          "no-arrow-suffix": 1,
+          "no-crushed-tracking": 6,
+          "no-eyebrow-label": 2,
+          "no-horizontal-overflow": 1,
+          "no-overused-font": 1,
+          "no-straggler": 1,
+          "no-tiny-text": 7,
+          "text-off-viewport-edge": 7
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "gpt-6.1-terra-bakery-tailwind.html",
+      "model": "gpt-6.1-terra",
+      "framework": "tailwind",
+      "brief": "bakery",
+      "hash": "25f7699acb6a",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 14,
+          "no-italic-emphasis": 9,
+          "no-overused-font": 2,
+          "no-radial-halo": 1,
+          "radius-scale": 1,
+          "repeated-markup": 1,
+          "spacing-scale": 2,
+          "type-scale": 15
+        }
+      },
+      "browser": {
+        "rules": {
+          "heading-spacing": 1,
+          "legible-contrast": 16,
+          "no-all-caps-sentences": 2,
+          "no-crushed-tracking": 2,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 4,
+          "no-italic-serif-hero": 1,
+          "no-overused-font": 1,
+          "no-straggler": 2,
+          "no-tiny-text": 10
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "gpt-6.1-terra-bakery-bootstrap.html",
+      "model": "gpt-6.1-terra",
+      "framework": "bootstrap",
+      "brief": "bakery",
+      "hash": "99c657f77396",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-crushed-tracking": 2,
+          "no-decorative-uppercase": 3,
+          "no-overused-font": 2,
+          "spacing-scale": 11
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "heading-spacing": 1,
+          "legible-contrast": 10,
+          "no-all-caps-sentences": 1,
+          "no-clipart-svg": 2,
+          "no-crushed-tracking": 6,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 4,
+          "no-horizontal-overflow": 1,
+          "no-italic-serif-hero": 1,
+          "no-overused-font": 1,
+          "no-straggler": 2,
+          "no-tiny-text": 12,
+          "text-off-viewport-edge": 1
+        },
+        "seconds": 16
+      }
+    },
+    {
+      "file": "gpt-6.1-terra-portfolio-tailwind.html",
+      "model": "gpt-6.1-terra",
+      "framework": "tailwind",
+      "brief": "portfolio",
+      "hash": "29faa08bd5bd",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-crushed-tracking": 5,
+          "no-decorative-uppercase": 22,
+          "no-greeting-headline": 1,
+          "no-hover-scale": 2,
+          "no-italic-emphasis": 3,
+          "radius-scale": 2,
+          "repeated-markup": 2,
+          "spacing-scale": 3,
+          "type-scale": 45
+        }
+      },
+      "browser": {
+        "rules": {
+          "heading-order": 1,
+          "legible-contrast": 31,
+          "no-colored-shadow": 1,
+          "no-crushed-tracking": 10,
+          "no-default-cream": 1,
+          "no-grid-wallpaper": 1,
+          "no-italic-serif-hero": 1,
+          "no-nested-cards": 1,
+          "no-tiny-text": 12
+        },
+        "seconds": 11
+      }
+    },
+    {
+      "file": "gpt-6.1-terra-portfolio-bootstrap.html",
+      "model": "gpt-6.1-terra",
+      "framework": "bootstrap",
+      "brief": "portfolio",
+      "hash": "52e0cdabbcf7",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-crushed-tracking": 7,
+          "no-decorative-uppercase": 4,
+          "no-greeting-headline": 1,
+          "no-stripe-surface": 1,
+          "radius-scale": 5,
+          "spacing-scale": 43
+        }
+      },
+      "browser": {
+        "rules": {
+          "heading-order": 1,
+          "heading-spacing": 2,
+          "legible-contrast": 12,
+          "no-colored-shadow": 1,
+          "no-crushed-tracking": 11,
+          "no-default-cream": 1,
+          "no-stripe-surface": 1,
+          "no-tiny-text": 13
+        },
+        "seconds": 12
       }
     }
   ],
@@ -1186,7 +1995,7 @@
           "balanced-headings": 1,
           "heading-spacing": 1,
           "legible-contrast": 23,
-          "no-ai-gradients": 1,
+          "no-ai-gradients": 2,
           "no-cramped-padding": 3,
           "no-nested-cards": 3,
           "no-radial-halo": 1,
@@ -1195,7 +2004,7 @@
           "no-tiny-text": 10,
           "readable-measure": 1
         },
-        "seconds": 40
+        "seconds": 30
       }
     },
     {
@@ -1236,18 +2045,19 @@
         "rules": {
           "balanced-headings": 1,
           "heading-spacing": 1,
+          "legible-contrast": 5,
           "no-eyebrow-label": 1,
           "no-flush-cards": 1,
           "no-marquee": 1,
           "no-nested-cards": 2,
           "no-radial-halo": 1,
           "no-straggler": 1,
-          "no-tiny-text": 9,
+          "no-tiny-text": 12,
           "pulse-for-live-only": 1,
           "text-not-clipped": 12,
-          "text-off-viewport-edge": 6
+          "text-off-viewport-edge": 3
         },
-        "seconds": 31
+        "seconds": 25
       }
     },
     {
@@ -1259,14 +2069,14 @@
       "browser": {
         "rules": {
           "image-not-broken": 1,
-          "legible-contrast": 3,
+          "legible-contrast": 4,
           "no-crushed-tracking": 6,
           "no-grid-wallpaper": 1,
           "no-lopsided-fold": 1,
           "no-marquee": 1,
           "no-tiny-text": 1
         },
-        "seconds": 18
+        "seconds": 12
       }
     },
     {
@@ -1278,13 +2088,14 @@
       "browser": {
         "rules": {
           "balanced-headings": 11,
+          "legible-contrast": 11,
           "no-cramped-padding": 1,
           "no-default-cream": 1,
           "no-straggler": 1,
           "no-tiny-text": 1,
           "text-not-covered": 1
         },
-        "seconds": 28
+        "seconds": 13
       }
     },
     {
@@ -1305,7 +2116,7 @@
           "no-tiny-text": 16,
           "pulse-for-live-only": 1,
           "readable-measure": 5,
-          "text-not-covered": 10
+          "text-not-covered": 12
         },
         "seconds": 21
       }
@@ -1321,7 +2132,7 @@
           "flat-type-scale": 1,
           "no-straggler": 4
         },
-        "seconds": 49
+        "seconds": 27
       }
     },
     {
@@ -1335,7 +2146,7 @@
           "no-marquee": 1,
           "text-off-viewport-edge": 1
         },
-        "seconds": 30
+        "seconds": 23
       }
     },
     {
@@ -1348,12 +2159,14 @@
           "balanced-headings": 5,
           "heading-spacing": 1,
           "legible-contrast": 6,
+          "no-announcement-pill": 1,
+          "no-giant-sentence": 1,
           "no-marquee": 1,
-          "no-script-errors": 2,
+          "no-radial-halo": 1,
           "readable-measure": 1,
           "text-off-viewport-edge": 2
         },
-        "seconds": 41
+        "seconds": 52
       }
     },
     {
@@ -1365,20 +2178,20 @@
         "rules": {
           "balanced-headings": 2,
           "heading-spacing": 2,
-          "legible-contrast": 22,
+          "legible-contrast": 14,
           "no-accent-word": 1,
           "no-bounce-easing": 2,
           "no-invisible-content": 2,
           "no-italic-serif-hero": 1,
           "no-nested-cards": 1,
-          "no-straggler": 5,
-          "no-tight-leading": 3,
+          "no-straggler": 4,
+          "no-tight-leading": 2,
           "no-tiny-text": 10,
           "readable-measure": 2,
           "text-not-covered": 2,
           "text-off-viewport-edge": 12
         },
-        "seconds": 38
+        "seconds": 63
       }
     },
     {
@@ -1441,7 +2254,7 @@
           "no-straggler": 1,
           "no-tight-leading": 17
         },
-        "seconds": 17
+        "seconds": 16
       }
     },
     {
@@ -1474,7 +2287,7 @@
           "text-not-clipped": 1,
           "text-not-covered": 1
         },
-        "seconds": 19
+        "seconds": 16
       }
     },
     {
@@ -1484,7 +2297,7 @@
       "date": "2026-11-05",
       "browser": {
         "rules": {
-          "legible-contrast": 1,
+          "legible-contrast": 2,
           "no-ai-gradients": 4,
           "no-buried-image": 6,
           "no-clipped-popover": 1,
@@ -1498,7 +2311,7 @@
           "text-not-covered": 6,
           "text-off-viewport-edge": 2
         },
-        "seconds": 33
+        "seconds": 29
       }
     },
     {
@@ -1520,7 +2333,7 @@
           "text-not-clipped": 3,
           "text-off-viewport-edge": 1
         },
-        "seconds": 19
+        "seconds": 18
       }
     },
     {
@@ -1537,7 +2350,7 @@
           "no-overused-font": 1,
           "no-straggler": 2
         },
-        "seconds": 10
+        "seconds": 13
       }
     },
     {
@@ -1554,7 +2367,7 @@
           "no-straggler": 3,
           "no-tight-leading": 8
         },
-        "seconds": 10
+        "seconds": 11
       }
     },
     {
@@ -1583,7 +2396,7 @@
           "no-straggler": 4,
           "text-not-covered": 1
         },
-        "seconds": 11
+        "seconds": 12
       }
     },
     {
@@ -1601,7 +2414,7 @@
           "no-straggler": 3,
           "no-tiny-text": 4
         },
-        "seconds": 10
+        "seconds": 18
       }
     },
     {
@@ -1617,7 +2430,7 @@
           "no-giant-sentence": 1,
           "no-straggler": 1
         },
-        "seconds": 14
+        "seconds": 11
       }
     },
     {
@@ -1628,15 +2441,16 @@
       "browser": {
         "rules": {
           "balanced-headings": 4,
-          "legible-contrast": 14,
+          "legible-contrast": 13,
           "no-eyebrow-label": 2,
           "no-script-errors": 1,
-          "no-straggler": 9,
-          "no-tight-leading": 5,
-          "no-tiny-text": 10,
-          "pulse-for-live-only": 1
+          "no-straggler": 7,
+          "no-tight-leading": 2,
+          "no-tiny-text": 9,
+          "pulse-for-live-only": 1,
+          "text-not-covered": 2
         },
-        "seconds": 25
+        "seconds": 19
       }
     },
     {
@@ -1647,12 +2461,13 @@
       "browser": {
         "rules": {
           "balanced-headings": 2,
+          "heading-order": 1,
           "no-side-stripe": 5,
           "no-straggler": 11,
           "readable-measure": 1,
           "text-not-covered": 4
         },
-        "seconds": 12
+        "seconds": 10
       }
     },
     {
@@ -1674,14 +2489,14 @@
       "browser": {
         "rules": {
           "balanced-headings": 20,
-          "heading-order": 1,
+          "heading-order": 3,
           "no-script-errors": 1,
-          "no-straggler": 13,
+          "no-straggler": 12,
           "no-tiny-text": 1,
           "readable-measure": 1,
           "text-off-viewport-edge": 7
         },
-        "seconds": 47
+        "seconds": 42
       }
     },
     {
@@ -1696,10 +2511,9 @@
           "legible-contrast": 30,
           "no-hard-offset-shadow": 1,
           "pulse-for-live-only": 1,
-          "readable-measure": 1,
           "text-off-viewport-edge": 1
         },
-        "seconds": 14
+        "seconds": 13
       }
     },
     {
@@ -1717,7 +2531,7 @@
           "no-overused-font": 1,
           "no-radial-halo": 1
         },
-        "seconds": 11
+        "seconds": 9
       }
     },
     {
@@ -1729,9 +2543,9 @@
       "browser": {
         "rules": {
           "legible-contrast": 1,
-          "text-not-clipped": 1
+          "no-script-errors": 1
         },
-        "seconds": 30
+        "seconds": 26
       }
     },
     {
@@ -1745,9 +2559,10 @@
           "heading-order": 4,
           "legible-contrast": 5,
           "no-ai-gradients": 1,
-          "no-overused-font": 1
+          "no-overused-font": 1,
+          "no-tiny-text": 1
         },
-        "seconds": 20
+        "seconds": 15
       }
     },
     {
@@ -1759,7 +2574,7 @@
         "rules": {
           "no-tiny-text": 1
         },
-        "seconds": 7
+        "seconds": 9
       }
     },
     {
@@ -1776,7 +2591,7 @@
           "no-tight-leading": 3,
           "spacing-rhythm": 1
         },
-        "seconds": 23
+        "seconds": 20
       }
     },
     {
@@ -1793,7 +2608,7 @@
           "no-straggler": 21,
           "no-tiny-text": 11
         },
-        "seconds": 28
+        "seconds": 21
       }
     }
   ]

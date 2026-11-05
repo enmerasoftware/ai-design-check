@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f6f1">
+  <title>Tallyhoo — Make time for your best work</title>
+  <meta name="description" content="A refreshingly simple time tracker for freelance designers. Track your hours, understand your projects, and get paid for every bit of your work.">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .display { font-family: Georgia, 'Times New Roman', serif; letter-spacing: -.055em; }
+    .grid-paper { background-image: linear-gradient(#e7e6dc 1px, transparent 1px), linear-gradient(90deg, #e7e6dc 1px, transparent 1px); background-size: 24px 24px; }
+    .scribble { text-decoration: underline; text-decoration-color: #bde85d; text-decoration-thickness: .13em; text-underline-offset: .08em; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body class="bg-[#f7f6f1] text-[#20251d] antialiased">
+  <header class="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-6 lg:px-14">
+    <a href="#" class="flex items-center gap-2.5 text-[23px] font-extrabold tracking-[-0.07em]" aria-label="Tallyhoo home">
+      <span class="flex h-9 w-9 items-center justify-center rounded-full bg-[#c6ef6b]" aria-hidden="true"><svg viewBox="0 0 32 32" class="h-6 w-6 fill-none stroke-[#20251d]" stroke-width="2.5" stroke-linecap="round"><path d="M9 8v15M15 8v15M21 8v15M6 20l19-9"/></svg></span>tallyhoo<span class="text-[#82a93c]">.</span>
+    </a>
+    <nav aria-label="Main navigation" class="hidden items-center gap-9 text-sm font-semibold md:flex"><a class="transition hover:text-[#709534]" href="#how-it-works">How it works</a><a class="transition hover:text-[#709534]" href="#features">Features</a><a class="transition hover:text-[#709534]" href="#pricing">Pricing</a></nav>
+    <div class="flex items-center gap-5"><a href="#pricing" class="hidden text-sm font-semibold sm:block">Log in</a><a href="#pricing" class="rounded-full bg-[#20251d] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#3b4931]">Start for free <span aria-hidden="true">↗</span></a></div>
+  </header>
+
+  <main>
+    <section class="mx-auto grid max-w-[1440px] items-center gap-12 px-6 pb-20 pt-12 lg:grid-cols-[.9fr_1.1fr] lg:gap-8 lg:px-14 lg:pb-28 lg:pt-20">
+      <div class="max-w-[650px]">
+        <div class="mb-7 inline-flex items-center gap-2 rounded-full border border-[#d9ddcf] bg-white/60 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.13em]"><span class="h-2 w-2 rounded-full bg-[#9bc84f]"></span> Made for independent creatives</div>
+        <h1 class="display text-[clamp(4rem,7.4vw,7.3rem)] leading-[.91]">Make time for <span class="italic">your</span> <span class="scribble">best work.</span></h1>
+        <p class="mt-8 max-w-md text-lg leading-8 text-[#697064]">Less watching the clock, more making the good stuff. Tallyhoo makes tracking your time feel like the easy part.</p>
+        <div class="mt-9 flex flex-wrap items-center gap-5"><a href="#pricing" class="inline-flex items-center gap-8 rounded-full bg-[#c6ef6b] px-6 py-4 text-sm font-bold transition hover:bg-[#b5e35a]">Start tracking for free <span class="text-lg" aria-hidden="true">↗</span></a><span class="text-sm text-[#798074]">No credit card needed</span></div>
+        <div class="mt-12 flex items-center gap-4 border-t border-[#dedfd5] pt-6"><div class="flex -space-x-2" aria-hidden="true"><span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#f7f6f1] bg-[#d4a792] text-xs font-bold">M</span><span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#f7f6f1] bg-[#e9c45f] text-xs font-bold">J</span><span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#f7f6f1] bg-[#a9b9a0] text-xs font-bold">A</span><span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#f7f6f1] bg-[#d8a6aa] text-xs font-bold">R</span></div><p class="text-xs leading-5 text-[#697064]"><span class="font-bold text-[#20251d]">Made for your kind of work.</span><br>Built for the beautifully self-employed.</p></div>
+      </div>
+      <div class="relative mx-auto w-full max-w-[690px] lg:pl-6" aria-label="Preview of the Tallyhoo time tracking dashboard">
+        <div class="grid-paper relative overflow-hidden rounded-[28px] border border-[#dcded3] bg-[#eceee4] p-5 sm:p-10 lg:p-12">
+          <div class="absolute right-8 top-6 rotate-12 text-4xl text-[#94ba4f]" aria-hidden="true">✳</div>
+          <div class="relative mx-auto mt-6 max-w-[500px] rounded-2xl border border-[#e5e6de] bg-[#fffefa] p-5 shadow-[0_24px_60px_rgba(42,50,31,0.12)] sm:p-7">
+            <div class="flex items-center justify-between border-b border-[#eeefe8] pb-5"><div><p class="text-xs font-semibold text-[#94998e]">Monday, June 12</p><h2 class="mt-1 text-xl font-bold tracking-tight">Good morning, Alex <span aria-hidden="true">✳</span></h2></div><span class="flex h-9 w-9 items-center justify-center rounded-full bg-[#d9b5a0] text-xs font-bold">A</span></div>
+            <div class="mt-6 flex items-center justify-between"><div><p class="text-[10px] font-bold uppercase tracking-[.14em] text-[#92998c]">Currently tracking</p><p class="mt-2 text-sm font-bold">Brand identity exploration</p><p class="mt-1 text-xs text-[#92998c]"><span class="mr-1 inline-block h-2 w-2 rounded-full bg-[#d4a4f3]"></span> Studio Fern</p></div><span class="rounded-full bg-[#eef7dd] px-3 py-1 text-[10px] font-bold text-[#6e9630]">● &nbsp; LIVE</span></div>
+            <div class="mt-5 flex items-center justify-between rounded-xl bg-[#f3f5ec] p-4 sm:p-5"><span class="font-mono text-3xl tracking-[-.08em] sm:text-4xl">02:34:18</span><span class="flex h-11 w-11 items-center justify-center rounded-full bg-[#20251d] text-white" aria-label="Pause timer"><span class="text-lg">Ⅱ</span></span></div>
+            <div class="mb-3 mt-7 flex items-center justify-between"><p class="text-sm font-bold">This week</p><span class="text-xs text-[#92998c]">View report ↗</span></div>
+            <div class="flex h-28 items-end justify-between gap-2 border-b border-[#e8eae1] px-1"><div class="h-[42%] w-8 rounded-t-md bg-[#e3e9d6]"></div><div class="h-[70%] w-8 rounded-t-md bg-[#e3e9d6]"></div><div class="h-[55%] w-8 rounded-t-md bg-[#e3e9d6]"></div><div class="h-[90%] w-8 rounded-t-md bg-[#c6ef6b]"></div><div class="h-[35%] w-8 rounded-t-md bg-[#e3e9d6]"></div><div class="h-[15%] w-8 rounded-t-md bg-[#e3e9d6]"></div><div class="h-[10%] w-8 rounded-t-md bg-[#e3e9d6]"></div></div>
+            <div class="mt-2 flex justify-between px-2 text-[10px] text-[#a0a69b]"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+          </div>
+          <div class="absolute bottom-8 right-4 rotate-3 rounded-xl border border-[#e8e9df] bg-white px-4 py-3 shadow-lg sm:bottom-14 sm:right-4"><p class="text-[10px] font-semibold text-[#899083]">Hours this week</p><p class="mt-1 text-xl font-bold">24.5 <span class="text-xs font-medium text-[#84a846]">↗ 12%</span></p></div>
+        </div>
+        <div class="absolute -bottom-5 left-2 -rotate-6 rounded-full bg-[#f0c7b8] px-5 py-3 text-xs font-bold shadow-sm sm:left-0">✳ &nbsp; Look at you go!</div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="border-y border-[#dfe1d7] bg-[#eceee5]">
+      <div class="mx-auto flex max-w-[1440px] flex-col gap-5 px-6 py-8 sm:flex-row sm:items-center sm:justify-between lg:px-14"><p class="text-xs font-bold uppercase tracking-[.15em] text-[#818a79]">A little more flow, a lot less admin</p><div class="flex flex-wrap gap-x-8 gap-y-3 text-sm font-semibold text-[#626c5c]"><span>✳ &nbsp; Track effortlessly</span><span>◷ &nbsp; Know your hours</span><span>↗ &nbsp; Grow your business</span></div></div>
+    </section>
+
+    <section id="features" class="mx-auto max-w-[1440px] px-6 py-24 lg:px-14 lg:py-32">
+      <div class="grid gap-8 md:grid-cols-2 md:items-end"><div><p class="mb-5 text-xs font-bold uppercase tracking-[.16em] text-[#7f9d51]">A little help for your big ideas</p><h2 class="display max-w-xl text-5xl leading-[1.02] sm:text-6xl">Your time is creative. <span class="italic">Treat it that way.</span></h2></div><p class="max-w-md text-base leading-7 text-[#737b6e] md:justify-self-end">Whether you're sketching the first idea or putting the final pixels in place, Tallyhoo keeps the little things in order.</p></div>
+      <div class="mt-14 grid gap-4 md:grid-cols-3"><article class="rounded-2xl bg-[#e7efd7] p-8"><div class="mb-12 flex h-12 w-12 items-center justify-center rounded-full bg-[#c6ef6b] text-2xl">◷</div><h3 class="text-xl font-bold tracking-tight">One click, then create.</h3><p class="mt-3 text-sm leading-7 text-[#65715c]">Start a timer and get back into your groove. Your hours are taken care of in the background.</p></article><article class="rounded-2xl bg-[#f0e5db] p-8"><div class="mb-12 flex h-12 w-12 items-center justify-center rounded-full bg-[#e9c1ad] text-2xl">▥</div><h3 class="text-xl font-bold tracking-tight">See the whole picture.</h3><p class="mt-3 text-sm leading-7 text-[#776c64]">Get a clear view of where your time goes, project by project. Better estimates start here.</p></article><article class="rounded-2xl bg-[#e8e5f0] p-8"><div class="mb-12 flex h-12 w-12 items-center justify-center rounded-full bg-[#cfc1e4] text-2xl">↗</div><h3 class="text-xl font-bold tracking-tight">Make every hour count.</h3><p class="mt-3 text-sm leading-7 text-[#706b79]">Keep billable hours organized and ready to share, so you can invoice with confidence.</p></article></div>
+    </section>
+    <section id="pricing" class="mx-auto max-w-[1440px] px-6 pb-20 lg:px-14"><div class="flex flex-col items-start justify-between gap-8 rounded-[28px] bg-[#20291e] px-8 py-12 text-[#f7f6f1] sm:px-12 md:flex-row md:items-center lg:px-16"><div><p class="mb-4 text-xs font-bold uppercase tracking-[.16em] text-[#c6ef6b]">Your time is yours again</p><h2 class="display text-5xl leading-none sm:text-6xl">Ready when <span class="italic">you are.</span></h2><p class="mt-4 text-sm text-[#b8c2b2]">Start tracking for free and make room for more of what you love.</p></div><a href="mailto:hello@tallyhoo.app?subject=Getting%20started%20with%20Tallyhoo" class="inline-flex shrink-0 items-center gap-10 rounded-full bg-[#c6ef6b] px-6 py-4 text-sm font-bold text-[#20251d] transition hover:bg-[#b5e35a]">Get started free <span aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <footer class="mx-auto flex max-w-[1440px] flex-col gap-5 border-t border-[#dedfd5] px-6 py-8 text-xs text-[#7d8578] sm:flex-row sm:items-center sm:justify-between lg:px-14"><a href="#" class="text-xl font-extrabold tracking-[-0.07em] text-[#20251d]">tallyhoo<span class="text-[#82a93c]">.</span></a><p>Made for the beautifully self-employed. © 2026 Tallyhoo.</p><a href="mailto:hello@tallyhoo.app" class="font-semibold text-[#505a4b] hover:underline">Say hello ↗</a></footer>
+</body>
+</html>

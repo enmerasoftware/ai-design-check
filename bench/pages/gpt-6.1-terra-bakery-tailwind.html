@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f4e9">
+  <meta name="description" content="Crumb & Co is your neighbourhood bakery for slow-made sourdough, pastries and good coffee.">
+  <title>Crumb & Co | Your neighbourhood bakery</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+    :root { color-scheme: light; }
+    body { font-family: 'DM Sans', sans-serif; }
+    .serif { font-family: 'DM Serif Display', Georgia, serif; }
+    .grain { background-image: radial-gradient(#40563b 0.6px, transparent 0.6px); background-size: 5px 5px; }
+    html { scroll-behavior: smooth; }
+    ::selection { background: #f4c95d; color: #263c2b; }
+  </style>
+</head>
+<body class="bg-[#f7f4e9] text-[#263c2b] antialiased">
+  <div class="bg-[#d7e5ce] px-4 py-2 text-center text-[10px] font-bold tracking-[0.18em] uppercase sm:text-xs">Baked fresh, shared with love <span class="mx-2">✳</span> Every single day</div>
+  <header class="border-b border-[#263c2b]/20">
+    <nav aria-label="Main navigation" class="mx-auto flex max-w-[1440px] items-center justify-between gap-5 px-5 py-5 sm:px-10 lg:px-16">
+      <a href="#top" class="serif whitespace-nowrap text-[27px] leading-none tracking-[-0.05em] sm:text-[32px]">crumb <span class="italic">&</span> co<span class="text-[#d87c47]">.</span></a>
+      <div class="hidden items-center gap-9 text-[13px] font-bold md:flex"><a class="hover:text-[#b85f37]" href="#bakes">Our bakes</a><a class="hover:text-[#b85f37]" href="#story">Our story</a><a class="hover:text-[#b85f37]" href="#visit">Find us</a></div>
+      <a href="#visit" class="rounded-full border border-[#263c2b] px-5 py-3 text-[11px] font-bold uppercase tracking-[0.1em] transition hover:bg-[#263c2b] hover:text-[#f7f4e9] sm:px-6">Come say hello <span aria-hidden="true" class="ml-1">↗</span></a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="mx-auto grid max-w-[1440px] items-center gap-10 px-5 pb-14 pt-12 sm:px-10 md:grid-cols-2 md:gap-4 md:py-16 lg:px-16 lg:py-20">
+      <div class="relative z-10 max-w-[650px] md:pr-5">
+        <p class="mb-6 flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.2em]"><span class="h-px w-9 bg-[#d87c47]"></span> Your neighbourhood bakery</p>
+        <h1 class="serif text-[clamp(4.1rem,8.2vw,8.2rem)] leading-[0.88] tracking-[-0.055em]">Good bread.<br><span class="italic text-[#d37949]">Good days.</span></h1>
+        <p class="mt-7 max-w-[420px] text-[15px] leading-7 text-[#526453] sm:text-base">Slow mornings, warm ovens, and something lovely to share. Come on in for the little things that make a day feel good.</p>
+        <div class="mt-8 flex flex-wrap items-center gap-6"><a href="#bakes" class="rounded-full bg-[#263c2b] px-7 py-4 text-xs font-bold uppercase tracking-[0.1em] text-white transition hover:bg-[#426246]">See what's baking <span aria-hidden="true" class="ml-3">↗</span></a><a href="#visit" class="border-b border-[#263c2b] pb-1 text-xs font-bold uppercase tracking-[0.1em]">Find our bakery</a></div>
+        <div class="mt-12 flex items-center gap-3 text-xs font-semibold text-[#667566]"><span class="flex h-9 w-9 items-center justify-center rounded-full border border-[#b8c6ad] text-lg text-[#d37949]">✳</span> Made by hand, right here in the neighbourhood.</div>
+      </div>
+      <div class="relative mx-auto w-full max-w-[650px]">
+        <div class="absolute -left-2 top-[10%] z-10 flex h-24 w-24 -rotate-12 items-center justify-center rounded-full bg-[#f4c95d] p-3 text-center text-[10px] font-bold uppercase leading-4 tracking-[0.12em] sm:h-28 sm:w-28">A little joy<br>in every<br>crumb <span class="sr-only">.</span></div>
+        <div class="relative overflow-hidden rounded-t-[48%] rounded-b-[4px] bg-[#d7e5ce] pt-[100%]">
+          <svg class="absolute inset-0 h-full w-full" viewBox="0 0 600 600" role="img" aria-label="Illustration of a golden loaf of bread on a gingham cloth">
+            <defs><pattern id="check" width="56" height="56" patternUnits="userSpaceOnUse"><rect width="56" height="56" fill="#f3e9cb"/><path d="M0 0h28v56H0zM0 0h56v28H0z" fill="#cb7451" opacity=".35"/></pattern><linearGradient id="loaf" x1="0" y1="0" x2="0.8" y2="1"><stop stop-color="#efb45d"/><stop offset=".55" stop-color="#c87a35"/><stop offset="1" stop-color="#8e4b27"/></linearGradient></defs>
+            <circle cx="300" cy="255" r="215" fill="#c5d8bd"/><path d="M0 430Q148 378 300 430T600 410V600H0Z" fill="url(#check)"/><ellipse cx="307" cy="474" rx="207" ry="46" fill="#78503a" opacity=".18"/><path d="M107 379C99 286 170 210 279 196c109-14 206 33 225 120 8 37 0 86-32 111-41 32-286 46-338 9-17-12-25-33-27-57Z" fill="url(#loaf)" stroke="#8d512d" stroke-width="5"/><path d="M126 351c30-78 115-120 208-111 70 7 120 37 149 81" fill="none" stroke="#f8cb7b" stroke-width="8" opacity=".6" stroke-linecap="round"/><path d="M201 274c-20 19-34 41-38 68M278 249c-22 25-36 52-39 82M358 250c-20 26-31 53-31 82M428 274c-15 24-20 45-19 65" fill="none" stroke="#f8d49a" stroke-width="13" stroke-linecap="round"/><path d="M158 395c70 18 210 20 299-10" fill="none" stroke="#7c4328" stroke-width="4" opacity=".3"/><g fill="#f5d89f" opacity=".8"><circle cx="181" cy="365" r="3"/><circle cx="270" cy="368" r="3"/><circle cx="370" cy="359" r="3"/><circle cx="447" cy="355" r="3"/></g><path d="M58 191l10-22 10 22 22 10-22 10-10 22-10-22-22-10zM500 105l6-14 6 14 14 6-14 6-6 14-6-14-14-6z" fill="#f7f4e9"/>
+          </svg>
+        </div>
+        <div class="absolute -bottom-4 right-4 rotate-3 rounded-sm bg-[#f7f4e9] px-5 py-3 text-center shadow-sm sm:right-8"><span class="serif text-xl italic">always</span><br><span class="text-[9px] font-bold uppercase tracking-[.2em]">worth the crumbs</span></div>
+      </div>
+    </section>
+
+    <div class="overflow-hidden border-y border-[#263c2b] bg-[#f4c95d] py-4 text-center text-[11px] font-bold uppercase tracking-[0.18em]"><div class="whitespace-nowrap">Fresh from the oven <span class="mx-5">✳</span> Made with good things <span class="mx-5">✳</span> Here for the neighbourhood <span class="mx-5">✳</span> Fresh from the oven</div></div>
+
+    <section id="bakes" class="mx-auto max-w-[1440px] px-5 py-20 sm:px-10 lg:px-16 lg:py-28">
+      <div class="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p class="mb-4 text-[11px] font-bold uppercase tracking-[0.2em] text-[#bd6c43]">The good stuff</p><h2 class="serif text-5xl leading-none tracking-[-0.04em] sm:text-6xl">A little bit of <span class="italic">everything.</span></h2></div><p class="max-w-xs text-sm leading-6 text-[#667566]">Made from scratch, with care, and best enjoyed while it’s still warm.</p></div>
+      <div class="grid gap-8 sm:grid-cols-3 sm:gap-5 lg:gap-8">
+        <article><div class="flex aspect-[1.25] items-center justify-center overflow-hidden bg-[#e6d9be]"><svg viewBox="0 0 300 200" class="h-full w-full" aria-hidden="true"><ellipse cx="150" cy="156" rx="99" ry="16" fill="#b79a72" opacity=".35"/><path d="M55 127c-3-48 32-82 92-84 58-2 99 26 99 75 0 25-20 36-94 38-73 2-95-5-97-29Z" fill="#bc713c"/><path d="M65 116c10-39 42-61 85-61 43 0 75 18 85 53-20 15-46 24-84 24-38 0-67-5-86-16Z" fill="#de9b53"/><path d="M110 78l-17 31m58-40-17 35m56-29-16 33" stroke="#f6d29a" stroke-width="8" stroke-linecap="round"/></svg></div><div class="mt-5 flex items-baseline justify-between"><h3 class="serif text-3xl">Daily bread</h3><span class="text-[#c8754b]">↗</span></div><p class="mt-2 text-sm leading-6 text-[#667566]">Crackly sourdough, pillowy focaccia, and loaves worth planning lunch around.</p></article>
+        <article><div class="flex aspect-[1.25] items-center justify-center overflow-hidden bg-[#ead2ba]"><svg viewBox="0 0 300 200" class="h-full w-full" aria-hidden="true"><ellipse cx="150" cy="157" rx="101" ry="15" fill="#a47a5d" opacity=".25"/><path d="M50 127c13-2 27-13 37-33 16-32 39-39 63-31 24-8 47-1 63 31 10 20 24 31 37 33-18 31-52 37-100 24-48 13-82 7-100-24Z" fill="#b66c35"/><path d="M62 125c20-7 29-30 44-45 12-13 27-14 44-8 17-6 32-5 44 8 15 15 24 38 44 45-20 18-49 20-88 10-39 10-68 8-88-10Z" fill="#e9ad62"/><path d="M106 80c-3 24 2 42 14 57m30-65v63m44-55c3 24-2 42-14 57" fill="none" stroke="#f5cf90" stroke-width="5"/></svg></div><div class="mt-5 flex items-baseline justify-between"><h3 class="serif text-3xl">Sweet things</h3><span class="text-[#c8754b]">↗</span></div><p class="mt-2 text-sm leading-6 text-[#667566]">Buttery croissants, buns, and seasonal treats for your afternoon pick-me-up.</p></article>
+        <article><div class="flex aspect-[1.25] items-center justify-center overflow-hidden bg-[#d7e5ce]"><svg viewBox="0 0 300 200" class="h-full w-full" aria-hidden="true"><ellipse cx="145" cy="163" rx="87" ry="12" fill="#81987d" opacity=".25"/><path d="M86 76h105v60c0 16-13 25-29 25h-47c-16 0-29-9-29-25Z" fill="#f7f4e9"/><path d="M191 87h16c25 0 25 39-2 39h-14" fill="none" stroke="#f7f4e9" stroke-width="12"/><ellipse cx="139" cy="76" rx="53" ry="12" fill="#e8ddc5"/><ellipse cx="139" cy="77" rx="44" ry="8" fill="#9b5c39"/><path d="M124 56c-8-11 8-15 0-27m28 27c-8-11 8-15 0-27" fill="none" stroke="#f7f4e9" stroke-width="4" stroke-linecap="round"/></svg></div><div class="mt-5 flex items-baseline justify-between"><h3 class="serif text-3xl">Coffee & more</h3><span class="text-[#c8754b]">↗</span></div><p class="mt-2 text-sm leading-6 text-[#667566]">A proper cup, a friendly chat, and a good reason to stay a little longer.</p></article>
+      </div>
+      <p class="mt-8 text-xs italic text-[#788676]">Our counter changes with the seasons, so there’s always something new to try.</p>
+    </section>
+
+    <section id="story" class="bg-[#e2ead9] px-5 py-20 text-center sm:px-10 lg:py-24"><div class="mx-auto max-w-3xl"><span class="text-3xl text-[#c8754b]">✳</span><p class="mt-5 text-[11px] font-bold uppercase tracking-[0.2em]">A note from us</p><h2 class="serif mt-5 text-4xl leading-[1.12] tracking-[-0.035em] sm:text-5xl lg:text-6xl">Good food tastes even better <span class="italic text-[#c8754b]">when it’s shared.</span></h2><p class="mx-auto mt-6 max-w-xl text-sm leading-7 text-[#596b5a] sm:text-base">We’re a small team of early risers who believe in taking our time, using ingredients we love, and knowing our neighbours by name. Pull up a chair. There’s always room at our table.</p><span class="serif mt-7 block text-2xl italic">See you soon, Crumb & Co x</span></div></section>
+
+    <section id="visit" class="mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-10 md:grid-cols-2 lg:px-16 lg:py-28"><div><p class="mb-4 text-[11px] font-bold uppercase tracking-[0.2em] text-[#bd6c43]">Come on over</p><h2 class="serif text-5xl leading-none tracking-[-0.04em] sm:text-6xl">There’s a seat<br><span class="italic">waiting for you.</span></h2><p class="mt-6 max-w-md text-sm leading-7 text-[#667566]">Follow the smell of fresh bread. We’ll have the coffee on and something good in the oven.</p><a href="https://maps.google.com/?q=12+Columbia+Road+London" class="mt-8 inline-block rounded-full bg-[#263c2b] px-7 py-4 text-xs font-bold uppercase tracking-[0.1em] text-white transition hover:bg-[#426246]">Get directions <span aria-hidden="true" class="ml-3">↗</span></a></div><div class="grid gap-8 border-t border-[#263c2b]/30 pt-8 sm:grid-cols-2"><div><h3 class="text-[11px] font-bold uppercase tracking-[0.18em]">Find us</h3><p class="serif mt-5 text-2xl leading-snug">12 Columbia Road<br>London, E2 7NN</p><p class="mt-4 text-sm leading-6 text-[#667566]">Just around the corner and always happy to see you.</p><a class="mt-5 inline-block border-b border-[#263c2b] pb-1 text-sm font-semibold" href="mailto:hello@crumbandco.example">hello@crumbandco.example</a></div><div><h3 class="text-[11px] font-bold uppercase tracking-[0.18em]">Opening hours</h3><div class="mt-5 space-y-3 text-sm"><div class="flex justify-between gap-5 border-b border-[#263c2b]/15 pb-3"><span>Monday – Friday</span><span class="font-bold">7am – 5pm</span></div><div class="flex justify-between gap-5 border-b border-[#263c2b]/15 pb-3"><span>Saturday</span><span class="font-bold">8am – 5pm</span></div><div class="flex justify-between gap-5 border-b border-[#263c2b]/15 pb-3"><span>Sunday</span><span class="font-bold">8am – 3pm</span></div></div><p class="mt-4 text-xs text-[#788676]">Come early for the best pick of the bunch.</p></div></div></section>
+  </main>
+  <footer class="bg-[#263c2b] px-5 py-10 text-[#f7f4e9] sm:px-10 lg:px-16"><div class="mx-auto flex max-w-[1312px] flex-col justify-between gap-8 sm:flex-row sm:items-end"><div><a href="#top" class="serif text-4xl tracking-[-0.05em]">crumb <span class="italic">&</span> co<span class="text-[#e19a68]">.</span></a><p class="mt-3 text-sm text-[#c3d0bd]">A little bakery with a lot of heart.</p></div><div class="flex flex-wrap gap-x-7 gap-y-3 text-xs font-semibold text-[#dbe5d5]"><a href="#bakes">Our bakes</a><a href="#story">Our story</a><a href="#visit">Visit us</a><span>© 2026 Crumb & Co</span></div></div></footer>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7f1">
+  <title>Brightmoss — Better support starts with better words</title>
+  <meta name="description" content="Brightmoss helps customer support teams write thoughtful, on-brand replies in less time.">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+    :root { color-scheme: light; }
+    body { font-family: 'DM Sans', sans-serif; }
+    h1, h2, h3, .brand { font-family: 'Manrope', sans-serif; }
+    .hero-grid { background-image: linear-gradient(rgba(255,255,255,.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.25) 1px, transparent 1px); background-size: 48px 48px; mask-image: linear-gradient(to bottom, black, transparent 90%); }
+    .soft-shadow { box-shadow: 0 28px 80px rgba(31, 53, 35, .13), 0 4px 12px rgba(31, 53, 35, .06); }
+    .card-shadow { box-shadow: 0 12px 36px rgba(32, 53, 35, .08); }
+    a:focus-visible, button:focus-visible { outline: 3px solid #ccf36a; outline-offset: 4px; }
+  </style>
+</head>
+<body class="bg-[#f7f8f2] text-[#1e3024] antialiased">
+  <header class="relative z-20 border-b border-[#e5e9dc] bg-[#f7f8f2]/95">
+    <div class="mx-auto flex h-20 max-w-[1320px] items-center justify-between px-6 lg:px-12">
+      <a href="#" class="brand flex items-center gap-2.5 text-[23px] font-extrabold tracking-[-1.3px]" aria-label="Brightmoss home">
+        <span class="flex h-9 w-9 items-center justify-center rounded-[11px] bg-[#294d35] text-[#d5f68a]">
+          <svg viewBox="0 0 32 32" fill="none" class="h-6 w-6" aria-hidden="true"><path d="M16 4c.7 6.5 3.5 9.3 10 10-6.5.7-9.3 3.5-10 10-.7-6.5-3.5-9.3-10-10 6.5-.7 9.3-3.5 10-10Z" fill="currentColor"/><path d="M25 21c.25 2.3 1.25 3.3 3.5 3.5-2.25.25-3.25 1.25-3.5 3.5-.25-2.25-1.25-3.25-3.5-3.5 2.25-.2 3.25-1.2 3.5-3.5Z" fill="currentColor"/></svg>
+        </span>brightmoss<span class="text-[#84a955]">.</span>
+      </a>
+      <nav aria-label="Main navigation" class="hidden items-center gap-9 text-[14px] font-semibold text-[#435448] md:flex">
+        <a class="transition hover:text-[#719b3f]" href="#how-it-works">How it works</a>
+        <a class="transition hover:text-[#719b3f]" href="#benefits">Why Brightmoss</a>
+        <a class="transition hover:text-[#719b3f]" href="#stories">Customer stories</a>
+      </nav>
+      <a href="mailto:hello@brightmoss.com?subject=Brightmoss%20demo" class="inline-flex items-center gap-2 rounded-full bg-[#244a32] px-5 py-3 text-[13px] font-bold text-white transition hover:bg-[#356244]">Book a demo <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main>
+    <section class="relative overflow-hidden bg-[#e8efd9]">
+      <div class="hero-grid pointer-events-none absolute inset-0"></div>
+      <div class="relative mx-auto grid max-w-[1320px] items-center gap-14 px-6 pb-20 pt-20 lg:grid-cols-[.92fr_1.08fr] lg:gap-12 lg:px-12 lg:pb-28 lg:pt-28">
+        <div class="max-w-[610px]">
+          <div class="mb-7 inline-flex items-center gap-2 rounded-full border border-[#c9d9b4] bg-[#f5f9ec]/80 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.13em] text-[#456947]"><span class="h-2 w-2 rounded-full bg-[#7ba64c]"></span> A little brighter, every reply</div>
+          <h1 class="text-[48px] font-bold leading-[1.08] tracking-[-2.8px] sm:text-[60px] lg:text-[67px]">Good support is human.<br><span class="text-[#709b43]">Great writing helps.</span></h1>
+          <p class="mt-7 max-w-[490px] text-[17px] leading-[1.8] text-[#5d6d5d]">Meet the AI writing partner that helps your support team turn everyday conversations into lasting customer relationships.</p>
+          <div class="mt-9 flex flex-wrap items-center gap-5">
+            <a href="mailto:hello@brightmoss.com?subject=Brightmoss%20demo" class="inline-flex items-center gap-5 rounded-full bg-[#244a32] px-6 py-4 text-sm font-bold text-white transition hover:bg-[#356244]">See Brightmoss in action <span aria-hidden="true">↗</span></a>
+            <a href="#how-it-works" class="group inline-flex items-center gap-2 text-sm font-bold text-[#294d35]">See how it works <span class="transition group-hover:translate-x-1" aria-hidden="true">→</span></a>
+          </div>
+          <div class="mt-11 flex items-center gap-3 text-[12px] text-[#687969]"><div class="flex -space-x-2" aria-hidden="true"><span class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#e8efd9] bg-[#d99a72] font-bold text-white">J</span><span class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#e8efd9] bg-[#658d79] font-bold text-white">M</span><span class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#e8efd9] bg-[#b18b6f] font-bold text-white">A</span></div><span>Made for the people behind great support</span></div>
+        </div>
+
+        <div class="relative mx-auto w-full max-w-[610px] lg:ml-auto">
+          <div class="absolute -left-7 top-12 h-32 w-32 rounded-full bg-[#d2e5b7] blur-2xl"></div><div class="absolute -bottom-5 right-2 h-36 w-36 rounded-full bg-[#c7dfaa] blur-2xl"></div>
+          <div class="soft-shadow relative overflow-hidden rounded-2xl border border-white/90 bg-[#fbfcf8]">
+            <div class="flex h-12 items-center justify-between border-b border-[#e8ede3] px-5"><div class="flex gap-1.5"><span class="h-2 w-2 rounded-full bg-[#d5ded0]"></span><span class="h-2 w-2 rounded-full bg-[#d5ded0]"></span><span class="h-2 w-2 rounded-full bg-[#d5ded0]"></span></div><span class="text-[10px] font-semibold text-[#91a090]">Your workspace</span><span class="h-5 w-5 rounded-full bg-[#dbe9d3]"></span></div>
+            <div class="grid grid-cols-[52px_1fr] sm:grid-cols-[72px_1fr]"><div class="border-r border-[#edf0e9] bg-[#f5f8f1] px-4 py-5"><div class="mx-auto mb-7 flex h-8 w-8 items-center justify-center rounded-lg bg-[#294d35] text-lg text-[#d2f184]">✳</div><div class="mx-auto mb-5 h-2 w-5 rounded-full bg-[#c6d5c2]"></div><div class="mx-auto mb-5 h-2 w-5 rounded-full bg-[#dce6d8]"></div><div class="mx-auto h-2 w-5 rounded-full bg-[#dce6d8]"></div></div>
+              <div class="p-5 sm:p-7"><div class="mb-5 flex items-center justify-between"><div><p class="text-[10px] font-bold uppercase tracking-[.12em] text-[#8b9c8b]">Conversation #2841</p><p class="mt-1 text-sm font-bold">A little help with my order</p></div><span class="rounded-full bg-[#edf4e8] px-2.5 py-1 text-[10px] font-bold text-[#729160]">Open</span></div>
+                <div class="rounded-xl bg-[#f1f4ed] p-4"><div class="mb-2 flex items-center gap-2"><span class="flex h-6 w-6 items-center justify-center rounded-full bg-[#ddbea7] text-[10px] font-bold text-white">S</span><span class="text-[10px] font-bold">Sarah Miller</span><span class="text-[10px] text-[#a1aea0]">· 10:24 AM</span></div><p class="text-[11px] leading-5 text-[#68776a]">Hi! My order hasn't arrived yet and I was hoping to have it for the weekend. Could you help me check on it?</p></div>
+                <div class="mt-4 rounded-xl border border-[#dce9d3] bg-white p-4"><div class="mb-3 flex items-center justify-between"><div class="flex items-center gap-2 text-[10px] font-bold"><span class="text-[#7eaa4d]">✳</span> Draft with Brightmoss</div><span class="rounded-md bg-[#eef6e4] px-2 py-1 text-[9px] font-bold text-[#6d9650]">✦ Thoughtful & warm</span></div><p class="text-[11px] leading-[1.9] text-[#5c6e5e]">Hi Sarah,<br><br>Thanks for reaching out! I know how important it is to have your order in time. I'm happy to look into this for you and get you an update as soon as I can.<br><br>I've got you covered,<br>Alex</p><div class="mt-4 flex items-center justify-between border-t border-[#edf1ea] pt-3"><span class="text-[10px] font-semibold text-[#91a190]">✧ &nbsp; Make it your own</span><span class="rounded-lg bg-[#294d35] px-3 py-2 text-[9px] font-bold text-white">Use this reply &nbsp; ↗</span></div></div>
+              </div></div>
+          </div>
+          <div class="card-shadow absolute -bottom-7 -left-3 flex items-center gap-3 rounded-xl border border-white bg-white px-4 py-3 sm:-left-9"><span class="flex h-10 w-10 items-center justify-center rounded-full bg-[#e9f4dc] text-lg text-[#6c9c46]">✦</span><div><p class="text-xs font-bold">More time for people</p><p class="mt-1 text-[10px] text-[#8b9a8b]">Less time finding the words</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-[#e6eadf] bg-[#f7f8f2] px-6 py-9"><div class="mx-auto flex max-w-[1224px] flex-wrap items-center justify-center gap-x-12 gap-y-5 text-center"><p class="text-[11px] font-bold uppercase tracking-[.14em] text-[#92a08f]">Built for teams who care</p><span class="brand text-lg font-extrabold tracking-tight text-[#96a693]">goodkind<span class="text-[#b7c7ad]">.</span></span><span class="brand text-lg font-bold tracking-tight text-[#96a693]">northstar</span><span class="brand text-lg font-extrabold tracking-[-1px] text-[#96a693]">huddle<span class="text-[#b7c7ad]">&</span>co</span><span class="brand text-lg font-bold tracking-tight text-[#96a693]">everly</span></div></section>
+
+    <section id="benefits" class="mx-auto max-w-[1320px] px-6 py-24 lg:px-12 lg:py-32"><div class="grid gap-8 md:grid-cols-2 md:items-end"><div><p class="mb-4 text-[11px] font-bold uppercase tracking-[.16em] text-[#7a9d58]">A better way to show up</p><h2 class="max-w-[570px] text-4xl font-bold leading-[1.14] tracking-[-1.8px] sm:text-[48px]">Thoughtful support,<br>at the speed of real life.</h2></div><p class="max-w-[430px] text-[15px] leading-7 text-[#718071] md:ml-auto">Your team knows how to care. Brightmoss makes it easier to put that care into words, even on the busiest days.</p></div>
+      <div class="mt-14 grid gap-5 md:grid-cols-3"><article class="rounded-2xl border border-[#e7ecdf] bg-white p-8"><div class="mb-9 flex h-12 w-12 items-center justify-center rounded-xl bg-[#eaf3df] text-2xl text-[#6e9c48]">✳</div><h3 class="text-lg font-bold tracking-[-.4px]">Find the right words, faster</h3><p class="mt-3 text-sm leading-7 text-[#778577]">Go from a blank page to a helpful first draft in seconds, with more time left for the human stuff.</p></article><article class="rounded-2xl border border-[#e7ecdf] bg-white p-8"><div class="mb-9 flex h-12 w-12 items-center justify-center rounded-xl bg-[#f3eee2] text-2xl text-[#b89964]">♡</div><h3 class="text-lg font-bold tracking-[-.4px]">Sound like your team</h3><p class="mt-3 text-sm leading-7 text-[#778577]">Keep your voice consistent and your replies personal, whether you're a team of five or fifty.</p></article><article class="rounded-2xl border border-[#e7ecdf] bg-white p-8"><div class="mb-9 flex h-12 w-12 items-center justify-center rounded-xl bg-[#e7f0eb] text-2xl text-[#709985]">↗</div><h3 class="text-lg font-bold tracking-[-.4px]">Make every reply count</h3><p class="mt-3 text-sm leading-7 text-[#778577]">Turn tricky moments into opportunities to build trust, one clear and considerate response at a time.</p></article></div>
+    </section>
+
+    <section id="how-it-works" class="bg-[#eaf0e2] px-6 py-24 lg:py-28"><div class="mx-auto grid max-w-[1224px] gap-14 lg:grid-cols-2 lg:items-center"><div class="relative rounded-[24px] bg-[#dce9d1] p-7 sm:p-12"><div class="card-shadow mx-auto max-w-md rounded-2xl bg-white p-6"><div class="flex items-center justify-between border-b border-[#edf1e9] pb-4"><span class="text-sm font-bold">Make this sound a little warmer</span><span class="text-[#83a96b]">✦</span></div><div class="mt-5 rounded-xl bg-[#f5f7f2] p-4 text-xs leading-6 text-[#879486]">Your refund has been processed. It will appear in 3–5 business days.</div><div class="py-3 text-center text-[#83a96b]">↓</div><div class="rounded-xl border border-[#dcebd3] bg-[#f8fbf5] p-4 text-xs leading-6 text-[#4f6751]">Good news! Your refund is on its way. You should see it back in your account within 3–5 business days. Please let me know if there's anything else I can help with!</div></div><span class="absolute -right-3 -top-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#c8e5a5] text-2xl text-[#587e3d]">✦</span></div><div class="lg:pl-12"><p class="mb-4 text-[11px] font-bold uppercase tracking-[.16em] text-[#7a9d58]">Meet your writing partner</p><h2 class="text-4xl font-bold leading-[1.15] tracking-[-1.7px] sm:text-[48px]">A little help goes<br>a long way.</h2><p class="mt-6 max-w-md text-[15px] leading-7 text-[#708070]">Draft a reply, polish your tone, or make a complicated answer feel simple. Brightmoss works alongside your team, so every message still sounds like you.</p><a href="mailto:hello@brightmoss.com?subject=Brightmoss%20demo" class="mt-8 inline-flex items-center gap-3 text-sm font-bold text-[#31583a]">Get to know Brightmoss <span aria-hidden="true">→</span></a></div></div></section>
+
+    <section id="stories" class="px-6 py-24 text-center lg:py-32"><div class="mx-auto max-w-[790px]"><div class="text-xl tracking-[.2em] text-[#8eb465]" aria-label="Five stars">★★★★★</div><blockquote class="mt-7 font-[Manrope] text-[27px] font-semibold leading-[1.4] tracking-[-1px] sm:text-[35px]">“The best support feels like a real conversation. Brightmoss helps our team bring that feeling to every reply.”</blockquote><div class="mt-7 flex items-center justify-center gap-3"><span class="flex h-10 w-10 items-center justify-center rounded-full bg-[#d9b49d] text-sm font-bold text-white">M</span><div class="text-left"><p class="text-xs font-bold">Morgan Lee</p><p class="mt-1 text-xs text-[#91a091]">Customer Experience Lead</p></div></div></div></section>
+
+    <section class="px-6 pb-16 lg:px-12"><div class="relative mx-auto max-w-[1224px] overflow-hidden rounded-[24px] bg-[#294d35] px-7 py-16 text-center text-white sm:px-12 sm:py-20"><div class="absolute -left-10 -top-20 h-56 w-56 rounded-full border border-[#55775a]"></div><div class="absolute -bottom-28 right-0 h-64 w-64 rounded-full border border-[#55775a]"></div><div class="relative"><p class="mb-4 text-[11px] font-bold uppercase tracking-[.16em] text-[#bfdf9e]">A brighter way to work</p><h2 class="text-4xl font-bold tracking-[-1.6px] sm:text-[48px]">Make room for more care.</h2><p class="mx-auto mt-5 max-w-md text-sm leading-7 text-[#c6d7c4]">Give your team the words and the time to make every customer feel heard.</p><a href="mailto:hello@brightmoss.com?subject=Brightmoss%20demo" class="mt-8 inline-flex items-center gap-5 rounded-full bg-[#d3f493] px-6 py-4 text-sm font-bold text-[#284832] transition hover:bg-[#e2ffac]">Book a demo <span aria-hidden="true">↗</span></a></div></div></section>
+  </main>
+  <footer class="border-t border-[#e5e9df] px-6 py-8 lg:px-12"><div class="mx-auto flex max-w-[1224px] flex-wrap items-center justify-between gap-5"><a href="#" class="brand text-lg font-extrabold tracking-[-1px]">✳ &nbsp;brightmoss<span class="text-[#84a955]">.</span></a><p class="text-xs text-[#92a091]">© 2026 Brightmoss. Made for more human moments.</p><a href="mailto:hello@brightmoss.com" class="text-xs font-semibold text-[#657767] hover:text-[#294d35]">Say hello ↗</a></div></footer>
+</body>
+</html>

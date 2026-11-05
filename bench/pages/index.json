@@ -334,5 +334,173 @@
     "framework": "bootstrap",
     "brief": "portfolio",
     "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
+  },
+  {
+    "file": "gpt-6.1-sol-timetrack-tailwind.html",
+    "model": "gpt-6.1-sol",
+    "framework": "tailwind",
+    "brief": "timetrack",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A landing page for Tallyhoo, a time-tracking app for freelance designers."
+  },
+  {
+    "file": "gpt-6.1-sol-timetrack-bootstrap.html",
+    "model": "gpt-6.1-sol",
+    "framework": "bootstrap",
+    "brief": "timetrack",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A landing page for Tallyhoo, a time-tracking app for freelance designers."
+  },
+  {
+    "file": "gpt-6.1-sol-aiwriter-tailwind.html",
+    "model": "gpt-6.1-sol",
+    "framework": "tailwind",
+    "brief": "aiwriter",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A landing page for Brightmoss, an AI writing assistant for customer-support teams."
+  },
+  {
+    "file": "gpt-6.1-sol-aiwriter-bootstrap.html",
+    "model": "gpt-6.1-sol",
+    "framework": "bootstrap",
+    "brief": "aiwriter",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A landing page for Brightmoss, an AI writing assistant for customer-support teams."
+  },
+  {
+    "file": "gpt-6.1-sol-dashboard-tailwind.html",
+    "model": "gpt-6.1-sol",
+    "framework": "tailwind",
+    "brief": "dashboard",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: The home screen of Ledgerly, an accounting web app for small businesses: revenue this month, invoices due, recent transactions and a cash-flow chart."
+  },
+  {
+    "file": "gpt-6.1-sol-dashboard-bootstrap.html",
+    "model": "gpt-6.1-sol",
+    "framework": "bootstrap",
+    "brief": "dashboard",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home screen of Ledgerly, an accounting web app for small businesses: revenue this month, invoices due, recent transactions and a cash-flow chart."
+  },
+  {
+    "file": "gpt-6.1-sol-pricing-tailwind.html",
+    "model": "gpt-6.1-sol",
+    "framework": "tailwind",
+    "brief": "pricing",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A pricing page for Fernhook, a developer API for sending SMS, with three plans and an FAQ."
+  },
+  {
+    "file": "gpt-6.1-sol-pricing-bootstrap.html",
+    "model": "gpt-6.1-sol",
+    "framework": "bootstrap",
+    "brief": "pricing",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A pricing page for Fernhook, a developer API for sending SMS, with three plans and an FAQ."
+  },
+  {
+    "file": "gpt-6.1-sol-bakery-tailwind.html",
+    "model": "gpt-6.1-sol",
+    "framework": "tailwind",
+    "brief": "bakery",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A home page for Crumb & Co, a neighbourhood bakery: what they bake, opening hours and where to find them."
+  },
+  {
+    "file": "gpt-6.1-sol-bakery-bootstrap.html",
+    "model": "gpt-6.1-sol",
+    "framework": "bootstrap",
+    "brief": "bakery",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A home page for Crumb & Co, a neighbourhood bakery: what they bake, opening hours and where to find them."
+  },
+  {
+    "file": "gpt-6.1-sol-portfolio-tailwind.html",
+    "model": "gpt-6.1-sol",
+    "framework": "tailwind",
+    "brief": "portfolio",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
+  },
+  {
+    "file": "gpt-6.1-sol-portfolio-bootstrap.html",
+    "model": "gpt-6.1-sol",
+    "framework": "bootstrap",
+    "brief": "portfolio",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
+  },
+  {
+    "file": "gpt-6.1-terra-timetrack-tailwind.html",
+    "model": "gpt-6.1-terra",
+    "framework": "tailwind",
+    "brief": "timetrack",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A landing page for Tallyhoo, a time-tracking app for freelance designers."
+  },
+  {
+    "file": "gpt-6.1-terra-timetrack-bootstrap.html",
+    "model": "gpt-6.1-terra",
+    "framework": "bootstrap",
+    "brief": "timetrack",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A landing page for Tallyhoo, a time-tracking app for freelance designers."
+  },
+  {
+    "file": "gpt-6.1-terra-aiwriter-tailwind.html",
+    "model": "gpt-6.1-terra",
+    "framework": "tailwind",
+    "brief": "aiwriter",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A landing page for Brightmoss, an AI writing assistant for customer-support teams."
+  },
+  {
+    "file": "gpt-6.1-terra-aiwriter-bootstrap.html",
+    "model": "gpt-6.1-terra",
+    "framework": "bootstrap",
+    "brief": "aiwriter",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A landing page for Brightmoss, an AI writing assistant for customer-support teams."
+  },
+  {
+    "file": "gpt-6.1-terra-dashboard-tailwind.html",
+    "model": "gpt-6.1-terra",
+    "framework": "tailwind",
+    "brief": "dashboard",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: The home screen of Ledgerly, an accounting web app for small businesses: revenue this month, invoices due, recent transactions and a cash-flow chart."
+  },
+  {
+    "file": "gpt-6.1-terra-dashboard-bootstrap.html",
+    "model": "gpt-6.1-terra",
+    "framework": "bootstrap",
+    "brief": "dashboard",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home screen of Ledgerly, an accounting web app for small businesses: revenue this month, invoices due, recent transactions and a cash-flow chart."
+  },
+  {
+    "file": "gpt-6.1-terra-pricing-tailwind.html",
+    "model": "gpt-6.1-terra",
+    "framework": "tailwind",
+    "brief": "pricing",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A pricing page for Fernhook, a developer API for sending SMS, with three plans and an FAQ."
+  },
+  {
+    "file": "gpt-6.1-terra-pricing-bootstrap.html",
+    "model": "gpt-6.1-terra",
+    "framework": "bootstrap",
+    "brief": "pricing",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A pricing page for Fernhook, a developer API for sending SMS, with three plans and an FAQ."
+  },
+  {
+    "file": "gpt-6.1-terra-bakery-tailwind.html",
+    "model": "gpt-6.1-terra",
+    "framework": "tailwind",
+    "brief": "bakery",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A home page for Crumb & Co, a neighbourhood bakery: what they bake, opening hours and where to find them."
+  },
+  {
+    "file": "gpt-6.1-terra-bakery-bootstrap.html",
+    "model": "gpt-6.1-terra",
+    "framework": "bootstrap",
+    "brief": "bakery",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A home page for Crumb & Co, a neighbourhood bakery: what they bake, opening hours and where to find them."
+  },
+  {
+    "file": "gpt-6.1-terra-portfolio-tailwind.html",
+    "model": "gpt-6.1-terra",
+    "framework": "tailwind",
+    "brief": "portfolio",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
+  },
+  {
+    "file": "gpt-6.1-terra-portfolio-bootstrap.html",
+    "model": "gpt-6.1-terra",
+    "framework": "bootstrap",
+    "brief": "portfolio",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
   }
 ]

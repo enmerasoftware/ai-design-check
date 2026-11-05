@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Simple, transparent SMS API pricing for teams of every size.">
+  <title>Pricing — Fernhook</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+    :root { font-family: 'DM Sans', sans-serif; color: #183a2d; background: #f8faf5; }
+    h1, h2, h3, .brand { font-family: 'Manrope', sans-serif; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] .plus { transform: rotate(45deg); }
+    .plus { transition: transform .2s ease; }
+  </style>
+</head>
+<body class="antialiased">
+  <header class="border-b border-[#dfe8dd] bg-[#f8faf5]">
+    <div class="mx-auto flex h-20 max-w-[1280px] items-center justify-between px-6 lg:px-10">
+      <a href="#" class="brand flex items-center gap-2.5 text-[23px] font-extrabold tracking-[-1.2px] text-[#173e2d]" aria-label="Fernhook home">
+        <svg width="31" height="31" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#235A3F"/><path d="M8 23.5c5.2-1.1 9.9-5.6 14.9-14.8M13.5 20.7c-2.9-.1-4.6-1.5-5.2-4.1 2.7-.1 4.7.8 6.2 2.7M17.3 16.8c-.6-2.7.2-4.8 2.5-6.3 1.1 2.5.8 4.6-.7 6.4M12 21.6c1.8 1.9 4 2.4 6.6 1.3-.9-2.3-2.6-3.6-5.2-3.6" stroke="#E0F3A6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        fernhook<span class="text-[#8caf86]">.</span>
+      </a>
+      <nav class="hidden items-center gap-9 text-[14px] font-semibold text-[#526b5d] md:flex" aria-label="Main navigation">
+        <a class="hover:text-[#153e2b]" href="#features">Product</a><a class="hover:text-[#153e2b]" href="#faq">Developers</a><a class="text-[#173e2d]" href="#pricing" aria-current="page">Pricing</a><a class="hover:text-[#153e2b]" href="mailto:hello@fernhook.com">Company</a>
+      </nav>
+      <div class="flex items-center gap-5 text-sm font-bold"><a href="mailto:hello@fernhook.com" class="hidden text-[#294d3b] sm:block">Log in</a><a href="mailto:hello@fernhook.com?subject=Get%20started%20with%20Fernhook" class="rounded-lg bg-[#194a33] px-5 py-3 text-white transition hover:bg-[#286344]">Get started <span class="ml-1">↗</span></a></div>
+    </div>
+  </header>
+  <main>
+    <section id="pricing" class="relative overflow-hidden px-6 pb-20 pt-16 lg:px-10 lg:pb-24 lg:pt-20">
+      <div class="pointer-events-none absolute left-0 top-0 h-[410px] w-full bg-[#eef5e9]"></div>
+      <div class="relative mx-auto max-w-[1200px]">
+        <div class="text-center">
+          <div class="inline-flex items-center gap-2 rounded-full border border-[#cfdfc8] bg-[#f8fbf5] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.13em] text-[#537a52]"><span class="h-1.5 w-1.5 rounded-full bg-[#71a766]"></span> Simple, transparent pricing</div>
+          <h1 class="mx-auto mt-5 max-w-3xl text-[40px] font-extrabold leading-[1.1] tracking-[-2px] text-[#173e2d] sm:text-[56px]">Good messages.<br><span class="text-[#78a565]">Better pricing.</span></h1>
+          <p class="mx-auto mt-5 max-w-xl text-[16px] leading-7 text-[#6c8271]">From your first message to your millionth, there's a plan that grows with you. No surprises, just simple SMS.</p>
+          <div class="mt-7 inline-flex items-center gap-3 rounded-full border border-[#d9e7d4] bg-white p-1.5 text-xs font-bold text-[#68816d]"><span class="rounded-full bg-[#e6f1de] px-4 py-2 text-[#275d3a]">Pay monthly</span><span class="pr-3">No contracts. Cancel anytime.</span></div>
+        </div>
+        <div class="mt-12 grid items-stretch gap-5 lg:grid-cols-3">
+          <article class="flex flex-col rounded-2xl border border-[#dce8d9] bg-white p-7 shadow-[0_12px_35px_rgba(40,78,45,.04)] sm:p-8">
+            <div class="flex items-start justify-between"><div><p class="text-xs font-bold uppercase tracking-[.14em] text-[#71906f]">For getting started</p><h2 class="mt-2 text-2xl font-extrabold tracking-[-.8px]">Seedling</h2></div><div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eef5e9] text-[#528453]"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 21v-9M12 15C6 15 4 12 4 8c5 0 8 2 8 7ZM12 12c0-5 3-7 8-7 0 4-2 7-8 7Z"/></svg></div></div>
+            <p class="mt-4 min-h-[48px] text-sm leading-6 text-[#788b7b]">Everything you need to start building with SMS.</p>
+            <div class="mt-6 border-b border-[#edf2eb] pb-6"><span class="text-[42px] font-extrabold tracking-[-2px] text-[#173e2d]">$0</span><span class="ml-1 text-sm text-[#829283]">/ month</span><p class="mt-1 text-xs text-[#829283]">Just pay for the messages you send</p></div>
+            <p class="mt-6 text-[13px] font-bold text-[#315640]">What's included</p>
+            <ul class="mt-4 space-y-3.5 text-[13px] text-[#647b69]"><li>✓ <span class="ml-2">Pay-as-you-go messaging</span></li><li>✓ <span class="ml-2">SMS API &amp; webhooks</span></li><li>✓ <span class="ml-2">Developer documentation</span></li><li>✓ <span class="ml-2">Community support</span></li></ul>
+            <a href="mailto:hello@fernhook.com?subject=Start%20with%20Seedling" class="mt-8 block rounded-lg border border-[#cbdcca] px-4 py-3.5 text-center text-sm font-bold text-[#285439] transition hover:bg-[#f1f7ee] lg:mt-auto">Start building <span class="ml-1">→</span></a>
+          </article>
+          <article class="relative flex flex-col rounded-2xl border-2 border-[#588d5c] bg-white p-[27px] shadow-[0_16px_45px_rgba(50,100,55,.12)] sm:p-[31px]">
+            <span class="absolute right-6 top-0 -translate-y-1/2 rounded-full bg-[#d9edbb] px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.1em] text-[#3e7040]">Most popular</span>
+            <div class="flex items-start justify-between"><div><p class="text-xs font-bold uppercase tracking-[.14em] text-[#71906f]">For growing teams</p><h2 class="mt-2 text-2xl font-extrabold tracking-[-.8px]">Grove</h2></div><div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[#e6f2dd] text-[#528453]"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V8M12 14C8 14 5 12 5 8c4 0 7 2 7 6ZM12 11c0-4 2-6 6-6 0 4-2 6-6 6ZM8 21h8"/></svg></div></div>
+            <p class="mt-4 min-h-[48px] text-sm leading-6 text-[#788b7b]">More room to grow, with tools for your whole team.</p>
+            <div class="mt-6 border-b border-[#edf2eb] pb-6"><span class="text-[42px] font-extrabold tracking-[-2px] text-[#173e2d]">$49</span><span class="ml-1 text-sm text-[#829283]">/ month</span><p class="mt-1 text-xs text-[#829283]">Plus usage-based messaging rates</p></div>
+            <p class="mt-6 text-[13px] font-bold text-[#315640]">Everything in Seedling, plus</p>
+            <ul class="mt-4 space-y-3.5 text-[13px] text-[#647b69]"><li>✓ <span class="ml-2">Lower per-message rates</span></li><li>✓ <span class="ml-2">Advanced delivery analytics</span></li><li>✓ <span class="ml-2">Up to 5 team members</span></li><li>✓ <span class="ml-2">Priority email support</span></li></ul>
+            <a href="mailto:hello@fernhook.com?subject=Get%20started%20with%20Grove" class="mt-8 block rounded-lg bg-[#1e5338] px-4 py-3.5 text-center text-sm font-bold text-white transition hover:bg-[#2f6948] lg:mt-auto">Get started with Grove <span class="ml-1">→</span></a>
+          </article>
+          <article class="flex flex-col rounded-2xl border border-[#dce8d9] bg-white p-7 shadow-[0_12px_35px_rgba(40,78,45,.04)] sm:p-8">
+            <div class="flex items-start justify-between"><div><p class="text-xs font-bold uppercase tracking-[.14em] text-[#71906f]">For scaling businesses</p><h2 class="mt-2 text-2xl font-extrabold tracking-[-.8px]">Forest</h2></div><div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eef5e9] text-[#528453]"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V4M12 10 8 6M12 14l5-5M12 18l-6-5M7 21h10"/><path d="M8 6C5 6 4 4 4 2c3 0 4 1 4 4ZM17 9c0-3 1-5 4-5 0 3-1 5-4 5ZM6 13c-3 0-4-2-4-4 3 0 4 1 4 4Z"/></svg></div></div>
+            <p class="mt-4 min-h-[48px] text-sm leading-6 text-[#788b7b]">Built for scale, with a little extra care from us.</p>
+            <div class="mt-6 border-b border-[#edf2eb] pb-6"><span class="text-[37px] font-extrabold tracking-[-1.5px] text-[#173e2d]">Let's talk</span><p class="mt-2 text-xs text-[#829283]">Custom pricing for your needs</p></div>
+            <p class="mt-6 text-[13px] font-bold text-[#315640]">Everything in Grove, plus</p>
+            <ul class="mt-4 space-y-3.5 text-[13px] text-[#647b69]"><li>✓ <span class="ml-2">Custom volume discounts</span></li><li>✓ <span class="ml-2">Unlimited team members</span></li><li>✓ <span class="ml-2">Dedicated account manager</span></li><li>✓ <span class="ml-2">Tailored onboarding &amp; support</span></li></ul>
+            <a href="mailto:sales@fernhook.com?subject=Forest%20plan" class="mt-8 block rounded-lg border border-[#cbdcca] px-4 py-3.5 text-center text-sm font-bold text-[#285439] transition hover:bg-[#f1f7ee] lg:mt-auto">Talk to sales <span class="ml-1">→</span></a>
+          </article>
+        </div>
+        <p class="mt-7 text-center text-xs text-[#879987]">All plans include secure, reliable delivery and access to our developer-friendly API. <a href="mailto:hello@fernhook.com" class="font-bold text-[#4f8054] underline underline-offset-2">Questions about pricing?</a></p>
+      </div>
+    </section>
+    <section id="features" class="border-y border-[#e0eade] bg-[#edf5e9] px-6 py-10 lg:px-10"><div class="mx-auto flex max-w-[1120px] flex-col items-center justify-between gap-7 text-center md:flex-row md:text-left"><div><p class="text-[11px] font-bold uppercase tracking-[.14em] text-[#82a080]">Built for builders</p><h2 class="mt-2 text-xl font-extrabold tracking-[-.6px]">The little things add up.</h2></div><div class="grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-10"><div class="flex items-center gap-3 text-sm font-bold text-[#496b50]"><span class="text-xl text-[#7eab72]">✳</span> Simple REST API</div><div class="flex items-center gap-3 text-sm font-bold text-[#496b50]"><span class="text-xl text-[#7eab72]">◷</span> Real-time webhooks</div><div class="flex items-center gap-3 text-sm font-bold text-[#496b50]"><span class="text-xl text-[#7eab72]">◇</span> Reliable delivery</div></div></div></section>
+    <section id="faq" class="mx-auto grid max-w-[1120px] gap-10 px-6 py-20 md:grid-cols-[.8fr_1.2fr] lg:px-10 lg:py-24"><div><p class="text-xs font-bold uppercase tracking-[.14em] text-[#7da078]">A little more detail</p><h2 class="mt-3 text-3xl font-extrabold tracking-[-1.2px] sm:text-4xl">Questions?<br>We've got answers.</h2><p class="mt-5 max-w-xs text-sm leading-7 text-[#788b7b]">Still curious about something? Our friendly team is always happy to help.</p><a href="mailto:hello@fernhook.com" class="mt-5 inline-block text-sm font-bold text-[#427b4c]">Get in touch <span class="ml-1">→</span></a></div><div class="border-t border-[#dfe9dc]"><details class="group border-b border-[#dfe9dc] py-5" open><summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold text-[#284d37]">How does usage-based pricing work?<span class="plus text-xl font-normal text-[#75a16d]">+</span></summary><p class="mt-3 max-w-xl pr-8 text-sm leading-6 text-[#7b8d7d]">You only pay for the messages you send, in addition to any monthly plan fee. Message rates vary by destination and volume; we'll always make your rates clear before you send.</p></details><details class="group border-b border-[#dfe9dc] py-5"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold text-[#284d37]">Can I change plans later?<span class="plus text-xl font-normal text-[#75a16d]">+</span></summary><p class="mt-3 pr-8 text-sm leading-6 text-[#7b8d7d]">Absolutely. You can move to a different plan as your needs change. Get in touch and we'll help you find the right fit.</p></details><details class="group border-b border-[#dfe9dc] py-5"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold text-[#284d37]">Are there any setup fees or contracts?<span class="plus text-xl font-normal text-[#75a16d]">+</span></summary><p class="mt-3 pr-8 text-sm leading-6 text-[#7b8d7d]">There are no setup fees or long-term contracts for Seedling or Grove. You can cancel your monthly plan at any time.</p></details><details class="group border-b border-[#dfe9dc] py-5"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold text-[#284d37]">What kind of support do you offer?<span class="plus text-xl font-normal text-[#75a16d]">+</span></summary><p class="mt-3 pr-8 text-sm leading-6 text-[#7b8d7d]">Every plan includes access to our documentation and community. Grove includes priority email support, while Forest comes with dedicated help.</p></details></div></section>
+  </main>
+  <footer class="border-t border-[#e1eae0] px-6 py-8 lg:px-10"><div class="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-4 text-xs text-[#8a9a8b] sm:flex-row"><a href="#" class="brand text-lg font-extrabold tracking-[-.8px] text-[#315b3e]">✿ fernhook<span class="text-[#8caf86]">.</span></a><p>© 2026 Fernhook. Made for meaningful connections.</p><div class="flex gap-5"><a class="hover:text-[#315b3e]" href="mailto:hello@fernhook.com">Contact</a><a class="hover:text-[#315b3e]" href="#faq">FAQ</a></div></div></footer>
+</body>
+</html>

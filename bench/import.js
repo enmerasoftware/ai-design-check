@@ -15,7 +15,7 @@ const PAGES = join(dirname(fileURLToPath(import.meta.url)), 'pages');
 /** Where the generating agents wrote the 0.14.0 set. Any folder with the same layout works. */
 const CORPUS = '/private/tmp/claude-501/-Users-sinanyorulmaz-Projeler-Web-ai-design-check/0c11bcb4-3041-4f6c-b1d7-5384d0fc843c/scratchpad/bench-corpus';
 
-const MODELS = ['opus', 'sonnet', 'haiku', 'fable'];
+const MODELS = ['opus', 'sonnet', 'haiku', 'fable', 'gpt-6.1-sol', 'gpt-6.1-terra'];
 const BRIEFS = {
     timetrack: 'A landing page for Tallyhoo, a time-tracking app for freelance designers.',
     aiwriter: 'A landing page for Brightmoss, an AI writing assistant for customer-support teams.',
