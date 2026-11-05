@@ -94,6 +94,11 @@ Kurallar [Enmera](https://enmera.com.tr) ve [Searvia](https://searvia.com)'da ca
 gibi görünenler, dar ekranda bozulanlar, kullanıcının anlamadıkları. Ardından yüksek puanlı 16 panel tasarımıyla karşılaştırdık.
 Yöntem ve bulgular: [RESEARCH.md](RESEARCH.md).
 
+**Ne kadar iyi ayırıyor?** [BENCHMARK.md](BENCHMARK.md) her kuralı, dört Claude modelinin Tailwind ve Bootstrap ile ürettiği 48
+sayfada ve insanların tasarladığı 34 sitede çalıştırır. Bazı kurallar iki grubu açıkça ayırır: telefonda yapay zekâ
+sayfalarının %38'i yana kayar, insan sitelerinin hiçbiri kaymaz; krem zemin %33'e karşı %3 görülür. Mor gradyan gibi
+bazıları artık ayırmıyor; bu kuralların önem seviyesi bu kanıta göre belirlendi.
+
 ## Çalışan sayfa ve yeniden tasarım
 
 `scan` sayfayı Chrome'unuzda masaüstü ve telefon genişliğinde açar; model ve API anahtarı gerekmez. Kaynak kodun

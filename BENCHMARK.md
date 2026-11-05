@@ -6,6 +6,28 @@ The rules are there to catch interfaces that look generated and interfaces that 
 most human sites as well is not telling the two apart, and a rule that never fires on AI pages is not earning its
 place. The pages, the site list, the code and the numbers are all here, so anyone can check them and run them again.
 
+## What it shows
+
+From the run on 5 November 2026; the full numbers are under [Results](#results).
+
+- **Some rules separate the two groups well.** On phones, 38% of the AI pages scroll sideways and no human site does.
+  All of them are Bootstrap pages, 18 of the 24: a `.row` with `g-4` or `g-5` gutters is wider than its container's
+  padding. A cream page ground: 33% of the AI pages, one human site. An icon tile above every heading: 17% and none. An
+  eyebrow label above a heading: 25% and 9%. A badge pill above the headline: 19% and 6%. Numbered section labels: 10%
+  and none.
+- **Some tells no longer tell.** Purple gradients and gradient text fired on no AI page and on 24% of the human sites
+  (Stripe, Raycast, Shopify and Bootstrap's own site among them). Radial halos and auto-scrolling logo strips also showed
+  up on human sites more often than on AI pages. Those rules are now warnings or notes, not errors, and this table is why.
+- **The craft rules fire on everyone.** Line breaks, heading wrap, line length, small text and text near the screen edge
+  fire on human sites as much as on AI pages, often more: human sites are longer and carry more text. They are there to
+  improve any page, not to tell who made it.
+- **Today's Claude pages have their own habits.** The habits a spring-2026 sample of generated-looking Show HN sites
+  showed (an accent word in the headline, coloured shadows, an arrow on every call to action) barely appear in pages from
+  Claude Opus 5.5, Sonnet 5.5, Haiku 5.5 and Fable 5.1. Theirs are the cream ground, the eyebrow, the icon tiles,
+  numbered sections and, in Bootstrap, the overflowing row. Rules whose evidence comes from other generators stay notes.
+- **Neither side is more accessible.** 69% of the AI pages and 65% of the human sites have at least one contrast or
+  heading-order finding.
+
 ## What is measured
 
 - **AI pages.** 48 single-file pages: six briefs, each built once with Tailwind CSS and once with Bootstrap, by four
@@ -137,16 +159,16 @@ The bench folder is not part of the npm package.
 ## Results
 
 <!-- results:start -->
-Measured on 2026-11-05 with ai-design-check 0.13.0, Node v25.4.0 and Google Chrome 156.0.8078.80, at 1440 and 390 px. 48 AI pages from 4 models, 6 briefs and 2 frameworks; 34 human sites. Counts for every page and site are in [bench/results.json](bench/results.json).
+Measured on 2026-11-05 with ai-design-check 0.14.0, Node v25.4.0 and Google Chrome 156.0.8078.80, at 1440 and 390 px. 48 AI pages from 4 models, 6 briefs and 2 frameworks; 34 human sites. Counts for every page and site are in [bench/results.json](bench/results.json).
 
 ### At a glance
 
 | Group | Checker | Measured | With a style finding | Style findings, median | With an accessibility finding | Accessibility findings, median |
 |---|---|---:|---:|---:|---:|---:|
 | AI pages | browser | 48 of 48 | 96% | 7 | 69% | 2 |
-| Human sites | browser | 33 of 34 | 97% | 16 | 70% | 5 |
-| Human sites, research set | browser | 12 of 12 | 92% | 15.5 | 58% | 2.5 |
-| Human sites, new | browser | 21 of 22 | 100% | 16 | 76% | 6 |
+| Human sites | browser | 34 of 34 | 97% | 14 | 65% | 3 |
+| Human sites, research set | browser | 12 of 12 | 92% | 15.5 | 58% | 2 |
+| Human sites, new | browser | 22 of 22 | 100% | 12.5 | 68% | 4.5 |
 | AI pages | source | 48 of 48 | 90% | 3 | 13% | 0 |
 
 The browser rows compare like with like: one checker reads both groups. Human sites have no source to read, so the source row has no human counterpart. Almost every page, AI or human, has some style finding: the broad craft rules (line breaks, wrapping, measure) fire on both. What tells the groups apart is the next section.
@@ -158,30 +180,30 @@ Browser checker only, so both groups are read the same way. A rule is listed whe
 | Fires more on AI pages | AI pages | Human sites | Difference |
 |---|---:|---:|---:|
 | `no-horizontal-overflow` No sideways scrolling on phones | 38% | 0% | +38 |
+| `no-straggler` No single word on the last line | 81% | 50% | +31 |
 | `no-default-cream` A background chosen, not defaulted | 33% | 3% | +30 |
-| `no-straggler` No single word on the last line | 81% | 52% | +30 |
 | `no-icon-tile-stack` No icon tile above every heading | 17% | 0% | +17 |
+| `balanced-headings` Headings wrap evenly | 67% | 50% | +17 |
 | `no-eyebrow-label` No eyebrow label above a heading | 25% | 9% | +16 |
-| `balanced-headings` Headings wrap evenly | 67% | 52% | +15 |
+| `no-announcement-pill` No announcement pill above the headline | 19% | 6% | +13 |
 | `no-section-numbers` No numbered section labels | 10% | 0% | +10 |
 
 | Fires as often or more on human sites | AI pages | Human sites | Difference |
 |---|---:|---:|---:|
-| `text-off-viewport-edge` Text keeps off the screen edge | 2% | 36% | -34 |
-| `no-tiny-text` No tiny text | 10% | 42% | -32 |
-| `no-tight-leading` Lines have room | 4% | 33% | -29 |
-| `readable-measure` Readable line length and leading | 8% | 33% | -25 |
+| `no-tiny-text` No tiny text | 10% | 44% | -34 |
+| `text-off-viewport-edge` Text keeps off the screen edge | 2% | 35% | -33 |
+| `no-tight-leading` Lines have room | 4% | 32% | -28 |
+| `readable-measure` Readable line length and leading | 8% | 32% | -24 |
 | `no-ai-gradients` No gradient text or purple gradients | 0% | 24% | -24 |
-| `text-not-covered` Nothing covers the text | 8% | 27% | -19 |
+| `text-not-covered` Nothing covers the text | 8% | 26% | -18 |
 | `no-marquee` No auto-scrolling strips | 0% | 18% | -18 |
 | `no-overused-font` A font chosen, not defaulted | 0% | 18% | -18 |
-| `pulse-for-live-only` Pulse only for live data | 4% | 21% | -17 |
-| `text-not-clipped` Text is not cut off | 0% | 15% | -15 |
-| `no-radial-halo` No radial glow behind content | 4% | 18% | -14 |
+| `text-not-clipped` Text is not cut off | 0% | 18% | -18 |
+| `pulse-for-live-only` Pulse only for live data | 4% | 21% | -16 |
 | `no-cramped-padding` Room inside a box | 2% | 15% | -13 |
-| `no-repeated-label` One card says a thing once | 8% | 18% | -10 |
-| `no-nested-cards` No cards inside cards | 19% | 27% | -9 |
-| `no-giant-sentence` No full sentence at display size | 4% | 12% | -8 |
+| `no-radial-halo` No radial glow behind content | 4% | 15% | -11 |
+| `no-repeated-label` One card says a thing once | 8% | 18% | -9 |
+| `no-nested-cards` No cards inside cards | 19% | 26% | -8 |
 
 ### Style rules
 
@@ -189,8 +211,8 @@ The share of pages each rule fired on. A dash means that checker does not read t
 
 | Rule | AI pages, browser | Human sites, browser | AI pages, source |
 |---|---:|---:|---:|
-| `no-straggler` No single word on the last line | 81% | 52% | – |
-| `balanced-headings` Headings wrap evenly | 67% | 52% | – |
+| `no-straggler` No single word on the last line | 81% | 50% | – |
+| `balanced-headings` Headings wrap evenly | 67% | 50% | – |
 | `no-decorative-uppercase` No tracked uppercase labels | – | – | 54% |
 | `repeated-markup` Repeated markup becomes a component | – | – | 42% |
 | `no-horizontal-overflow` No sideways scrolling on phones | 38% | 0% | – |
@@ -198,34 +220,34 @@ The share of pages each rule fired on. A dash means that checker does not read t
 | `hover-media-query` Hover styles only where hover exists | – | – | 29% |
 | `no-eyebrow-label` No eyebrow label above a heading | 25% | 9% | – |
 | `no-heavy-card-shadow` Cards rest on surface steps, not heavy shadows | – | – | 25% |
-| `no-nested-cards` No cards inside cards | 19% | 27% | – |
+| `no-nested-cards` No cards inside cards | 19% | 26% | – |
 | `heading-spacing` A heading sits with what it introduces | 19% | 18% | – |
-| `no-announcement-pill` No announcement pill above the headline | 19% | 9% | 2% |
+| `no-announcement-pill` No announcement pill above the headline | 19% | 6% | 2% |
 | `no-icon-tile-stack` No icon tile above every heading | 17% | 0% | – |
 | `no-greeting-headline` The title names the page, not the user | – | – | 15% |
 | `no-endless-loop` Nothing loops forever without a reason | – | – | 13% |
 | `no-heavy-headings` Headings at regular to semibold weight | – | – | 13% |
-| `no-tiny-text` No tiny text | 10% | 42% | – |
+| `no-tiny-text` No tiny text | 10% | 44% | – |
 | `no-section-numbers` No numbered section labels | 10% | 0% | – |
 | `spacing-scale` Spacing on the project's scale | – | – | 10% |
-| `readable-measure` Readable line length and leading | 8% | 33% | – |
-| `text-not-covered` Nothing covers the text | 8% | 27% | – |
+| `readable-measure` Readable line length and leading | 8% | 32% | – |
+| `text-not-covered` Nothing covers the text | 8% | 26% | – |
 | `no-ai-gradients` No gradient text or purple gradients | 0% | 24% | 8% |
-| `no-radial-halo` No radial glow behind content | 4% | 18% | 8% |
 | `no-repeated-label` One card says a thing once | 8% | 18% | – |
+| `no-radial-halo` No radial glow behind content | 4% | 15% | 8% |
 | `no-middle-dot-lists` No lists strung on middle dots | 8% | 0% | – |
 | `no-italic-emphasis` Emphasis with weight or colour, not italic | – | – | 6% |
 | `no-unsourced-proof` Social proof with a source | – | – | 6% |
-| `no-tight-leading` Lines have room | 4% | 33% | 0% |
+| `no-tight-leading` Lines have room | 4% | 32% | 0% |
 | `pulse-for-live-only` Pulse only for live data | 4% | 21% | 0% |
-| `no-giant-sentence` No full sentence at display size | 4% | 12% | – |
+| `no-giant-sentence` No full sentence at display size | 4% | 9% | – |
 | `no-blinking-cursor` No decorative blinking cursor | 4% | 6% | – |
 | `no-clipart-svg` No clip art built from shapes | 4% | 6% | – |
 | `no-hard-offset-shadow` A hard offset shadow is a decision | 4% | 3% | 4% |
 | `no-neon-on-dark` No neon cyan on dark | 4% | 3% | – |
 | `interface-speed` Interface responds within 300 ms | – | – | 4% |
 | `radius-scale` Corner radii from the scale only | – | – | 4% |
-| `text-off-viewport-edge` Text keeps off the screen edge | 2% | 36% | – |
+| `text-off-viewport-edge` Text keeps off the screen edge | 2% | 35% | – |
 | `no-cramped-padding` Room inside a box | 2% | 15% | – |
 | `no-crushed-tracking` No crushed letter spacing | 2% | 6% | 0% |
 | `no-side-stripe` No coloured side stripe on cards | 2% | 6% | 0% |
@@ -234,14 +256,14 @@ The share of pages each rule fired on. A dash means that checker does not read t
 | `no-tight-small-text` Small text keeps normal tracking | – | – | 2% |
 | `no-marquee` No auto-scrolling strips | 0% | 18% | 0% |
 | `no-overused-font` A font chosen, not defaulted | 0% | 18% | 0% |
-| `text-not-clipped` Text is not cut off | 0% | 15% | – |
+| `text-not-clipped` Text is not cut off | 0% | 18% | – |
 | `no-buried-image` No picture buried under a wash | 0% | 9% | – |
-| `no-invisible-content` Content is visible at rest | 0% | 9% | – |
 | `no-script-errors` No script errors on load | 0% | 9% | – |
 | `flat-type-scale` Headings stand above the text | 0% | 6% | – |
 | `no-accent-word` No accent word in the headline | 0% | 6% | – |
 | `no-bounce-easing` No bounce or overshoot easing on interface | 0% | 6% | 0% |
 | `no-clipped-popover` A clipping box does not cut what it holds | 0% | 6% | – |
+| `no-invisible-content` Content is visible at rest | 0% | 6% | – |
 | `no-lopsided-fold` Columns in the first screen stay close | 0% | 6% | – |
 | `glow-in-charts-only` Glow only in charts | 0% | 3% | 0% |
 | `image-not-broken` No broken images | 0% | 3% | 0% |
@@ -259,10 +281,10 @@ The share of pages each rule fired on. A dash means that checker does not read t
 
 | Rule | AI pages, browser | Human sites, browser | AI pages, source |
 |---|---:|---:|---:|
-| `legible-contrast` Legible contrast | 69% | 64% | – |
+| `legible-contrast` Legible contrast | 69% | 62% | – |
 | `focus-ring-removed` Never remove the focus ring without a replacement | – | – | 6% |
 | `input-text-16` Fields use 16 px text on phones | – | – | 6% |
-| `heading-order` Heading levels do not skip | 0% | 24% | – |
+| `heading-order` Heading levels do not skip | 0% | 21% | – |
 
 In the tables below, as above, the measured count, the share and the first two medians come from the browser checker. The source column reads the AI pages' HTML; the most common rules count a rule found by either checker.
 
@@ -289,18 +311,14 @@ In the tables below, as above, the measured count, the share and the first two m
 | Category | Measured | With a style finding | Style findings, median | Accessibility findings, median | Most common style rules |
 |---|---:|---:|---:|---:|---|
 | Product and SaaS | 13 of 13 | 100% | 21 | 10 | `balanced-headings` 62%, `no-tiny-text` 62%, `no-straggler` 54% |
-| Commerce | 2 of 3 | 100% | 32.5 | 6.5 | `no-tight-leading` 100%, `text-off-viewport-edge` 100%, `balanced-headings` 50% |
+| Commerce | 3 of 3 | 100% | 29 | 1 | `no-tight-leading` 67%, `no-tiny-text` 67%, `text-not-covered` 67% |
 | Docs and reference | 6 of 6 | 100% | 10 | 0 | `no-straggler` 67%, `balanced-headings` 33%, `heading-spacing` 33% |
-| Government | 3 of 3 | 100% | 23 | 1 | `no-straggler` 100%, `balanced-headings` 67%, `text-not-covered` 67% |
+| Government | 3 of 3 | 100% | 23 | 1 | `no-straggler` 100%, `balanced-headings` 67%, `no-cramped-padding` 33% |
 | News | 3 of 3 | 67% | 27 | 1 | `balanced-headings` 67%, `readable-measure` 67%, `text-off-viewport-edge` 67% |
 | Built with Bootstrap | 3 of 3 | 100% | 2 | 3 | `no-ai-gradients` 67%, `no-overused-font` 67%, `no-announcement-pill` 33% |
 | Personal | 3 of 3 | 100% | 9 | 9 | `balanced-headings` 67%, `no-tiny-text` 67%, `no-all-caps-sentences` 33% |
 
 ### Not measured
 
-Left out of every number above.
-
-| Page or site | Checker | Why | Detail |
-|---|---|---|---|
-| Airbnb | browser | crash | TypeError: Cannot read properties of null (reading 'scrollHeight') |
+Every page and site was measured.
 <!-- results:end -->

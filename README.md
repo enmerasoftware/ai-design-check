@@ -93,6 +93,11 @@ The rules come from screens we shipped at [Enmera](https://enmera.com.tr) and [S
 generated, what broke at narrow widths, what people did not understand. We then compared them with 16 highly rated
 dashboard designs. Method and findings: [RESEARCH.md](RESEARCH.md).
 
+**How well it tells them apart.** [BENCHMARK.md](BENCHMARK.md) runs every rule on 48 pages that four Claude models
+generated, in Tailwind and in Bootstrap, and on 34 sites people designed. Some rules separate the two clearly: on phones 38%
+of the AI pages scroll sideways and no human site does; a cream page ground shows on 33% against 3%. Others no longer do,
+purple gradients among them, and their severity follows that evidence.
+
 ## The running page and the redesign
 
 `scan` opens the page in your Chrome at desktop and phone width, with no model and no API key. It reads what the source can't

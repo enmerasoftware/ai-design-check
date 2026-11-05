@@ -1,0 +1,1800 @@
+{
+  "date": "2026-11-05",
+  "tool": "0.14.0",
+  "rulesHash": "f9002ceca6af",
+  "node": "v25.4.0",
+  "chrome": "Google Chrome 156.0.8078.80",
+  "pages": [
+    {
+      "file": "opus-timetrack-tailwind.html",
+      "model": "opus",
+      "framework": "tailwind",
+      "brief": "timetrack",
+      "hash": "cf4c7f17838b",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 1,
+          "no-unsourced-proof": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "legible-contrast": 8,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 1,
+          "no-section-numbers": 1,
+          "no-straggler": 3
+        },
+        "seconds": 8
+      }
+    },
+    {
+      "file": "opus-timetrack-bootstrap.html",
+      "model": "opus",
+      "framework": "bootstrap",
+      "brief": "timetrack",
+      "hash": "8bcf072f59c3",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 3,
+          "legible-contrast": 9,
+          "no-announcement-pill": 1,
+          "no-default-cream": 1,
+          "no-horizontal-overflow": 1,
+          "no-straggler": 1
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "opus-aiwriter-tailwind.html",
+      "model": "opus",
+      "framework": "tailwind",
+      "brief": "aiwriter",
+      "hash": "42d0a6476e34",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-heavy-card-shadow": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 3,
+          "no-nested-cards": 1,
+          "no-straggler": 1
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "opus-aiwriter-bootstrap.html",
+      "model": "opus",
+      "framework": "bootstrap",
+      "brief": "aiwriter",
+      "hash": "d95b3e913e1e",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {}
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 3,
+          "heading-spacing": 1,
+          "no-horizontal-overflow": 1,
+          "no-side-stripe": 1,
+          "no-straggler": 3
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "opus-dashboard-tailwind.html",
+      "model": "opus",
+      "framework": "tailwind",
+      "brief": "dashboard",
+      "hash": "e819132620a5",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "input-text-16": 1,
+          "no-decorative-uppercase": 1,
+          "no-greeting-headline": 1,
+          "repeated-markup": 2
+        }
+      },
+      "browser": {
+        "rules": {
+          "no-repeated-label": 1,
+          "no-straggler": 1,
+          "text-not-covered": 1
+        },
+        "seconds": 8
+      }
+    },
+    {
+      "file": "opus-dashboard-bootstrap.html",
+      "model": "opus",
+      "framework": "bootstrap",
+      "brief": "dashboard",
+      "hash": "12b231fa1cea",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {}
+      },
+      "browser": {
+        "rules": {
+          "no-repeated-label": 1,
+          "no-tiny-text": 1
+        },
+        "seconds": 7
+      }
+    },
+    {
+      "file": "opus-pricing-tailwind.html",
+      "model": "opus",
+      "framework": "tailwind",
+      "brief": "pricing",
+      "hash": "250e25a3bfe5",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {}
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "legible-contrast": 1,
+          "no-straggler": 1
+        },
+        "seconds": 8
+      }
+    },
+    {
+      "file": "opus-pricing-bootstrap.html",
+      "model": "opus",
+      "framework": "bootstrap",
+      "brief": "pricing",
+      "hash": "c368d03f6cb0",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "spacing-scale": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 6,
+          "no-straggler": 1
+        },
+        "seconds": 8
+      }
+    },
+    {
+      "file": "opus-bakery-tailwind.html",
+      "model": "opus",
+      "framework": "tailwind",
+      "brief": "bakery",
+      "hash": "88888505f3dc",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-italic-emphasis": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "no-default-cream": 1,
+          "no-straggler": 2
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "opus-bakery-bootstrap.html",
+      "model": "opus",
+      "framework": "bootstrap",
+      "brief": "bakery",
+      "hash": "2ee55d2c274d",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {}
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 2,
+          "no-default-cream": 1,
+          "no-horizontal-overflow": 1,
+          "no-straggler": 1
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "opus-portfolio-tailwind.html",
+      "model": "opus",
+      "framework": "tailwind",
+      "brief": "portfolio",
+      "hash": "8fd0b19f3375",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 2,
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 3,
+          "heading-spacing": 1,
+          "legible-contrast": 8,
+          "no-default-cream": 1,
+          "no-straggler": 2
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "opus-portfolio-bootstrap.html",
+      "model": "opus",
+      "framework": "bootstrap",
+      "brief": "portfolio",
+      "hash": "d45386efc8e8",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-decorative-uppercase": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "heading-spacing": 1,
+          "legible-contrast": 2,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 1,
+          "no-horizontal-overflow": 1,
+          "no-straggler": 2,
+          "no-tight-leading": 1,
+          "readable-measure": 1
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "sonnet-timetrack-tailwind.html",
+      "model": "sonnet",
+      "framework": "tailwind",
+      "brief": "timetrack",
+      "hash": "e871a332cc8f",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 1,
+          "no-hard-offset-shadow": 2,
+          "no-radial-halo": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 2,
+          "heading-spacing": 1,
+          "legible-contrast": 1,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 1,
+          "no-giant-sentence": 1,
+          "no-hard-offset-shadow": 2,
+          "no-section-numbers": 1,
+          "no-straggler": 3
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "sonnet-timetrack-bootstrap.html",
+      "model": "sonnet",
+      "framework": "bootstrap",
+      "brief": "timetrack",
+      "hash": "898525c1b656",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-decorative-uppercase": 1,
+          "no-hard-offset-shadow": 2
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "heading-spacing": 1,
+          "legible-contrast": 4,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 1,
+          "no-giant-sentence": 1,
+          "no-hard-offset-shadow": 2,
+          "no-horizontal-overflow": 1,
+          "no-section-numbers": 1,
+          "no-straggler": 2
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "sonnet-aiwriter-tailwind.html",
+      "model": "sonnet",
+      "framework": "tailwind",
+      "brief": "aiwriter",
+      "hash": "19ffbf03afef",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-announcement-pill": 1,
+          "no-decorative-uppercase": 1,
+          "no-heavy-card-shadow": 1,
+          "no-heavy-headings": 5
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "no-announcement-pill": 1,
+          "no-nested-cards": 1,
+          "no-straggler": 2
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "sonnet-aiwriter-bootstrap.html",
+      "model": "sonnet",
+      "framework": "bootstrap",
+      "brief": "aiwriter",
+      "hash": "fc6caf844739",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "focus-ring-removed": 3,
+          "no-decorative-uppercase": 1,
+          "no-heavy-headings": 2
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 4,
+          "no-announcement-pill": 1,
+          "no-horizontal-overflow": 1,
+          "no-nested-cards": 1,
+          "no-straggler": 2,
+          "no-tiny-text": 2
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "sonnet-dashboard-tailwind.html",
+      "model": "sonnet",
+      "framework": "tailwind",
+      "brief": "dashboard",
+      "hash": "d200a3eaaac1",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 1,
+          "no-greeting-headline": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 6
+        },
+        "seconds": 8
+      }
+    },
+    {
+      "file": "sonnet-dashboard-bootstrap.html",
+      "model": "sonnet",
+      "framework": "bootstrap",
+      "brief": "dashboard",
+      "hash": "486814877cb9",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-decorative-uppercase": 1,
+          "no-greeting-headline": 1,
+          "spacing-scale": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 2
+        },
+        "seconds": 8
+      }
+    },
+    {
+      "file": "sonnet-pricing-tailwind.html",
+      "model": "sonnet",
+      "framework": "tailwind",
+      "brief": "pricing",
+      "hash": "5d28bab7da38",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {}
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 4,
+          "no-straggler": 1
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "sonnet-pricing-bootstrap.html",
+      "model": "sonnet",
+      "framework": "bootstrap",
+      "brief": "pricing",
+      "hash": "7bae20f4b9d6",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "focus-ring-removed": 5,
+          "hover-media-query": 1,
+          "spacing-scale": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 5,
+          "legible-contrast": 1,
+          "no-tiny-text": 1
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "sonnet-bakery-tailwind.html",
+      "model": "sonnet",
+      "framework": "tailwind",
+      "brief": "bakery",
+      "hash": "702f488fff0a",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-italic-emphasis": 1,
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "no-default-cream": 1
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "sonnet-bakery-bootstrap.html",
+      "model": "sonnet",
+      "framework": "bootstrap",
+      "brief": "bakery",
+      "hash": "7b18023c3555",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 2,
+          "no-default-cream": 1,
+          "no-horizontal-overflow": 1
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "sonnet-portfolio-tailwind.html",
+      "model": "sonnet",
+      "framework": "tailwind",
+      "brief": "portfolio",
+      "hash": "e99becfc54bf",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 3
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 2,
+          "no-default-cream": 1,
+          "no-straggler": 4
+        },
+        "seconds": 8
+      }
+    },
+    {
+      "file": "sonnet-portfolio-bootstrap.html",
+      "model": "sonnet",
+      "framework": "bootstrap",
+      "brief": "portfolio",
+      "hash": "06b9f6d527a5",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-decorative-uppercase": 1,
+          "spacing-scale": 2
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 3,
+          "legible-contrast": 3,
+          "no-crushed-tracking": 1,
+          "no-default-cream": 1,
+          "no-straggler": 2,
+          "readable-measure": 1
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "haiku-timetrack-tailwind.html",
+      "model": "haiku",
+      "framework": "tailwind",
+      "brief": "timetrack",
+      "hash": "4fdcd7c4785c",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "input-text-16": 1,
+          "no-decorative-uppercase": 2,
+          "no-endless-loop": 1,
+          "no-heavy-card-shadow": 2,
+          "radius-scale": 1,
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "legible-contrast": 9,
+          "no-announcement-pill": 1,
+          "no-icon-tile-stack": 1,
+          "no-section-numbers": 1,
+          "no-straggler": 2,
+          "pulse-for-live-only": 1
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "haiku-timetrack-bootstrap.html",
+      "model": "haiku",
+      "framework": "bootstrap",
+      "brief": "timetrack",
+      "hash": "ad098823d88c",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "focus-ring-removed": 1,
+          "no-decorative-uppercase": 1,
+          "no-endless-loop": 1,
+          "no-heavy-card-shadow": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 5,
+          "legible-contrast": 10,
+          "no-announcement-pill": 1,
+          "no-horizontal-overflow": 1,
+          "no-icon-tile-stack": 1,
+          "no-section-numbers": 1,
+          "no-straggler": 2,
+          "pulse-for-live-only": 1
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "haiku-aiwriter-tailwind.html",
+      "model": "haiku",
+      "framework": "tailwind",
+      "brief": "aiwriter",
+      "hash": "e86b9b3983ef",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-ai-gradients": 4,
+          "no-blur-blobs": 1,
+          "no-decorative-uppercase": 2,
+          "no-endless-loop": 1,
+          "no-heavy-card-shadow": 3,
+          "radius-scale": 1,
+          "repeated-markup": 2
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "heading-spacing": 1,
+          "legible-contrast": 5,
+          "no-announcement-pill": 1,
+          "no-colored-shadow": 1,
+          "no-eyebrow-label": 1,
+          "no-nested-cards": 1,
+          "no-straggler": 6
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "haiku-aiwriter-bootstrap.html",
+      "model": "haiku",
+      "framework": "bootstrap",
+      "brief": "aiwriter",
+      "hash": "2486324503bb",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-ai-gradients": 2,
+          "no-decorative-uppercase": 1,
+          "no-endless-loop": 1,
+          "no-heavy-card-shadow": 1,
+          "no-radial-halo": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 3,
+          "heading-spacing": 1,
+          "legible-contrast": 14,
+          "no-announcement-pill": 1,
+          "no-eyebrow-label": 1,
+          "no-horizontal-overflow": 1,
+          "no-nested-cards": 1,
+          "no-straggler": 4,
+          "readable-measure": 1
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "haiku-dashboard-tailwind.html",
+      "model": "haiku",
+      "framework": "tailwind",
+      "brief": "dashboard",
+      "hash": "5f207b83f3cd",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "interface-speed": 1,
+          "no-decorative-uppercase": 1,
+          "no-greeting-headline": 1,
+          "repeated-markup": 2
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "legible-contrast": 5
+        },
+        "seconds": 8
+      }
+    },
+    {
+      "file": "haiku-dashboard-bootstrap.html",
+      "model": "haiku",
+      "framework": "bootstrap",
+      "brief": "dashboard",
+      "hash": "49298e29ba9a",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "interface-speed": 1,
+          "no-greeting-headline": 1,
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 1,
+          "no-horizontal-overflow": 1,
+          "no-nested-cards": 4,
+          "no-tiny-text": 4
+        },
+        "seconds": 8
+      }
+    },
+    {
+      "file": "haiku-pricing-tailwind.html",
+      "model": "haiku",
+      "framework": "tailwind",
+      "brief": "pricing",
+      "hash": "93657918ab2f",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 2,
+          "no-heavy-card-shadow": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 4,
+          "no-eyebrow-label": 1,
+          "no-straggler": 3
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "haiku-pricing-bootstrap.html",
+      "model": "haiku",
+      "framework": "bootstrap",
+      "brief": "pricing",
+      "hash": "977fefe9570e",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 6,
+          "legible-contrast": 2,
+          "no-cramped-padding": 1,
+          "no-eyebrow-label": 1,
+          "no-nested-cards": 2,
+          "no-straggler": 3
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "haiku-bakery-tailwind.html",
+      "model": "haiku",
+      "framework": "tailwind",
+      "brief": "bakery",
+      "hash": "c98e78814c07",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 7,
+          "no-radial-halo": 1,
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "heading-spacing": 1,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 5,
+          "no-radial-halo": 1,
+          "no-straggler": 3
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "haiku-bakery-bootstrap.html",
+      "model": "haiku",
+      "framework": "bootstrap",
+      "brief": "bakery",
+      "hash": "697f96657c1c",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 7,
+          "no-radial-halo": 1,
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "heading-spacing": 1,
+          "legible-contrast": 1,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 5,
+          "no-horizontal-overflow": 1,
+          "no-radial-halo": 1,
+          "no-straggler": 1
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "haiku-portfolio-tailwind.html",
+      "model": "haiku",
+      "framework": "tailwind",
+      "brief": "portfolio",
+      "hash": "aa9e238552b0",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-ai-gradients": 1,
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 1,
+          "no-straggler": 1
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "haiku-portfolio-bootstrap.html",
+      "model": "haiku",
+      "framework": "bootstrap",
+      "brief": "portfolio",
+      "hash": "a17e57c7a9b8",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-ai-gradients": 1,
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "legible-contrast": 19,
+          "no-horizontal-overflow": 1,
+          "no-straggler": 1
+        },
+        "seconds": 8
+      }
+    },
+    {
+      "file": "fable-timetrack-tailwind.html",
+      "model": "fable",
+      "framework": "tailwind",
+      "brief": "timetrack",
+      "hash": "eee3dfa6f781",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 2,
+          "no-heavy-card-shadow": 2,
+          "no-heavy-headings": 3,
+          "no-unsourced-proof": 1,
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 2,
+          "legible-contrast": 6,
+          "no-announcement-pill": 1,
+          "no-icon-tile-stack": 1,
+          "no-neon-on-dark": 1,
+          "no-straggler": 3,
+          "text-not-covered": 1
+        },
+        "seconds": 12
+      }
+    },
+    {
+      "file": "fable-timetrack-bootstrap.html",
+      "model": "fable",
+      "framework": "bootstrap",
+      "brief": "timetrack",
+      "hash": "28de0ed5075c",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-decorative-uppercase": 1,
+          "no-heavy-card-shadow": 1,
+          "no-unsourced-proof": 1,
+          "repeated-markup": 2
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 4,
+          "legible-contrast": 11,
+          "no-announcement-pill": 1,
+          "no-horizontal-overflow": 1,
+          "no-icon-tile-stack": 1,
+          "no-neon-on-dark": 1,
+          "no-straggler": 5
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "fable-aiwriter-tailwind.html",
+      "model": "fable",
+      "framework": "tailwind",
+      "brief": "aiwriter",
+      "hash": "5c1ec230c51e",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-endless-loop": 1,
+          "no-heavy-card-shadow": 2,
+          "no-heavy-headings": 1,
+          "repeated-markup": 2
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 4,
+          "legible-contrast": 2,
+          "no-blinking-cursor": 1,
+          "no-icon-tile-stack": 1,
+          "no-middle-dot-lists": 1,
+          "no-nested-cards": 1,
+          "no-straggler": 5
+        },
+        "seconds": 11
+      }
+    },
+    {
+      "file": "fable-aiwriter-bootstrap.html",
+      "model": "fable",
+      "framework": "bootstrap",
+      "brief": "aiwriter",
+      "hash": "9df8f68916d1",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-endless-loop": 1,
+          "no-heavy-card-shadow": 1,
+          "repeated-markup": 2
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 4,
+          "legible-contrast": 11,
+          "no-blinking-cursor": 1,
+          "no-horizontal-overflow": 1,
+          "no-icon-tile-stack": 1,
+          "no-middle-dot-lists": 1,
+          "no-nested-cards": 1,
+          "no-straggler": 6
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "fable-dashboard-tailwind.html",
+      "model": "fable",
+      "framework": "tailwind",
+      "brief": "dashboard",
+      "hash": "384a450a0e32",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "input-text-16": 1,
+          "no-decorative-uppercase": 1,
+          "no-greeting-headline": 1,
+          "no-italic-emphasis": 1,
+          "repeated-markup": 3
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "legible-contrast": 2,
+          "no-repeated-label": 2,
+          "no-straggler": 1,
+          "text-not-covered": 1
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "fable-dashboard-bootstrap.html",
+      "model": "fable",
+      "framework": "bootstrap",
+      "brief": "dashboard",
+      "hash": "7ae9b5cf7b2f",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-greeting-headline": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 1,
+          "no-horizontal-overflow": 1,
+          "no-repeated-label": 2,
+          "no-straggler": 1,
+          "no-tiny-text": 2,
+          "text-not-covered": 1,
+          "text-off-viewport-edge": 1
+        },
+        "seconds": 7
+      }
+    },
+    {
+      "file": "fable-pricing-tailwind.html",
+      "model": "fable",
+      "framework": "tailwind",
+      "brief": "pricing",
+      "hash": "035eee800a5d",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-heavy-card-shadow": 1,
+          "no-heavy-headings": 4,
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "no-straggler": 2,
+          "readable-measure": 1
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "fable-pricing-bootstrap.html",
+      "model": "fable",
+      "framework": "bootstrap",
+      "brief": "pricing",
+      "hash": "a0f147005668",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-heavy-headings": 1,
+          "spacing-scale": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 4,
+          "no-horizontal-overflow": 1,
+          "no-tight-leading": 1
+        },
+        "seconds": 8
+      }
+    },
+    {
+      "file": "fable-bakery-tailwind.html",
+      "model": "fable",
+      "framework": "tailwind",
+      "brief": "bakery",
+      "hash": "03bed8ff6d7b",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-decorative-uppercase": 1,
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "no-default-cream": 1,
+          "no-eyebrow-label": 1,
+          "no-icon-tile-stack": 1,
+          "no-straggler": 3
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "fable-bakery-bootstrap.html",
+      "model": "fable",
+      "framework": "bootstrap",
+      "brief": "bakery",
+      "hash": "a2d287470b1f",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1,
+          "no-decorative-uppercase": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "legible-contrast": 5,
+          "no-default-cream": 1,
+          "no-eyebrow-label": 1,
+          "no-horizontal-overflow": 1,
+          "no-icon-tile-stack": 1,
+          "no-straggler": 1
+        },
+        "seconds": 9
+      }
+    },
+    {
+      "file": "fable-portfolio-tailwind.html",
+      "model": "fable",
+      "framework": "tailwind",
+      "brief": "portfolio",
+      "hash": "8565fc915a4a",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "no-tight-small-text": 1,
+          "repeated-markup": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "no-clipart-svg": 4,
+          "no-middle-dot-lists": 4,
+          "no-straggler": 1
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "file": "fable-portfolio-bootstrap.html",
+      "model": "fable",
+      "framework": "bootstrap",
+      "brief": "portfolio",
+      "hash": "4982f37fe028",
+      "date": "2026-11-05",
+      "source": {
+        "rules": {
+          "hover-media-query": 1
+        }
+      },
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "legible-contrast": 22,
+          "no-clipart-svg": 4,
+          "no-horizontal-overflow": 1,
+          "no-middle-dot-lists": 4,
+          "no-straggler": 3
+        },
+        "seconds": 10
+      }
+    }
+  ],
+  "sites": [
+    {
+      "name": "Stripe",
+      "url": "https://stripe.com",
+      "category": "product",
+      "research": true,
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "heading-spacing": 1,
+          "legible-contrast": 23,
+          "no-ai-gradients": 1,
+          "no-cramped-padding": 3,
+          "no-nested-cards": 3,
+          "no-radial-halo": 1,
+          "no-repeated-label": 13,
+          "no-tight-leading": 7,
+          "no-tiny-text": 10,
+          "readable-measure": 1
+        },
+        "seconds": 40
+      }
+    },
+    {
+      "name": "Linear",
+      "url": "https://linear.app",
+      "category": "product",
+      "research": true,
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "heading-order": 1,
+          "legible-contrast": 45,
+          "no-arrow-suffix": 2,
+          "no-blinking-cursor": 1,
+          "no-clipart-svg": 1,
+          "no-clipped-popover": 1,
+          "no-giant-sentence": 1,
+          "no-nested-cards": 12,
+          "no-overused-font": 1,
+          "no-repeated-label": 5,
+          "no-tiny-text": 13,
+          "pulse-for-live-only": 1,
+          "text-not-clipped": 1,
+          "text-not-covered": 2,
+          "text-off-viewport-edge": 8
+        },
+        "seconds": 34
+      }
+    },
+    {
+      "name": "GitHub",
+      "url": "https://github.com",
+      "category": "product",
+      "research": true,
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "heading-spacing": 1,
+          "no-eyebrow-label": 1,
+          "no-flush-cards": 1,
+          "no-marquee": 1,
+          "no-nested-cards": 2,
+          "no-radial-halo": 1,
+          "no-straggler": 1,
+          "no-tiny-text": 9,
+          "pulse-for-live-only": 1,
+          "text-not-clipped": 12,
+          "text-off-viewport-edge": 6
+        },
+        "seconds": 31
+      }
+    },
+    {
+      "name": "Vercel",
+      "url": "https://vercel.com",
+      "category": "product",
+      "research": true,
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "image-not-broken": 1,
+          "legible-contrast": 3,
+          "no-crushed-tracking": 6,
+          "no-grid-wallpaper": 1,
+          "no-lopsided-fold": 1,
+          "no-marquee": 1,
+          "no-tiny-text": 1
+        },
+        "seconds": 18
+      }
+    },
+    {
+      "name": "Anthropic",
+      "url": "https://www.anthropic.com",
+      "category": "product",
+      "research": true,
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 11,
+          "no-cramped-padding": 1,
+          "no-default-cream": 1,
+          "no-straggler": 1,
+          "no-tiny-text": 1,
+          "text-not-covered": 1
+        },
+        "seconds": 28
+      }
+    },
+    {
+      "name": "Basecamp",
+      "url": "https://basecamp.com",
+      "category": "product",
+      "research": true,
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "legible-contrast": 42,
+          "no-ai-gradients": 1,
+          "no-bounce-easing": 2,
+          "no-cramped-padding": 2,
+          "no-nested-cards": 3,
+          "no-repeated-label": 12,
+          "no-tight-leading": 1,
+          "no-tiny-text": 16,
+          "pulse-for-live-only": 1,
+          "readable-measure": 5,
+          "text-not-covered": 10
+        },
+        "seconds": 21
+      }
+    },
+    {
+      "name": "Figma",
+      "url": "https://www.figma.com",
+      "category": "product",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 3,
+          "flat-type-scale": 1,
+          "no-straggler": 4
+        },
+        "seconds": 49
+      }
+    },
+    {
+      "name": "Notion",
+      "url": "https://www.notion.com",
+      "category": "product",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "legible-contrast": 10,
+          "no-marquee": 1,
+          "text-off-viewport-edge": 1
+        },
+        "seconds": 30
+      }
+    },
+    {
+      "name": "Dropbox",
+      "url": "https://www.dropbox.com",
+      "category": "product",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 5,
+          "heading-spacing": 1,
+          "legible-contrast": 6,
+          "no-marquee": 1,
+          "no-script-errors": 2,
+          "readable-measure": 1,
+          "text-off-viewport-edge": 2
+        },
+        "seconds": 41
+      }
+    },
+    {
+      "name": "Mailchimp",
+      "url": "https://mailchimp.com",
+      "category": "product",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 2,
+          "heading-spacing": 2,
+          "legible-contrast": 22,
+          "no-accent-word": 1,
+          "no-bounce-easing": 2,
+          "no-invisible-content": 2,
+          "no-italic-serif-hero": 1,
+          "no-nested-cards": 1,
+          "no-straggler": 5,
+          "no-tight-leading": 3,
+          "no-tiny-text": 10,
+          "readable-measure": 2,
+          "text-not-covered": 2,
+          "text-off-viewport-edge": 12
+        },
+        "seconds": 38
+      }
+    },
+    {
+      "name": "Sentry",
+      "url": "https://sentry.io",
+      "category": "product",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "legible-contrast": 57,
+          "no-accent-word": 1,
+          "no-ai-gradients": 1,
+          "no-buried-image": 5,
+          "no-marquee": 1,
+          "no-straggler": 2,
+          "no-tight-leading": 6,
+          "readable-measure": 1,
+          "text-off-viewport-edge": 4
+        },
+        "seconds": 20
+      }
+    },
+    {
+      "name": "Raycast",
+      "url": "https://www.raycast.com",
+      "category": "product",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 1,
+          "glow-in-charts-only": 2,
+          "heading-order": 3,
+          "legible-contrast": 70,
+          "no-ai-gradients": 2,
+          "no-blinking-cursor": 1,
+          "no-buried-image": 11,
+          "no-clipart-svg": 1,
+          "no-eyebrow-label": 1,
+          "no-nested-cards": 5,
+          "no-overused-font": 1,
+          "no-radial-halo": 5,
+          "no-repeated-label": 2,
+          "no-straggler": 7,
+          "no-tight-leading": 2,
+          "no-tiny-text": 6,
+          "pulse-for-live-only": 1,
+          "text-not-clipped": 3,
+          "text-off-viewport-edge": 14
+        },
+        "seconds": 24
+      }
+    },
+    {
+      "name": "Mozilla",
+      "url": "https://www.mozilla.org/en-US/",
+      "category": "product",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "no-straggler": 1,
+          "no-tight-leading": 17
+        },
+        "seconds": 17
+      }
+    },
+    {
+      "name": "Apple",
+      "url": "https://www.apple.com",
+      "category": "commerce",
+      "research": true,
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 12,
+          "legible-contrast": 8,
+          "no-lopsided-fold": 1,
+          "no-straggler": 2,
+          "no-tight-leading": 3,
+          "readable-measure": 5,
+          "text-off-viewport-edge": 6
+        },
+        "seconds": 15
+      }
+    },
+    {
+      "name": "Airbnb",
+      "url": "https://www.airbnb.com",
+      "category": "commerce",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "no-tiny-text": 3,
+          "text-not-clipped": 1,
+          "text-not-covered": 1
+        },
+        "seconds": 19
+      }
+    },
+    {
+      "name": "Shopify",
+      "url": "https://www.shopify.com",
+      "category": "commerce",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "legible-contrast": 1,
+          "no-ai-gradients": 4,
+          "no-buried-image": 6,
+          "no-clipped-popover": 1,
+          "no-invisible-content": 2,
+          "no-marquee": 1,
+          "no-nested-cards": 1,
+          "no-radial-halo": 2,
+          "no-tight-leading": 1,
+          "no-tiny-text": 6,
+          "pulse-for-live-only": 4,
+          "text-not-covered": 6,
+          "text-off-viewport-edge": 2
+        },
+        "seconds": 33
+      }
+    },
+    {
+      "name": "Tailwind CSS",
+      "url": "https://tailwindcss.com",
+      "category": "docs",
+      "framework": "tailwind",
+      "research": true,
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "legible-contrast": 20,
+          "no-ai-gradients": 1,
+          "no-colored-shadow": 1,
+          "no-giant-sentence": 1,
+          "no-repeated-label": 1,
+          "no-stripe-surface": 1,
+          "readable-measure": 1,
+          "text-not-clipped": 3,
+          "text-off-viewport-edge": 1
+        },
+        "seconds": 19
+      }
+    },
+    {
+      "name": "shadcn/ui",
+      "url": "https://ui.shadcn.com",
+      "category": "docs",
+      "framework": "tailwind",
+      "research": true,
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "no-announcement-pill": 1,
+          "no-nested-cards": 1,
+          "no-overused-font": 1,
+          "no-straggler": 2
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "name": "MDN Web Docs",
+      "url": "https://developer.mozilla.org/en-US/",
+      "category": "docs",
+      "research": true,
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 2,
+          "heading-spacing": 1,
+          "no-overused-font": 1,
+          "no-straggler": 3,
+          "no-tight-leading": 8
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "name": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Main_Page",
+      "category": "docs",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "heading-spacing": 1,
+          "readable-measure": 2,
+          "text-not-covered": 1
+        },
+        "seconds": 11
+      }
+    },
+    {
+      "name": "W3C",
+      "url": "https://www.w3.org",
+      "category": "docs",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 4,
+          "no-cramped-padding": 1,
+          "no-straggler": 4,
+          "text-not-covered": 1
+        },
+        "seconds": 11
+      }
+    },
+    {
+      "name": "Python",
+      "url": "https://www.python.org",
+      "category": "docs",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "legible-contrast": 26,
+          "no-crushed-tracking": 3,
+          "no-neon-on-dark": 1,
+          "no-nested-cards": 1,
+          "no-repeated-label": 1,
+          "no-straggler": 3,
+          "no-tiny-text": 4
+        },
+        "seconds": 10
+      }
+    },
+    {
+      "name": "GOV.UK",
+      "url": "https://www.gov.uk",
+      "category": "government",
+      "research": true,
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "legible-contrast": 1,
+          "no-cramped-padding": 1,
+          "no-giant-sentence": 1,
+          "no-straggler": 1
+        },
+        "seconds": 14
+      }
+    },
+    {
+      "name": "NASA",
+      "url": "https://www.nasa.gov",
+      "category": "government",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 4,
+          "legible-contrast": 14,
+          "no-eyebrow-label": 2,
+          "no-script-errors": 1,
+          "no-straggler": 9,
+          "no-tight-leading": 5,
+          "no-tiny-text": 10,
+          "pulse-for-live-only": 1
+        },
+        "seconds": 25
+      }
+    },
+    {
+      "name": "USA.gov",
+      "url": "https://www.usa.gov",
+      "category": "government",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 2,
+          "no-side-stripe": 5,
+          "no-straggler": 11,
+          "readable-measure": 1,
+          "text-not-covered": 4
+        },
+        "seconds": 12
+      }
+    },
+    {
+      "name": "The New York Times",
+      "url": "https://www.nytimes.com",
+      "category": "news",
+      "research": true,
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {},
+        "seconds": 9
+      }
+    },
+    {
+      "name": "BBC",
+      "url": "https://www.bbc.com",
+      "category": "news",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 20,
+          "heading-order": 1,
+          "no-script-errors": 1,
+          "no-straggler": 13,
+          "no-tiny-text": 1,
+          "readable-measure": 1,
+          "text-off-viewport-edge": 7
+        },
+        "seconds": 47
+      }
+    },
+    {
+      "name": "The Guardian",
+      "url": "https://www.theguardian.com/international",
+      "category": "news",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 22,
+          "flat-type-scale": 1,
+          "legible-contrast": 30,
+          "no-hard-offset-shadow": 1,
+          "pulse-for-live-only": 1,
+          "readable-measure": 1,
+          "text-off-viewport-edge": 1
+        },
+        "seconds": 14
+      }
+    },
+    {
+      "name": "Bootstrap",
+      "url": "https://getbootstrap.com",
+      "category": "bootstrap",
+      "framework": "bootstrap",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "heading-order": 1,
+          "legible-contrast": 2,
+          "no-ai-gradients": 1,
+          "no-announcement-pill": 1,
+          "no-overused-font": 1,
+          "no-radial-halo": 1
+        },
+        "seconds": 11
+      }
+    },
+    {
+      "name": "Bootstrap Themes",
+      "url": "https://themes.getbootstrap.com",
+      "category": "bootstrap",
+      "framework": "bootstrap",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "legible-contrast": 1,
+          "text-not-clipped": 1
+        },
+        "seconds": 30
+      }
+    },
+    {
+      "name": "Bootswatch",
+      "url": "https://bootswatch.com",
+      "category": "bootstrap",
+      "framework": "bootstrap",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "heading-order": 4,
+          "legible-contrast": 5,
+          "no-ai-gradients": 1,
+          "no-overused-font": 1
+        },
+        "seconds": 20
+      }
+    },
+    {
+      "name": "Paul Graham",
+      "url": "https://paulgraham.com",
+      "category": "personal",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "no-tiny-text": 1
+        },
+        "seconds": 7
+      }
+    },
+    {
+      "name": "Julia Evans",
+      "url": "https://jvns.ca",
+      "category": "personal",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 3,
+          "heading-order": 1,
+          "legible-contrast": 8,
+          "no-side-stripe": 2,
+          "no-tight-leading": 3,
+          "spacing-rhythm": 1
+        },
+        "seconds": 23
+      }
+    },
+    {
+      "name": "Daring Fireball",
+      "url": "https://daringfireball.net",
+      "category": "personal",
+      "date": "2026-11-05",
+      "browser": {
+        "rules": {
+          "balanced-headings": 2,
+          "heading-order": 3,
+          "legible-contrast": 15,
+          "no-all-caps-sentences": 12,
+          "no-straggler": 21,
+          "no-tiny-text": 11
+        },
+        "seconds": 28
+      }
+    }
+  ]
+}
