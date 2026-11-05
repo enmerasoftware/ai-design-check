@@ -2,9 +2,9 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, dirname, join, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CLASS_FUNCTIONS, blankComments, classUnits, tokens, utility } from './classes.js';
+import { CLASS_FUNCTIONS, blankComments, classUnits, literals, tokens, utility } from './classes.js';
 import { cssHits, markupSheet, scssAsCss } from './css.js';
-import { children, parseAttrs, tags, visibleText } from './jsx.js';
+import { children, parseAttrs, readTag, tags, visibleText } from './jsx.js';
 import { LOOKS } from './looks.js';
 import { RADIUS_STEPS, describeScale, onRadiusScale, onScale, readScales } from './spacing.js';
 
@@ -365,6 +365,70 @@ function checkTouchables(path, source, report) {
     }
 }
 
+/** Elements that never close in HTML, so they never hold anything. */
+const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']);
+/** The utilities on an element: className, class, a Vue :class, cn('…') literals; variants stripped. */
+function utilitiesOf(attrs) {
+    const parsed = parseAttrs(attrs);
+    const values = ['className', 'class', ':class', 'v-bind:class'].map((name) => parsed[name]).filter((value) => value !== undefined && value !== true);
+    return new Set(values.flatMap((value) => tokens(typeof value === 'string' ? value : literals(value.code).join(' '))).map(utility));
+}
+/** A width that caps how wide the text can ask its parents to be (a percentage does not: it is auto while sizing). */
+const CAPPED = /^(?:w-(?!auto$|fit$|max$|min$|full$|\d+\/\d+$)\S+|max-w-(?!none$|full$|max$|fit$)\S+|size-\S+)$/;
+/** A flex or grid item allowed to be narrower than its content: min-w-0 or a clipping overflow. */
+const SHRINKS = /^(?:min-w-0|min-w-\[0(?:px)?\]|overflow-(?:x-)?(?:hidden|clip|auto|scroll))$/;
+const ROW_FLEX = (classes) => (classes.has('flex') || classes.has('inline-flex')) && !classes.has('flex-col') && !classes.has('flex-col-reverse');
+/**
+ * A grid whose tracks may grow to their content. grid-cols-N is minmax(0, 1fr) in Tailwind and cannot; an arbitrary
+ * list can when one track is auto, content-sized or a bare 1fr (minmax(auto, 1fr)); minmax(11rem, 1fr) cannot.
+ */
+const GROWING_TRACK = /(?:^|[_,(\s])(?:\d*\.?\d+fr|auto|min-content|max-content|fit-content)(?![-\w])/;
+const AUTO_GRID = (classes) => {
+    if (!classes.has('grid') && !classes.has('inline-grid')) return false;
+    const columns = [...classes].filter((name) => name.startsWith('grid-cols-'));
+    if (!columns.length) return true;
+    return columns.some((name) => name.startsWith('grid-cols-[') && GROWING_TRACK.test(name.slice(11, -1).replace(/minmax\(\s*(?!auto\b)[^,()]+,[^()]*\)/g, 'x')));
+};
+
+/**
+ * A truncated line inside a flex item that has no min-w-0: the item never shrinks below the line's full width, so a
+ * long name widens the card past its column and over the next one. The line's width travels up every parent until a
+ * fixed width or max-w caps it; min-w-0 on one item lets that item shrink but does not stop the width travelling on,
+ * so each flex or grid item on the way needs its own.
+ */
+function checkMinWidthChain(path, source, report) {
+    const stack = [];
+    const reported = new Set();
+    for (const match of source.matchAll(/<(\/?)(?:([A-Za-z][\w.-]*)(?=[\s/>])|(?=>))/g)) {
+        if (match[1]) {
+            const at = stack.map((item) => item.name).lastIndexOf(match[2] ?? '');
+            if (at >= 0) stack.length = at;
+            continue;
+        }
+        const tag = match[2] ? readTag(source, match.index) : { name: '', attrs: '', selfClosing: false, start: match.index };
+        if (!tag) continue;
+        const element = { name: tag.name, classes: utilitiesOf(tag.attrs), start: tag.start };
+        if (element.classes.has('truncate') || element.classes.has('text-ellipsis')) {
+            let item = element;
+            for (let index = stack.length - 1; index >= 0 && index >= stack.length - 8; index--) {
+                const parent = stack[index];
+                if (!parent.name) continue; // a fragment draws no box: its children belong to the box around it
+                if (/^[A-Z]/.test(parent.name) && !parent.classes.size) break; // a component: its layout is elsewhere
+                if ([...item.classes].some((name) => CAPPED.test(name))) break;
+                if (item !== element && (ROW_FLEX(parent.classes) || AUTO_GRID(parent.classes)) && ![...item.classes].some((name) => SHRINKS.test(name))) {
+                    if (!reported.has(item.start)) {
+                        reported.add(item.start);
+                        report('cell-holds-content', path, lineOf(source, item.start), `<${item.name || '>'}`, `<${item.name}> is a ${ROW_FLEX(parent.classes) ? 'flex' : 'grid'} item holding a truncated line but has no min-w-0: a long text widens it past its column`);
+                    }
+                    break;
+                }
+                item = parent;
+            }
+        }
+        if (!tag.selfClosing && !(VOID.has(tag.name) && !/^[A-Z]/.test(tag.name))) stack.push(element);
+    }
+}
+
 function checkSharedComponents(config, path, source, report) {
     if (matches(config.componentDirs, path)) return;
     for (const tag of tags(source, Object.keys(config.components))) {
@@ -567,6 +631,7 @@ export function check(cwd, overrides = {}) {
         if (on('sentence-case') && config.labels && ['tsx', 'jsx', 'vue', 'svelte'].includes(extension)) checkLabels(config, path, source, report);
         if (reactNative && JSX.includes(extension)) checkTouchables(path, code, report);
         if (on('icon-button-name') && HTML_LIKE.includes(extension)) checkMarkupIconButtons(path, source, report);
+        if (on('cell-holds-content') && MARKUP.includes(extension)) checkMinWidthChain(path, source, report);
         if (JSX.includes(extension)) {
             if (on('icon-button-name')) checkIconButtons(path, source, report);
             if (on('use-shared-components')) checkSharedComponents(config, path, source, report);

@@ -19,6 +19,22 @@ const card = 'border:1px solid #ccc;border-radius:12px;padding:16px;background:#
 
 // Each rule: pages that must be flagged and shapes that look close but must pass.
 const CASES = {
+    'cell-holds-content': {
+        flag: [
+            '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:600px"><a href="/" style="display:flex"><div style="display:flex;flex:1;flex-direction:column"><p style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin:0">Whispy AI: Create Your Story and keep on telling it</p></div></a><a href="/" style="display:flex"><div>Neighbour card</div></a></div>',
+            '<div style="display:flex;width:400px;gap:8px"><div style="flex:1 1 0;min-width:0;display:flex"><span style="flex:none;white-space:nowrap">A long unbroken label that keeps going on</span></div><div style="flex:1 1 0">Next</div></div>',
+            '<div style="display:grid;grid-template-columns:150px 150px"><div><div style="width:260px;height:40px;background:#eee">Wide</div></div><div>Next</div></div>',
+            '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:450px"><div><div style="display:flex"><b style="white-space:nowrap">SuperLongUnbrokenWordThatDoesNotFitAnywhere</b></div></div><div>B</div><div>C</div></div>',
+        ],
+        pass: [
+            '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:600px"><a href="/" style="display:flex;min-width:0"><div style="display:flex;flex:1;flex-direction:column;min-width:0"><p style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin:0">Whispy AI: Create Your Story and keep on telling it</p></div></a><a href="/" style="display:flex"><div>Neighbour card</div></a></div>',
+            '<div style="display:grid;grid-template-columns:150px 150px"><div style="overflow:hidden"><div style="width:260px;height:40px;background:#eee">Clipped</div></div><div>Next</div></div>',
+            '<div style="display:grid;grid-template-columns:150px 150px"><div style="position:relative">A<span style="position:absolute;right:-40px;top:0">New</span></div><div>B</div></div>',
+            '<div style="display:grid;grid-template-columns:150px"><div><div style="width:260px">Wide alone</div></div></div>',
+            '<div style="display:grid;grid-template-columns:150px 150px;column-gap:16px"><div>A</div><div><div style="width:160px;height:20px">Bit wider</div></div></div>',
+            '<div style="display:flex;flex-direction:column;width:200px"><div style="height:20px"><div style="height:60px;background:#eee">Tall</div></div><div>Next</div></div>',
+        ],
+    },
     'legible-contrast': { flag: ['<p style="color:#aaa">Pale words on a white page here</p>', '<a href="/" style="color:#ccc">Pale link</a>'], pass: ['<p style="color:#555">Dark enough words on white</p>', '<h1 style="font-size:48px;color:#888">Large title</h1>', '<div style="background:#111;color:#eee;padding:16px">Light on dark</div>'] },
     'no-nested-cards': { flag: [`<div style="${card};width:500px;height:200px"><div style="${card};width:200px;height:80px">Inner</div></div>`], pass: [`<div style="${card};width:500px;height:200px">One card</div>`, `<div style="${card};width:500px"><button style="border:1px solid #333;border-radius:8px;padding:8px 16px">Save</button></div>`] },
     'spacing-rhythm': { flag: [`<div>${'<p style="margin:0 0 24px">Same gap again</p>'.repeat(12)}</div>`], pass: [`<div><h2 style="margin:0 0 8px">Title</h2><p style="margin:0 0 24px">Text</p><h2 style="margin:48px 0 8px">Next</h2><p style="margin:0 0 12px">Text</p><p style="margin:0 0 64px">End</p></div>`] },

@@ -534,6 +534,16 @@
 
 **How to fix:** Let rows wrap (flex-wrap), allow long words to break (hyphens: auto with the right lang, overflow-wrap), wrap wide tables in overflow-x-auto.
 
+### Content stays in its column
+
+`cell-holds-content` · warning · checked
+
+**Rule:** Nothing inside a grid or flex cell paints over the next cell. A flex or grid item that holds a truncated line has min-w-0 (min-width: 0) or overflow hidden, so the line is cut, not the layout.
+
+**Why:** A flex item never shrinks below its content by default, so one long name in a truncate line widens the card past its column and over its neighbour, while the column itself looks fine.
+
+**How to fix:** Add min-w-0 to every flex or grid item between the cell and the truncated text (or overflow-hidden on the cell).
+
 ### Phones get the same content
 
 `no-hidden-content-narrow` · note · checked

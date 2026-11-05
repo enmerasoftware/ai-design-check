@@ -576,7 +576,16 @@ if (format === 'json') {
         for (const path of fixes.skipped) print(paint(33, `  ${path}: not UTF-8, left as it is. Convert it first; writing it back would destroy its letters.`));
         for (const item of fixes) print(`  ${`${item.path}:${item.line}`.padEnd(32)} ${item.from} → ${item.to}  ${paint(2, item.rule)}`);
         const made = `${fixes.length} change${fixes.length === 1 ? '' : 's'}`;
-        print(paint(1, `\n${fixes.length === 0 ? 'Nothing to fix.' : dryRun ? `${made} would be made (--dry-run, nothing written).` : `${made} made. Check them with git diff.`}`));
+        if (fixes.length > 0) print(paint(1, `\n${dryRun ? `${made} would be made (--dry-run, nothing written).` : `${made} made. Check them with git diff.`}`));
+        // What --fix left alone, and why: an empty "Nothing to fix" over a full report reads as a tool that does nothing.
+        const fixed = new Set(fixes.map((item) => `${item.path}:${item.line}:${item.from}`));
+        const left = dryRun ? findings.filter((item) => !fixed.has(`${item.path}:${item.line}:${item.value}`)) : findings;
+        if (left.length === 0) print(paint(1, fixes.length === 0 ? '\nNothing to fix.' : '\nNothing else left.'));
+        else {
+            const byRule = Object.entries(left.reduce((all, item) => ({ ...all, [item.rule]: (all[item.rule] ?? 0) + 1 }), {})).sort((a, b) => b[1] - a[1]);
+            print(paint(1, `\n${fixes.length === 0 ? 'No mechanical fix here. ' : ''}${left.length} finding${left.length === 1 ? '' : 's'} left for a person or the ai-design-fix skill: ${byRule.map(([rule, total]) => `${rule} ${total}`).join(', ')}.`));
+            print(paint(2, '--fix only moves spacing and corners (px, rem, Tailwind brackets) to the nearest step and lightens extra-bold headings. Font sizes, colours, sizes, offsets, em values and words take a decision, so they stay in the report.'));
+        }
     }
     const list = Object.entries(seen.unread).map(([extension, total]) => `${total} .${extension} file${total === 1 ? '' : 's'}`).join(', ');
     if (list) print(paint(2, `\nNot read, no rule covers them yet: ${list}.`));

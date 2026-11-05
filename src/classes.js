@@ -65,14 +65,27 @@ export function classUnits(source, functions = CLASS_FUNCTIONS) {
             end = source.indexOf(quote, start + 1);
             if (end < 0) continue;
             end += 1;
-            // Blade/Vue: keep the static text, drop {{ … }} and :binding expressions.
-            text = clean([source.slice(start + 1, end - 1).replace(/\{\{[\s\S]*?\}\}|@\w+\([^)]*\)/g, ' ')]);
+            const body = source.slice(start + 1, end - 1);
+            // Vue and Alpine :class="{ 'a': on }" is an expression: its strings are the classes.
+            if (match[0].startsWith(':') || source[match.index - 1] === ':') text = clean(literals(body));
+            // Blade/Vue/Twig: the static text, plus the strings inside {{ $on ? 'a' : 'b' }}; other directives dropped.
+            else text = clean([body.replace(/\{\{[\s\S]*?\}\}|\{!![\s\S]*?!!\}/g, (expression) => ` ${literals(expression).join(' ')} `).replace(/@\w+\([^)]*\)/g, ' ')]);
         }
         covered.push([start, end]);
         // Element that carries the attribute: the nearest "<Name" before it.
         const open = source.lastIndexOf('<', match.index);
         const element = open >= 0 ? (/^<([A-Za-z][\w.-]*)/.exec(source.slice(open, open + 60))?.[1] ?? null) : null;
         if (text) units.push({ index: match.index, text, kind: 'attribute', element });
+    }
+
+    // Blade's @class(['a', 'b' => $on]) builds a class attribute from strings.
+    for (const match of source.matchAll(/@class\s*\(/g)) {
+        const open = match.index + match[0].length - 1;
+        const end = balancedEnd(source, open, '(', ')');
+        if (end < 0) continue;
+        covered.push([match.index, end]);
+        const text = clean(literals(source.slice(open, end)));
+        if (text) units.push({ index: match.index, text, kind: 'attribute', element: null });
     }
 
     const callPattern = new RegExp(`(?<![\\w.$])(?:${functions.map((name) => name.replace(/[$]/g, '\\$')).join('|')})\\s*\\(`, 'g');

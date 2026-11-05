@@ -2703,6 +2703,31 @@
       }
     },
     {
+      "id": "cell-holds-content",
+      "area": "layout",
+      "severity": "warn",
+      "title": {
+        "en": "Content stays in its column",
+        "tr": "İçerik kendi sütununda kalır"
+      },
+      "rule": {
+        "en": "Nothing inside a grid or flex cell paints over the next cell. A flex or grid item that holds a truncated line has min-w-0 (min-width: 0) or overflow hidden, so the line is cut, not the layout.",
+        "tr": "Izgara ya da flex hücresinin içindeki hiçbir şey yandaki hücrenin üstüne taşmaz. Kısaltılan (truncate) satırı tutan flex ya da ızgara öğesinde min-w-0 (min-width: 0) ya da overflow hidden bulunur; böylece kesilen satır olur, düzen değil."
+      },
+      "why": {
+        "en": "A flex item never shrinks below its content by default, so one long name in a truncate line widens the card past its column and over its neighbour, while the column itself looks fine.",
+        "tr": "Flex öğesi varsayılan olarak içeriğinden dar olamaz; truncate satırındaki tek bir uzun ad kartı sütunundan taşırıp komşusunun üstüne çıkarır, sütun ise doğru görünür."
+      },
+      "fix": {
+        "en": "Add min-w-0 to every flex or grid item between the cell and the truncated text (or overflow-hidden on the cell).",
+        "tr": "Hücre ile kısaltılan metin arasındaki her flex ya da ızgara öğesine min-w-0 ekleyin (ya da hücreye overflow-hidden)."
+      },
+      "check": {
+        "type": "min-width-chain",
+        "scan": true
+      }
+    },
+    {
       "id": "no-shrunk-text",
       "area": "type",
       "severity": "warn",

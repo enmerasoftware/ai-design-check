@@ -147,6 +147,18 @@ test('a careful Bootstrap page and a clean plain-CSS page find none of it', () =
     });
 });
 
+test('--fix moves a rem to the nearest step at the root size the report used, and keeps it a rem', () => {
+    project({ 'a.css': '.a { padding-top: 0.45rem; margin: 0.8rem 1.1rem; }\n' }, (cwd, read) => {
+        assert.match(run(cwd, '--fix', '--dry-run').stdout, /a\.css:1 +0\.45rem → 0\.5rem +spacing-scale/);
+        run(cwd, '--fix');
+        assert.equal(read('a.css'), '.a { padding-top: 0.5rem; margin: 0.75rem 1rem; }\n');
+    });
+    project({ 'a.css': 'html { font-size: 10px; }\n.b { padding: 1.3rem; }\n' }, (cwd, read) => {
+        run(cwd, '--fix');
+        assert.equal(read('a.css'), 'html { font-size: 10px; }\n.b { padding: 1.2rem; }\n');
+    });
+});
+
 test('plain CSS: every length of a shorthand, rem by the root size, hairlines, negatives and functions', () => {
     const css = [
         '.a { margin: 13px 7px 0 auto; padding: 4px 12px; }',
@@ -300,13 +312,15 @@ test('--fix moves CSS, inline and SCSS lengths, each number on its own; a tie go
         assert.match(dry.stdout, /a\.css:1 +13px → 12px +spacing-scale/);
         assert.equal(read('a.css').includes('13px 7px'), true);
         run(cwd, '--fix');
-        assert.equal(read('a.css'), '.a { margin: 12px 8px 0 auto; padding: 12px; }\n.b { border-radius: 8px 12px; margin-left: -12px; gap: 16px; }\n.c { top: 13px; padding-top: 0.8rem; border-radius: 40px; }\n');
+        assert.equal(read('a.css'), '.a { margin: 12px 8px 0 auto; padding: 12px; }\n.b { border-radius: 8px 12px; margin-left: -12px; gap: 16px; }\n.c { top: 13px; padding-top: 0.75rem; border-radius: 40px; }\n');
         assert.equal(read('b.html'), '<div class="mt-3" style="padding: 12px 12px; border-radius: 8px">Box</div>\n<p style=\'margin-bottom: 12px\'>Text <span style="margin: 12px">13px</span></p>\n');
         assert.equal(read('c.scss'), '// margin: 13px in a comment stays\n$gap: 13px;\n.x {\n    margin-top: 12px;\n    &:hover { padding: 8px; }\n}\n');
-        // An offset, a rem value and a corner far from any step stay in the report.
+        // An offset and a corner far from any step stay in the report, and --fix says so instead of "Nothing to fix".
         const left = check(cwd).filter((item) => ['spacing-scale', 'radius-scale'].includes(item.rule)).map((item) => `${item.path}:${item.line} ${item.value}`).sort();
-        assert.deepEqual(left, ['a.css:3 0.8rem', 'a.css:3 13px', 'a.css:3 40px']);
-        assert.match(run(cwd, '--fix').stdout, /Nothing to fix/);
+        assert.deepEqual(left, ['a.css:3 13px', 'a.css:3 40px']);
+        const again = run(cwd, '--fix').stdout;
+        assert.doesNotMatch(again, /Nothing to fix/);
+        assert.match(again, /No mechanical fix here\. \d+ findings? left for a person or the ai-design-fix skill: .*spacing-scale 1/);
     });
 });
 

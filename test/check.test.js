@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -17,7 +19,7 @@ const values = (rule) => by(rule).map((item) => item.value);
 
 test('every rule has both languages, a known area and a valid check type', () => {
     const { areas, rules } = loadRules();
-    const types = ['render', 'native', 'class', 'regex', 'i18n-case', 'icon-button-name', 'shared-components', 'style-overrides', 'repeated-markup', 'shared-looks'];
+    const types = ['render', 'native', 'class', 'regex', 'i18n-case', 'icon-button-name', 'shared-components', 'style-overrides', 'repeated-markup', 'shared-looks', 'min-width-chain'];
     for (const rule of rules) {
         assert.ok(areas[rule.area], rule.id);
         for (const field of ['title', 'rule', 'why', 'fix']) assert.ok(rule[field].en && rule[field].tr, `${rule.id}.${field}`);
@@ -211,4 +213,58 @@ test('narrow --stress: long names and large numbers break what short ones do not
     assert.deepEqual([...new Set(worst.map((item) => item.rule))].sort(), ['no-horizontal-overflow', 'text-not-clipped']);
     assert.ok(worst.every((item) => item.severity === 'warn' && /^With long data/.test(item.message)));
     assert.ok(worst.some((item) => item.value.includes('Muhammed')));
+});
+
+test('a truncated line in a flex item without min-w-0 is named where min-w-0 goes', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adc-chain-'));
+    mkdirSync(join(dir, 'src'));
+    writeFileSync(join(dir, 'src', 'Showcase.tsx'), [
+        'export function Showcase({ apps }) {',
+        '    const [name] = useState<string>("");',
+        '    return (',
+        '        <div className="grid grid-cols-2 gap-4">',
+        '            {apps.map((app) => (',
+        '                <a key={app.id} href={app.url} className="group flex">',
+        '                    <div className="flex flex-1 flex-col rounded-lg border p-4">',
+        '                        <p className="truncate font-medium">{app.name}</p>',
+        '                    </div>',
+        '                </a>',
+        '            ))}',
+        '            <div className="flex items-center gap-2">',
+        '                <img src="x.png" />',
+        '                <div className="min-w-0 flex-1"><p className="truncate">{name}</p></div>',
+        '            </div>',
+        '            <div className="flex gap-2"><span className="truncate">Its own flex item</span></div>',
+        "            <div className={cn('flex', open && 'gap-2')}>",
+        '                <div className="flex-1"><span className="truncate">Wide</span></div>',
+        '            </div>',
+        '            <div className="flex"><div className="w-48"><span className="truncate">Fixed width</span></div></div>',
+        '            <ul className="flex flex-col"><li><span className="truncate">Column</span></li></ul>',
+        '            <Card><span className="truncate">Inside a component</span></Card>',
+        '            <div className="flex w-max gap-3"><a className="flex shrink-0 gap-2"><span className="max-w-48 truncate">Capped line</span></a></div>',
+        '            <a className="group flex">',
+        '                <Panel className="flex flex-1 flex-col">',
+        '                    <div className="flex items-center gap-3"><div className="min-w-0"><p className="truncate">Inner min-w-0 is not enough</p></div></div>',
+        '                </Panel>',
+        '            </a>',
+        '            <div className="flex flex-wrap gap-3"><>',
+        '                <span className="min-w-0 flex-1 truncate">A fragment is not a box</span>',
+        '            </></div>',
+        '        </div>',
+        '    );',
+        '}',
+    ].join('\n'));
+    writeFileSync(join(dir, 'src', 'list.html'), '<div class="flex gap-2"><div class="grow"><span class="truncate">Bad</span></div></div>\n<div class="flex"><div class="min-w-0 grow"><span class="truncate">Good</span></div></div>\n');
+    const found = check(dir).filter((item) => item.rule === 'cell-holds-content').map((item) => `${item.path}:${item.line}`);
+    assert.deepEqual(found, ['src/list.html:1', 'src/Showcase.tsx:7', 'src/Showcase.tsx:18', 'src/Showcase.tsx:25']);
+});
+
+test('Blade: classes inside {{ }} ternaries, @class() and Alpine :class are read', () => {
+    const source = [
+        `<h2 class="mx-auto {{ $on ? 'text-4xl' : 'text-[40px] leading-[44px]' }} {{ $color }}">T</h2>`,
+        `<span @class(['p-[13px]', 'font-bold' => $active])>S</span>`,
+        `<div x-bind:class="{ 'text-[21px]': open }" :class="open ? 'p-[7px]' : ''">D</div>`,
+    ].join('\n');
+    const text = classUnits(source).map((unit) => unit.text).join(' | ');
+    assert.equal(text, 'mx-auto text-4xl text-[40px] leading-[44px] | p-[13px] font-bold | text-[21px] | p-[7px]');
 });

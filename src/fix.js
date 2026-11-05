@@ -47,22 +47,27 @@ function radius(value, themed) {
 }
 
 /**
- * A px length in a stylesheet, a style attribute or SCSS, each number on its own: a margin, padding or gap moves on the
- * web scale; a corner moves to a radius step within 3 px, as a rounded-[…] class does. An offset (top, inset) is left in
- * the report like a size, and so are rem and em, whose px depend on a root or a font size.
+ * A px or rem length in a stylesheet, a style attribute or SCSS, each number on its own: a margin, padding or gap moves
+ * on the web scale; a corner moves to a radius step within 3 px, as a rounded-[…] class does. A rem is read at the root
+ * size the report used, and stays a rem (0.45rem → 0.5rem at 16 px). An offset (top, inset) is left in the report like a size, and
+ * so is em, whose px depend on the element's own font size.
  */
 function cssLength(finding, scales) {
-    const length = /^(-?)(\d*\.?\d+)px$/.exec(finding.value);
+    const length = /^(-?)(\d*\.?\d+)(px|rem)$/.exec(finding.value);
     if (!length) return null;
-    const [, minus, raw] = length;
-    const number = Number(raw);
+    const [, minus, raw, unit] = length;
+    // The report has already read the rem at the project's root size: "0.45rem (7.2px)". No px there, no fix.
+    const root = unit === 'rem' ? Number(/\((-?\d*\.?\d+)px\)/.exec(finding.message ?? '')?.[1]) / Number(raw) : 1;
+    if (!(root > 0)) return null;
+    const number = Number(raw) * root;
+    const write = (px) => `${minus}${unit === 'rem' ? `${Number((px / root).toFixed(4))}rem` : `${px}px`}`;
     if (finding.rule === 'radius-scale') {
         const step = [5, ...RADIUS_PX].reduce((best, item) => (Math.abs(item - number) <= Math.abs(best - number) ? item : best));
 
-        return Math.abs(step - number) <= 3 ? `${minus}${step}px` : null;
+        return Math.abs(step - number) <= 3 ? write(step) : null;
     }
 
-    return finding.rule === 'spacing-scale' && SPACING_PROPERTY.test(finding.css) ? `${minus}${nearestOnScale(scales.web, number)}px` : null;
+    return finding.rule === 'spacing-scale' && SPACING_PROPERTY.test(finding.css) ? write(nearestOnScale(scales.web, number)) : null;
 }
 
 const weight = (value) => value

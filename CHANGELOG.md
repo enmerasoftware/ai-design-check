@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.14.2
+
+A layout bug a person found by eye on a real page, now found by the checker.
+
+- **New rule `cell-holds-content`: content stays in its column.** A card in a two-column grid grew past its column and
+  painted over its neighbour: a long app name sat in a `truncate` line inside a flex item without `min-w-0`, so the item
+  could not shrink below the name's full width. The text was not cut, the box grew instead, so `text-not-clipped` stayed
+  quiet. Two checks now cover it:
+  - `scan` reports a grid or flex item whose content runs past its cell onto the next one (positioned badges, clipped
+    cells and overflow with no neighbour beside it are left alone);
+  - the code check (JSX, HTML, Blade, Vue, Svelte) walks up from each `truncate` and names the flex or grid item that has
+    no `min-w-0`, at the line where it goes. A fixed width or `max-w-*` on the way caps the line, and a grid built from
+    `grid-cols-N` or `minmax(11rem, 1fr)` tracks cannot grow, so neither is reported.
+- **Blade classes inside `{{ }}` are read.** `class="{{ $hero ? 'text-4xl' : 'text-[40px] leading-[44px]' }}"` used to
+  lose everything between the braces, so a theme view whose sizes all sat in a ternary came back clean. The strings inside
+  `{{ }}` and `{!! !!}`, Blade's `@class([...])` and Alpine or Vue `:class="{ 'a': on }"` now go through the class rules.
+- **`--fix` moves rem spacing too.** `padding-top: 0.45rem` was reported as 7.2 px off the scale but left alone; it now
+  becomes `0.5rem`, read at the root size the report used (a project with `html { font-size: 10px }` gets steps of 10 px
+  rems). em values still stay: their px depend on the element's own font size.
+- **`--fix` says what it left.** "Nothing to fix" over a full report read as a tool that does nothing. It now counts the
+  findings that take a decision, by rule, and points to the ai-design-fix skill; "Nothing to fix" is kept for an empty report.
+
 ## 0.14.1
 
 Four gaps left open by 0.14.0, closed.

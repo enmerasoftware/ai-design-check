@@ -534,6 +534,16 @@
 
 **Nasıl düzeltilir:** Satırların alta geçmesine izin verin (flex-wrap), uzun kelimeleri bölün (doğru lang ile hyphens: auto, overflow-wrap), geniş tabloyu overflow-x-auto içine alın.
 
+### İçerik kendi sütununda kalır
+
+`cell-holds-content` · uyarı · denetlenir
+
+**Kural:** Izgara ya da flex hücresinin içindeki hiçbir şey yandaki hücrenin üstüne taşmaz. Kısaltılan (truncate) satırı tutan flex ya da ızgara öğesinde min-w-0 (min-width: 0) ya da overflow hidden bulunur; böylece kesilen satır olur, düzen değil.
+
+**Neden:** Flex öğesi varsayılan olarak içeriğinden dar olamaz; truncate satırındaki tek bir uzun ad kartı sütunundan taşırıp komşusunun üstüne çıkarır, sütun ise doğru görünür.
+
+**Nasıl düzeltilir:** Hücre ile kısaltılan metin arasındaki her flex ya da ızgara öğesine min-w-0 ekleyin (ya da hücreye overflow-hidden).
+
 ### Telefon aynı içeriği alır
 
 `no-hidden-content-narrow` · not · denetlenir

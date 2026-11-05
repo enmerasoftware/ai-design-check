@@ -487,6 +487,36 @@ export function scanPage(designSystem) {
         else if (parent && /(hidden|clip)/.test(parent.overflowX) && (rect.width > target.parentElement.getBoundingClientRect().width * 1.2 || /marquee|ticker/i.test(animation.animationName ?? ''))) hit('no-marquee', short(text(target)));
     }
 
+    // Content that grows out of its grid or flex cell and paints over the next one. The usual cause is a flex item with
+    // min-width:auto holding a long nowrap line (truncate without min-w-0): the box widens, the cell does not.
+    const layouts = new Map();
+    const layoutOf = (el) => layouts.get(el) ?? layouts.set(el, getComputedStyle(el).display).get(el);
+    for (const { el, style, rect } of all) {
+        const parent = el.parentElement;
+        if (!parent || !/flex|grid/.test(layoutOf(parent)) || style.display.startsWith('inline') || style.overflowX !== 'visible' || el.scrollWidth <= el.clientWidth + 1) continue;
+        const siblings = [...parent.children].filter((other) => other !== el && other.getBoundingClientRect().width > 0);
+        if (!siblings.length) continue;
+        let out = null;
+        const walk = (node) => {
+            for (const child of node.children) {
+                const look = getComputedStyle(child);
+                if (look.position === 'absolute' || look.position === 'fixed' || look.display === 'none') continue;
+                const box = child.getBoundingClientRect();
+                const past = Math.max(box.right - rect.right, rect.left - box.left);
+                if (box.width > 0 && past > 1 && (!out || past > out.past)) out = { box, past };
+                if (look.overflowX === 'visible') walk(child);
+            }
+        };
+        walk(el);
+        if (!out) continue;
+        const { box } = out;
+        const over = siblings.find((other) => {
+            const next = other.getBoundingClientRect();
+            return Math.min(box.right, next.right) - Math.max(box.left, next.left) > 1 && Math.min(box.bottom, next.bottom) - Math.max(box.top, next.top) > 1;
+        });
+        if (over) hit('cell-holds-content', `${el.tagName.toLowerCase()} "${short(text(el))}"`, `Runs ${Math.round(out.past)} px past its column onto the next one: ${el.tagName.toLowerCase()} "${short(text(el))}"`);
+    }
+
     // The whole page
     const fonts = {};
     for (const { el, style } of texts) {
