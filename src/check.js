@@ -86,6 +86,7 @@ export function loadConfig(cwd) {
         ignore: [...DEFAULT_IGNORE, ...(config.ignore ?? [])],
         rules: config.rules ?? {},
         allow: config.allow ?? {},
+        designSystem: config.designSystem, // fonts, sizes, radii and colours the scan holds a page to
         spacing: config.spacing,
         configFile: file ? basename(file) : CONFIG_FILE,
         i18n: { files: config.i18n?.files ?? [], keysAreSource: config.i18n?.keysAreSource ?? true, framework: config.i18n?.framework ?? [] },

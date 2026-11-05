@@ -19,9 +19,9 @@ Usage
   npx @enmera/ai-design-check story <before> <after> [--out story.mp4] [--still frame.png] [--title name] [--music track.mp3]
                                                  Square before/after video with every finding marked (files or URLs;
                                                  needs Chrome and ffmpeg, nothing else)
-  npx @enmera/ai-design-check scan <url>         Check the running page at desktop and phone width: real contrast, sizes,
+  npx @enmera/ai-design-check scan <url> [url …] Check running pages at desktop and phone width: real contrast, sizes,
                                                  what covers what, script errors, and the tells only a browser sees
-                                                 (needs Chrome; no model, no API key)
+                                                 (needs Chrome; no model, no API key). Each page gets its own summary
   npx @enmera/ai-design-check narrow <file|url> [--width 320] [--stress]
                                                  Render at phone width and report sideways scrolling, cut-off text,
                                                  text shrunk to fit and content hidden on phones (needs Chrome);
@@ -37,7 +37,8 @@ Usage
                                                  branch. A pass that loses content or does not improve the page is thrown
                                                  away. Needs Chrome and git; web pages only. --plan: stop after the cards
                                                  so you can read and edit them, then --brief to build them.
-                                                 --agent none: the plan and the prompts, nothing run
+                                                 --agent none: the plan and the prompts, nothing run. Commit or stash
+                                                 your changes first; Ctrl-C puts the pass in progress back
   npx @enmera/ai-design-check fonts [--character calm]
                                                  The characters and the font library behind system
 
@@ -53,6 +54,13 @@ Options
   --no-baseline               Ignore the baseline file
   --tr                        Turkish rule texts
   --allow-status 404          scan, narrow: check a page that answers this HTTP status (an error page you designed)
+  --cookie "name=value"       scan, narrow, redesign: a cookie for the page's host, for pages behind a sign-in
+                              (repeatable). AI_DESIGN_CHECK_COOKIE="a=1; b=2" keeps it out of shell history and CI logs
+  --header "Name: value"      scan, narrow, redesign: a request header such as Authorization (repeatable); it goes with
+                              every request the page makes. AI_DESIGN_CHECK_HEADERS takes one per line. Cookie and header
+                              values are never printed
+  --allow-redirect            scan, narrow, redesign: check the page a redirect lands on, even a sign-in page (without
+                              it, a page that sends the browser to a sign-in page stops the run with exit 2)
   --force                     system: overwrite existing files
   --version                   Print the version
 
@@ -69,8 +77,8 @@ process.on('uncaughtException', (error) => {
 });
 
 const args = process.argv.slice(2);
-const SWITCHES = ['json', 'strict', 'quiet', 'fix', 'dry-run', 'write-baseline', 'no-baseline', 'tr', 'help', 'version', 'all', 'stress', 'plan', 'force'];
-const VALUES = ['format', 'out', 'still', 'title', 'music', 'width', 'character', 'brand', 'kind', 'ui', 'display', 'source', 'path', 'agent', 'build', 'only', 'brief', 'allow-status'];
+const SWITCHES = ['json', 'strict', 'quiet', 'fix', 'dry-run', 'write-baseline', 'no-baseline', 'tr', 'help', 'version', 'all', 'stress', 'plan', 'force', 'allow-redirect'];
+const VALUES = ['format', 'out', 'still', 'title', 'music', 'width', 'character', 'brand', 'kind', 'ui', 'display', 'source', 'path', 'agent', 'build', 'only', 'brief', 'allow-status', 'cookie', 'header'];
 // An option that is not understood must stop the run: silently dropped, --strict is off and --dry-run writes files.
 const usageError = (message) => {
     console.error(`${message}\nSee: ai-design-check --help`);
@@ -92,6 +100,32 @@ const valueOf = (name) => {
     const index = args.indexOf(`--${name}`);
 
     return index >= 0 ? args[index + 1] : undefined;
+};
+/** Every value of an option given more than once (--cookie a=1 --cookie b=2), in order. */
+const valuesOf = (name) => args.flatMap((arg, index) => {
+    if (arg.startsWith(`--${name}=`)) return [arg.slice(name.length + 3)];
+
+    return arg === `--${name}` && args[index - 1] !== `--${name}` && args[index + 1] !== undefined ? [args[index + 1]] : [];
+});
+/**
+ * Cookies and headers for a page behind a sign-in, from the options and from the environment, which keeps them out of
+ * shell history and CI logs. They are secrets: no message here, or anywhere after, shows a value.
+ */
+const signInFrom = () => {
+    const cookies = [...valuesOf('cookie'), process.env.AI_DESIGN_CHECK_COOKIE ?? ''].flatMap((text) => text.split(';')).map((item) => item.trim()).filter(Boolean).map((item) => {
+        const at = item.indexOf('=');
+        if (at < 1) usageError('A cookie takes the form name=value (in --cookie or AI_DESIGN_CHECK_COOKIE, separated by ";"); one has no name or no "=". Its value is not shown.');
+
+        return { name: item.slice(0, at).trim(), value: item.slice(at + 1).trim() };
+    });
+    const headers = {};
+    for (const item of [...valuesOf('header'), ...(process.env.AI_DESIGN_CHECK_HEADERS ?? '').split(/\r?\n/)].map((line) => line.trim()).filter(Boolean)) {
+        const at = item.indexOf(':');
+        if (at < 1) usageError('A header takes the form "Name: value" (in --header, or one per line in AI_DESIGN_CHECK_HEADERS); one has no name or no ":". Its value is not shown.');
+        headers[item.slice(0, at).trim()] = item.slice(at + 1).trim();
+    }
+
+    return { cookies, headers };
 };
 const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story', 'narrow', 'system', 'fonts', 'redesign', 'scan'];
 const positional = args.filter((arg, index) => !arg.startsWith('-') && !VALUES.includes(args[index - 1]?.slice(2)));
@@ -174,30 +208,47 @@ if (command === 'story') {
 }
 
 if (command === 'scan') {
-    const target = named[0];
-    if (!target) {
-        console.error('Usage: ai-design-check scan <url of the running page> [--format text|json|github] [--strict]');
+    if (named.length === 0) {
+        console.error('Usage: ai-design-check scan <url of the running page> [url …] [--format text|json|github] [--strict]');
         done(1);
     }
-    const { scan } = await import('../src/scan.js');
+    const { scanPages } = await import('../src/scan.js');
     try {
-        const results = await scan(target, { config: loadConfig(cwd), allowStatus });
-        const total = (severity) => results.filter((item) => item.severity === severity).length;
-        if (format === 'json') print(JSON.stringify({ findings: results, errors: total('error'), warnings: total('warn'), notes: total('info') }, null, 2));
-        else if (format === 'github') for (const item of results) print(annotation(item));
-        else {
-            const groups = [[loadRules().areas.accessibility[lang], results.filter((item) => item.area === 'accessibility' || item.rule === 'legible-contrast')], [lang === 'tr' ? 'Stil' : 'Style', results.filter((item) => item.area !== 'accessibility' && item.rule !== 'legible-contrast')]];
-            for (const [title, items] of groups) {
-                if (items.length === 0) continue;
-                print(`\n${paint(1, `${title} (${items.length})`)}`);
-                for (const item of items) print(`  ${SEVERITY[item.severity](item.severity.padEnd(5))}  ${item.message}  ${paint(2, item.rule)}${item.width < 768 ? paint(2, ` (${item.width} px)`) : ''}`);
+        const pages = await scanPages(named, { config: loadConfig(cwd), allowStatus, allowRedirect: flags.has('--allow-redirect'), auth: signInFrom() });
+        const results = pages.flatMap((page) => page.findings);
+        const total = (items, severity) => items.filter((item) => item.severity === severity).length;
+        const counts = (items) => ({ errors: total(items, 'error'), warnings: total(items, 'warn'), notes: total(items, 'info') });
+        const failed = pages.filter((page) => page.error);
+        // A page that could not be checked says why; the pages that could still report.
+        for (const page of failed) console.error(page.error.message);
+        if (format === 'json') {
+            print(JSON.stringify({ findings: results, ...counts(results), pages: pages.map((page) => ({ url: page.url, ...(page.measured ? { measured: page.measured } : {}), ...(page.error ? { error: page.error.message } : counts(page.findings)) })) }, null, 2));
+        } else if (format === 'github') {
+            for (const item of results) print(annotation(pages.length > 1 ? { ...item, message: `${item.message} (${item.path})` } : item));
+        } else {
+            for (const page of pages.filter((item) => !item.error)) {
+                if (pages.length > 1) print(`\n${paint(1, page.url)}`);
+                if (page.measured) print(paint(33, `Measured ${page.measured}: ${page.url} redirected there.`));
+                const groups = [[loadRules().areas.accessibility[lang], page.findings.filter((item) => item.area === 'accessibility' || item.rule === 'legible-contrast')], [lang === 'tr' ? 'Stil' : 'Style', page.findings.filter((item) => item.area !== 'accessibility' && item.rule !== 'legible-contrast')]];
+                for (const [title, items] of groups) {
+                    if (items.length === 0) continue;
+                    print(`\n${paint(1, `${title} (${items.length})`)}`);
+                    for (const item of items) print(`  ${SEVERITY[item.severity](item.severity.padEnd(5))}  ${item.message}  ${paint(2, item.rule)}${item.width < 768 ? paint(2, ` (${item.width} px)`) : ''}`);
+                }
+                const { errors, warnings, notes } = counts(page.findings);
+                print(`\n${page.findings.length === 0 ? paint(32, 'No findings.') : `${errors} errors, ${warnings} warnings, ${notes} notes.`} ${paint(2, page.url)}`);
             }
-            print(`\n${results.length === 0 ? paint(32, 'No findings.') : `${total('error')} errors, ${total('warn')} warnings, ${total('info')} notes.`} ${paint(2, target)}`);
+            if (pages.length > 1) {
+                const { errors, warnings, notes } = counts(results);
+                print(`\n${paint(1, `${pages.length - failed.length} of ${pages.length} pages checked`)}${failed.length ? paint(31, ` (not checked: ${failed.map((page) => page.url).join(', ')})`) : ''}: ${errors} errors, ${warnings} warnings, ${notes} notes.`);
+            }
         }
-        done(total('error') > 0 || (flags.has('--strict') && total('warn') > 0) ? 1 : 0);
+        // A sign-in page in place of the one asked for is a usage problem (exit 2); a page not there is a failure.
+        const status = failed.some((page) => page.error.exitCode === 2) ? 2 : failed.length || total(results, 'error') > 0 || (flags.has('--strict') && total(results, 'warn') > 0) ? 1 : 0;
+        done(status);
     } catch (error) {
         console.error(error.message);
-        done(1);
+        done(error.exitCode ?? 1);
     }
 }
 
@@ -211,12 +262,14 @@ if (command === 'narrow') {
         const width = Number(valueOf('width') ?? 320);
         if (!(width > 0)) throw new Error(`--width takes a number of pixels, got ${valueOf('width')}`);
         const config = loadConfig(cwd);
-        const results = (await narrow(named[0], { width, stress: flags.has('--stress'), allowStatus }))
+        let measured = null;
+        const results = (await narrow(named[0], { width, stress: flags.has('--stress'), allowStatus, allowRedirect: flags.has('--allow-redirect'), auth: signInFrom(), onLanded: (landed) => { measured = landed; } }))
             .map((item) => ({ ...item, severity: config.rules[item.rule] ?? item.severity }))
             .filter((item) => item.severity !== 'off');
-        if (format === 'json') print(JSON.stringify({ findings: results }, null, 2));
+        if (format === 'json') print(JSON.stringify({ findings: results, ...(measured ? { measured } : {}) }, null, 2));
         else if (format === 'github') for (const item of results) print(annotation(item));
         else {
+            if (measured) print(paint(33, `Measured ${measured}: ${named[0]} redirected there.`));
             if (!flags.has('--quiet')) for (const item of results) print(`  ${SEVERITY[item.severity](item.severity.padEnd(5))}  ${item.message}  ${paint(2, item.rule)}`);
             const errors = results.filter((item) => item.severity === 'error').length;
             print(`\n${results.length === 0 ? paint(32, `No problems at ${width} px.`) : `${errors} errors, ${results.length - errors} warnings and notes at ${width} px.`}`);
@@ -224,7 +277,7 @@ if (command === 'narrow') {
         done(results.some((item) => item.severity === 'error' || (flags.has('--strict') && item.severity === 'warn')) ? 1 : 0);
     } catch (error) {
         console.error(error.message);
-        done(1);
+        done(error.exitCode ?? 1);
     }
 }
 
@@ -288,8 +341,9 @@ if (command === 'redesign') {
     }
     try {
         const result = await redesign({
-            cwd, url, path: valueOf('path') ?? new URL(url).pathname, agent: valueOf('agent') ?? 'claude', build: valueOf('build'),
-            only: valueOf('only')?.split(','), kind: valueOf('kind') ?? 'marketing', plan: flags.has('--plan'), briefFile: valueOf('brief'), log: (line) => console.error(line),
+            cwd, url, path: valueOf('path'), agent: valueOf('agent') ?? 'claude', build: valueOf('build'),
+            only: valueOf('only')?.split(','), kind: valueOf('kind') ?? 'marketing', plan: flags.has('--plan'), briefFile: valueOf('brief'),
+            allowRedirect: flags.has('--allow-redirect'), auth: signInFrom(), log: (line) => console.error(line),
         });
         if (format === 'json') {
             print(JSON.stringify(result, null, 2));
@@ -317,13 +371,18 @@ if (command === 'redesign') {
             done(0);
         }
         print('');
-        for (const pass of result.passes) print(`  ${pass.kept ? paint(32, 'kept') : paint(31, 'thrown away')}  ${pass.name}${pass.problems ? `: ${pass.problems.join('; ')}` : ''}`);
+        for (const pass of result.passes) {
+            print(`  ${pass.kept ? paint(32, 'kept') : paint(31, 'thrown away')}  ${pass.name}${pass.problems ? `: ${pass.problems.join('; ')}` : ''}`);
+            // Git cannot put these back or commit them: the person decides what happens to them.
+            if (pass.outside) print(paint(33, `    changed outside git, ${pass.kept ? 'not in the commit' : 'not put back'}: ${pass.outside.join(', ')}`));
+        }
         print(`\nBefore ${JSON.stringify(result.before)}\nAfter  ${JSON.stringify(result.after)}`);
         print(`\nBranch ${result.branch}. Screenshots and logs in ${result.out}. To undo everything: git checkout ${result.start} && git branch -D ${result.branch}`);
         done(0);
     } catch (error) {
+        // Stopped with Ctrl-C: 130, as a shell expects; the message says where the person is and how to go back.
         console.error(error.message);
-        done(1);
+        done(error.exitCode ?? 1);
     }
 }
 

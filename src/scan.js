@@ -1,20 +1,25 @@
 import { loadRules } from './check.js';
 import { scanPage } from './scan-page.js';
-import { assertPage, findChrome, launch } from './story.js';
+import { assertLanded, assertPage, findChrome, launch, signIn } from './story.js';
 
 /**
  * Checks a running page: what only the browser knows (real contrast, real sizes, what covers what, whether the scripts
  * ran). Dependency-free, like the rest: it drives the installed Chrome. No model and no API key.
  */
 
-/** One page at one width. browser: from launch(). */
-export async function scanWith(browser, url, { width = 1440, config = {}, quick = false, allowStatus = [], requireContent = false } = {}) {
+/**
+ * One page at one width. browser: from launch(). onLanded: told the address measured when a redirect led elsewhere;
+ * a sign-in page in its place stops the scan unless allowRedirect.
+ */
+export async function scanWith(browser, url, { width = 1440, config = {}, quick = false, allowStatus = [], requireContent = false, allowRedirect = false, onLanded } = {}) {
     const mobile = width < 768;
     const errors = [];
     await browser.send('Runtime.enable');
     const stop = browser.on('Runtime.exceptionThrown', ({ exceptionDetails }) => errors.push(exceptionDetails.exception?.description?.split('\n')[0] ?? exceptionDetails.text));
     try {
         assertPage(await browser.open(url, { width, height: mobile ? 844 : 900, mobile, settle: quick ? 0 : 300, steady: !quick }), url, allowStatus);
+        const landed = await assertLanded(browser, url, { allowRedirect });
+        if (landed) onLanded?.(landed);
         // Lazy images and on-scroll reveals get their chance before anything counts as hidden.
         await browser.evaluate('(async () => { document.documentElement.style.scrollBehavior = "auto"; for (let y = 0; y < Math.min(document.documentElement.scrollHeight, 40000); y += innerHeight / 2) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 40)); } scrollTo(0, 0); await document.fonts.ready; await new Promise((r) => setTimeout(r, ' + (quick ? 0 : 200) + ')); })()');
         // A page with nothing on it has no findings, and that is not good news (an empty #root whose bundle failed).
@@ -35,25 +40,51 @@ export async function scanWith(browser, url, { width = 1440, config = {}, quick 
     }
 }
 
-/** A page at desktop and phone width; the same finding at both widths is reported once. */
-export async function scan(url, { widths = [1440, 390], config = {}, allowStatus = [] } = {}) {
+/**
+ * Pages at desktop and phone width, all in one browser. Each page's findings keep its address as their path; the same
+ * finding at both widths is reported once. A page that cannot be checked carries the reason in `error`, and the rest
+ * are still checked.
+ * @param {string[]} urls
+ * @param {{widths?: number[], config?: object, allowStatus?: number[], allowRedirect?: boolean, auth?: {cookies?: {name: string, value: string}[], headers?: Record<string, string>}}} options
+ * @returns {Promise<{url: string, measured?: string, findings: object[], error?: Error}[]>}
+ */
+export async function scanPages(urls, { widths = [1440, 390], config = {}, allowStatus = [], allowRedirect = false, auth = {} } = {}) {
     const chrome = findChrome();
     if (!chrome) throw new Error('Chrome or Chromium not found; set CHROME_PATH');
     const browser = await launch(chrome);
     try {
-        const seen = new Set();
-        const findings = [];
-        for (const width of widths) {
-            for (const item of await scanWith(browser, url, { width, config, allowStatus, requireContent: true })) {
-                const key = `${item.rule}\u0000${item.value}`;
-                if (seen.has(key)) continue;
-                seen.add(key);
-                findings.push(item);
+        const pages = [];
+        for (const url of urls) {
+            const page = { url, findings: [] };
+            pages.push(page);
+            try {
+                await signIn(browser, url, auth);
+                const seen = new Set();
+                for (const width of widths) {
+                    for (const item of await scanWith(browser, url, { width, config, allowStatus, allowRedirect, requireContent: true, onLanded: (landed) => { page.measured = landed; } })) {
+                        const key = `${item.rule}\u0000${item.value}`;
+                        if (seen.has(key)) continue;
+                        seen.add(key);
+                        page.findings.push(item);
+                    }
+                }
+            } catch (error) {
+                // Half a page's findings would read as a page checked.
+                page.findings = [];
+                page.error = error;
             }
         }
 
-        return findings;
+        return pages;
     } finally {
         await browser.close();
     }
+}
+
+/** One page at desktop and phone width; throws when it cannot be checked. */
+export async function scan(url, options = {}) {
+    const [page] = await scanPages([url], options);
+    if (page.error) throw page.error;
+
+    return page.findings;
 }

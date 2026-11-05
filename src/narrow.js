@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { loadRules } from './check.js';
-import { assertPage, findChrome, launch } from './story.js';
+import { assertLanded, assertPage, findChrome, launch, signIn } from './story.js';
 
 /**
  * Narrow-screen check: renders the page at a phone width and at a desktop width in Chrome and reports what only a
@@ -65,9 +65,10 @@ const finding = (rule, severity, path, value, message) => ({ rule, area: loadRul
 
 /**
  * @param {string} input file or URL
- * @param {{width?: number, desktop?: number, stress?: boolean}} options
+ * @param {{width?: number, desktop?: number, stress?: boolean, allowStatus?: number[], allowRedirect?: boolean, auth?: object, onLanded?: (url: string) => void}} options
+ *   auth: cookies and headers for a page behind a sign-in (see signIn); onLanded: told the address measured after a redirect
  */
-export async function narrow(input, { width = 320, desktop = 1280, stress = false, allowStatus = [] } = {}) {
+export async function narrow(input, { width = 320, desktop = 1280, stress = false, allowStatus = [], allowRedirect = false, auth = {}, onLanded } = {}) {
     const chrome = findChrome();
     if (!chrome) throw new Error('Chrome or Chromium not found; set CHROME_PATH');
     const url = /^https?:\/\//.test(input) ? input : pathToFileURL(resolve(input)).href;
@@ -75,7 +76,10 @@ export async function narrow(input, { width = 320, desktop = 1280, stress = fals
 
     const browser = await launch(chrome);
     try {
+        await signIn(browser, url, auth);
         assertPage(await browser.open(url, { width: desktop, height: 900 }), url, allowStatus);
+        const landed = await assertLanded(browser, url, { allowRedirect });
+        if (landed) onLanded?.(landed);
         const wide = await browser.evaluate(MEASURE);
         await browser.open(url, { width, height: 800, mobile: true });
         const phone = await browser.evaluate(MEASURE);
