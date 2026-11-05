@@ -42,6 +42,7 @@ npx @enmera/ai-design-check --fix --dry-run
 
 Bu komut değişiklikleri listeler; yazmak için `--dry-run` bayrağını kaldırın. Boşluk ve köşeler ölçeğinizin en yakın
 basamağına gider, çok kalın yazı kalına iner. Dokunma alanı, renk, emoji, metin ve hiyerarşi karar istediği için raporda kalır.
+`text-[Npx]` boyutlarının da temadaki en yakın boyuta gitmesi için `--nearest-type` ekleyin (`lg:text-[64px]` → `lg:text-6xl`).
 
 **3. Kalanı ajanınıza bırakın.**
 

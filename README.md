@@ -42,6 +42,7 @@ npx @enmera/ai-design-check --fix --dry-run
 
 This lists the changes; drop `--dry-run` to make them. Spacing and corners move to the nearest step of your scale, and very
 heavy type becomes bold. Tap sizes, colours, emoji, words and hierarchy stay in the report, since they take a decision.
+Add `--nearest-type` to move `text-[Npx]` sizes to the nearest theme size as well (`lg:text-[64px]` → `lg:text-6xl`).
 
 **3. Let your agent fix the rest.**
 

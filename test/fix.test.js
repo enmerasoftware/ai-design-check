@@ -112,3 +112,32 @@ test('--fix --json reports the changes', () => {
         assert.equal(findings.filter((item) => item.rule === 'spacing-scale').length, 0);
     });
 });
+
+test('--fix --nearest-type: bracket sizes move to theme steps with their variants, leading keeps its ratio', () => {
+    const view = [
+        `<h2 class="mx-auto {{ $t ? 'text-4xl sm:text-6xl leading-snug' : 'text-[40px] leading-[44px] sm:text-[52px] sm:leading-[58px] lg:text-[64px] lg:leading-[68px] tracking-[-0.035em]' }} {{ $c }}">T</h2>`,
+        `<p class="{{ $t ? 'text-sm' : 'text-[17px] leading-[28px] lg:text-[20px] lg:leading-[32px]' }}">D</p>`,
+        `<span class="text-[13px] tracking-[1px]">S</span>`,
+        '',
+    ].join('\n');
+    project({ 'views/hero.blade.php': view }, (cwd, read) => {
+        const plain = run(cwd, '--fix', '--dry-run').stdout;
+        assert.match(plain, /No mechanical fix here\. 6 findings left .*type-scale 6/);
+        assert.match(plain, /Add --nearest-type/);
+        run(cwd, '--fix');
+        assert.equal(read('views/hero.blade.php'), view); // off by default
+
+        const dry = run(cwd, '--fix', '--dry-run', '--nearest-type').stdout;
+        assert.match(dry, /hero\.blade\.php:1 +lg:text-\[64px\] → lg:text-6xl +type-scale/);
+        assert.match(dry, /hero\.blade\.php:3 +tracking-\[1px\] was set for 13 px text; check it at 14 px/);
+        assert.match(dry, /Nothing else left\./);
+        run(cwd, '--fix', '--nearest-type');
+        assert.equal(read('views/hero.blade.php'), [
+            `<h2 class="mx-auto {{ $t ? 'text-4xl sm:text-6xl leading-snug' : 'text-4xl leading-[40px] sm:text-5xl sm:leading-[52px] lg:text-6xl lg:leading-[64px] tracking-[-0.035em]' }} {{ $c }}">T</h2>`,
+            `<p class="{{ $t ? 'text-sm' : 'text-lg leading-[28px] lg:text-xl lg:leading-[32px]' }}">D</p>`,
+            `<span class="text-sm tracking-[1px]">S</span>`,
+            '',
+        ].join('\n'));
+        assert.deepEqual(check(cwd).filter((item) => item.rule === 'type-scale'), []);
+    });
+});

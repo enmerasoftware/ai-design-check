@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.14.3
+
+- **`--fix --nearest-type` moves font sizes too, when you ask.** Every `text-[Npx]` (or rem) on a flagged line moves to the
+  nearest theme size with its variant kept: `text-[40px] sm:text-[52px] lg:text-[64px]` becomes
+  `text-4xl sm:text-5xl lg:text-6xl`; a tie goes up, as spacing does. A `leading-[Npx]` with the same variant in the same
+  class string keeps its ratio to the size, on the 4 px grid (`leading-[44px]` at 40 px becomes `leading-[40px]` at
+  36 px); a `tracking-[Npx]` is named for a look instead, since a fixed letter spacing does not scale. Each side of a
+  Blade `{{ $a ? '…' : '…' }}` is paired on its own. Without the flag `--fix` leaves sizes alone, as before, and says
+  the flag exists when type-scale findings are left.
+
 ## 0.14.2
 
 A layout bug a person found by eye on a real page, now found by the checker.

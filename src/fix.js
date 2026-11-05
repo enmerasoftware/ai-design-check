@@ -97,8 +97,62 @@ function locate(source, value, line) {
     return -1;
 }
 
+
+/** Tailwind's font-size steps, in px. text-2xs is a common project addition, so it counts only where the theme names it. */
+const TYPE_STEPS = [[12, 'xs'], [14, 'sm'], [16, 'base'], [18, 'lg'], [20, 'xl'], [24, '2xl'], [30, '3xl'], [36, '4xl'], [48, '5xl'], [60, '6xl'], [72, '7xl'], [96, '8xl'], [128, '9xl']];
+const nearestType = (px) => TYPE_STEPS.reduce((best, item) => {
+    const gap = Math.abs(item[0] - px) - Math.abs(best[0] - px);
+    return gap < 0 || (gap === 0 && item[0] > best[0]) ? item : best; // a tie goes up, as spacing does
+});
+const SIZE_TOKEN = /(^|[\s'"`{])((?:[\w-]+:)*)text-\[(\d*\.?\d+)(px|rem)\](?=[\s'"`}]|$)/g;
+
+/**
+ * --nearest-type: every text-[Npx] on a line the report flagged moves to the nearest theme step, its variant kept
+ * (lg:text-[64px] → lg:text-6xl). A leading-[Npx] with the same variant in the same class string keeps its ratio to
+ * the size, on the 4 px grid; a tracking-[Npx] is named for a look, since a fixed letter spacing does not scale.
+ */
+function typeEdits(source, lines, scales) {
+    const edits = [];
+    const notes = [];
+    const starts = [0];
+    for (let index = source.indexOf('\n'); index >= 0; index = source.indexOf('\n', index + 1)) starts.push(index + 1);
+    for (const line of lines) {
+        const from = starts[line - 1];
+        const text = source.slice(from, starts[line] ?? source.length);
+        // A class string: text between quotes, so the two sides of a {{ $a ? '…' : '…' }} are paired on their own.
+        for (const run of text.matchAll(/[^'"`]+/g)) {
+            const sizes = new Map();
+            for (const match of run[0].matchAll(SIZE_TOKEN)) {
+                const [, lead, prefix, raw, unit] = match;
+                const px = Number(raw) * (unit === 'rem' ? 16 : 1);
+                const [step, name] = nearestType(px);
+                const start = from + run.index + match.index + lead.length;
+                const old = match[0].slice(lead.length);
+                sizes.set(prefix, { px, step });
+                edits.push({ start, end: start + old.length, line, from: old, to: `${prefix}text-${name}` });
+            }
+            for (const match of run[0].matchAll(/(^|[\s{])((?:[\w-]+:)*)(leading|tracking)-\[(-?\d*\.?\d+)(px|rem)\](?=[\s}]|$)/g)) {
+                const [, lead, prefix, kind, raw, unit] = match;
+                const size = sizes.get(prefix);
+                if (!size || size.step === size.px) continue;
+                const old = match[0].slice(lead.length);
+                if (kind === 'tracking') {
+                    notes.push({ line, note: `${old} was set for ${size.px} px text; check it at ${size.step} px` });
+                    continue;
+                }
+                const px = Number(raw) * (unit === 'rem' ? 16 : 1);
+                const next = nearestOnScale(scales.web, (px / size.px) * size.step);
+                const start = from + run.index + match.index + lead.length;
+                if (next !== px) edits.push({ start, end: start + old.length, line, from: old, to: `${prefix}leading-[${next}px]` });
+            }
+        }
+    }
+
+    return { edits, notes };
+}
+
 /** Returns the changes ({ path, line, rule, from, to }); with write they are made. */
-export function applyFixes(cwd, findings, scales, { write = true } = {}) {
+export function applyFixes(cwd, findings, scales, { write = true, nearestType: typeScale = false } = {}) {
     let themed;
     const answer = {
         'spacing-scale': (value) => spacing(value, scales),
@@ -107,7 +161,11 @@ export function applyFixes(cwd, findings, scales, { write = true } = {}) {
     };
     const changes = [];
     changes.skipped = [];
+    changes.notes = [];
     const byFile = new Map();
+    const typeLines = new Map();
+    if (typeScale) for (const finding of findings) if (finding.rule === 'type-scale' && !finding.css && /^text-\[/.test(finding.value)) typeLines.set(finding.path, new Set([...(typeLines.get(finding.path) ?? []), finding.line]));
+    for (const path of typeLines.keys()) if (!byFile.has(path)) byFile.set(path, []);
     for (const finding of findings) {
         // A finding read from CSS names its property; one read from a class or app code does not.
         const to = finding.css ? cssLength(finding, scales) : answer[finding.rule]?.(finding.value);
@@ -129,6 +187,15 @@ export function applyFixes(cwd, findings, scales, { write = true } = {}) {
             taken.add(start);
             edits.push({ start, end: start + finding.value.length, to });
             changes.push({ path, line: finding.line, rule: finding.rule, from: finding.value, to });
+        }
+        if (typeLines.has(path)) {
+            const { edits: sized, notes } = typeEdits(source, [...typeLines.get(path)].sort((a, b) => a - b), scales);
+            for (const edit of sized) {
+                if (edits.some((other) => edit.start < other.end && other.start < edit.end)) continue;
+                edits.push(edit);
+                changes.push({ path, line: edit.line, rule: 'type-scale', from: edit.from, to: edit.to });
+            }
+            changes.notes.push(...notes.map((note) => ({ path, ...note })));
         }
         if (write && edits.length > 0) {
             let out = source;

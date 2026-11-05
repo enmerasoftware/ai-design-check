@@ -51,6 +51,8 @@ Options
   --fix                       Change what has one mechanical answer, no agent needed: spacing and corners to the nearest
                               step of the scale (a tie goes up), very heavy type to bold. The rest stays in the report
   --dry-run                   With --fix: list the changes, write nothing
+  --nearest-type              With --fix: also move text-[Npx] to the nearest theme size (lg:text-[64px] → lg:text-6xl),
+                              a matching leading-[Npx] keeping its ratio. Off by default: a size is a hierarchy decision
   --write-baseline            Record current findings in ${BASELINE}; later runs report only new ones
   --no-baseline               Ignore the baseline file
   --tr                        Turkish rule texts
@@ -78,7 +80,7 @@ process.on('uncaughtException', (error) => {
 });
 
 const args = process.argv.slice(2);
-const SWITCHES = ['json', 'strict', 'quiet', 'fix', 'dry-run', 'write-baseline', 'no-baseline', 'tr', 'help', 'version', 'all', 'stress', 'plan', 'force', 'allow-redirect'];
+const SWITCHES = ['json', 'strict', 'quiet', 'fix', 'dry-run', 'nearest-type', 'write-baseline', 'no-baseline', 'tr', 'help', 'version', 'all', 'stress', 'plan', 'force', 'allow-redirect'];
 const VALUES = ['format', 'out', 'still', 'title', 'music', 'width', 'character', 'brand', 'kind', 'ui', 'display', 'source', 'path', 'agent', 'build', 'only', 'brief', 'allow-status', 'cookie', 'header'];
 // An option that is not understood must stop the run: silently dropped, --strict is off and --dry-run writes files.
 const usageError = (message) => {
@@ -507,7 +509,7 @@ const include = paths.length > 0 ? { include: paths } : {};
 let findings = check(root, { ...include, ...(scales ? { scales } : {}) });
 const seen = coverage(root, include);
 const dryRun = flags.has('--dry-run');
-const fixes = flags.has('--fix') ? applyFixes(root, findings, scales ?? spacingScales(root), { write: !dryRun }) : null;
+const fixes = flags.has('--fix') ? applyFixes(root, findings, scales ?? spacingScales(root), { write: !dryRun, nearestType: flags.has('--nearest-type') }) : null;
 if (fixes?.length && !dryRun) findings = check(root, { ...include, ...(scales ? { scales } : {}) });
 // A run that read nothing has found nothing: a wrong path, an empty folder or an unread language is not a pass.
 if (seen.read === 0 && findings.length === 0) {
@@ -575,16 +577,18 @@ if (format === 'json') {
     if (fixes) {
         for (const path of fixes.skipped) print(paint(33, `  ${path}: not UTF-8, left as it is. Convert it first; writing it back would destroy its letters.`));
         for (const item of fixes) print(`  ${`${item.path}:${item.line}`.padEnd(32)} ${item.from} → ${item.to}  ${paint(2, item.rule)}`);
+        for (const item of fixes.notes ?? []) print(paint(33, `  ${`${item.path}:${item.line}`.padEnd(32)} ${item.note}`));
         const made = `${fixes.length} change${fixes.length === 1 ? '' : 's'}`;
         if (fixes.length > 0) print(paint(1, `\n${dryRun ? `${made} would be made (--dry-run, nothing written).` : `${made} made. Check them with git diff.`}`));
         // What --fix left alone, and why: an empty "Nothing to fix" over a full report reads as a tool that does nothing.
-        const fixed = new Set(fixes.map((item) => `${item.path}:${item.line}:${item.from}`));
-        const left = dryRun ? findings.filter((item) => !fixed.has(`${item.path}:${item.line}:${item.value}`)) : findings;
+        const key = (path, line, value) => `${path}:${line}:${value.split(':').pop()}`;
+        const fixed = new Set(fixes.map((item) => key(item.path, item.line, item.from)));
+        const left = dryRun ? findings.filter((item) => !fixed.has(key(item.path, item.line, item.value))) : findings;
         if (left.length === 0) print(paint(1, fixes.length === 0 ? '\nNothing to fix.' : '\nNothing else left.'));
         else {
             const byRule = Object.entries(left.reduce((all, item) => ({ ...all, [item.rule]: (all[item.rule] ?? 0) + 1 }), {})).sort((a, b) => b[1] - a[1]);
             print(paint(1, `\n${fixes.length === 0 ? 'No mechanical fix here. ' : ''}${left.length} finding${left.length === 1 ? '' : 's'} left for a person or the ai-design-fix skill: ${byRule.map(([rule, total]) => `${rule} ${total}`).join(', ')}.`));
-            print(paint(2, '--fix only moves spacing and corners (px, rem, Tailwind brackets) to the nearest step and lightens extra-bold headings. Font sizes, colours, sizes, offsets, em values and words take a decision, so they stay in the report.'));
+            print(paint(2, `--fix only moves spacing and corners (px, rem, Tailwind brackets) to the nearest step and lightens extra-bold headings. Colours, sizes, offsets, em values and words take a decision, so they stay in the report.${left.some((item) => item.rule === 'type-scale') && !flags.has('--nearest-type') ? ' Add --nearest-type to move text-[Npx] to the nearest theme size as well.' : ''}`));
         }
     }
     const list = Object.entries(seen.unread).map(([extension, total]) => `${total} .${extension} file${total === 1 ? '' : 's'}`).join(', ');
