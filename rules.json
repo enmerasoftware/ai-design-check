@@ -120,7 +120,17 @@
       "check": {
         "type": "class",
         "pattern": "(?:\\buppercase\\b[^\"'`]*\\btracking-(?:wide|wider|widest|\\[0?\\.\\d+em\\])|\\btracking-(?:wide|wider|widest|\\[0?\\.\\d+em\\])[^\"'`]*\\buppercase\\b)",
-        "markup": "class(?:Name)?=[\"'][^\"']*\\btracking-(?:wide|wider|widest|\\[0?\\.\\d+em\\])[^\"']*[\"'][^>]*>\\s*(\\p{Lu}[\\p{Lu}\\d&/ -]{3,})\\s*<",
+        "markup": [
+          "class(?:Name)?=[\"'][^\"']*\\btracking-(?:wide|wider|widest|\\[0?\\.\\d+em\\])[^\"']*[\"'][^>]*>\\s*(\\p{Lu}[\\p{Lu}\\d&/ -]{3,})\\s*<",
+          "<(?:small\\b|[a-z][\\w-]*\\b(?=[^>]*\\bclass(?:Name)?=[\"'][^\"']*(?<![\\w-])(?:small|fs-[67])(?![\\w-])))(?=[^>]*\\bclass(?:Name)?=[\"'](?=[^\"']*(?<![\\w-])text-uppercase(?![\\w-]))(?=[^\"']*(?<![\\w-])fw-(?:semibold|bold|bolder)(?![\\w-])))[^>]*>\\s*([^<>\\s][^<>]{0,38}?)\\s*</"
+        ],
+        "css": [
+          {
+            "property": "text-transform",
+            "value": "^\\s*uppercase\\b",
+            "with": "(?:^|; )letter-spacing: (?:(?:0?\\.(?:0[5-9]|[1-9])\\d*|[1-9]\\d*(?:\\.\\d+)?)r?em|[1-9]\\d*(?:\\.\\d+)?px)\\b"
+          }
+        ],
         "native": {
           "swift": [
             "\\bText\\(\\s*\"\\p{Lu}{2,}(?:\\s+\\p{Lu}{2,})+\"",
@@ -241,8 +251,8 @@
         "tr": "Köşe yuvarlaklığı yalnız ölçekten"
       },
       "rule": {
-        "en": "Use rounded-md … rounded-3xl and rounded-full; large marketing surfaces get one shared token (rounded-panel). Arbitrary radii only for micro elements up to 5 px and for drawn device or icon shapes.",
-        "tr": "rounded-md … rounded-3xl ve rounded-full kullanılır; tanıtım sitesinin büyük yüzeyleri tek bir ortak değer alır (rounded-panel). Elle köşe yalnız 5 px'e kadar mikro öğelerde ve cihaz/ikon çizimlerinde."
+        "en": "Use rounded-md … rounded-3xl and rounded-full; large marketing surfaces get one shared token (rounded-panel). Arbitrary radii only for micro elements up to 5 px and for drawn device or icon shapes. In CSS a px radius is 6, 8, 12, 16, 20, 24 or 32, up to 5, or 999 and more.",
+        "tr": "rounded-md … rounded-3xl ve rounded-full kullanılır; tanıtım sitesinin büyük yüzeyleri tek bir ortak değer alır (rounded-panel). Elle köşe yalnız 5 px'e kadar mikro öğelerde ve cihaz/ikon çizimlerinde. CSS'te px köşe 6, 8, 12, 16, 20, 24 ya da 32 olur; 5'e kadar olanlar ile 999 ve üstü de geçer."
       },
       "why": {
         "en": "28, 30 and 32 px side by side read as noise, not as a system.",
@@ -255,6 +265,12 @@
       "check": {
         "type": "class",
         "pattern": "\\brounded(?:-[a-z]{1,2})?-\\[(?![1-5]px\\]|inherit\\])[^\\]]+\\]",
+        "css": [
+          {
+            "property": "border(?:-(?:top|bottom)-(?:left|right)|-(?:start|end)-(?:start|end))?-radius",
+            "scale": "radius"
+          }
+        ],
         "native": {
           "swift": {
             "pattern": "cornerRadius(?::\\s*|\\(\\s*)([0-9.]+)",
@@ -512,6 +528,20 @@
       "check": {
         "type": "class",
         "pattern": "(?:\\bbg-clip-text\\b|\\b(?:from|via|to)-(?:purple|violet|fuchsia|indigo)-[0-9]{2,3}\\b)",
+        "css": [
+          {
+            "gradient": true,
+            "hue": [
+              270,
+              335
+            ]
+          },
+          {
+            "property": "(?:-webkit-)?background-clip",
+            "value": "^\\s*text\\b",
+            "with": "gradient\\("
+          }
+        ],
         "native": {
           "swift": "(?:Linear|Angular|Radial)Gradient\\([\\s\\S]{0,240}?\\.(?:purple|indigo|pink)\\b|Text\\([^\\n]*\\)\\s*(?:\\.[a-zA-Z]+\\([^()\\n]*\\)\\s*){0,4}\\.foregroundStyle\\(\\s*(?:Linear|Angular|Radial)Gradient",
           "kt": "Brush\\.(?:linear|horizontal|vertical|sweep|radial)Gradient\\([\\s\\S]{0,240}?(?:Purple|Violet|Magenta|Indigo|Pink)",
@@ -963,8 +993,8 @@
         "tr": "Odak halkası yerine yenisi konmadan kaldırılmaz"
       },
       "rule": {
-        "en": "outline-none / outline-hidden only together with a visible focus-visible style (ring, outline or border) on the same element.",
-        "tr": "outline-none / outline-hidden yalnız aynı öğede görünür bir focus-visible biçimiyle (ring, outline ya da border) birlikte kullanılır."
+        "en": "outline-none / outline-hidden only together with a visible focus-visible style (ring, outline or border) on the same element. In CSS, outline: none needs a box-shadow, border or outline in the same rule or a :focus-visible rule; Bootstrap's shadow-none on a .btn or .form-control needs focus-ring.",
+        "tr": "outline-none / outline-hidden yalnız aynı öğede görünür bir focus-visible biçimiyle (ring, outline ya da border) birlikte kullanılır. CSS'te outline: none yalnız aynı kuralda box-shadow, border ya da outline ya da bir :focus-visible kuralı varsa yazılır; Bootstrap'te .btn ya da .form-control üzerindeki shadow-none için focus-ring gerekir."
       },
       "why": {
         "en": "Keyboard users lose their place. WCAG 2.4.7 (focus visible), 2.4.11 (focus not obscured).",
@@ -976,10 +1006,27 @@
       },
       "check": {
         "type": "class",
-        "pattern": "(?:^|\\s)(?:[\\w-]+:)*outline-(?:none|hidden)(?=\\s|$)",
+        "pattern": [
+          "(?:^|\\s)(?:[\\w-]+:)*outline-(?:none|hidden)(?=\\s|$)",
+          {
+            "pattern": "(?:^|\\s)shadow-none(?=\\s|$)",
+            "with": "(?:^|\\s)(?:btn|form-control|form-select|form-check-input|accordion-button|page-link|nav-link)(?=\\s|$)",
+            "unless": "(?:^|\\s)focus-ring(?=\\s|$)|(?:focus-visible|focus):(?:ring(?!-0(?:\\s|$))|outline(?!-none|-hidden|-0)|shadow(?!-none)|border)"
+          }
+        ],
         "unless": "(?:focus-visible|focus|focus-within|group-focus-visible|peer-focus-visible|data-focus-visible|data-\\[focus-visible\\]|data-\\[focused\\]|data-focused|has-focus-visible):(?:ring(?!-0(?:\\s|$))|outline(?!-none|-hidden|-0)|shadow(?!-none)|border|bg|underline)",
         "exceptElements": "^(?:\\w*(?:Dialog|Popover|Modal|Sheet|Drawer|Menu|ListBox|Listbox|Tooltip|Command|Overlay|Popup|Viewport|Panel)\\w*|[A-Z]\\w*Content)$",
-        "unlessBefore": "(?:focus-within|has-\\[:focus-visible\\]|has-focus-visible|has-\\[\\[[^\\]]*\\]:focus-visible\\]):(?:ring|outline|shadow|border)"
+        "unlessBefore": "(?:focus-within|has-\\[:focus-visible\\]|has-focus-visible|has-\\[\\[[^\\]]*\\]:focus-visible\\]):(?:ring|outline|shadow|border)",
+        "css": [
+          {
+            "property": "outline(?:-style|-width)?",
+            "value": "^\\s*(?:none|0(?:px)?)(?:\\s+none)?\\s*(?:!important\\s*)?$",
+            "subject": ":focus(?!-within)|^(?:\\*|a|button|input|select|textarea)(?![\\w-])|\\.(?:btn|form-control|form-select)(?![\\w-])",
+            "unlessSelector": ":not\\(\\s*:focus-visible\\s*\\)|\\[tabindex=[\"']?-1",
+            "unless": "(?:^|; )(?:box-shadow: (?!none\\b)|border(?:-(?:top|right|bottom|left|inline|block)(?:-(?:start|end))?)?(?:-(?:width|style|color))?: (?!(?:none|0(?:px)?)(?![\\w.]))|outline(?:-width|-style)?: (?!(?:none|0(?:px)?)(?![\\w.]))|text-decoration(?:-line)?: [^;]*\\bunderline)",
+            "unlessRule": ":focus-visible"
+          }
+        ]
       }
     },
     {
@@ -1532,7 +1579,17 @@
       },
       "check": {
         "type": "class",
-        "pattern": "(?:^|\\s)(?:[\\w-]+:)*font-(?:extrabold|black)(?=\\s|$)",
+        "pattern": [
+          "(?:^|\\s)(?:[\\w-]+:)*font-(?:extrabold|black)(?=\\s|$)",
+          {
+            "pattern": "(?:^|\\s)fw-bolder(?=\\s|$)",
+            "onlyElements": "^h[1-6]$"
+          },
+          {
+            "pattern": "(?:^|\\s)fw-bolder(?=\\s|$)",
+            "with": "(?:^|\\s)(?:h[1-6]|display-[1-6])(?=\\s|$)"
+          }
+        ],
         "css": "font-weight\\s*:\\s*(?:800|900)\\b",
         "native": {
           "swift": "\\.fontWeight\\(\\s*\\.(?:heavy|black)\\s*\\)|\\bweight:\\s*\\.(?:heavy|black)\\b",
@@ -1564,7 +1621,21 @@
       },
       "check": {
         "type": "class",
-        "pattern": "(?:^|\\s)(?:group-)?hover:scale-(?:10[1-9]|1[1-9]\\d|\\[1\\.\\d+\\])(?=\\s|$)"
+        "pattern": "(?:^|\\s)(?:group-)?hover:scale-(?:10[1-9]|1[1-9]\\d|\\[1\\.\\d+\\])(?=\\s|$)",
+        "css": [
+          {
+            "property": "transform",
+            "value": "\\bscale(?:3d|X|Y)?\\(\\s*(\\d*\\.?\\d+)",
+            "above": 1,
+            "selector": ":hover"
+          },
+          {
+            "property": "scale",
+            "value": "^\\s*(\\d*\\.?\\d+)(?![\\d.]*%)",
+            "above": 1,
+            "selector": ":hover"
+          }
+        ]
       }
     },
     {
@@ -1576,8 +1647,8 @@
         "tr": "Boşluklar projenin ölçeğinde"
       },
       "rule": {
-        "en": "Arbitrary spacing and sizes in px (mt-[13px], h-[31px], gap-[7px]) sit on the project's scale: the one in ai-design-check.json, else the one read from Tailwind or CSS variables, else the 4 px grid. App code (SwiftUI, Compose, Flutter, React Native) uses the config file or 4 pt/dp. Prefer the theme steps.",
-        "tr": "Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]) projenin ölçeğine oturur: ai-design-check.json'daki, yoksa Tailwind ya da CSS değişkenlerinden okunan, o da yoksa 4 px ızgarası. Uygulama kodu (SwiftUI, Compose, Flutter, React Native) yapılandırma dosyasını ya da 4 pt/dp kullanır. Tema basamakları tercih edilir."
+        "en": "Arbitrary spacing and sizes in px (mt-[13px], h-[31px], gap-[7px]; margin, padding, gap and offsets in CSS) sit on the project's scale: the one in ai-design-check.json, else the one read from Tailwind, Bootstrap's $spacer and $spacers, or CSS variables, else the 4 px grid. App code (SwiftUI, Compose, Flutter, React Native) uses the config file or 4 pt/dp. Prefer the theme steps.",
+        "tr": "Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]; CSS'te margin, padding, gap ve konum değerleri) projenin ölçeğine oturur: ai-design-check.json'daki, yoksa Tailwind'den, Bootstrap'in $spacer ve $spacers değerlerinden ya da CSS değişkenlerinden okunan, o da yoksa 4 px ızgarası. Uygulama kodu (SwiftUI, Compose, Flutter, React Native) yapılandırma dosyasını ya da 4 pt/dp kullanır. Tema basamakları tercih edilir."
       },
       "why": {
         "en": "Off-grid values are what a model types when it guesses; rows and gaps drift apart by a pixel or two and the screen looks uneven.",
@@ -1591,6 +1662,12 @@
         "type": "class",
         "pattern": "(?:^|\\s)(?:[\\w-]+:)*-?(?:[mp][xytrblse]?|gap(?:-[xy])?|space-[xy]|(?:min-|max-)?[hw]|size|top|right|bottom|left|inset(?:-[xy])?|start|end)-\\[(\\d+(?:\\.\\d+)?)px\\]",
         "scale": "spacing",
+        "css": [
+          {
+            "property": "(?:margin|padding)(?:-(?:top|right|bottom|left|inline|block)(?:-(?:start|end))?)?|(?:grid-)?(?:row-|column-)?gap|inset(?:-(?:inline|block)(?:-(?:start|end))?)?|top|right|bottom|left",
+            "scale": "spacing"
+          }
+        ],
         "native": {
           "swift": {
             "pattern": "(?:\\.padding\\(\\s*(?:\\.[a-zA-Z]+\\s*,\\s*|\\[[^\\]]*\\]\\s*,\\s*)?|\\bspacing:\\s*)([0-9.]+)(?=\\s*[,)])",
@@ -2227,8 +2304,21 @@
       },
       "check": {
         "type": "class",
-        "pattern": "(?:^|\\s)(?:[\\w-]+:)*bg-(?:gradient|linear|radial|conic)-[\\w-]+",
-        "onlyElements": "^(?:button|Button|LinkButton|a|Link)$"
+        "pattern": [
+          "(?:^|\\s)(?:[\\w-]+:)*bg-(?:gradient|linear|radial|conic)-[\\w-]+",
+          {
+            "pattern": "(?:^|\\s)bg-gradient(?=\\s|$)",
+            "with": "(?:^|\\s)btn(?=\\s|$)"
+          }
+        ],
+        "onlyElements": "^(?:button|Button|LinkButton|a|Link)$",
+        "css": [
+          {
+            "property": "background(?:-image)?",
+            "gradient": true,
+            "subject": "^button(?![\\w-])|\\.(?:btn|button)(?:[-_][\\w-]*)?(?![\\w-])|\\.cta(?:[-_](?:btn|button))?(?![\\w-])|\\[type=[\"']?(?:submit|button)[\"']?\\]"
+          }
+        ]
       }
     },
     {
@@ -2254,7 +2344,7 @@
       "check": {
         "type": "class",
         "pattern": "(?:^|\\s)shadow-(?:lg|xl|2xl)(?=\\s|$)",
-        "unless": "\\b(?:absolute|fixed|sticky|z-\\d+|popover|dropdown|dialog|modal|tooltip)\\b",
+        "unless": "\\b(?:absolute|fixed|sticky|z-\\d+|popover|dropdown|dialog|modal|offcanvas|toast|tooltip)\\b",
         "native": {
           "swift": {
             "pattern": "\\.shadow\\((?:[^()\\n]|\\([^()\\n]*\\))*?radius:\\s*([0-9.]+)",

@@ -3,9 +3,10 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, dirname, join, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CLASS_FUNCTIONS, blankComments, classUnits, tokens, utility } from './classes.js';
+import { cssHits, markupSheet, scssAsCss } from './css.js';
 import { children, parseAttrs, tags, visibleText } from './jsx.js';
 import { LOOKS } from './looks.js';
-import { describeScale, onScale, readScales } from './spacing.js';
+import { RADIUS_STEPS, describeScale, onRadiusScale, onScale, readScales } from './spacing.js';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 
@@ -44,12 +45,15 @@ const SMALL = new Set(['a', 'an', 'the', 'and', 'or', 'for', 'of', 'on', 'in', '
 
 const MARKUP = ['tsx', 'jsx', 'vue', 'svelte', 'html', 'blade.php'];
 const JSX = ['tsx', 'jsx'];
+/** Markup written as HTML: style="" is CSS here (JSX takes an object) and icons come as <i>, <svg> or a ligature span. */
+const HTML_LIKE = ['html', 'blade.php', 'vue', 'svelte'];
 /** App code read through each rule's check.native patterns: SwiftUI (swift), Jetpack Compose (kt), Flutter (dart). React Native files are "rn". */
 const NATIVE = ['swift', 'kt', 'dart'];
 const SCRIPT = ['tsx', 'jsx', 'ts', 'js'];
 const REACT_NATIVE = /\bfrom\s+['"]react-native['"]|\brequire\(\s*['"]react-native['"]\s*\)/;
 /** Interface code no rule reads yet: the report names it instead of calling the project clean. */
-const UNREAD = /\.(php|astro|ejs|erb|twig|hbs|liquid|njk|cshtml|razor|m|mm|java|scss|sass|less|styl|mdx|pug|haml|slim)$/;
+const UNREAD = /\.(php|astro|ejs|erb|twig|hbs|liquid|njk|cshtml|razor|m|mm|java|sass|less|styl|mdx|pug|haml|slim)$/;
+const STYLESHEET = ['css', 'scss'];
 /** Files that say nothing about an interface: one of these alone must not count as "something was checked". */
 const NOT_INTERFACE = /\.d\.ts$|(?:^|\/)[\w.-]+\.config\.\w+$/;
 /** A plain .js file written as JSX (Create React App, older Next.js projects). */
@@ -159,15 +163,12 @@ export const extensionOf = (path) => (path.endsWith('.blade.php') ? 'blade.php' 
 
 const lineOf = (source, index) => source.slice(0, index).split('\n').length;
 
-/** Markup with everything outside <style> blanked, so CSS rules read inline styles and line numbers stay valid. */
-function styleBlocks(source) {
-    let out = source.replace(/[^\n]/g, ' ');
-    for (const match of source.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) {
-        const start = match.index + match[0].indexOf('>') + 1;
-        out = out.slice(0, start) + blankComments(match[1], false) + out.slice(start + match[1].length);
-    }
+/** A file as a stylesheet ({ css, regions }), offsets kept: a .css or .scss file, or the <style> blocks and style attributes of markup. */
+function sheetOf(extension, source) {
+    if (extension === 'css') return { css: blankComments(source, false) };
+    if (extension === 'scss') return { css: scssAsCss(source) };
 
-    return out;
+    return markupSheet(source, { inline: HTML_LIKE.includes(extension) });
 }
 
 /** The at-rules (@media, @supports) whose block holds this position in a stylesheet. */
@@ -293,6 +294,10 @@ const NAME_ATTRS = ['aria-label', 'aria-labelledby', 'title', 'label', 'tooltip'
 /** Names imported from an icon set: lucide's <Trash2 /> has no "Icon" in it. */
 const ICON_IMPORT = /import\s*\{([^}]*)\}\s*from\s*['"](?:lucide-react|lucide-vue-next|lucide-svelte|@heroicons\/[^'"]+|react-icons\/[^'"]+|@phosphor-icons\/[^'"]+|phosphor-react|@tabler\/icons-react|@radix-ui\/react-icons|react-feather)['"]/g;
 
+/** Bootstrap's close button draws its × in CSS: empty as it is, it still needs a name. */
+const CLOSE_BUTTON = /(?:^|\s)btn-close(?:\s|$)/;
+const CLOSE_MESSAGE = 'Close button (.btn-close) has no aria-label';
+
 function checkIconButtons(path, source, report) {
     const iconNames = new Set([...source.matchAll(ICON_IMPORT)].flatMap((match) => match[1].split(',').map((name) => name.trim().split(/\s+as\s+/).pop()).filter(Boolean)));
     for (const tag of tags(source, ['button', 'Button', 'IconButton', 'a', 'Link', 'LinkButton'])) {
@@ -300,9 +305,35 @@ function checkIconButtons(path, source, report) {
         // A spread may carry the label; a react-aria slot ("previous", "next") is labelled by its parent.
         if (NAME_ATTRS.some((name) => attrs[name] !== undefined) || attrs.slot !== undefined || /\{\s*\.\.\./.test(tag.attrs)) continue;
         const inner = children(source, tag);
+        if (CLOSE_BUTTON.test(typeof attrs.className === 'string' ? attrs.className : '') && inner !== null && visibleText(inner) === '') {
+            report('icon-button-name', path, lineOf(source, tag.start), tag.name, CLOSE_MESSAGE);
+            continue;
+        }
         if (inner === null || inner === '') continue;
         const hasIcon = /<(?:svg|[A-Z]\w*Icon|Icon|[A-Z]\w*Logo)\b/.test(inner) || [...inner.matchAll(/<([A-Z]\w*)\b/g)].some((match) => iconNames.has(match[1]));
         if (hasIcon && visibleText(inner) === '') report('icon-button-name', path, lineOf(source, tag.start), tag.name, `Icon-only <${tag.name}> has no aria-label`);
+    }
+}
+
+/** Icons in HTML: an icon font (<i class="bi …">, Font Awesome), a ligature or Bootstrap *-icon span, an svg, an image, an icon component. */
+const MARKUP_ICON = /<(?:svg|i|img|iconify-icon|ion-icon|[A-Z]\w*Icon|Icon|[A-Z]\w*Logo)\b|<span\b[^>]*\bclass=["'][^"']*(?:\bmaterial-(?:icons|symbols)|-icon\b)/;
+/** A ligature icon's text is the icon's name ("delete", "arrow_forward"), not a label. */
+const LIGATURE = /<(span|i)\b[^>]*\bclass=["'][^"']*\bmaterial-(?:icons|symbols)[^>]*>[^<]*<\/\1>/g;
+/** A child that names the control: an image's alt, an svg's aria-label, text that a framework fills in. */
+const CHILD_NAME = /\b(?:alt|aria-label|title)=(?:["']\s*[^\s"']|\{)|\b(?:v-text|v-html|x-text|x-html)=/;
+
+/** HTML, Blade, Vue and Svelte: a Vue or Alpine binding (:aria-label) names the control too, and {{ }} text is text. */
+function checkMarkupIconButtons(path, source, report) {
+    for (const tag of tags(source, ['button', 'a'])) {
+        const attrs = parseAttrs(tag.attrs);
+        const names = Object.keys(attrs).map((name) => name.replace(/^(?:v-bind:|x-bind:|:|attr\.)/, ''));
+        if (names.some((name) => NAME_ATTRS.includes(name) || /^(?:v-text|v-html|x-text|x-html)$/.test(name)) || attrs['aria-hidden'] === 'true') continue;
+        const inner = children(source, tag);
+        if (inner === null) continue;
+        const content = inner.replace(LIGATURE, ' <i></i> ');
+        const closeButton = CLOSE_BUTTON.test(typeof attrs.class === 'string' ? attrs.class : '');
+        if (!(closeButton || MARKUP_ICON.test(content)) || CHILD_NAME.test(content) || visibleText(content) !== '') continue;
+        report('icon-button-name', path, lineOf(source, tag.start), tag.name, closeButton ? CLOSE_MESSAGE : `Icon-only <${tag.name}> has no aria-label`);
     }
 }
 
@@ -409,7 +440,7 @@ export function check(cwd, overrides = {}) {
         const isI18n = config.i18n.files.length > 0 && matches(config.i18n.files, path);
         const markup = MARKUP.includes(extension);
         const regexFor = regexRules.filter((rule) => rule.check.files.includes(extension) && !(isI18n && !['no-buzzwords', 'error-copy', 'ellipsis-character'].includes(rule.id)));
-        if (!markup && extension !== 'css' && regexFor.length === 0 && !NATIVE.includes(extension) && !isI18n) continue;
+        if (!markup && !STYLESHEET.includes(extension) && regexFor.length === 0 && !NATIVE.includes(extension) && !isI18n) continue;
 
         const raw = readFileSync(join(cwd, path), 'utf8');
         skip = ignores(raw); // inline ignores live in comments, so they are read before comments are blanked
@@ -421,21 +452,29 @@ export function check(cwd, overrides = {}) {
         if (markup) {
             for (const unit of classUnits(source, config.classFunctions)) {
                 const line = lineOf(source, unit.index);
-                for (const rule of classRules.filter((item) => item.check.pattern)) {
-                    if (rule.check.unless && new RegExp(rule.check.unless, 'u').test(unit.text)) continue;
-                    if (rule.check.exceptElements && unit.element && new RegExp(rule.check.exceptElements).test(unit.element)) continue;
-                    if (rule.check.onlyElements && !(unit.element && new RegExp(rule.check.onlyElements).test(unit.element))) continue;
+                const seen = new Set();
+                // One pattern with the rule's options, or a list: an object entry carries its own (Bootstrap's classes beside Tailwind's).
+                for (const rule of classRules.filter((item) => item.check.pattern)) for (const entry of [rule.check.pattern].flat()) {
+                    const check = typeof entry === 'string' ? rule.check : entry;
+                    const pattern = typeof entry === 'string' ? entry : entry.pattern;
+                    if (check.with && !new RegExp(check.with, 'u').test(unit.text)) continue;
+                    if (check.unless && new RegExp(check.unless, 'u').test(unit.text)) continue;
+                    if (check.exceptElements && unit.element && new RegExp(check.exceptElements).test(unit.element)) continue;
+                    if (check.onlyElements && !(unit.element && new RegExp(check.onlyElements).test(unit.element))) continue;
                     // The element's own attributes can rule it out (type="file" has no text to zoom on).
-                    if (rule.check.unlessTag) {
+                    if (check.unlessTag) {
                         const next = source.indexOf('<', unit.index);
-                        if (new RegExp(rule.check.unlessTag, 'u').test(source.slice(source.lastIndexOf('<', unit.index), next < 0 ? undefined : next))) continue;
+                        if (new RegExp(check.unlessTag, 'u').test(source.slice(source.lastIndexOf('<', unit.index), next < 0 ? undefined : next))) continue;
                     }
                     // A wrapper just above may carry the style (focus-within: ring on the box around an input).
-                    if (rule.check.unlessBefore && new RegExp(rule.check.unlessBefore, 'u').test(source.slice(Math.max(0, unit.index - 1500), unit.index))) continue;
-                    for (const match of unit.text.matchAll(new RegExp(rule.check.pattern, 'gu'))) {
+                    if (check.unlessBefore && new RegExp(check.unlessBefore, 'u').test(source.slice(Math.max(0, unit.index - 1500), unit.index))) continue;
+                    for (const match of unit.text.matchAll(new RegExp(pattern, 'gu'))) {
                         // A value on the project's scale (mt-[24px] on a 4 px grid) and hairlines (1–2 px) pass.
-                        if (rule.check.scale && onScale(spacing().web, Number(match[1]), match[0])) continue;
-                        report(rule.id, path, line, match[0].trim(), rule.check.scale ? `Off the spacing scale, ${describeScale(spacing().web)}: ${match[0].trim()}` : `${rule.title.en}: ${match[0].trim()}`);
+                        if (check.scale && onScale(spacing().web, Number(match[1]), match[0])) continue;
+                        // Two entries may find the same class (fw-bolder on an h1 that is also .display-4): one finding.
+                        if (seen.has(`${rule.id}:${match.index}`)) continue;
+                        seen.add(`${rule.id}:${match.index}`);
+                        report(rule.id, path, line, match[0].trim(), check.scale ? `Off the spacing scale, ${describeScale(spacing().web)}: ${match[0].trim()}` : `${rule.title.en}: ${match[0].trim()}`);
                     }
                 }
                 if (repeated) {
@@ -446,15 +485,35 @@ export function check(cwd, overrides = {}) {
         }
         // Class rules that also need the element's text (an all-caps label written by hand).
         if (markup) {
-            for (const rule of classRules.filter((item) => item.check.markup)) {
-                for (const match of source.matchAll(new RegExp(rule.check.markup, 'gu'))) report(rule.id, path, lineOf(source, match.index), match[1] ?? match[0], `${rule.title.en}: ${(match[1] ?? match[0]).trim()}`);
+            for (const rule of classRules.filter((item) => item.check.markup)) for (const markupPattern of [rule.check.markup].flat()) {
+                for (const match of source.matchAll(new RegExp(markupPattern, 'gu'))) report(rule.id, path, lineOf(source, match.index), match[1] ?? match[0], `${rule.title.en}: ${(match[1] ?? match[0]).trim()}`);
             }
         }
-        if (extension === 'css' || markup) {
-            const css = extension === 'css' ? blankComments(source, false) : styleBlocks(source);
-            for (const rule of classRules.filter((item) => item.check.css)) {
+        if (STYLESHEET.includes(extension) || markup) {
+            const sheet = sheetOf(extension, source);
+            const { css } = sheet;
+            for (const rule of classRules.filter((item) => item.check.css)) for (const entry of [rule.check.css].flat()) {
+                if (typeof entry !== 'string') {
+                    // Declaration by declaration: each length of a shorthand, each gradient, each offending block.
+                    for (const hit of cssHits(sheet, entry)) {
+                        let message = `${rule.title.en}: ${hit.value}`;
+                        if (entry.scale === 'spacing') {
+                            const px = hit.unit === 'px' ? hit.number : spacing().rem ? hit.number * spacing().rem : null;
+                            // 0, hairlines and the negative of a step pass; a rem with an unknown root size is not guessed.
+                            if (px === null || onScale(spacing().web, Math.abs(px), hit.property)) continue;
+                            message = `Off the spacing scale, ${describeScale(spacing().web)}: ${hit.value}${hit.unit === 'rem' ? ` (${Math.round(Math.abs(px) * 100) / 100}px)` : ''} in ${hit.property}`;
+                        } else if (entry.scale === 'radius') {
+                            if (hit.unit !== 'px' || onRadiusScale(Math.abs(hit.number))) continue;
+                            message = `Corner radius off the steps (${RADIUS_STEPS.join(', ')} px; up to 5 px and 999 px or more pass): ${hit.value} in ${hit.property}`;
+                        }
+                        const finding = report(rule.id, path, lineOf(source, hit.index), hit.value, message);
+                        // Where the text sits and which property it belongs to, for --fix; not part of the report.
+                        if (finding) Object.defineProperties(finding, { offset: { value: hit.index }, css: { value: hit.property } });
+                    }
+                    continue;
+                }
                 let reported = false;
-                for (const match of css.matchAll(new RegExp(rule.check.css, 'gu'))) {
+                for (const match of css.matchAll(new RegExp(entry, 'gu'))) {
                     if (reported && rule.check.cssOnePerFile) break;
                     if (rule.check.unlessMedia && atRulesAround(css, match.index).some((at) => new RegExp(rule.check.unlessMedia, 'iu').test(at))) continue;
                     const value = match[0].replace(/\s+/g, ' ').trim();
@@ -463,7 +522,7 @@ export function check(cwd, overrides = {}) {
             }
         }
         // Code rules read code and copy, not comments (inline ignores were read above, before blanking).
-        const code = ['tsx', 'jsx', 'ts', 'js', 'vue', 'svelte', 'css', ...NATIVE].includes(extension) ? blankComments(source, extension !== 'css') : source;
+        const code = ['tsx', 'jsx', 'ts', 'js', 'vue', 'svelte', 'css', 'scss', ...NATIVE].includes(extension) ? blankComments(source, extension !== 'css') : source;
         // Native rules: one pattern per platform; group 1 is the number when the rule checks a scale or a limit.
         for (const rule of nativeFor) for (const entry of [rule.check.native[platform]].flat()) {
             const native = typeof entry === 'string' ? { pattern: entry } : entry;
@@ -501,6 +560,7 @@ export function check(cwd, overrides = {}) {
         if (on('sentence-case') && isI18n) checkI18n(config, path, source, report);
         if (on('sentence-case') && config.labels && ['tsx', 'jsx', 'vue', 'svelte'].includes(extension)) checkLabels(config, path, source, report);
         if (reactNative && JSX.includes(extension)) checkTouchables(path, code, report);
+        if (on('icon-button-name') && HTML_LIKE.includes(extension)) checkMarkupIconButtons(path, source, report);
         if (JSX.includes(extension)) {
             if (on('icon-button-name')) checkIconButtons(path, source, report);
             if (on('use-shared-components')) checkSharedComponents(config, path, source, report);
@@ -534,7 +594,7 @@ export function coverage(cwd, overrides = {}) {
         const other = (UNREAD.test(path) && !path.endsWith('.blade.php') ? UNREAD : LAYOUT_XML).exec(path)?.[1];
         if (other) unread[other] = (unread[other] ?? 0) + 1;
         else if (NOT_INTERFACE.test(path)) continue;
-        else if ([...MARKUP, ...NATIVE, ...SCRIPT, 'css'].includes(extensionOf(path)) || config.include.includes(path) || matches(config.i18n.files, path)) read++;
+        else if ([...MARKUP, ...NATIVE, ...SCRIPT, ...STYLESHEET].includes(extensionOf(path)) || config.include.includes(path) || matches(config.i18n.files, path)) read++;
     }
 
     return { read, unread };

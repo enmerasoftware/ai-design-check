@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadConfig, walk } from './check.js';
-import { nearestOnScale } from './spacing.js';
+import { RADIUS_STEPS as RADIUS_PX, SPACING_PROPERTY, nearestOnScale } from './spacing.js';
 
 /**
  * --fix: the findings with one mechanical answer, changed without an agent. A value moves to the nearest step of the
@@ -46,6 +46,25 @@ function radius(value, themed) {
     return Math.abs(step - raw) <= 3 ? `${prefix}${utility}-${label}` : null;
 }
 
+/**
+ * A px length in a stylesheet, a style attribute or SCSS, each number on its own: a margin, padding or gap moves on the
+ * web scale; a corner moves to a radius step within 3 px, as a rounded-[…] class does. An offset (top, inset) is left in
+ * the report like a size, and so are rem and em, whose px depend on a root or a font size.
+ */
+function cssLength(finding, scales) {
+    const length = /^(-?)(\d*\.?\d+)px$/.exec(finding.value);
+    if (!length) return null;
+    const [, minus, raw] = length;
+    const number = Number(raw);
+    if (finding.rule === 'radius-scale') {
+        const step = [5, ...RADIUS_PX].reduce((best, item) => (Math.abs(item - number) <= Math.abs(best - number) ? item : best));
+
+        return Math.abs(step - number) <= 3 ? `${minus}${step}px` : null;
+    }
+
+    return finding.rule === 'spacing-scale' && SPACING_PROPERTY.test(finding.css) ? `${minus}${nearestOnScale(scales.web, number)}px` : null;
+}
+
 const weight = (value) => value
     .replace(/font-(?:extrabold|black)/, 'font-bold')
     .replace(/FontWeight\.(?:ExtraBold|Black)\b/, 'FontWeight.Bold')
@@ -85,7 +104,8 @@ export function applyFixes(cwd, findings, scales, { write = true } = {}) {
     changes.skipped = [];
     const byFile = new Map();
     for (const finding of findings) {
-        const to = answer[finding.rule]?.(finding.value);
+        // A finding read from CSS names its property; one read from a class or app code does not.
+        const to = finding.css ? cssLength(finding, scales) : answer[finding.rule]?.(finding.value);
         if (to && to !== finding.value) byFile.set(finding.path, [...(byFile.get(finding.path) ?? []), { finding, to }]);
     }
     for (const [path, items] of byFile) {
