@@ -6,10 +6,9 @@
 [![license: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [English](README.md) · [Türkçe](README.tr.md)
 
-Claude Code、Cursor、Codex で開発するすべての人へ。87 のデザインルール、依存関係も API キーも不要なチェッカー、
-そして画面を修復するエージェントスキルを提供します。Web プロジェクトと、SwiftUI および Jetpack Compose のアプリを読み取れます。
+Claude Code、Cursor、Codex で開発するすべての人へ。137 のデザインルール、依存関係も API キーも不要なチェッカー、そして画面を修復するエージェントスキルを提供します。Web プロジェクト（React、Vue、Svelte、Laravel Blade、HTML）と、SwiftUI、Jetpack Compose、Flutter、React Native のアプリを読み取れます。問題の検出にエージェントは不要で、機械的な修正にも必要ありません。
 
-## 2 ステップで始める
+## 3 ステップで始める
 
 **1. プロジェクトをチェックします。**
 
@@ -33,14 +32,21 @@ lang/tr.json
 1 accessibility, 3 style: 3 errors, 1 warnings, 0 notes.
 ```
 
-**2. エージェントに修正させます。**
+**2. 答えが 1 つに決まるものは、エージェントなしで修正します。**
+
+```bash
+npx @enmera/ai-design-check --fix --dry-run
+```
+
+変更内容の一覧が表示されます。`--dry-run` を外すと実際に変更します。余白と角丸はスケール上の最も近い値に揃えられ、極端に太い文字は bold になります。タップ領域、色、絵文字、文言、階層は判断が必要なため、レポートに残ります。
+
+**3. 残りはエージェントに修正させます。**
 
 ```bash
 npx skills add enmerasoftware/ai-design-check
 ```
 
-次に「*このスクリーンのデザインを直して*」と頼みます。エージェントは画面を計測し、プロダクトに沿った短いブリーフを書いて修復し、
-修正前後の件数を示します。機能、データ、文言はそのまま残ります。
+次に「この画面のデザインを直して」と頼みます。エージェントは画面を計測し、プロダクトに沿った短いブリーフを書いて修復し、修正前後の件数を示します。機能、データ、文言はそのまま残ります。
 
 <p align="center">
   <img src="examples/before-after-web.webp" width="860" alt="同じダッシュボードの修正前と修正後：266 件の指摘が 0 件に">
@@ -53,38 +59,42 @@ npx skills add enmerasoftware/ai-design-check
 |---|---|---|
 | **チェッカー** | どのファイルのどの行で、何が問題か？ | `npx @enmera/ai-design-check` |
 | **修正スキル** | エージェントがこの画面を修復し、それを証明できるか？ | `npx skills add enmerasoftware/ai-design-check` |
+| **`scan`** | 実行中のページには実際に何が表示されているか？ コントラスト、サイズ、何が何を覆っているか、スクリプトエラー | `npx @enmera/ai-design-check scan http://localhost:3000` |
+| **`redesign`** | エージェントがこのページを調べ、各ステップを証明しながらブランチ上で作り直せるか？ | `npx @enmera/ai-design-check redesign http://localhost:3000` |
 | **`inventory`** | ボタン、入力欄、見出し、カードは何種類あるか？ | `npx @enmera/ai-design-check inventory` |
-| **`narrow`** | スマートフォンや長い言語で何が崩れるか？ | `npx @enmera/ai-design-check narrow page.html` |
+| **`narrow`** | スマートフォンや文字列が長くなる言語で何が崩れるか？ | `npx @enmera/ai-design-check narrow page.html` |
 | **`system`** | 新しいプロダクトは、どのフォント、文字サイズ、色から始めるべきか？ | `npx @enmera/ai-design-check system --brand "#1E5A63"` |
 | **`story`** | 変更を動画で共有できるか？ | `npx @enmera/ai-design-check story before.html after.html` |
 
 ## 検出できること
 
-チェッカーは 50 のルールを自動でテストします。残りの 37 は画面を目で確認する必要があるため *review* として扱い、あなたと
-修正スキルに任せます。各ルールには、何をすべきか、その理由、修正方法が英語とトルコ語で書かれています：[RULES.md](RULES.md)。
+67 のルールがコードを読み（うち 33 はアプリのコードも対象）、55 のルールが実行中のページを読みます（`scan`）。両方に当てはまるルールもあります。残りの 33 は画面を目で確認する必要があるため *review* として扱い、あなたと修正スキルに任せます。各ルールには、何をすべきか、その理由、修正方法が英語とトルコ語で書かれています：[RULES.md](RULES.md)。
 
 | 分野 | 例 |
 |---|---|
 | アクセシビリティ | フォーカスリングを代替なしで消さない、アイコンだけのボタンにも名前を付ける、タップ領域 |
+| スマートフォンのブラウザ | ピンチズームを無効にしない、入力欄の文字は 16 px、固定の `100vh` には `dvh` を併記、ホバーするまで隠さない |
 | 文字と形状 | 11 px を下限とする 1 つの文字サイズスケール、階層ごとに 1 つの角丸、カードの中にカードを入れない |
 | 文章とコピー | センテンスケース、字間を広げた大文字ラベルを使わない、バズワードを使わない、動作がわかるボタン、対処法がわかるエラー |
 | コンポーネント | ボタンと入力欄は共有コンポーネントから、外部からのスタイル指定をしない、繰り返されるマークアップはコンポーネントにする |
 | レイアウト | 4 px グリッドに沿った余白と階層ごとに 1 つの間隔、幅の広い表はページ全体に広げる、スマートフォンでも各セルに十分な幅 |
 | ビジュアル言語 | 絵文字ではなく線画アイコン、グラデーション文字や紫のグラデーションを使わない、サイドのストライプを使わない、グローはグラフのみ |
-| モーション | `transition-all` を使わない、バウンスを使わない、モーション軽減の設定を尊重する、パルスはライブデータのみ |
+| モーション | `transition-all` を使わない、バウンスを使わない、モーション軽減の設定を尊重する、パルスはライブデータのみ、反応は 300 ms 以内、終わりのないループを使わない |
 | データ | 数値には比較対象を添える、等幅数字、空の状態 |
 | ローカライズ | ロケールに応じた大文字・小文字の変換（トルコ語の i/İ）、数値はフォーマッター経由、正しい複数形 |
 | セレクターとナビゲーション | セレクターの言語は 1 つに統一、メニューは目的別にグループ化、移動した URL はリダイレクトする |
 
-ルールは、私たちが [Enmera](https://enmera.com.tr) と [Searvia](https://searvia.com) でリリースした画面から生まれました。何が生成っぽく
-見えたか、狭い幅で何が崩れたか、何が理解されなかったか。そのうえで、評価の高い 16 のダッシュボードデザインと比較しました。
-手法と結果：[RESEARCH.md](RESEARCH.md)。
+ルールは、私たちが [Enmera](https://enmera.com.tr) と [Searvia](https://searvia.com) でリリースした画面から生まれました。何が生成っぽく見えたか、狭い幅で何が崩れたか、何が理解されなかったか。そのうえで、評価の高い 16 のダッシュボードデザインと比較しました。手法と結果：[RESEARCH.md](RESEARCH.md)。
+
+## 実行中のページとリデザイン
+
+`scan` は、モデルも API キーも使わずに、お使いの Chrome でページをデスクトップとスマートフォンの幅で開きます。ソースからはわからないもの、つまり実際のコントラスト、サイズ、何が何を覆っているか、壊れた画像、スクリプトエラー、いつまでも表示されないコンテンツを読み取ります。プルリクエスト向けには `--format github` を付けます。設定に `designSystem`（`fonts`、`sizes`、`radii`、`colors`）があれば、そこから外れているものも指摘します。
+
+`redesign` は、エージェント（Claude Code または Codex）が必要な唯一の機能です。ページが何を見せるべきかを決めるには判断が必要だからです。エージェントはスクリーンショット、コード、主題を調べ、セクションごとに 1 枚のカードを書きます。カードには、何を伝えているか、何が問題か、そのコンテンツ自体から生まれるアイデア、サイトから使う色を記します。カードは計測したページと照合されます。その後、番号付きの修正とカードが新しい git ブランチ上で 1 段階ずつ適用され、コンテンツが失われたり、ルールのエラーが増えたり、見た目が悪くなったりした段階は破棄されます。`--plan` はカードを書いた時点で止まるので、内容を読んで編集できます。`--brief` はそのカードをもとに実装します。
 
 ## モバイルアプリ
 
-アプリのフォルダーを指定してください。SwiftUI と Jetpack Compose を読み取り、4 pt グリッドから外れた余白（`.padding(13)`、`10.dp`）、
-スケールから外れた角丸、Dynamic Type を無視した固定テキスト、太すぎる見出し、紫のグラデーション、AI を表す `sparkles`、文字列内の絵文字、
-タイトルケースのラベル、重い影、大きなぼかし、ループするアニメーション、44 pt / 48 dp 未満のタップ領域を検出します。
+アプリのフォルダーを指定してください。SwiftUI と Jetpack Compose を読み取り、スケールから外れた余白（`spacing` を設定しない限り 4 pt。例：`.padding(13)`、`10.dp`）、スケールから外れた角丸、Dynamic Type を無視した固定テキスト、太すぎる見出し、紫のグラデーション、AI を表す `sparkles`、文字列内の絵文字、タイトルケースのラベル、重い影、大きなぼかし、ループするアニメーション、44 pt / 48 dp 未満のタップ領域を検出します。
 
 ```bash
 npx @enmera/ai-design-check Cebbin/Views
@@ -102,12 +112,11 @@ npx @enmera/ai-design-check Cebbin/Views
 パッケージには 2 つのスキルが含まれており、どちらも `npx skills add enmerasoftware/ai-design-check` でインストールされます。
 
 - **ai-design-check** は、エージェントが画面に手を加える前にルールを読み、その後でチェッカーを実行するようにします。
-- **ai-design-fix** は、すでに生成っぽく見える画面を修復します。間隔と角丸を計測し、4 行のブリーフ（役割、
-  主張、根拠、維持するもの）を書き、害の大きい順に画面を修正して、修正前後を報告します。件数を減らすために
-  コンテンツを削除することはなく、理由なしに指摘を黙らせることもありません。
+- **ai-design-fix** は、すでに生成っぽく見える画面を修復します。間隔と角丸を計測し、4 行のブリーフ（役割、主張、根拠、維持するもの）を書き、害の大きい順に画面を修正して、修正前後を報告します。件数を減らすためにコンテンツを削除することはなく、理由なしに指摘を黙らせることもありません。
 
-スキルを使わない場合は、エージェントへの指示（`CLAUDE.md`、`AGENTS.md`、`.cursor/rules`）で
-`node_modules/@enmera/ai-design-check/RULES.md` を参照させてください。
+Claude Code では、同じスキルをプラグインとしてインストールできます。`/plugin marketplace add enmerasoftware/ai-design-check` の後に `/plugin install ai-design-check@ai-design-check` を実行してください。Codex では `codex plugin marketplace add enmerasoftware/ai-design-check` を実行してください。
+
+スキルを使わない場合は、エージェントへの指示（`CLAUDE.md`、`AGENTS.md`、`.cursor/rules`）で `node_modules/@enmera/ai-design-check/RULES.md` を参照させてください。
 
 ### 編集のたびにすぐ指摘を表示する
 
@@ -123,8 +132,7 @@ npx @enmera/ai-design-check Cebbin/Views
 }
 ```
 
-同じコマンドは、stdin の JSON で `tool_input.file_path` または `file_path` を渡すあらゆるエージェントフックで動作します。
-問題のないファイルでは何も出力せずに終了し、指摘がある場合は stderr に出力して終了コード 2 で終了します。
+同じコマンドは、stdin の JSON で `tool_input.file_path` または `file_path` を渡すあらゆるエージェントフックで動作します。問題のないファイルでは何も出力せずに終了し、指摘がある場合は stderr に出力して終了コード 2 で終了します。
 
 ### CI に追加する
 
@@ -132,8 +140,7 @@ npx @enmera/ai-design-check Cebbin/Views
 - run: npx @enmera/ai-design-check
 ```
 
-エラーがあると終了コード 1 で終了し、`--strict` を付けると警告でも同様に終了します。`--json` は機械向けの形式で出力し、`--format github` は
-プルリクエストのアノテーションを書き込みます。
+エラーがあると終了コード 1 で終了し、`--strict` を付けると警告でも同様に終了します。`--json` は機械向けの形式で出力し、`--format github` はプルリクエストのアノテーションを書き込みます。
 
 ### 既存のプロジェクトから始める
 
@@ -161,19 +168,17 @@ Buttons  726 uses · 149 different looks · 147 without a shared component
 Headings  229 uses · 69 different looks · 229 without a shared component
 ```
 
-整理の前に使えばばらつきを確認でき、整理の後に使えばそれが解消されたことを確認できます。レイアウト用のクラスは無視されるため、
-配置だけが異なる 2 つのコピーは 1 つの見た目として数えられます。
+整理の前に使うとばらつきを確認でき、整理の後に使うとそれが解消されたことを確認できます。レイアウト用のクラスは無視されるため、配置だけが異なる 2 つのコピーは 1 つの見た目として数えられます。
 
-### `narrow`：スマートフォンと長い言語
+### `narrow`：スマートフォンと文字列が長くなる言語
 
 ```bash
 npx @enmera/ai-design-check narrow examples/narrow-de.html --width 320
 ```
 
-お使いの Chrome でページをスマートフォンとデスクトップの幅でレンダリングし、レンダリングされたページでしかわからない問題を報告します：横スクロールと
-その原因、切れたテキスト、収まるように縮小されたテキスト、スマートフォンで非表示になるコンテンツ。最も長い言語で実行してください。ドイツ語の
-ラベルは英語より 30〜40 % 長くなることがよくあります。[崩れた例](examples/narrow-de.html)と
-[修正した例](examples/narrow-de.fixed.html)を試してみてください。
+お使いの Chrome でページをスマートフォンとデスクトップの幅でレンダリングし、レンダリングされたページでしかわからない問題を報告します：横スクロールとその原因、切れたテキスト、収まるように縮小されたテキスト、スマートフォンで非表示になるコンテンツ。文字列が最も長くなる言語で実行してください。ドイツ語のラベルは英語より 30〜40 % 長くなることがよくあります。[崩れた例](examples/narrow-de.html)と[修正した例](examples/narrow-de.fixed.html)を試してみてください。
+
+`--stress` を付けると、長い名前、大きな数値、40 % 長いテキストという最悪のケースのデータでもう一度実行します。これはレイアウトのテストです。「1 member」のような文法は、実際のデータで画面を見て確認する必要があります。
 
 ### `system`：ブランドからデザインシステムを作る
 
@@ -181,13 +186,11 @@ npx @enmera/ai-design-check narrow examples/narrow-de.html --width 320
 npx @enmera/ai-design-check system --character calm --brand "#1E5A63" --kind app --out design-system
 ```
 
-新しいプロダクトや、トークンがまだないプロダクト向けです。キャラクター（`calm`、`precise`、`friendly`、`warm`、`bold`、`editorial`、
-`luxurious`、`playful`、`technical`、`trustworthy`）、ブランドカラー、画面の種類（`dashboard`、`app`、`marketing`、
-`reading`）を指定します。
+新しいプロダクトや、トークンがまだないプロダクト向けです。キャラクター（`calm`、`precise`、`friendly`、`warm`、`bold`、`editorial`、`luxurious`、`playful`、`technical`、`trustworthy`）、ブランドカラー、画面の種類（`dashboard`、`app`、`marketing`、`reading`）を指定します。
 
 | 得られるもの | 詳細 |
 |---|---|
-| フォント | UI、ディスプレイ、数字、コード用のフォントを 50 種類のライブラリから選びます。`fonts --character calm` で候補を一覧表示できます |
+| フォント | UI、ディスプレイ、数字、コード用のフォントを、50 種類を収録したライブラリから選びます。`fonts --character calm` で候補を一覧表示できます |
 | 文字サイズのスケール | Dynamic Type と Material 3 に対応する 8 つの役割 |
 | 色 | ライトとダーク。すべての文字色は WCAG 2 を満たすまで調整されます |
 | 形状 | 4 px の余白スケール、入れ子にできる角丸、コントロールの高さ、カードのパディング |
@@ -199,8 +202,7 @@ npx @enmera/ai-design-check system --character calm --brand "#1E5A63" --kind app
 npx @enmera/ai-design-check story screen.before.html screen.html --out story.mp4 --music track.mp3 --still frame.png
 ```
 
-正方形の 12 秒の動画です。すべての指摘を 1 つずつマークし、件数が減っていくのに合わせて新しい画面へワイプで切り替え、最後にエンドカードを表示します。
-ファイルまたは URL を受け取り、必要なのはお使いの Chrome と ffmpeg だけです。
+正方形の 12 秒の動画です。すべての指摘を 1 つずつマークし、件数が減っていくのに合わせて新しい画面へワイプで切り替え、最後にエンドカードを表示します。ファイルまたは URL を受け取り、必要なのはお使いの Chrome と ffmpeg だけです。
 
 ### その他のコマンド
 
@@ -225,6 +227,7 @@ npx @enmera/ai-design-check init     # write a config with the defaults
     "sharedComponents": ["Button", "Badge", "Input", "Card"],
     "looks": { "badge": "StatusBadge", "card": "Tile or SectionCard", "heading": "Heading", "link": "LinkButton" },
     "rules": { "pulse-for-live-only": "off" },
+    "spacing": { "base": 6 },
     "allow": {
         "type-scale": ["src/marketing/hero.tsx:text-[44px]"],
         "glow-in-charts-only": ["src/components/charts/**"]
@@ -237,32 +240,41 @@ npx @enmera/ai-design-check init     # write a config with the defaults
 | `i18n.files` | JSON の辞書。`keysAreSource` を指定すると、キーは英語の原文として扱われ、キーもチェックされます。`framework` には名前を変更できないキーを列挙します |
 | `properNouns` | 大文字を保持する名前 |
 | `allow` | ルールごとに `"glob"` または `"glob:exact match"` |
+| `spacing` | 余白のスケール：`6`、`[4, 6, 8, 12]`、または `{ "base": 4, "values": [18], "native": { "base": 8 } }`。詳しくは下記を参照してください |
 | `rules` | ルール ID ごとに `"off"`、`"info"`、`"warn"`、`"error"` のいずれか |
 | `componentDirs` | 素の `<button>` と `<input>` を許可する場所 |
 | `components` | 素の要素 → 代わりに使う共有コンポーネント |
 | `sharedComponents` | 見た目が props で決まるコンポーネント。`className` は配置にのみ使用できます |
 | `looks` | 手書きの各見た目を担当するコンポーネント。`false` を指定するとその種類をオフにします |
 
+**余白のスケール。** `spacing-scale` は、次のうち最初に読み取れるものを基準に値を判定し、どれを使ったかをレポートに示します。
+
+1. 設定ファイルの `spacing`。
+2. Tailwind 4 の `@theme`：`--spacing` がグリッドになり、`--spacing-*` がステップを追加します。
+3. `tailwind.config.*`。テキストとして読むだけで、実行はしません。`theme.spacing` はステップを置き換え、`theme.extend.spacing` は 4 px グリッドに追加します。関数、変数、スプレッド、プリセットはこの方法では読み取れません。
+4. `:root` の変数：`--spacing` がグリッドになり、`--space-*` と `--spacing-*` は 4 px グリッドにステップを追加するだけで、削除はしません。
+5. 4 px グリッド。
+
+存在するのに読み取れないソース（`calc()`、`clamp()`、内容が食い違う 2 つのファイル、1 つの数値ではないルートのフォントサイズ）の場合は、4 px グリッドのままレポートに注記を残します。推測はせず、後のソースも試しません。自分で決めるには `spacing` を設定してください。`base` のないリストを指定した場合、マージン、パディング、ギャップはリスト上の値でなければなりません。幅、高さ、オフセットはリストの公約数で割り切れれば十分です。
+
+アプリのコード（SwiftUI、Compose、Flutter、React Native）では、設定ファイルの `spacing`（Web と異なる場合は `native`）または 4 pt/dp を使い、それ以外は読みません。アプリのコードの定数には共通の置き場所がなく、アプリの隣にある Web のテーマはアプリの判断材料にならないからです。
+
 </details>
 
 <details>
 <summary><strong>チェッカーが読み取るもの</strong></summary>
 
-`.tsx`、`.jsx`、`.vue`、`.svelte`、`.html`、Blade、CSS、i18n JSON、SwiftUI（`.swift`）、Jetpack Compose（`.kt`）。素の Node 20+ で
-動作します。クラスに関するルールはクラス文字列（`class`、`className`、`cn()`、`clsx()`、`cva()`、`twMerge()`）だけを読むため、コメントや
-コピーテキストにはマッチしません。
+`.tsx`、`.jsx`、`.vue`、`.svelte`、`.html`、Blade、CSS、i18n JSON、SwiftUI（`.swift`）、Jetpack Compose（`.kt`）。素の Node 20+ で動作します。クラスに関するルールはクラス文字列（`class`、`className`、`cn()`、`clsx()`、`cva()`、`twMerge()`）だけを読むため、コメントや文言にはマッチしません。
 
 </details>
 
 <details>
 <summary><strong>ルールを追加する</strong></summary>
 
-ルールは [`rules.json`](rules.json) にあります：`id`、`area`、`severity`、そして `en` と `tr` の `title`、`rule`、`why`、`fix`、さらに
-任意の `check` です。
+ルールは [`rules.json`](rules.json) にあります：`id`、`area`、`severity`、そして `en` と `tr` の `title`、`rule`、`why`、`fix`、さらに任意の `check` です。
 
 - `class`：クラス文字列に対するパターン。`unless`、`exceptElements`、`unlessBefore`、`css` を指定できます
-- `native`：`swift` と `kt` の下にプラットフォームごとに 1 つのパターン。`notMultipleOf`、`min`、`max`、`unlessBefore`、`unlessAfter`、
-  `onlyIf` を指定できます
+- `native`：`swift` と `kt` の下にプラットフォームごとに 1 つのパターン。`notMultipleOf`、`min`、`max`、`unlessBefore`、`unlessAfter`、`onlyIf` を指定できます
 - `regex`：コメントを除いたコードに対するパターン。`flags` と `files` を指定できます
 - または構造的なチェック
 
