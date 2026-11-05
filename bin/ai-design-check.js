@@ -28,8 +28,9 @@ Usage
                                                  --stress runs it again with long names, large numbers, longer text
   npx @enmera/ai-design-check system [--character calm] [--brand "#1E5A63"] [--kind dashboard] [--out design-system]
                                                  Generate a design system: fonts, type scale, light and dark colors that
-                                                 pass contrast, radius and spacing, as CSS, Tailwind, JSON, SwiftUI,
-                                                 Compose and a preview page (--ui/--display pick fonts, --source any)
+                                                 pass contrast, radius and spacing, as CSS, Tailwind, Bootstrap (CSS and
+                                                 Sass), JSON, SwiftUI, Compose and a preview page (--ui/--display pick
+                                                 fonts, --source any)
   npx @enmera/ai-design-check redesign <url> [--agent claude|codex|none] [--plan] [--brief brief.json] [--build "npm run build"] [--path /] [--only type,color,craft]
                                                  Your coding agent studies the running page, its code and its subject and
                                                  writes one card per section; the numbered fixes (type, colour, rhythm,
@@ -303,6 +304,8 @@ if (command === 'system') {
         const files = {
             'tokens.css': css,
             'theme.css': tokens.tailwind(system),
+            'bootstrap.css': tokens.bootstrap(system),
+            '_variables.scss': tokens.scss(system),
             'tokens.json': tokens.json(system),
             'DesignSystem.swift': tokens.swift(system),
             // The file that defines the scale holds every size once; that is not a screen breaking it.

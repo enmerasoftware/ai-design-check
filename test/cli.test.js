@@ -136,12 +136,18 @@ test('nothing is written through a symbolic link', () => {
 });
 
 test('system does not overwrite other files, and its output passes the checker', () => {
-    const dir = project({ 'design-system/theme.css': 'mine' });
+    const dir = project({ 'design-system/theme.css': 'mine', 'design-system/_variables.scss': 'mine' });
     assert.notEqual(run(dir, ['system']).status, 0);
     assert.equal(readFileSync(join(dir, 'design-system/theme.css'), 'utf8'), 'mine');
+    assert.equal(readFileSync(join(dir, 'design-system/_variables.scss'), 'utf8'), 'mine');
     assert.equal(run(dir, ['system', '--force']).status, 0);
     assert.doesNotMatch(readFileSync(join(dir, 'design-system/theme.css'), 'utf8'), /@theme \{[^}]*color-scheme/);
     assert.equal(run(dir, ['--json', 'design-system/DesignSystem.kt']).status, 0);
+    // The Bootstrap files, in one run so it counts as a check even where .scss is not read.
+    const result = run(dir, ['--json', 'design-system/bootstrap.css', 'design-system/_variables.scss']);
+    assert.equal(result.status, 0);
+    assert.deepEqual(JSON.parse(result.stdout).findings.filter((item) => item.severity === 'error'), []);
+    assert.match(readFileSync(join(dir, 'design-system/bootstrap.css'), 'utf8'), /\[data-bs-theme=dark\] \{/);
 });
 
 test('rules read what they promise', () => {

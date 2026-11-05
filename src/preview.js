@@ -28,9 +28,16 @@ function swatches(colors) {
     return names.map((name) => `<div class="swatch"><i style="background: var(--c-${kebab(name)})"></i><span>${name}</span><code>${colors[name]}</code></div>`).join('');
 }
 
+/** One row per text color: every ground it sits on, drawn as that pair, with the ratio it reaches. */
+function contrastRows(colors) {
+    const byText = new Map();
+    for (const item of contrastReport(colors)) byText.set(item.fg, [...(byText.get(item.fg) ?? []), item]);
+
+    return [...byText].map(([fg, items]) => `<tr><td>${fg}</td><td class="num">${items[0].target}</td><td><div class="pairs">${items.map((item) => `<span class="pair" style="background: var(--c-${kebab(item.bg)}); color: var(--c-${kebab(fg)})">${item.bg} <b>${item.ratio.toFixed(2)}</b></span>`).join('')}</div></td></tr>`).join('');
+}
+
 function pane(system, mode) {
     const colors = system.color[mode];
-    const report = contrastReport(colors).map((item) => `<tr><td>${item.fg}</td><td>${item.bg}</td><td class="num">${item.ratio.toFixed(2)}</td></tr>`).join('');
     const bars = [62, 48, 80, 54, 92, 70].map((value, index) => `<i style="height: ${value}%; background: var(--c-${index === 4 ? 'chart-highlight' : 'chart-muted'})"></i>`).join('');
 
     return `<section class="pane" style="${variables(colors)}" data-mode="${mode}">
@@ -53,7 +60,7 @@ function pane(system, mode) {
 <h3>Colors</h3>
 <div class="swatches">${swatches(colors)}</div>
 <h3>Contrast (WCAG 2)</h3>
-<table class="contrast"><thead><tr><th>Text</th><th>On</th><th class="num">Ratio</th></tr></thead><tbody>${report}</tbody></table>
+<table class="contrast"><thead><tr><th>Text</th><th class="num">Needs</th><th>Ratio on each ground it sits on</th></tr></thead><tbody>${contrastRows(colors)}</tbody></table>
 </section>`;
 }
 
@@ -76,7 +83,7 @@ header h1 { font-family: var(--font-display); font-size: 28px; font-weight: 600;
 header p { margin: 0; color: #52525b; font-size: 14px; line-height: 1.5; }
 .types { max-width: 1200px; margin: 24px auto; padding: 0 24px; }
 .type-row { display: grid; grid-template-columns: 240px 1fr; gap: 24px; padding: 16px 0; border-top: 1px solid #e4e4e7; align-items: baseline; }
-.meta { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: #71717a; }
+.meta { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: #63636b; }
 .meta b { color: #18181b; font-size: 13px; font-weight: 600; }
 .panes { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1200px; margin: 0 auto 48px; padding: 0 24px; }
 .pane { background: var(--c-bg); color: var(--c-text); border-radius: ${radius.xl}px; padding: 24px; display: flex; flex-direction: column; gap: 16px; border: 1px solid var(--c-border); }
@@ -117,6 +124,8 @@ a { color: var(--c-accent-text); }
 .swatch i { grid-row: span 2; width: 28px; height: 28px; border-radius: ${radius.sm}px; border: 1px solid var(--c-border); }
 .swatch code { color: var(--c-text-tertiary); font-family: var(--font-mono); font-size: 11px; }
 .contrast { font-size: 12px; }
+.pairs { display: flex; flex-wrap: wrap; gap: 4px; }
+.pair { padding: 2px 6px; border: 1px solid var(--c-border); border-radius: ${radius.sm}px; white-space: nowrap; }
 @media (max-width: 860px) { .panes { grid-template-columns: 1fr; } .type-row { grid-template-columns: 1fr; gap: 6px; } }
 </style>
 </head>
@@ -124,7 +133,7 @@ a { color: var(--c-accent-text); }
 <header>
 <h1>${escape(system.character[0].toUpperCase() + system.character.slice(1))} ${escape(system.kind)} system</h1>
 <p>Brand ${escape(system.brand)} · UI ${escape(system.fonts.ui)} · display ${escape(system.fonts.display)} · numbers ${escape(system.fonts.numeric)} · code ${escape(system.fonts.mono)}.
-Every text color is checked against its background and moved until it passes WCAG 2.</p>
+Every text color is checked on each ground it sits on and moved until it passes WCAG 2.</p>
 </header>
 <div class="types">
 ${typeRows(system)}

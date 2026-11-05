@@ -1,13 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { contrast, hexToOklch, oklchToHex, round, withContrast } from './color.js';
+import { contrast, hexToOklch, luminance, oklchToHex, round, withContrast } from './color.js';
 
 /**
  * Design system generator: from a product character, a brand color and the kind of screen it decides the fonts and
  * their sizes, weights, line heights and letter-spacing, the colors of every surface, text, border, button, badge and
- * chart in light and dark, the radius and spacing scale. Every text color is checked against its background (WCAG 2:
- * 4.5 for text, 3 for large text and UI parts) and moved until it passes.
+ * chart in light and dark, the radius and spacing scale. Every text color is checked against each ground it sits on
+ * (GROUNDS; WCAG 2: 4.5 for text) and moved until it passes on all of them.
  */
 
 const LIBRARY = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'data', 'fonts.json'), 'utf8'));
@@ -113,7 +113,56 @@ export function typeScale(kind, fonts, character) {
 
 const tone = (h, c) => (l) => oklchToHex({ l, c, h });
 
-/** Colors for one theme. `dark` flips the lightness steps; every text role is pushed to its contrast target. */
+/** Status colors by hue. */
+const STATUS = { success: 150, warning: 75, danger: 27, info: 245 };
+
+/**
+ * Every ground each text color sits on, from the component map and the preview: the page, cards and the sidebar,
+ * plus badges and the selected nav item (muted), pills (the soft grounds), buttons (the fills) and tooltips (text
+ * inverted). The generator moves each text color, or for an ink its fill, until it passes on all of its grounds;
+ * the report lists the same pairs.
+ */
+const PAGE = ['bg', 'surface', 'subtle'];
+const GROUNDS = {
+    text: [...PAGE, 'muted'],
+    textSecondary: [...PAGE, 'muted'],
+    textTertiary: PAGE,
+    accentInk: ['accent', 'accentHover'],
+    accentText: [...PAGE, 'accentSoft'],
+    ...Object.fromEntries(Object.keys(STATUS).flatMap((name) => [[`${name}Ink`, [name]], [`${name}Text`, [...PAGE, `${name}Soft`]]])),
+    surface: ['text'],
+};
+
+/** Body and secondary text keep their steps above the rest; everything else needs WCAG 2 AA for text. */
+const TARGETS = { text: 12, textSecondary: 7 };
+const targetOf = (role) => TARGETS[role] ?? 4.5;
+
+/**
+ * Moves a color's lightness until it reaches the target on every ground. All the grounds lie on one side of the
+ * text (light ones in light mode), so each step away from one is a step away from all: the move is only as large as
+ * the hardest ground needs.
+ */
+const readable = (color, grounds, target) => grounds.reduce((moved, ground) => withContrast(moved, ground, target), color);
+
+/**
+ * A hover fill at least 0.05 lighter or darker and 1.15:1 apart, so the change shows, with its ink still at 4.5.
+ * It moves away from the ink, so the label gains contrast; toward it only when the range ends (black or white brands).
+ */
+function hoverOf(fill, ink) {
+    const { l, c, h } = hexToOklch(fill);
+    const away = luminance(ink) > luminance(fill) ? -0.01 : 0.01;
+    for (const step of [away, -away]) {
+        for (let next = l + 5 * step; next >= 0 && next <= 1; next += step) {
+            const candidate = oklchToHex({ l: next, c, h });
+            if (contrast(candidate, ink) < 4.5) break;
+            if (contrast(candidate, fill) >= 1.15) return candidate;
+        }
+    }
+
+    return fill;
+}
+
+/** Colors for one theme. `dark` flips the lightness steps; every text color is pushed to its target on each of its grounds. */
 function theme(brand, character, dark) {
     const { tint } = CHARACTERS[character];
     const { h, c } = brand;
@@ -125,28 +174,31 @@ function theme(brand, character, dark) {
         : { bg: 0.985, surface: 1, subtle: 0.965, muted: 0.94, border: 0.91, borderStrong: 0.85 };
     const bg = paper(steps.bg);
     const surface = dark ? neutral(steps.surface) : '#ffffff';
-    const colors = {
-        bg, surface, subtle: paper(steps.subtle), muted: neutral(steps.muted), border: neutral(steps.border), borderStrong: neutral(steps.borderStrong),
-        text: withContrast(neutral(dark ? 0.96 : 0.21), surface, 12),
-        textSecondary: withContrast(neutral(dark ? 0.8 : 0.42), surface, 7),
-        textTertiary: withContrast(neutral(dark ? 0.66 : 0.55), surface, 4.5),
-    };
+    const colors = { bg, surface, subtle: paper(steps.subtle), muted: neutral(steps.muted), border: neutral(steps.border), borderStrong: neutral(steps.borderStrong) };
+    // Grounds come first, so a text color can be fitted to all of the ones it sits on.
+    const fit = (role, start) => readable(start, GROUNDS[role].map((name) => colors[name]), targetOf(role));
+    colors.text = fit('text', neutral(dark ? 0.96 : 0.21));
+    colors.textSecondary = fit('textSecondary', neutral(dark ? 0.8 : 0.42));
+    colors.textTertiary = fit('textTertiary', neutral(dark ? 0.66 : 0.55));
     // Accent: the brand itself when it can carry text on it, else moved until it can. Ink is white or near-black, whichever reads.
     let accent = oklchToHex({ l: dark ? Math.max(brand.l, 0.62) : Math.min(brand.l, 0.62), c, h });
     const ink = (fill) => (contrast(fill, '#ffffff') >= contrast(fill, neutral(0.18)) ? '#ffffff' : neutral(0.18));
-    if (contrast(accent, ink(accent)) < 4.5) accent = withContrast(accent, ink(accent), 4.5);
+    // A fill moves until its ink passes, as little as it takes: lighter under near-black ink, darker under white.
+    const carry = (fill) => (contrast(fill, ink(fill)) < 4.5 ? withContrast(fill, ink(fill), 4.5) : fill);
+    accent = carry(accent);
+    const accentInk = ink(accent);
     colors.accent = accent;
-    colors.accentHover = oklchToHex({ ...hexToOklch(accent), l: hexToOklch(accent).l + (dark ? 0.05 : -0.05) });
-    colors.accentInk = ink(accent);
+    colors.accentHover = hoverOf(accent, accentInk);
+    colors.accentInk = accentInk;
     colors.accentSoft = oklchToHex({ l: dark ? 0.28 : 0.95, c: Math.min(c, 0.03), h });
-    colors.accentText = withContrast(accent, surface, 4.5);
+    colors.accentText = fit('accentText', accent);
     colors.focus = accent;
-    for (const [name, hue] of Object.entries({ success: 150, warning: 75, danger: 27, info: 245 })) {
-        const fill = oklchToHex({ l: dark ? 0.68 : 0.58, c: 0.15, h: hue });
+    for (const [name, hue] of Object.entries(STATUS)) {
+        const fill = carry(oklchToHex({ l: dark ? 0.68 : 0.58, c: 0.15, h: hue }));
         colors[name] = fill;
         colors[`${name}Ink`] = ink(fill);
         colors[`${name}Soft`] = oklchToHex({ l: dark ? 0.27 : 0.96, c: 0.04, h: hue });
-        colors[`${name}Text`] = withContrast(fill, surface, 4.5);
+        colors[`${name}Text`] = fit(`${name}Text`, fill);
     }
     // Charts: one series carries the accent, the rest stay quiet; categories share one lightness.
     colors.chartHighlight = accent;
@@ -218,9 +270,7 @@ export function designSystem({ character = 'calm', brand, kind = 'dashboard', ui
     };
 }
 
-/** Contrast table for the report: each text role on the surface it sits on. */
+/** Contrast table for the report: every text color on every ground it sits on (GROUNDS), with the ratio it needs. */
 export function contrastReport(colors) {
-    const pairs = [['text', 'surface'], ['textSecondary', 'surface'], ['textTertiary', 'surface'], ['text', 'bg'], ['accentInk', 'accent'], ['accentText', 'surface'], ['successText', 'surface'], ['dangerText', 'surface'], ['warningText', 'surface']];
-
-    return pairs.map(([fg, bg]) => ({ fg, bg, ratio: round(contrast(colors[fg], colors[bg]), 2) }));
+    return Object.entries(GROUNDS).flatMap(([fg, grounds]) => grounds.map((bg) => ({ fg, bg, ratio: round(contrast(colors[fg], colors[bg]), 2), target: targetOf(fg) })));
 }
