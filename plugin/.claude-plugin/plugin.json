@@ -1,7 +1,7 @@
 {
   "name": "ai-design-check",
   "displayName": "AI Design Check",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "Find and fix what makes an AI-built interface look generated, on the web and in SwiftUI, Compose, Flutter and React Native apps. 141 rules, a checker that needs no model, and a skill that repairs the screen and proves it.",
   "author": {
     "name": "Enmera Software",

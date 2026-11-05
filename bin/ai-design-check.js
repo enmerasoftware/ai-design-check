@@ -57,8 +57,8 @@ Options
   --allow-status 404          scan, narrow: check a page that answers this HTTP status (an error page you designed)
   --cookie "name=value"       scan, narrow, redesign: a cookie for the page's host, for pages behind a sign-in
                               (repeatable). AI_DESIGN_CHECK_COOKIE="a=1; b=2" keeps it out of shell history and CI logs
-  --header "Name: value"      scan, narrow, redesign: a request header such as Authorization (repeatable); it goes with
-                              every request the page makes. AI_DESIGN_CHECK_HEADERS takes one per line. Cookie and header
+  --header "Name: value"      scan, narrow, redesign: a request header such as Authorization (repeatable); it goes only
+                              to the page's own origin. AI_DESIGN_CHECK_HEADERS takes one per line. Cookie and header
                               values are never printed
   --allow-redirect            scan, narrow, redesign: check the page a redirect lands on, even a sign-in page (without
                               it, a page that sends the browser to a sign-in page stops the run with exit 2)

@@ -168,3 +168,44 @@ test('the system command writes every file', () => {
     assert.match(readFileSync(join(out, 'theme.css'), 'utf8'), /@theme \{/);
     assert.equal(JSON.parse(execFileSync('node', [bin, 'system', '--json'], { encoding: 'utf8' })).kind, 'dashboard');
 });
+
+test('bootstrap.css replaces every blue Bootstrap 5.3 compiles in, in both themes', () => {
+    const out = bootstrap(designSystem({ kind: 'marketing', brand: '#b4531f' }));
+    // Each is a rule or variable of Bootstrap's compiled CSS that holds #0d6efd, or a tint of it, as a literal value.
+    for (const [selector, ...properties] of [
+        ['.form-control:focus, .form-select:focus, .form-check-input:focus', 'border-color', 'box-shadow'],
+        ['.form-check-input:checked, .form-check-input[type=checkbox]:indeterminate', 'background-color', 'border-color'],
+        ['.form-check-input:checked[type=checkbox]', '--bs-form-check-bg-image'],
+        ['.form-check-input:checked[type=radio]', '--bs-form-check-bg-image'],
+        ['.form-check-input[type=checkbox]:indeterminate', '--bs-form-check-bg-image'],
+        ['.form-switch .form-check-input:focus', '--bs-form-switch-bg'],
+        ['.form-switch .form-check-input:checked', '--bs-form-switch-bg'],
+        ['.form-range:focus::-webkit-slider-thumb', 'box-shadow'],
+        ['.form-range:focus::-moz-range-thumb', 'box-shadow'],
+        ['.form-range::-webkit-slider-thumb', 'background-color'],
+        ['.form-range::-webkit-slider-thumb:active', 'background-color'],
+        ['.form-range::-moz-range-thumb', 'background-color'],
+        ['.form-range::-moz-range-thumb:active', 'background-color'],
+        ['.btn-primary', '--bs-btn-bg', '--bs-btn-hover-bg', '--bs-btn-active-bg', '--bs-btn-disabled-bg'],
+        ['.btn-outline-primary', '--bs-btn-color', '--bs-btn-border-color', '--bs-btn-hover-bg', '--bs-btn-active-bg', '--bs-btn-disabled-color'],
+        ['.dropdown-menu, .dropdown-menu-dark', '--bs-dropdown-link-active-bg'],
+        ['.nav-link:focus-visible', 'box-shadow'],
+        ['.nav-pills', '--bs-nav-pills-link-active-bg'],
+        ['.accordion', '--bs-accordion-btn-active-icon', '--bs-accordion-btn-focus-box-shadow'],
+        ['.pagination', '--bs-pagination-focus-box-shadow', '--bs-pagination-active-bg', '--bs-pagination-active-border-color'],
+        ['.progress, .progress-stacked', '--bs-progress-bar-bg'],
+        ['.list-group', '--bs-list-group-active-bg', '--bs-list-group-active-border-color'],
+        ['.btn-close', '--bs-btn-close-focus-shadow'],
+        ['.table-primary', '--bs-table-bg'],
+    ]) {
+        const start = out.indexOf(`\n${selector} {`);
+        assert.notEqual(start, -1, `no rule for ${selector}`);
+        const body = out.slice(start, out.indexOf('}', start));
+        for (const property of properties) assert.ok(body.includes(`${property}:`), `${selector} has no ${property}`);
+    }
+    assert.doesNotMatch(out, /#0d6efd|#86b7fe|13, 110, 253|%230d6efd|%2386b7fe|%23052c65/i);
+    // The marks sit in the theme blocks, so a dark section gets the dark ones.
+    for (const block of [out.slice(out.indexOf('[data-bs-theme=light]'), out.indexOf('[data-bs-theme=dark]')), out.slice(out.indexOf('[data-bs-theme=dark]'), out.indexOf('.btn-primary'))]) {
+        for (const name of ['--bs-focus-ring-color', '--ds-check', '--ds-radio', '--ds-indeterminate', '--ds-switch-on', '--ds-switch-focus', '--ds-accordion-open']) assert.match(block, new RegExp(`${name}: `));
+    }
+});

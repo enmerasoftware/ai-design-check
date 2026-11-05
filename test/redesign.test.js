@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { detectStack, laravelView, pageFiles } from '../src/redesign/detect.js';
 import { diagnose, typeScale } from '../src/redesign/diagnose.js';
-import { OUT, agentCommand, brief, redesign, verify } from '../src/redesign/run.js';
+import { OUT, agentCommand, brief, codexStream, onlyReads, redesign, verify } from '../src/redesign/run.js';
 import { measure } from '../src/redesign/measure.js';
 import { briefMd, craftPrompt, studyPrompt, validateBrief } from '../src/redesign/study.js';
 import { findChrome } from '../src/story.js';
@@ -396,4 +396,30 @@ process.exit(1);
         process.env.PATH = path;
         project.close();
     }
+});
+
+test('what Codex says it wrote: only its edit tool names files, and a shell command that may write ends the list', () => {
+    for (const command of ["/bin/zsh -lc 'cat index.html'", "/bin/zsh -lc 'rg -n hero src | head -5'", "bash -c 'sed -n 1,20p a.css && git diff --stat 2>/dev/null'", 'ls -la', "/bin/zsh -lc 'find . -name \"*.css\"'"]) {
+        assert.equal(onlyReads(command), true, command);
+    }
+    for (const command of ["/bin/zsh -lc 'printf hi > hello.txt'", "/bin/zsh -lc 'sed -i s/a/b/ a.css'", "/bin/zsh -lc 'python3 fix.py'", "/bin/zsh -lc 'find . -name x -delete'", "/bin/zsh -lc 'cat a | tee b'", "/bin/zsh -lc 'git checkout a'", 'echo $(rm a)', 'npm run build']) {
+        assert.equal(onlyReads(command), false, command);
+    }
+    const event = (item) => JSON.stringify({ type: 'item.completed', item });
+    const cwd = mkdtempSync(join(tmpdir(), 'codex-stream-'));
+    const clean = codexStream(cwd);
+    clean.line(JSON.stringify({ type: 'thread.started' }));
+    clean.line(event({ type: 'command_execution', command: "/bin/zsh -lc 'cat index.html'" }));
+    clean.line(event({ type: 'file_change', changes: [{ path: join(cwd, 'index.html'), kind: 'update' }, { path: 'a.css', kind: 'add' }] }));
+    clean.line(event({ type: 'agent_message', text: 'Done.' }));
+    assert.deepEqual([...clean.writes()].sort(), ['a.css', 'index.html']);
+    assert.match(clean.log(), /> update .*index\.html[\s\S]*Done\./);
+    const shell = codexStream(cwd);
+    shell.line(event({ type: 'file_change', changes: [{ path: 'a.css', kind: 'update' }] }));
+    shell.line(event({ type: 'command_execution', command: "/bin/zsh -lc 'printf hi > b.css'" }));
+    assert.equal(shell.writes(), null);
+    const plain = codexStream(cwd);
+    plain.line('not json');
+    assert.equal(plain.writes(), null);
+    assert.match(plain.log(), /not json/);
 });

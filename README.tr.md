@@ -107,9 +107,11 @@ içerik. Chrome'un hesapladığı her rengi okur, Tailwind 4'ün `oklch()` renkl
 alışkanlıklarını da yakalar: başlıkta renkle ayrılmış kelime, renkli gölge, her çağrı düğmesinin sonunda ok, orta noktayla
 dizilmiş listeler, başlığın üstünde rozet.
 
-Açılamayan, hata döndüren ya da tarayıcıyı giriş sayfasına yönlendiren bir sayfa temiz sayılmaz; tarama 2 koduyla durur.
+Açılamayan, hata döndüren, tarayıcıyı giriş sayfasına yönlendiren ya da kendi yerinde giriş formu gösteren bir sayfa temiz
+sayılmaz; tarama 2 koduyla durur.
 Giriş gerektiren sayfa için `--cookie "ad=değer"` ya da `--header "Ad: değer"` verin; kabuk geçmişinde ve CI kayıtlarında
-görünmesinler diye `AI_DESIGN_CHECK_COOKIE` ve `AI_DESIGN_CHECK_HEADERS` ortam değişkenlerini de kullanabilirsiniz. Böyle bir
+görünmesinler diye `AI_DESIGN_CHECK_COOKIE` ve `AI_DESIGN_CHECK_HEADERS` ortam değişkenlerini de kullanabilirsiniz. İkisi de yalnızca sayfanın kendi kaynağına (origin)
+gider, yüklediği başka alan adlarına gitmez. Böyle bir
 sayfayı bilerek denetlemek için `--allow-redirect` ve `--allow-status 404` var. Birden çok adres tek seferde taranır. Pull
 request için `--format github` ekleyin. Yapılandırmada `designSystem` (`fonts`, `sizes`, `radii`, `colors`)
 varsa sistemden sapanları da adıyla söyler.
@@ -240,7 +242,8 @@ Yeni ya da değişkenleri olmayan ürünler için. Bir karakter (`calm`, `precis
 | Dosyalar | `tokens.css`, Tailwind `theme.css`, Bootstrap `bootstrap.css` ve `_variables.scss`, `tokens.json`, `DesignSystem.swift`, `DesignSystem.kt`, `preview.html` |
 
 Bootstrap 5.3 ile `bootstrap.css` dosyasını Bootstrap'in kendi CSS'inden sonra bağlayın: açık tema varsayılandır, koyu tema
-`data-bs-theme="dark"` altında geçerli olur. Kaynaktan derleyen projeler `_variables.scss` dosyasını Bootstrap'ten önce içe
+`data-bs-theme="dark"` altında geçerli olur. Bootstrap'in alanlara, onay kutularına, menülere, sayfalamaya ve diğer
+bileşenlere derlenmiş mavisini de değiştirir. Kaynaktan derleyen projeler `_variables.scss` dosyasını Bootstrap'ten önce içe
 aktarır.
 
 ### `story`: önce/sonra videosu

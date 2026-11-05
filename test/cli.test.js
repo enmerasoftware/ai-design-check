@@ -307,3 +307,66 @@ test('designSystem in the config reaches the scan', { skip: !findChrome() }, asy
         assert.ok(findings.some((item) => item.rule === 'design-system-drift' && /Arial/.test(item.value)), JSON.stringify(findings));
     });
 });
+
+test('a --header goes to the page and never to the other hosts it loads from', { skip: !findChrome() }, async () => {
+    const dir = project();
+    const seen = { other: [], redirected: [] };
+    const other = (request, response) => {
+        seen.other.push(request.headers['x-token']);
+        response.writeHead(200, { 'content-type': 'text/css' });
+        response.end('p { color: inherit; }');
+    };
+    await served(other, async (elsewhere) => {
+        const own = (request, response) => {
+            const url = request.url.split('?')[0];
+            const show = (html) => { response.writeHead(200, { 'content-type': 'text/html' }); response.end(html); };
+            if (url === '/hop') { response.writeHead(302, { location: '/team' }); return response.end(); }
+            if (url === '/away') { response.writeHead(302, { location: `${elsewhere}/seen.css` }); return response.end(); }
+            if (url === '/team' && request.headers['x-token'] === 's3cret-header' && /session=s3cret-cookie/.test(request.headers.cookie ?? '')) {
+                return show(page('Team', `<link rel="stylesheet" href="${elsewhere}/style.css"><p>Four people on the team.</p><img src="/away" alt="">`));
+            }
+            if (url === '/favicon.ico' || url.endsWith('.png')) return response.end();
+            response.writeHead(401);
+            response.end('no');
+        };
+        await served(own, async (base) => {
+            const result = await runAsync(dir, ['scan', `${base}/hop`, '--header', 'X-Token: s3cret-header', '--cookie', 'session=s3cret-cookie', '--json']);
+            const [checked] = JSON.parse(result.stdout).pages;
+            assert.equal(checked.error, undefined, result.stderr);
+            assert.ok(seen.other.length > 0, 'the other host was asked');
+            assert.deepEqual(seen.other.filter(Boolean), []);
+        });
+    });
+});
+
+// Answers 200 at the address asked for, as an app does when it draws its own sign-in screen.
+const inPlace = (request, response) => {
+    const url = request.url.split('?')[0];
+    const filler = '<p>Three projects moved forward this week, and the team closed most of what was open.</p>'.repeat(12);
+    const pages = {
+        '/app': page('Acme', '<form><label>Email <input type="email" name="email"></label><label>Password <input type="password" name="password"></label><button>Continue</button></form>'),
+        '/first': page('Acme', '<h1>Welcome back</h1><form><label>Email <input type="email" name="email"></label><button>Sign in</button></form>'),
+        '/login': page('Acme', '<form><label>Password <input type="password" name="password"></label><button>Sign in</button></form>'),
+        '/signup': page('Acme', '<form><label>Password <input type="password" name="password"></label><button>Create account</button></form>'),
+        '/news': page('Acme', '<h1>Coming soon</h1><form><label>Email <input type="email" name="email"></label><button>Tell me</button></form>'),
+        '/long': page('Acme', `${filler}<form><label>Password <input type="password" name="password"></label><button>Sign in</button></form>`),
+    };
+    response.writeHead(pages[url] ? 200 : 404, { 'content-type': 'text/html' });
+    response.end(pages[url] ?? '');
+};
+
+test('a sign-in form drawn at the address asked for stops the scan; pages that merely hold a form do not', { skip: !findChrome() }, async () => {
+    const dir = project();
+    await served(inPlace, async (base) => {
+        for (const path of ['/app', '/first']) {
+            const stopped = await runAsync(dir, ['scan', `${base}${path}`]);
+            assert.equal(stopped.status, 2, `${path}: ${stopped.stdout}${stopped.stderr}`);
+            assert.match(stopped.stderr, /shows a sign-in form in place of the page/);
+            assert.notEqual((await runAsync(dir, ['scan', `${base}${path}`, '--allow-redirect'])).status, 2);
+        }
+        for (const path of ['/login', '/signup', '/news', '/long']) {
+            const result = await runAsync(dir, ['scan', `${base}${path}`]);
+            assert.notEqual(result.status, 2, `${path}: ${result.stderr}`);
+        }
+    });
+});

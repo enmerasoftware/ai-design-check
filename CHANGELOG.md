@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.14.1
+
+Four gaps left open by 0.14.0, closed.
+
+- **`--header` stays on the page's own origin.** It used to go with every request the page made, so a token could reach a
+  font host or an analytics script. Cookies already stayed on the host. An API on another subdomain no longer receives it.
+- **A sign-in form drawn in place.** An app that answers 200 at the address asked for and draws its own sign-in screen used to
+  pass as a clean page. A short page with a password field, or with an email field and a sign-in heading, title or button, now
+  stops the run with exit 2. Asking for `/login` or `/signup` itself is still fine, and `--allow-redirect` checks the form.
+- **`redesign` with Codex** now reads Codex's JSON events, so it can tell the agent's changes from yours, as it does with Claude
+  Code. Codex can also write from a shell command, which names no file; after such a command the run says nothing either way,
+  as before.
+- **`bootstrap.css` replaces all of Bootstrap's compiled blue**: field focus, checks, radios, switches, ranges, outline buttons,
+  menus, nav pills, accordions, pagination, progress bars, list groups, the close button and `.table-primary`, in both themes.
+  No build from source needed for it.
+
 ## 0.14.0
 
 Bootstrap and plain CSS are read as well as Tailwind, the browser checker sees modern colours and five more habits of

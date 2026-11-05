@@ -105,9 +105,10 @@ show: real contrast, sizes, what covers what, broken images, script errors, cont
 Chrome computes, Tailwind 4's `oklch()` included, and the habits of a generated page: an accent word in the headline,
 coloured shadows, an arrow on every call to action, lists strung on middle dots, a badge pill above the headline.
 
-A page that did not load, answers with an error or sends the browser to a sign-in page stops the scan with exit 2 instead of
-passing as clean. For a page behind a sign-in, pass `--cookie "name=value"` or `--header "Name: value"`, or set
-`AI_DESIGN_CHECK_COOKIE` and `AI_DESIGN_CHECK_HEADERS` to keep them out of shell history and CI logs. `--allow-redirect` and
+A page that did not load, answers with an error, sends the browser to a sign-in page or draws a sign-in form in its own place
+stops the scan with exit 2 instead of passing as clean. For a page behind a sign-in, pass `--cookie "name=value"` or `--header "Name: value"`, or set
+`AI_DESIGN_CHECK_COOKIE` and `AI_DESIGN_CHECK_HEADERS` to keep them out of shell history and CI logs. Both go only to the
+page's own origin, never to the other hosts it loads from. `--allow-redirect` and
 `--allow-status 404` check such a page on purpose. Several URLs are scanned in one run. Add `--format github`
 for pull requests. With `designSystem` in the config (`fonts`, `sizes`, `radii`, `colors`) it also names what drifts.
 
@@ -240,7 +241,8 @@ For a new product or one with no tokens. Give it a character (`calm`, `precise`,
 | Files | `tokens.css`, Tailwind `theme.css`, Bootstrap `bootstrap.css` and `_variables.scss`, `tokens.json`, `DesignSystem.swift`, `DesignSystem.kt`, `preview.html` |
 
 With Bootstrap 5.3, link `bootstrap.css` after Bootstrap's own CSS: light is the default and dark applies under
-`data-bs-theme="dark"`. A build from source imports `_variables.scss` before Bootstrap.
+`data-bs-theme="dark"`. It also replaces the blue Bootstrap compiles into fields, checks, menus, pagination and the rest. A
+build from source imports `_variables.scss` before Bootstrap.
 
 ### `story`: a before/after video
 

@@ -286,9 +286,63 @@ function inProject(cwd, file) {
     return relative(realpathSync(cwd), real).split(sep).join('/');
 }
 
+// Commands that can only read, and the forms of them that stay so. Anything else may write, and then Codex's list is not whole.
+const READS = /^(?:cat|head|tail|rg|grep|ls|wc|nl|pwd|echo|cut|sort|uniq|stat|file|which|tree|true|sed\s+-n\b|find\b(?!.*\s-(?:delete|exec|execdir|ok|okdir|fprint\w*|fls)\b)|git\s+(?:status|diff|log|show|ls-files|rev-parse)\b)(?:\s|$)/;
+
+/** Whether one shell command, as Codex reports it, can only read. Quoted text and odd shapes count as writing, which is the safe side. */
+export function onlyReads(command) {
+    const inner = /^\S*\/?(?:ba|z)?sh\s+-l?c\s+(?:'([^']*)'|"([^"]*)")$/.exec(command.trim());
+    const text = (inner ? inner[1] ?? inner[2] : command).replace(/\s\d?>\s*\/dev\/null|\s2>&1/g, '');
+    if (/[>`]|\$\(|<\(|\btee\b/.test(text)) return false;
+
+    return text.split(/&&|\|\||;|\||\n/).every((part) => READS.test(part.trim()));
+}
+
+/**
+ * Reads the JSON events of codex exec: the files it changed through its edit tool, and a log a person can read. Codex
+ * can also write from a shell command, and those name no file: one such command and the list is not whole, so it reports
+ * nothing and nothing is compared.
+ */
+export function codexStream(cwd) {
+    let events = 0;
+    let whole = true;
+    let raw = '';
+    const writes = new Set();
+    const said = [];
+
+    return {
+        line(text) {
+            let event = null;
+            try {
+                event = JSON.parse(text);
+            } catch {}
+            if (typeof event?.type !== 'string') {
+                raw = `${raw}${text}\n`.slice(-LOG_LIMIT);
+                return;
+            }
+            events += 1;
+            const item = event.type === 'item.completed' ? event.item : null;
+            if (item?.type === 'agent_message' && item.text) said.push(item.text);
+            if (item?.type === 'file_change') {
+                for (const change of Array.isArray(item.changes) ? item.changes : []) {
+                    if (typeof change?.path !== 'string') continue;
+                    writes.add(inProject(cwd, change.path));
+                    said.push(`> ${change.kind ?? 'change'} ${change.path}`);
+                }
+            }
+            if (item?.type === 'command_execution') {
+                said.push(`> ${item.command}`);
+                if (!onlyReads(String(item.command))) whole = false;
+            }
+        },
+        writes: () => (events && whole ? writes : null),
+        log: () => (events ? said.join('\n') : raw),
+    };
+}
+
 /**
  * Reads claude's stream-json as it arrives: the files the agent says it edited or wrote, and a log a person can read.
- * Output that is not such a stream (codex, a stand-in) reports nothing, and then nothing is compared.
+ * Output that is not such a stream (a stand-in) reports nothing, and then nothing is compared.
  */
 export function agentStream(cwd) {
     let events = 0;
@@ -428,9 +482,10 @@ export function agentCommand(agent, env = process.env) {
 
 async function runAgent({ agent, command }, prompt, cwd, { minutes = 20, edits = true, signal } = {}) {
     if (agent === 'codex') {
-        const result = await run(command, ['exec', '--skip-git-repo-check', '-s', 'workspace-write', prompt], { cwd, minutes, signal });
+        const stream = codexStream(cwd);
+        const result = await run(command, ['exec', '--json', '--skip-git-repo-check', '-s', 'workspace-write', prompt], { cwd, minutes, signal, onLine: stream.line });
 
-        return { ...result, writes: null, log: `${result.stdout}\n${result.stderr}` };
+        return { ...result, writes: stream.writes(), log: `${stream.log()}\n${result.stderr}` };
     }
     // stream-json names every file the agent edits or writes, so the run can tell its changes from anyone else's.
     const stream = agentStream(cwd);

@@ -92,7 +92,7 @@ npx skills add enmerasoftware/ai-design-check
 
 `scan` は、モデルも API キーも使わずに、お使いの Chrome でページをデスクトップとスマートフォンの幅で開きます。ソースからはわからないもの、つまり実際のコントラスト、サイズ、何が何を覆っているか、壊れた画像、スクリプトエラー、いつまでも表示されないコンテンツを読み取ります。Chrome が計算するすべての色（Tailwind 4 の `oklch()` を含む）を読み、生成されたページによく見られる癖も見つけます。見出しの中で色を変えた 1 語、色付きの影、すべての行動喚起ボタンの末尾に付いた矢印、中黒（·）でつないだリスト、見出しの上に置かれたバッジです。
 
-読み込めなかったページ、エラーを返したページ、サインインページへ転送されたページは、問題なしとはみなさず、終了コード 2 で止まります。サインインが必要なページには `--cookie "name=value"` や `--header "Name: value"` を渡します。シェルの履歴や CI のログに残したくない場合は、環境変数 `AI_DESIGN_CHECK_COOKIE` と `AI_DESIGN_CHECK_HEADERS` を使えます。そうしたページを意図して確認するには `--allow-redirect` や `--allow-status 404` を使います。複数の URL を渡すと 1 回の実行でまとめて確認します。プルリクエスト向けには `--format github` を付けます。設定に `designSystem`（`fonts`、`sizes`、`radii`、`colors`）があれば、そこから外れているものも指摘します。
+読み込めなかったページ、エラーを返したページ、サインインページへ転送されたページ、ページの代わりにサインインフォームを表示するページは、問題なしとはみなさず、終了コード 2 で止まります。サインインが必要なページには `--cookie "name=value"` や `--header "Name: value"` を渡します。シェルの履歴や CI のログに残したくない場合は、環境変数 `AI_DESIGN_CHECK_COOKIE` と `AI_DESIGN_CHECK_HEADERS` を使えます。どちらもページ自身のオリジンにだけ送られ、ページが読み込む他のホストには送られません。そうしたページを意図して確認するには `--allow-redirect` や `--allow-status 404` を使います。複数の URL を渡すと 1 回の実行でまとめて確認します。プルリクエスト向けには `--format github` を付けます。設定に `designSystem`（`fonts`、`sizes`、`radii`、`colors`）があれば、そこから外れているものも指摘します。
 
 `redesign` は、エージェント（Claude Code または Codex）が必要な唯一の機能です。ページが何を見せるべきかを決めるには判断が必要だからです。エージェントはスクリーンショット、コード、主題を調べ、セクションごとに 1 枚のカードを書きます。カードには、何を伝えているか、何が問題か、そのコンテンツ自体から生まれるアイデア、サイトから使う色を記します。カードは計測したページと照合されます。その後、番号付きの修正とカードが新しい git ブランチ上で 1 段階ずつ適用され、コンテンツが失われたり、ルールのエラーが増えたり、見た目が悪くなったりした段階は破棄されます。`--plan` はカードを書いた時点で止まるので、内容を読んで編集できます。`--brief` はそのカードをもとに実装します。作業ツリーがクリーンなときだけ開始し（先にコミットするか stash してください）、Ctrl-C を押すと途中の段階を元に戻します。
 
@@ -200,7 +200,7 @@ npx @enmera/ai-design-check system --character calm --brand "#1E5A63" --kind app
 | 形状 | 4 px の余白スケール、入れ子にできる角丸、コントロールの高さ、カードのパディング |
 | ファイル | `tokens.css`、Tailwind の `theme.css`、Bootstrap の `bootstrap.css` と `_variables.scss`、`tokens.json`、`DesignSystem.swift`、`DesignSystem.kt`、`preview.html` |
 
-Bootstrap 5.3 では、`bootstrap.css` を Bootstrap 本体の CSS の後に読み込みます。ライトが既定で、ダークは `data-bs-theme="dark"` の下で適用されます。ソースからビルドする場合は、Bootstrap より前に `_variables.scss` をインポートします。
+Bootstrap 5.3 では、`bootstrap.css` を Bootstrap 本体の CSS の後に読み込みます。ライトが既定で、ダークは `data-bs-theme="dark"` の下で適用されます。フォーム、チェック、メニュー、ページネーションなどに Bootstrap がコンパイルした青も置き換えます。ソースからビルドする場合は、Bootstrap より前に `_variables.scss` をインポートします。
 
 ### `story`：修正前後の動画
 

@@ -192,8 +192,9 @@ export function assertPage(response, url, allowStatus = []) {
 }
 
 /**
- * A page behind a sign-in: cookies for the page's host and extra request headers, set before it opens. The values are
- * the person's secrets; nothing here prints them. Headers go with every request the page makes, cookies only to its host.
+ * A page behind a sign-in: cookies and extra request headers, set before it opens. The values are the person's secrets;
+ * nothing here prints them. Both go only to the page's own origin: a page's scripts, fonts and analytics live on other
+ * hosts, and an Authorization header must not reach them.
  * @param {{cookies?: {name: string, value: string}[], headers?: Record<string, string>}} auth
  */
 export async function signIn(browser, url, { cookies = [], headers = {} } = {}) {
@@ -201,24 +202,50 @@ export async function signIn(browser, url, { cookies = [], headers = {} } = {}) 
         const { origin, protocol } = new URL(url);
         await browser.send('Network.setCookies', { cookies: cookies.map(({ name, value }) => ({ name, value, url: origin, path: '/', secure: protocol === 'https:' })) });
     }
-    if (Object.keys(headers).length) await browser.send('Network.setExtraHTTPHeaders', { headers });
+    if (Object.keys(headers).length && /^https?:\/\//.test(url)) await headersFor(browser, new URL(url).origin, headers);
+}
+
+const addedHeaders = new WeakMap();
+
+/** Network.setExtraHTTPHeaders would send them to every host, so each request to the origin is held and given them. */
+async function headersFor(browser, origin, headers) {
+    addedHeaders.get(browser)?.();
+    const names = new Set(Object.keys(headers).map((name) => name.toLowerCase()));
+    addedHeaders.set(browser, browser.on('Fetch.requestPaused', ({ requestId, request }) => {
+        const own = new URL(request.url).origin === origin;
+        const kept = Object.entries(request.headers).filter(([name]) => !own || !names.has(name.toLowerCase()));
+        const all = [...kept, ...(own ? Object.entries(headers) : [])].map(([name, value]) => ({ name, value }));
+        browser.send('Fetch.continueRequest', { requestId, headers: all }).catch(() => {});
+    }));
+    await browser.send('Fetch.enable', { patterns: [{ urlPattern: `${origin}/*` }] });
 }
 
 // A sign-in page by its address or its title; the Turkish words too (giriş, oturum).
 const SIGN_IN = /(?:^|[^a-z])(?:log[\s_-]?in|sign[\s_-]?in|o?auth(?:2|enticat(?:e|ion)|ori[sz]e)?|sso|sessions?|giri[sş]|oturum)(?:[^a-z]|$)/i;
+// The same, for an address someone asks for on purpose: checking the sign-up page itself is fine.
+const ACCOUNT_PAGE = /(?:^|[^a-z])(?:sign[\s_-]?up|register|join|password|forgot|reset|kay[iı]t)(?:[^a-z]|$)/i;
+/** A sign-in screen holds little else. Above this much visible text the form is part of a real page. */
+const SIGN_IN_TEXT = 800;
 const samePage = (a, b) => a.host === b.host && a.pathname.replace(/\/+$/, '') === b.pathname.replace(/\/+$/, '');
 
 /**
  * Where open() ended up. A redirect means another page was measured: its address is returned so it can be named. A
  * sign-in page in place of the one asked for would pass as clean, so that stops the run (exit 2) unless allowRedirect.
+ * An app can show that screen at the address asked for, with no redirect: a short page with a password field, or with
+ * an email field and a sign-in heading, title or button, counts the same.
  * @returns {Promise<string|null>} the page measured instead, or null when it is the one asked for
  */
 export async function assertLanded(browser, url, { allowRedirect = false } = {}) {
     if (!/^https?:\/\//.test(url)) return null;
-    const page = await browser.evaluate(`({ href: location.href, title: document.title, password: [...document.querySelectorAll('input[type=password]')].some((el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden') })`);
+    const page = await browser.evaluate(`({ href: location.href, title: document.title, password: [...document.querySelectorAll('input[type=password]')].some((el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden'), email: [...document.querySelectorAll('form input[type=email], form input[autocomplete=username], form input[name=email], form input[name=username]')].some((el) => el.getClientRects().length > 0), text: (document.body?.innerText ?? '').trim().length, words: [...document.querySelectorAll('h1, h2, button, input[type=submit]')].map((el) => (el.innerText || el.value || '').trim()).join(' | ').slice(0, 500) })`);
     const asked = new URL(url);
     const landed = new URL(page.href);
-    if (samePage(asked, landed)) return null;
+    if (samePage(asked, landed)) {
+        const askedForIt = SIGN_IN.test(asked.pathname) || ACCOUNT_PAGE.test(asked.pathname);
+        const screen = page.text < SIGN_IN_TEXT && (page.password || (page.email && (SIGN_IN.test(page.title) || SIGN_IN.test(page.words))));
+        if (allowRedirect || askedForIt || !screen) return null;
+        throw Object.assign(new Error(`${url} shows a sign-in form in place of the page, so the page cannot be checked. Sign in for it with --cookie "name=value" or --header "Name: value" (AI_DESIGN_CHECK_COOKIE and AI_DESIGN_CHECK_HEADERS keep them out of shell history and CI logs), or check the form itself with --allow-redirect.`), { exitCode: 2 });
+    }
     // The query is left out: a sign-in address often carries a token or the way back.
     const where = `${landed.origin}${landed.pathname}`;
     if (!allowRedirect && (page.password || SIGN_IN.test(`${landed.host}${landed.pathname}`) || SIGN_IN.test(page.title))) {
