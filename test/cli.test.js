@@ -52,7 +52,8 @@ test('a run that read nothing is not a pass', () => {
     assert.match(missing.stderr, /Not found: no\/such\/path/);
     // A config file alone is not an interface.
     assert.equal(run(project({ 'tailwind.config.js': 'module.exports = {}', 'x.d.ts': '' }), []).status, 2);
-    assert.match(run(project({ 'a.scss': 'a{}' }), []).stdout, /1 \.scss file/);
+    assert.match(run(project({ 'a.less': 'a{}' }), []).stdout, /1 \.less file/);
+    assert.equal(run(project({ 'a.scss': 'a{}' }), []).status, 0); // SCSS is read now
 });
 
 test('init does not switch the checker off', () => {
