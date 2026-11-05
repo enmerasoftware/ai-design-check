@@ -60,11 +60,48 @@ export function scanPage(designSystem) {
         const border = ['Top', 'Right', 'Bottom', 'Left'].filter((side) => px(style[`border${side}Width`]) > 0 && parse(style[`border${side}Color`])).length >= 3;
         return border || style.boxShadow !== 'none';
     };
-    const shadows = (value) => (value === 'none' ? [] : value.split(/,(?![^(]*\))/).map((part) => {
-        const color = /rgba?\([^)]*\)/.exec(part)?.[0];
-        const [x = 0, y = 0, blur = 0, spread = 0] = (part.replace(color, '').match(/-?[\d.]+px/g) ?? []).map(px);
-        return { color: parse(color), x, y, blur, spread };
+    // Every colour inside a computed value, brackets and all: Chrome writes Tailwind 4 colours as oklch() and oklab(),
+    // others as lab(), lch(), hwb(), color() or color-mix(), so a pattern for rgb() alone misses them. parse() reads each.
+    const colors = (value) => {
+        const found = [];
+        const start = /(?<![\w-])(?:url|rgba?|hsla?|hwb|lab|lch|oklab|oklch|color-mix|color|light-dark)\(|(?<![\w-])(?:transparent|currentcolor)(?![\w-])/gi;
+        for (let match = start.exec(value ?? ''); match; match = start.exec(value)) {
+            let end = start.lastIndex;
+            if (match[0].endsWith('(')) {
+                for (let depth = 1; end < value.length && depth; end++) depth += value[end] === '(' ? 1 : value[end] === ')' ? -1 : 0;
+                start.lastIndex = end;
+            }
+            if (!/^url/i.test(match[0])) found.push(value.slice(match.index, end)); // a picture's address is not a colour
+        }
+        return found;
+    };
+    // A comma list cut at the top level only, so rgb(0, 0, 0) and color-mix(in oklab, a, b) stay whole.
+    const layers = (value) => {
+        const parts = [];
+        let depth = 0;
+        let from = 0;
+        for (let i = 0; i <= value.length; i++) {
+            if (value[i] === '(') depth++;
+            else if (value[i] === ')') depth--;
+            else if (i === value.length || (value[i] === ',' && !depth)) { parts.push(value.slice(from, i).trim()); from = i + 1; }
+        }
+        return parts.filter(Boolean);
+    };
+    const shadows = (value) => (!value || value === 'none' ? [] : layers(value).map((part) => {
+        const color = colors(part)[0];
+        const [x = 0, y = 0, blur = 0, spread = 0] = ((color ? part.replace(color, ' ') : part).match(/-?[\d.]+px/g) ?? []).map(px);
+        return { color: color ? parse(color) : null, x, y, blur, spread, inset: /\binset\b/.test(part) };
     }));
+    // The drop-shadow() steps of a filter, read like box shadows.
+    const drops = (value) => {
+        const found = [];
+        for (let at = (value ?? '').indexOf('drop-shadow('); at >= 0; at = value.indexOf('drop-shadow(', at + 1)) {
+            let end = at + 12;
+            for (let depth = 1; end < value.length && depth; end++) depth += value[end] === '(' ? 1 : value[end] === ')' ? -1 : 0;
+            found.push(...shadows(value.slice(at + 12, end - 1)));
+        }
+        return found;
+    };
     const lines = (node) => {
         const range = document.createRange();
         range.selectNodeContents(node);
@@ -175,11 +212,12 @@ export function scanPage(designSystem) {
     if (body && main.length && Math.max(...main.map((item) => px(item.style.fontSize))) / body < 1.25) hit('flat-type-scale', `${Math.max(...main.map((item) => px(item.style.fontSize)))} px on ${body} px text`);
 
     const h1 = headings.find((item) => item.tag === 'H1');
+    const serif = (family) => /serif|Fraunces|Recoleta|Playfair|Newsreader|Instrument|Georgia|Lora|Cormorant|Times/i.test(family) && !/sans-serif/i.test(family);
+    const italicSerif = (style) => style.fontStyle === 'italic' && serif(style.fontFamily);
+    const italicHero = h1 && px(h1.style.fontSize) >= 40 && (italicSerif(h1.style) || [...h1.el.querySelectorAll('em, i, span')].some((item) => italicSerif(getComputedStyle(item))));
     if (h1) {
         const size = px(h1.style.fontSize);
-        const serif = (family) => /serif|Fraunces|Recoleta|Playfair|Newsreader|Instrument|Georgia|Lora|Cormorant|Times/i.test(family) && !/sans-serif/i.test(family);
-        const emphasis = [...h1.el.querySelectorAll('em, i, span')].some((item) => getComputedStyle(item).fontStyle === 'italic' && serif(getComputedStyle(item).fontFamily));
-        if (size >= 40 && ((h1.style.fontStyle === 'italic' && serif(h1.style.fontFamily)) || emphasis)) hit('no-italic-serif-hero', short(text(h1.el)));
+        if (italicHero) hit('no-italic-serif-hero', short(text(h1.el)));
         if (text(h1.el).split(' ').length >= 8 && (size >= 64 || h1.rect.height > vh * 0.6)) hit('no-giant-sentence', `${size} px: ${short(text(h1.el))}`);
         // One column running far past the fold while its neighbour fits.
         for (let box = h1.el.parentElement; box && box !== document.body; box = box.parentElement) {
@@ -198,6 +236,59 @@ export function scanPage(designSystem) {
             }
         }
     }
+
+    // The headline of the first screen: the largest h1 or h2 that starts above the fold (a screen-reader-only one is not).
+    const hero = headings.filter((item) => /^H[12]$/.test(item.tag) && item.rect.top < vh && item.rect.bottom > 0 && px(item.style.fontSize) >= 24 && item.rect.height >= 12).sort((a, b) => px(b.style.fontSize) - px(a.style.fontSize))[0];
+    // What one rule has reported, its neighbours leave alone: one thing, one finding.
+    const claimed = new Set();
+    const taken = (el) => [...claimed].some((item) => item.contains(el) || el.contains(item));
+    if (hero && !/text/.test(hero.style.backgroundClip + hero.style.webkitBackgroundClip)) {
+        // A word or short run set apart by colour or by gradient text. The headline's colour is the one most letters have.
+        const inks = {};
+        const walker = document.createTreeWalker(hero.el, NodeFilter.SHOW_TEXT);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+            const ink = getComputedStyle(node.parentElement).color;
+            inks[ink] = (inks[ink] || 0) + node.textContent.trim().length;
+        }
+        const base = parse(Object.entries(inks).sort((a, b) => b[1] - a[1])[0]?.[0]);
+        const whole = text(hero.el);
+        for (const run of hero.el.querySelectorAll('*')) {
+            const value = text(run);
+            if (!value || value.split(' ').length > 5 || value.length > whole.length * 0.6 || run.getBoundingClientRect().width < 2 || run.closest('a, button, code, kbd, samp, sup, sub, svg')) continue;
+            const look = getComputedStyle(run);
+            const gradient = /text/.test(look.backgroundClip + look.webkitBackgroundClip) && look.backgroundImage !== 'none';
+            const ink = parse(look.color);
+            const apart = ink && base && ink.a >= 0.5 && chroma(ink) > 0.2 && Math.abs(ink.r - base.r) + Math.abs(ink.g - base.g) + Math.abs(ink.b - base.b) >= 80;
+            // A badge or a highlight has a ground of its own; an italic serif word is no-italic-serif-hero's.
+            if ((!gradient && (parse(look.backgroundColor)?.a ?? 0) >= 0.1) || (italicHero && hero.el === h1.el && italicSerif(look))) continue;
+            if (gradient || apart) {
+                hit('no-accent-word', `"${short(value)}" in "${short(whole)}"`);
+                break;
+            }
+        }
+    }
+    if (hero) {
+        // A small pill lined up just above the headline: the announcement badge. A pill in the site's header or menu is not.
+        const rows = lines(hero.el);
+        const left = rows.length ? Math.min(...rows.map((row) => row.left)) : hero.rect.left;
+        const right = rows.length ? Math.max(...rows.map((row) => row.right)) : hero.rect.right;
+        for (const { el, style, rect, tag } of all) {
+            if (rect.bottom > hero.rect.top + 4 || rect.bottom < hero.rect.top - 160 || rect.height < 14 || rect.height > 44 || rect.width < 24 || rect.width > 480) continue;
+            const value = text(el);
+            const lined = Math.abs(rect.left - left) < 24 || Math.abs((rect.left + rect.right) / 2 - (left + right) / 2) < 40;
+            const round = Math.min(px(style.borderTopLeftRadius), px(style.borderBottomRightRadius)) >= rect.height / 2 - 1;
+            const painted = (parse(style.backgroundColor)?.a ?? 0) >= 0.04 || (px(style.borderTopWidth) > 0 && parse(style.borderTopColor)) || style.backgroundImage !== 'none';
+            const frame = el.closest('header, [role="banner"]');
+            if (!value || value.length > 60 || value.split(' ').length > 8 || !lined || !round || !painted || px(style.fontSize) > 16 || ['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'IMG'].includes(tag)) continue;
+            if ((frame && !frame.contains(hero.el)) || el.closest('nav, [role="navigation"]')) continue;
+            let pinned = false;
+            for (let node = el; node && node !== document.body; node = node.parentElement) pinned ||= /fixed|sticky/.test(getComputedStyle(node).position);
+            if (pinned) continue;
+            hit('no-announcement-pill', short(value));
+            claimed.add(el);
+            break;
+        }
+    }
     for (const heading of headings) {
         const prev = heading.el.previousElementSibling;
         if (prev && /^H[1-3]$/.test(heading.tag)) {
@@ -205,11 +296,35 @@ export function scanPage(designSystem) {
             const value = text(prev);
             const small = px(style.fontSize) <= 14 && value.length > 0 && value.length <= 40 && !prev.querySelector('a, button, img, svg') && !['A', 'NAV', 'BUTTON'].includes(prev.tagName);
             const shouted = style.textTransform === 'uppercase' || px(style.letterSpacing) / px(style.fontSize) >= 0.05 || (value === value.toUpperCase() && /\p{Lu}/u.test(value));
-            if (small && shouted && !/^0?\d+[.)]?$/.test(value)) hit('no-eyebrow-label', value);
+            if (small && shouted && !/^0?\d+[.)]?$/.test(value) && !taken(prev)) {
+                hit('no-eyebrow-label', value);
+                claimed.add(prev);
+            }
         }
     }
     const numbered = headings.filter(({ el }) => /^0?\d{1,2}[.)]?$/.test(text(el.previousElementSibling ?? document.createElement('i'))));
     if (numbered.length >= 2) hit('no-section-numbers', numbered.map(({ el }) => text(el.previousElementSibling)).join(', '));
+
+    // Short lines that string three or more items on middle dots or bullets. A footer line, a row of links and a byline
+    // that carries a date or a reading time are records, not decoration.
+    const visible = new Set(all.map((item) => item.el));
+    const DATED = /\b(?:19|20)\d{2}\b|\b\d{1,2}:\d{2}\b|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.? \d{1,2}\b|\b\d{1,2}\.? (?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|oca|şub|nis|haz|tem|ağu|eyl|eki|kas|ara)|\bmin(?:ute)?s? read\b|\bago\b|\b\d+(?:[.,]\d+)? ?[kmg]b\b/i;
+    const strung = new Set();
+    const dots = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let node = dots.nextNode(); node; node = dots.nextNode()) {
+        let line = node.parentElement;
+        if (!/[·•∙]/.test(node.textContent) || !line || line === document.body || SKIP.has(line.tagName) || inSvg(line)) continue;
+        // The line: the widest box around the dot that is still one short row.
+        while (line.parentElement !== document.body && line.parentElement.getBoundingClientRect().height <= line.getBoundingClientRect().height + 16 && text(line.parentElement).length <= 80) line = line.parentElement;
+        if (strung.has(line)) continue;
+        strung.add(line);
+        const value = text(line);
+        const items = value.split(/\s[·•∙]\s/);
+        if (items.length < 3 || value.length > 80 || items.some((item) => !/\p{L}/u.test(item) || item.trim().split(' ').length > 5)) continue;
+        if (!visible.has(line) || line.closest('footer, nav, table, pre, code, [role="contentinfo"], [role="navigation"]') || line.querySelectorAll('a').length >= 2) continue;
+        if (/^(?:©|\(c\)|copyright)/i.test(value) || DATED.test(value) || taken(line)) continue;
+        hit('no-middle-dot-lists', short(value));
+    }
 
     // Boxes
     const cards = all.filter(isCard);
@@ -235,6 +350,8 @@ export function scanPage(designSystem) {
     }
 
     const chars = { total: 0, hidden: 0 };
+    // A tinted shadow cast below a card, button or picture. A focus ring has no blur and a glow no offset: other rules.
+    const tinted = (shadow) => shadow.color && !shadow.inset && shadow.blur >= 6 && Math.abs(shadow.x) + Math.abs(shadow.y) >= 2 && shadow.color.a >= 0.15 && chroma(shadow.color) > 0.25;
     for (const { el, style, rect, tag } of all) {
         // Shadows
         for (const shadow of shadows(style.boxShadow)) {
@@ -242,6 +359,7 @@ export function scanPage(designSystem) {
             if (chroma(shadow.color) > 0.2 && !shadow.x && !shadow.y && shadow.blur >= 8) hit('glow-in-charts-only', `${tag.toLowerCase()}: ${shadow.blur} px glow`);
             if ((Math.abs(shadow.x) >= 4 || Math.abs(shadow.y) >= 4) && !shadow.blur && shadow.color.a > 0.3) hit('no-hard-offset-shadow', `${tag.toLowerCase()}: ${shadow.x} ${shadow.y} 0`);
         }
+        if (rect.width >= 32 && rect.height >= 20 && [...shadows(style.boxShadow), ...drops(style.filter)].some(tinted)) hit('no-colored-shadow', `${tag.toLowerCase()}: ${short(text(el)) || 'no text'}`);
         if (rect.width >= 100 && rect.height >= 40 && tag !== 'BLOCKQUOTE') {
             const sides = ['Top', 'Right', 'Bottom', 'Left'].map((side) => px(style[`border${side}Width`]));
             const thick = sides.filter((width) => width >= 3).length === 1 && sides.filter((width) => width <= 1).length === 3;
@@ -255,14 +373,15 @@ export function scanPage(designSystem) {
         }
         for (const image of painted) {
             if (image === 'none') continue;
-            const stops = (image.match(/rgba?\([^)]*\)/g) ?? []).map(parse).filter(Boolean);
-            const fading = /transparent|rgba\([^)]*,\s*0\)/.test(image);
+            const tokens = colors(image).map((token) => (/^currentcolor$/i.test(token) ? style.color : token));
+            const stops = tokens.map(parse).filter(Boolean);
+            const fading = tokens.some((token) => (parse(token)?.a ?? 0) < 0.05);
             if (/radial-gradient/.test(image) && fading && rect.width >= 240 && rect.height >= 120 && stops.some((stop) => chroma(stop) > 0.2)) hit('no-radial-halo', `${tag.toLowerCase()}: ${short(text(el)) || 'background'}`);
             if (/gradient/.test(image) && rect.width >= 120 && stops.some((stop) => chroma(stop) > 0.3 && hue(stop) >= 245 && hue(stop) <= 320)) hit('no-ai-gradients', `${tag.toLowerCase()}: purple gradient`);
             if (/repeating-(linear|radial)-gradient/.test(image) && rect.width >= 200 && rect.height >= 100) hit('no-stripe-surface', tag.toLowerCase());
             if ((image.match(/linear-gradient/g) ?? []).length >= 2 && /\d+px/.test(style.backgroundSize) && rect.width >= 200 && rect.height >= 150 && !/repeating/.test(image)) hit('no-grid-wallpaper', `${tag.toLowerCase()}: ${style.backgroundSize}`);
             if (/url\(/.test(image) && /gradient/.test(image.split('url(')[0])) {
-                const stops = (image.split('url(')[0].match(/rgba?\([^)]*\)/g) ?? []).map(parse);
+                const stops = colors(image.split('url(')[0]).map(parse);
                 if (stops.length && stops.every((stop) => stop && stop.a >= 0.9)) hit('no-buried-image', `${tag.toLowerCase()}: picture under a solid wash`);
             }
         }
@@ -311,6 +430,36 @@ export function scanPage(designSystem) {
     // Icon tiles and repeats
     const tiles = all.filter(({ el, rect, style }) => rect.width >= 28 && rect.width <= 72 && Math.abs(rect.width - rect.height) <= 4 && px(style.borderRadius) >= 6 && (parse(style.backgroundColor) || style.backgroundImage !== 'none') && el.querySelector('svg, img, i') && !own(el) && el.nextElementSibling && (/^H[1-5]$/.test(el.nextElementSibling.tagName) || el.nextElementSibling.querySelector?.('h1,h2,h3,h4,h5')));
     if (tiles.length >= 2) hit('no-icon-tile-stack', `${tiles.length} tiles above headings`);
+
+    // Calls to action that end in an arrow, as a glyph or an icon. One such link is fine; two different ones are a habit.
+    const ARROW = /(?:→|⟶|➜|➔|➝|➞|›|»|->)$/;
+    // lucide-arrow-right, bi-arrow-right-short, fa-arrow-right-long, arrow_forward; not chevrons, not sign-in brackets.
+    const ARROW_ICON = /(?:arrow[-_]?(?:right|forward|narrow[-_]right|long[-_]right)|long[-_]arrow[-_]right|move[-_]right)(?:[-_](?:short|long|circle|alt|fill|line|thin|bold))*(?![\w-])/i;
+    // What an icon is called: its classes, its icon attributes, its file, or the sprite it uses (<use href="#arrow-right">).
+    const named = (node) => [...['class', 'data-lucide', 'data-icon', 'icon', 'name', 'src'].map((name) => node.getAttribute(name)), node.querySelector('use')?.getAttribute('href') ?? node.querySelector('use')?.getAttribute('xlink:href')].filter(Boolean).join(' ');
+    // The last thing painted inside a control: a word, or an icon.
+    const tail = (node) => {
+        for (let child = node.lastChild; child; child = child.previousSibling) {
+            if (child.nodeType === 3 && child.textContent.trim()) return child;
+            if (child.nodeType !== 1 || getComputedStyle(child).display === 'none') continue;
+            return /^(svg|i|img)$/i.test(child.tagName) || ARROW_ICON.test(named(child)) ? child : (tail(child) ?? child);
+        }
+        return null;
+    };
+    const arrowed = new Set();
+    for (const { el, style, rect, tag } of all) {
+        const control = ['A', 'BUTTON'].includes(tag) || el.getAttribute('role') === 'button' || (tag === 'INPUT' && /^(submit|button)$/.test(el.type));
+        if (!control || rect.width < 8 || rect.height < 8 || rect.right <= 0 || rect.bottom <= 0 || rect.left >= vw || +style.opacity < 0.1 || el.closest('nav, [role="navigation"], .pagination')) continue;
+        const label = tag === 'INPUT' ? el.value.replace(/\s+/g, ' ').trim() : text(el);
+        const end = tag === 'INPUT' ? null : tail(el);
+        // Material icons are a word drawn as a picture: arrow_forward.
+        const host = end?.nodeType === 3 ? end.parentElement : end;
+        const ligature = host && /material-(?:icons|symbols)/.test(host.getAttribute('class') ?? '') && /^(?:arrow_forward|arrow_right_alt|east)$/.test(host.textContent.trim());
+        const words = ligature ? label.slice(0, -host.textContent.trim().length) : label.replace(ARROW, '');
+        const icon = ligature || (end?.nodeType === 1 && ARROW_ICON.test(named(end))) || /(?:→|⟶|➜|➔|›|»|->)\s*["']$/.test(getComputedStyle(el, '::after').content);
+        if (/\p{L}/u.test(words) && (ARROW.test(label) || icon)) arrowed.add(label);
+    }
+    if (arrowed.size >= 2) hit('no-arrow-suffix', `${arrowed.size} calls to action: ${[...arrowed].slice(0, 3).map((label) => `"${short(label)}"`).join(', ')}`);
 
     // Rhythm: one gap repeated everywhere.
     const gaps = {};
