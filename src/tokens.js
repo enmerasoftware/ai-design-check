@@ -1,5 +1,8 @@
+import { hexToOklch, hexToRgb, oklchToHex } from './color.js';
+
 /**
  * Writes a design system (src/system.js) for each platform: CSS variables with a dark theme, a Tailwind v4 @theme,
+ * Bootstrap 5.3 (CSS variables for a page that loads Bootstrap's CSS, Sass variables for a build from source),
  * JSON tokens, a SwiftUI file (colors for light and dark, fonts that follow Dynamic Type) and a Jetpack Compose file
  * (color schemes and Typography), plus an HTML preview page that shows every role in both themes.
  */
@@ -8,8 +11,8 @@ const kebab = (name) => name.replace(/([A-Z])/g, '-$1').toLowerCase();
 const camel = (name) => name.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
 const flat = (colors) => Object.entries(colors).flatMap(([name, value]) => (Array.isArray(value) ? value.map((item, index) => [`${name}${index + 1}`, item]) : [[name, value]]));
 const stack = (name, category) => `"${name}", ${category === 'serif' ? 'Georgia, serif' : category === 'mono' ? 'ui-monospace, monospace' : 'system-ui, sans-serif'}`;
-const googleUrl = (system) => {
-    const names = [...new Set([system.fonts.ui, system.fonts.display, system.fonts.numeric, system.fonts.mono])].filter((name) => system.fonts.sources[name] === 'google');
+const googleUrl = (system, wanted = [system.fonts.ui, system.fonts.display, system.fonts.numeric, system.fonts.mono]) => {
+    const names = [...new Set(wanted)].filter((name) => system.fonts.sources[name] === 'google');
 
     return names.length ? `https://fonts.googleapis.com/css2?${names.map((name) => `family=${name.replace(/ /g, '+')}:wght@400;500;600;700`).join('&')}&display=swap` : null;
 };
@@ -55,6 +58,156 @@ body { background: var(--color-bg); color: var(--color-text); font-family: var(-
 /** Tailwind v4: the same variables inside @theme, so bg-surface, text-text-secondary, text-body, rounded-md work. */
 export function tailwind(system) {
     return css(system).replace(':root {', '@theme {').replace('    color-scheme: light;\n}', '}\n\n:root {\n    color-scheme: light;\n}').replace('body {', '@layer base {\n    body {').replace(/\.tabular \{[^}]*\}\n$/, '}\n');
+}
+
+const STATUS = ['success', 'warning', 'danger', 'info'];
+const rgb = (hex) => hexToRgb(hex).map((channel) => Math.round(channel * 255)).join(', ');
+
+/** A third of the way from a soft ground to its fill: the border Bootstrap draws around alerts and subtle badges. */
+function between(soft, fill) {
+    const [from, to] = [hexToOklch(soft), hexToOklch(fill)];
+
+    return oklchToHex({ l: from.l + (to.l - from.l) / 3, c: from.c + (to.c - from.c) / 3, h: to.h });
+}
+
+/**
+ * Link hover: the link color 0.08 further from the page, so it gains contrast. A link already at white or black
+ * steps 0.08 back instead; that close to the end it still passes by far.
+ */
+function further(hex, dark) {
+    const { l, c, h } = hexToOklch(hex);
+    const step = dark ? 0.08 : -0.08;
+
+    return oklchToHex({ l: l + step >= 0 && l + step <= 1 ? l + step : l - step, c, h });
+}
+
+/**
+ * Bootstrap 5.3 colors for one theme as [name, value, has an -rgb form]. Bootstrap uses its body background for
+ * cards, fields and menus too, so that is the surface; its tertiary background is the sidebar and hover ground.
+ */
+function bootstrapColors(colors, dark) {
+    return [
+        ['body-bg', colors.surface, true], ['body-color', colors.text, true], ['emphasis-color', colors.text, true],
+        ['secondary-color', colors.textSecondary, true], ['tertiary-color', colors.textTertiary, true],
+        ['secondary-bg', colors.muted, true], ['tertiary-bg', colors.subtle, true], ['border-color', colors.border, false],
+        ['primary', colors.accent, true], ['primary-text-emphasis', colors.accentText, false],
+        ['primary-bg-subtle', colors.accentSoft, false], ['primary-border-subtle', between(colors.accentSoft, colors.accent), false],
+        ...STATUS.flatMap((name) => [
+            [name, colors[name], true], [`${name}-text-emphasis`, colors[`${name}Text`], false],
+            [`${name}-bg-subtle`, colors[`${name}Soft`], false], [`${name}-border-subtle`, between(colors[`${name}Soft`], colors[name]), false],
+        ]),
+        ['link-color', colors.accentText, true], ['link-hover-color', further(colors.accentText, dark), true],
+        ['form-valid-color', colors.successText, false], ['form-valid-border-color', colors.success, false],
+        ['form-invalid-color', colors.dangerText, false], ['form-invalid-border-color', colors.danger, false],
+    ];
+}
+
+/**
+ * Bootstrap 5.3 CSS, linked after Bootstrap's own: its variables for light (:root, [data-bs-theme=light]) and dark
+ * ([data-bs-theme=dark]), the primary button, and the inks Bootstrap compiles in, so text on a fill stays readable.
+ * The --ds- values are ones Bootstrap has no variable for; the button reads them from the nearest theme, so a light
+ * section inside a dark page gets the light ink.
+ */
+export function bootstrap(system) {
+    const { ui, display, mono, categories } = system.fonts;
+    const radius = system.shape.radius;
+    const url = googleUrl(system, [ui, display, mono]);
+    const theme = (colors, dark) => [
+        ...bootstrapColors(colors, dark).flatMap(([name, value, withRgb]) => [`    --bs-${name}: ${value};`, ...(withRgb ? [`    --bs-${name}-rgb: ${rgb(value)};`] : [])]),
+        `    --ds-primary-ink: ${colors.accentInk};`,
+        `    --ds-primary-hover: ${colors.accentHover};`,
+        ...STATUS.map((name) => `    --ds-${name}-ink: ${colors[`${name}Ink`]};`),
+    ].join('\n');
+    const names = ['primary', ...STATUS];
+
+    return `/* ${system.character} · ${system.kind} · brand ${system.brand}. Generated by @enmera/ai-design-check system.
+   Bootstrap 5.3: link this after Bootstrap's own CSS. Light by default, dark under data-bs-theme="dark".
+   What Bootstrap compiles its own blue into (field focus, checks, pagination, nav pills, progress) takes the
+   brand only in a build from source: use _variables.scss. */
+${url ? `@import url("${url}");\n` : ''}
+:root,
+[data-bs-theme=light] {
+    --bs-font-sans-serif: ${stack(ui, categories[ui])};
+    --bs-font-monospace: ${stack(mono, categories[mono])};
+    --bs-body-font-family: var(--bs-font-sans-serif);
+    --bs-border-radius-sm: ${radius.sm}px;
+    --bs-border-radius: ${radius.md}px;
+    --bs-border-radius-lg: ${radius.lg}px;
+    --bs-border-radius-xl: ${radius.xl}px;
+    --bs-border-radius-xxl: ${radius.xl}px;
+${theme(system.color.light, false)}
+}
+
+[data-bs-theme=dark] {
+    color-scheme: dark;
+${theme(system.color.dark, true)}
+}
+
+/* The primary button: the accent under the ink that passes on it, at rest, on hover, pressed and disabled. */
+.btn-primary {
+    --bs-btn-color: var(--ds-primary-ink);
+    --bs-btn-bg: var(--bs-primary);
+    --bs-btn-border-color: var(--bs-primary);
+    --bs-btn-hover-color: var(--ds-primary-ink);
+    --bs-btn-hover-bg: var(--ds-primary-hover);
+    --bs-btn-hover-border-color: var(--ds-primary-hover);
+    --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+    --bs-btn-active-color: var(--ds-primary-ink);
+    --bs-btn-active-bg: var(--ds-primary-hover);
+    --bs-btn-active-border-color: var(--ds-primary-hover);
+    --bs-btn-disabled-color: var(--ds-primary-ink);
+    --bs-btn-disabled-bg: var(--bs-primary);
+    --bs-btn-disabled-border-color: var(--bs-primary);
+}
+
+/* Bootstrap compiles white or black text onto these fills; the system's ink is the one that passes. */
+${names.map((name) => `.text-bg-${name} { color: var(--ds-${name}-ink) !important; }`).join('\n')}
+
+/* Text in the brand or a status color takes the shade made for text: it passes on the page and on its soft ground. */
+${names.map((name) => `.text-${name} { color: var(--bs-${name}-text-emphasis) !important; }`).join('\n')}
+${display !== ui ? `\n/* Display headlines take the display font. */\n${[1, 2, 3, 4, 5, 6].map((size) => `.display-${size}`).join(', ')} { font-family: ${stack(display, categories[display])}; }\n` : ''}`;
+}
+
+/**
+ * Bootstrap 5.3 Sass variables for a build from source, the same choices as bootstrap.css. Bootstrap's dark mode
+ * keeps the theme colors, so the dark block sets only the text, grounds, borders and links.
+ */
+export function scss(system) {
+    const { ui, display, mono, categories } = system.fonts;
+    const radius = system.shape.radius;
+    const url = googleUrl(system, [ui, display, mono]);
+    // Sass names where they differ from the CSS ones.
+    const sass = { 'emphasis-color': 'body-emphasis-color', 'secondary-color': 'body-secondary-color', 'tertiary-color': 'body-tertiary-color', 'secondary-bg': 'body-secondary-bg', 'tertiary-bg': 'body-tertiary-bg' };
+    const themeColors = new Set(['primary', ...STATUS]);
+    const lines = (colors, dark) => bootstrapColors(colors, dark).filter(([name]) => !dark || !themeColors.has(name)).map(([name, value]) => `$${sass[name] ?? name}${dark ? '-dark' : ''}: ${value};`).join('\n');
+
+    return `// ${system.character} · ${system.kind} · brand ${system.brand}. Generated by @enmera/ai-design-check system.
+// Bootstrap 5.3 built from source: import this before Bootstrap.
+//   @import "variables";
+//   @import "bootstrap/scss/bootstrap";
+// Bootstrap keeps $primary the same in dark mode. Link bootstrap.css after the build as well, and buttons and colored
+// text switch with the theme too.${url ? `\n// Fonts: ${url}` : ''}
+
+$enable-dark-mode: true;
+
+// Colors, light
+${lines(system.color.light, false)}
+
+// Colors, dark
+${lines(system.color.dark, true)}
+
+// Fonts
+$font-family-sans-serif: ${stack(ui, categories[ui])};
+$font-family-monospace: ${stack(mono, categories[mono])};
+${display !== ui ? `$display-font-family: ${stack(display, categories[display])};\n` : ''}
+// Shape. The spacer makes Bootstrap's steps 1 to 5 into 4, 8, 16, 24 and 48 px, all on the 4 px grid.
+$border-radius-sm: ${radius.sm}px;
+$border-radius: ${radius.md}px;
+$border-radius-lg: ${radius.lg}px;
+$border-radius-xl: ${radius.xl}px;
+$border-radius-xxl: ${radius.xl}px;
+$spacer: 1rem;
+`;
 }
 
 export const json = (system) => `${JSON.stringify(system, null, 2)}\n`;
