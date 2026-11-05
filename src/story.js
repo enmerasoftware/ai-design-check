@@ -57,7 +57,11 @@ export async function launch(chrome) {
     let buffer = '';
     const pending = new Map();
     const listeners = new Map();
+    // Once Chrome is gone every later call fails at once: a call left waiting would hang the run, or end it silently.
+    let gone = null;
+    const exited = new Promise((done) => proc.once('exit', done));
     const abort = (error) => {
+        gone ??= error;
         for (const { fail } of pending.values()) fail(error);
         pending.clear();
     };
@@ -78,6 +82,7 @@ export async function launch(chrome) {
         }
     });
     const send = (method, params = {}) => new Promise((done, fail) => {
+        if (gone) return fail(gone);
         const current = ++id;
         // A page that never answers (a hung script) must end the run, not hang it.
         const timer = setTimeout(() => {
@@ -100,7 +105,6 @@ export async function launch(chrome) {
     };
     const close = async () => {
         if (proc.exitCode === null && proc.signalCode === null) {
-            const exited = new Promise((done) => proc.once('exit', done));
             proc.kill();
             // Chrome's helpers can outlive the main process for a moment (Linux); never let cleanup fail the run.
             const timer = setTimeout(() => proc.kill('SIGKILL'), 3000);
@@ -161,8 +165,9 @@ export async function launch(chrome) {
                 stop();
                 throw new Error(`Could not open ${url}: ${errorText}`);
             }
-            await loaded;
+            await Promise.race([loaded, exited]);
             stop();
+            if (gone) throw gone;
             await new Promise((done) => setTimeout(done, settle)); // CDN styles and fonts
             // A fixed wait loses to a slow machine: go on only when the styles have stopped changing, within reason.
             let last = null;
@@ -184,6 +189,43 @@ export function assertPage(response, url, allowStatus = []) {
     if (!response) return;
     if (response.status >= 400 && !allowStatus.includes(response.status)) throw new Error(`${url} answered HTTP ${response.status}, so there is no page to check. Is it the right address, and is the server up? (--allow-status ${response.status} checks that page anyway.)`);
     if (response.mimeType && !/html|xml|svg/.test(response.mimeType)) throw new Error(`${url} answered ${response.mimeType}, not a page.`);
+}
+
+/**
+ * A page behind a sign-in: cookies for the page's host and extra request headers, set before it opens. The values are
+ * the person's secrets; nothing here prints them. Headers go with every request the page makes, cookies only to its host.
+ * @param {{cookies?: {name: string, value: string}[], headers?: Record<string, string>}} auth
+ */
+export async function signIn(browser, url, { cookies = [], headers = {} } = {}) {
+    if (cookies.length && /^https?:\/\//.test(url)) {
+        const { origin, protocol } = new URL(url);
+        await browser.send('Network.setCookies', { cookies: cookies.map(({ name, value }) => ({ name, value, url: origin, path: '/', secure: protocol === 'https:' })) });
+    }
+    if (Object.keys(headers).length) await browser.send('Network.setExtraHTTPHeaders', { headers });
+}
+
+// A sign-in page by its address or its title; the Turkish words too (giriş, oturum).
+const SIGN_IN = /(?:^|[^a-z])(?:log[\s_-]?in|sign[\s_-]?in|o?auth(?:2|enticat(?:e|ion)|ori[sz]e)?|sso|sessions?|giri[sş]|oturum)(?:[^a-z]|$)/i;
+const samePage = (a, b) => a.host === b.host && a.pathname.replace(/\/+$/, '') === b.pathname.replace(/\/+$/, '');
+
+/**
+ * Where open() ended up. A redirect means another page was measured: its address is returned so it can be named. A
+ * sign-in page in place of the one asked for would pass as clean, so that stops the run (exit 2) unless allowRedirect.
+ * @returns {Promise<string|null>} the page measured instead, or null when it is the one asked for
+ */
+export async function assertLanded(browser, url, { allowRedirect = false } = {}) {
+    if (!/^https?:\/\//.test(url)) return null;
+    const page = await browser.evaluate(`({ href: location.href, title: document.title, password: [...document.querySelectorAll('input[type=password]')].some((el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden') })`);
+    const asked = new URL(url);
+    const landed = new URL(page.href);
+    if (samePage(asked, landed)) return null;
+    // The query is left out: a sign-in address often carries a token or the way back.
+    const where = `${landed.origin}${landed.pathname}`;
+    if (!allowRedirect && (page.password || SIGN_IN.test(`${landed.host}${landed.pathname}`) || SIGN_IN.test(page.title))) {
+        throw Object.assign(new Error(`${url} sent the browser to ${where}, which looks like a sign-in page, so the page asked for cannot be checked. Sign in for it with --cookie "name=value" or --header "Name: value" (AI_DESIGN_CHECK_COOKIE and AI_DESIGN_CHECK_HEADERS keep them out of shell history and CI logs), or check the page it landed on with --allow-redirect.`), { exitCode: 2 });
+    }
+
+    return where;
 }
 
 /** A local copy of the page for the checker, and the URL Chrome opens. */

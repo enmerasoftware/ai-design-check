@@ -1,5 +1,5 @@
 import { writeFileSync } from 'node:fs';
-import { findChrome, launch, assertPage } from '../story.js';
+import { assertLanded, assertPage, findChrome, launch, signIn } from '../story.js';
 
 /**
  * Renders a page in Chrome and measures what a designer looks at, from the computed styles of what is on screen:
@@ -289,18 +289,28 @@ export const topKey = (map) => Object.entries(map).sort((a, b) => b[1] - a[1])[0
 
 /**
  * @param {string} url
- * @param {{screenshots?: string, widths?: number[]}} options screenshots: a path prefix; writes <prefix>-<width>.png
+ * @param {{screenshots?: string, widths?: number[], signal?: AbortSignal, auth?: object, allowRedirect?: boolean, onLanded?: (url: string) => void}} options
+ *   screenshots: a path prefix; writes <prefix>-<width>.png. signal: closes the browser at once when the run is stopped.
+ *   auth: cookies and headers for a page behind a sign-in (see signIn). onLanded: told the address measured after a redirect.
  * @returns {Promise<{desktop: object, mobile: object}>}
  */
-export async function measure(url, { screenshots, widths = [1440, 390] } = {}) {
+export async function measure(url, { screenshots, widths = [1440, 390], signal, auth, allowRedirect = false, onLanded } = {}) {
+    if (signal?.aborted) throw new Error('Stopped before measuring');
     const chrome = findChrome();
     if (!chrome) throw new Error('Chrome or Chromium not found; set CHROME_PATH');
     const browser = await launch(chrome);
+    const stop = () => { browser.close(); };
+    signal?.addEventListener('abort', stop, { once: true });
     try {
+        await signIn(browser, url, auth);
         const out = {};
-        for (const width of widths) {
+        for (const [index, width] of widths.entries()) {
             const mobile = width < 768;
             assertPage(await browser.open(url, { width, height: mobile ? 844 : 900, mobile, settle: 1800 }), url);
+            if (index === 0) {
+                const landed = await assertLanded(browser, url, { allowRedirect });
+                if (landed) onLanded?.(landed);
+            }
             await browser.evaluate(`document.documentElement.style.scrollBehavior = 'auto'; (${clearOverlays.toString()})()`); // a smooth scroll would still be moving when things are measured
             // Lazy images and on-scroll reveals: walk down the page once, then freeze motion before measuring.
             await browser.evaluate(`(async () => { for (let y = 0; y < document.documentElement.scrollHeight; y += innerHeight / 2) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); } scrollTo(0, 0); await document.fonts.ready; await new Promise((r) => setTimeout(r, 400)); })()`);
@@ -330,6 +340,7 @@ export async function measure(url, { screenshots, widths = [1440, 390] } = {}) {
 
         return out;
     } finally {
+        signal?.removeEventListener('abort', stop);
         await browser.close();
     }
 }

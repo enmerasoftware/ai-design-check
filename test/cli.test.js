@@ -185,9 +185,9 @@ const served = async (handler, work) => {
         server.close();
     }
 };
-const runAsync = (cwd, args) => new Promise((done) => {
+const runAsync = (cwd, args, env = {}) => new Promise((done) => {
     import('node:child_process').then(({ spawn }) => {
-        const child = spawn(process.execPath, [BIN, ...args], { cwd, stdio: ['ignore', 'pipe', 'pipe'] });
+        const child = spawn(process.execPath, [BIN, ...args], { cwd, env: { ...process.env, ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
         let stdout = '';
         let stderr = '';
         child.stdout.on('data', (chunk) => { stdout += chunk; });
@@ -226,4 +226,78 @@ new Image().src = ${JSON.stringify(`${base}/?d=`)} + text;
         await runAsync(dir, ['narrow', 'hostile.html']);
     });
     assert.doesNotMatch(got, /CANARY/);
+});
+
+const page = (title, body) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${title}</title></head><body><main><h1>${title}</h1>${body}</main></body></html>`;
+// A site with a sign-in: /dashboard always sends the browser there, /app needs a session cookie, /team a token header.
+const gated = (request, response) => {
+    const show = (html) => { response.writeHead(200, { 'content-type': 'text/html' }); response.end(html); };
+    const toSignIn = () => { response.writeHead(302, { location: '/login?next=%2Fapp' }); response.end(); };
+    const url = request.url.split('?')[0];
+    if (url === '/login') return show(page('Sign in', '<form><label>Password <input type="password" name="password"></label><button>Sign in</button></form>'));
+    if (url === '/app' && /(?:^|;\s*)session=s3cret-cookie(?:;|$)/.test(request.headers.cookie ?? '')) return show(page('Projects', '<p>Three projects this week.</p>'));
+    if (url === '/team' && request.headers['x-token'] === 's3cret-header') return show(page('Team', '<p>Four people on the team.</p>'));
+    return url === '/favicon.ico' ? response.end() : toSignIn();
+};
+
+test('a page that sends the browser to sign in is not checked as itself', { skip: !findChrome() }, async () => {
+    const dir = project();
+    await served(gated, async (base) => {
+        const stopped = await runAsync(dir, ['scan', `${base}/dashboard`]);
+        assert.equal(stopped.status, 2, stopped.stderr);
+        assert.match(stopped.stderr, /sent the browser to http:\/\/127\.0\.0\.1:\d+\/login, which looks like a sign-in page/);
+        assert.match(stopped.stderr, /--cookie/);
+        assert.match(stopped.stderr, /--header/);
+        assert.doesNotMatch(stopped.stderr, /next=/); // the address it landed on is named without its query
+        assert.equal((await runAsync(dir, ['narrow', `${base}/dashboard`])).status, 2);
+        const allowed = await runAsync(dir, ['scan', `${base}/dashboard`, '--allow-redirect', '--json']);
+        assert.notEqual(allowed.status, 2, allowed.stderr);
+        assert.equal(JSON.parse(allowed.stdout).pages[0].measured, `${base}/login`);
+    });
+});
+
+test('a signed-in page is reached with a cookie or a header, whose values are never printed', { skip: !findChrome() }, async () => {
+    const dir = project();
+    // A malformed one stops the run before anything opens, without showing it.
+    const malformed = run(dir, ['scan', 'http://127.0.0.1:9/', '--cookie', 's3cret-without-a-name']);
+    assert.equal(malformed.status, 2);
+    assert.doesNotMatch(malformed.stderr, /s3cret/);
+    await served(gated, async (base) => {
+        const said = [];
+        for (const [args, env] of [
+            [['scan', `${base}/app`, '--cookie', 'session=s3cret-cookie', '--json'], {}],
+            [['scan', `${base}/app`, '--json'], { AI_DESIGN_CHECK_COOKIE: 'theme=dark; session=s3cret-cookie' }],
+            [['scan', `${base}/team`, '--json'], { AI_DESIGN_CHECK_HEADERS: 'Accept-Language: en\nX-Token: s3cret-header' }],
+        ]) {
+            const result = await runAsync(dir, args, env);
+            assert.notEqual(result.status, 2, result.stderr);
+            const [checked] = JSON.parse(result.stdout).pages;
+            assert.equal(checked.error, undefined);
+            assert.equal(checked.measured, undefined); // the page itself, not the sign-in page
+            said.push(result.stdout, result.stderr);
+        }
+        assert.doesNotMatch(said.join('\n'), /s3cret/);
+    });
+});
+
+test('scan checks every page it is given, each under its own address', { skip: !findChrome() }, async () => {
+    const dir = project();
+    const broken = (name) => page(`Page ${name}`, `<p>Words on page ${name}.</p><script>throw new Error('boom-${name}')</script>`);
+    await served((request, response) => { response.writeHead(200, { 'content-type': 'text/html' }); response.end(broken(request.url.slice(1))); }, async (base) => {
+        const json = JSON.parse((await runAsync(dir, ['scan', `${base}/a`, `${base}/b`, '--json'])).stdout);
+        assert.deepEqual(json.pages.map((item) => item.url), [`${base}/a`, `${base}/b`]);
+        for (const name of ['a', 'b']) assert.ok(json.findings.some((item) => item.path === `${base}/${name}` && item.rule === 'no-script-errors' && item.value.includes(`boom-${name}`)), JSON.stringify(json.findings));
+        const text = await runAsync(dir, ['scan', `${base}/a`, `${base}/b`]);
+        assert.equal(text.status, 1);
+        for (const name of ['a', 'b']) assert.match(text.stdout, new RegExp(`\\d+ errors, \\d+ warnings, \\d+ notes\\. ${base}/${name}\\n`));
+        assert.match(text.stdout, /2 of 2 pages checked/);
+    });
+});
+
+test('designSystem in the config reaches the scan', { skip: !findChrome() }, async () => {
+    const dir = project({ 'ai-design-check.json': JSON.stringify({ designSystem: { fonts: ['Georgia'] } }) });
+    await served((request, response) => { response.writeHead(200, { 'content-type': 'text/html' }); response.end(page('Fonts', '<p style="font-family:Arial">Words in a font the system does not have.</p>')); }, async (base) => {
+        const { findings } = JSON.parse((await runAsync(dir, ['scan', `${base}/`, '--json'])).stdout);
+        assert.ok(findings.some((item) => item.rule === 'design-system-drift' && /Arial/.test(item.value)), JSON.stringify(findings));
+    });
 });
