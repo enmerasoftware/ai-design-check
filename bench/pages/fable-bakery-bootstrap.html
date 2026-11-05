@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crumb &amp; Co — Neighbourhood bakery, Walthamstow</title>
+  <meta name="description" content="Crumb & Co bakes sourdough, pastries and cakes every morning on Orford Road, Walthamstow. Opening hours, what's on the counter and how to find us.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root { --cc-brown: #92400e; --cc-brown-dark: #78350f; --cc-paper: #fdf8f1; }
+    html { scroll-behavior: smooth; }
+    body { background-color: var(--cc-paper); font-family: Georgia, "Times New Roman", serif; color: #44403c; }
+    .sans { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .text-brown { color: var(--cc-brown-dark) !important; }
+    .btn-brown { background-color: var(--cc-brown); border-color: var(--cc-brown); color: #fff; }
+    .btn-brown:hover, .btn-brown:focus { background-color: var(--cc-brown-dark); border-color: var(--cc-brown-dark); color: #fff; }
+    .btn-outline-brown { border-color: rgba(120,53,15,.35); color: var(--cc-brown-dark); }
+    .btn-outline-brown:hover { background-color: #fef3c7; color: var(--cc-brown-dark); }
+    .icon-circle { width: 48px; height: 48px; background: #fef3c7; color: var(--cc-brown); }
+    .card-bake { border-color: rgba(120,53,15,.12); background: transparent; }
+    .crust { background-color: #8b4a1f; }
+    .price { font-size: .85rem; font-weight: 600; color: var(--cc-brown); }
+    .hours-table th, .hours-table td { border-color: rgba(120,53,15,.12); }
+    .navbar .nav-link { color: #57534e; }
+    .navbar .nav-link:hover { color: var(--cc-brown-dark); }
+  </style>
+</head>
+<body>
+
+  <header class="border-bottom" style="border-color: rgba(120,53,15,.12) !important;">
+    <nav class="navbar navbar-expand-md py-3" aria-label="Main navigation">
+      <div class="container" style="max-width: 1000px;">
+        <a class="navbar-brand fs-3 fw-bold text-brown" href="#">Crumb <span style="color:#b45309">&amp;</span> Co</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="navbar-nav mx-auto sans small fw-medium">
+            <li class="nav-item"><a class="nav-link" href="#bakes">What we bake</a></li>
+            <li class="nav-item"><a class="nav-link" href="#hours">Hours</a></li>
+            <li class="nav-item"><a class="nav-link" href="#find">Find us</a></li>
+            <li class="nav-item"><a class="nav-link" href="#orders">Orders</a></li>
+          </ul>
+          <a href="#orders" class="btn btn-brown rounded-pill sans fw-semibold">Pre-order a loaf</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="container py-5" style="max-width: 1000px;">
+      <div class="row align-items-center g-5 py-md-4">
+        <div class="col-md-6">
+          <p class="sans small fw-semibold text-uppercase" style="letter-spacing:.12em; color:#b45309">Orford Road, Walthamstow · est. 2018</p>
+          <h1 class="display-5 fw-bold text-brown">Real bread, baked before you're awake.</h1>
+          <p class="fs-5 mt-3">We're a small bakery run by four people who think a good loaf needs only flour, water, salt and a lot of patience. The ovens go on at 4am. By seven the shop smells like it should, and by lunchtime the sourdough is usually gone.</p>
+          <div class="sans d-flex flex-wrap gap-2 mt-4">
+            <a href="#bakes" class="btn btn-brown btn-lg rounded-pill fw-semibold">See today's bakes</a>
+            <a href="#find" class="btn btn-outline-brown btn-lg rounded-pill fw-semibold">Get directions</a>
+          </div>
+        </div>
+        <div class="col-md-6 text-center" aria-hidden="true">
+          <svg width="320" height="260" viewBox="0 0 320 260" fill="none" class="img-fluid">
+            <ellipse cx="160" cy="225" rx="130" ry="18" fill="#e7d6c1"/>
+            <path d="M40 180c0-60 50-110 120-110s120 50 120 110c0 25-20 35-40 35H80c-20 0-40-10-40-35z" fill="#c4772e"/>
+            <path d="M55 175c0-50 45-95 105-95s105 45 105 95" stroke="#8b4a1f" stroke-width="6" stroke-linecap="round"/>
+            <path d="M95 110c15 25 20 50 15 85M160 85c0 30 5 60 0 125M225 110c-15 25-20 50-15 85" stroke="#fde7c8" stroke-width="7" stroke-linecap="round"/>
+            <path d="M70 150c20-8 40-8 60 0M190 150c20-8 40-8 60 0" stroke="#e39a4a" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="110" cy="200" r="3" fill="#fde7c8"/><circle cx="210" cy="195" r="3" fill="#fde7c8"/><circle cx="160" cy="215" r="2.5" fill="#fde7c8"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section id="bakes" class="bg-white py-5">
+      <div class="container py-md-4" style="max-width: 1000px;">
+        <div style="max-width: 560px;">
+          <h2 class="fw-bold text-brown">What's on the counter</h2>
+          <p class="text-secondary">The breads are daily. Pastries change with what the market has. Cakes are made to order, two days' notice.</p>
+        </div>
+        <div class="row g-4 mt-2">
+          <div class="col-sm-6 col-lg-4">
+            <article class="card card-bake h-100 rounded-4"><div class="card-body p-4">
+              <div class="icon-circle rounded-circle d-flex align-items-center justify-content-center mb-3"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 14c0-5 3.5-9 8-9s8 4 8 9c0 2-1 3-3 3H7c-2 0-3-1-3-3z"/><path d="M9 9l1 5M14 9l-1 5"/></svg></div>
+              <h3 class="h5 fw-bold text-brown">Country sourdough</h3>
+              <p class="text-secondary mb-0">36-hour ferment, stoneground white and a little rye. Thick crust, open crumb. Our bread for everything. <span class="sans price">£4.80</span></p>
+            </div></article>
+          </div>
+          <div class="col-sm-6 col-lg-4">
+            <article class="card card-bake h-100 rounded-4"><div class="card-body p-4">
+              <div class="icon-circle rounded-circle d-flex align-items-center justify-content-center mb-3"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 12c3-6 15-6 18 0-3 6-15 6-18 0z"/><path d="M12 9v6"/></svg></div>
+              <h3 class="h5 fw-bold text-brown">Seeded wholemeal tin</h3>
+              <p class="text-secondary mb-0">Soft, square and sensible. Sunflower, linseed and pumpkin seeds. Toasts beautifully, lasts four days. <span class="sans price">£4.20</span></p>
+            </div></article>
+          </div>
+          <div class="col-sm-6 col-lg-4">
+            <article class="card card-bake h-100 rounded-4"><div class="card-body p-4">
+              <div class="icon-circle rounded-circle d-flex align-items-center justify-content-center mb-3"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 18 12 5l8 13z"/><path d="M8 18c1-3 2.5-5 4-6M16 18c-1-3-2.5-5-4-6"/></svg></div>
+              <h3 class="h5 fw-bold text-brown">Butter croissants</h3>
+              <p class="text-secondary mb-0">Laminated the evening before with Normandy butter. Plain, almond or pain au chocolat. Out of the oven at 7:15 and 9:30. <span class="sans price">from £3.20</span></p>
+            </div></article>
+          </div>
+          <div class="col-sm-6 col-lg-4">
+            <article class="card card-bake h-100 rounded-4"><div class="card-body p-4">
+              <div class="icon-circle rounded-circle d-flex align-items-center justify-content-center mb-3"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="9" r="1"/><circle cx="13" cy="14" r="1"/><circle cx="9" cy="14" r="1"/></svg></div>
+              <h3 class="h5 fw-bold text-brown">Cardamom buns</h3>
+              <p class="text-secondary mb-0">Swedish-style, twisted by hand, finished with pearl sugar. The thing people queue for on Saturdays. <span class="sans price">£3.60</span></p>
+            </div></article>
+          </div>
+          <div class="col-sm-6 col-lg-4">
+            <article class="card card-bake h-100 rounded-4"><div class="card-body p-4">
+              <div class="icon-circle rounded-circle d-flex align-items-center justify-content-center mb-3"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 11h14v8H5z"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/></svg></div>
+              <h3 class="h5 fw-bold text-brown">Focaccia</h3>
+              <p class="text-secondary mb-0">Dimpled, olive-oil-soaked and topped with whatever's good: rosemary and sea salt most days, roasted tomatoes in summer. <span class="sans price">£3.00 a slab</span></p>
+            </div></article>
+          </div>
+          <div class="col-sm-6 col-lg-4">
+            <article class="card card-bake h-100 rounded-4"><div class="card-body p-4">
+              <div class="icon-circle rounded-circle d-flex align-items-center justify-content-center mb-3"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 10h16v10H4z"/><path d="M4 14h16"/><path d="M12 10V6M10 6h4"/></svg></div>
+              <h3 class="h5 fw-bold text-brown">Celebration cakes</h3>
+              <p class="text-secondary mb-0">Lemon drizzle, Victoria sponge, dark chocolate and olive oil. Six to twelve inches, written on if you like. <span class="sans price">from £28</span></p>
+            </div></article>
+          </div>
+        </div>
+        <p class="sans small text-secondary mt-4 mb-0">Everything is baked in a kitchen that handles nuts, gluten, dairy, eggs and sesame. Ask us about ingredients, we're happy to check.</p>
+      </div>
+    </section>
+
+    <section class="py-5">
+      <div class="container py-md-4" style="max-width: 1000px;">
+        <div class="row g-5">
+          <div class="col-md-6" id="hours">
+            <h2 class="fw-bold text-brown">Opening hours</h2>
+            <p class="text-secondary">We close when the bread runs out, which on Saturdays can be early. Come before eleven for the best choice.</p>
+            <table class="table hours-table sans small mt-3">
+              <caption class="visually-hidden">Weekly opening hours</caption>
+              <tbody>
+                <tr><th scope="row" class="fw-medium">Monday</th><td class="text-end text-secondary">Closed</td></tr>
+                <tr><th scope="row" class="fw-medium">Tuesday</th><td class="text-end">7:30am – 3:00pm</td></tr>
+                <tr><th scope="row" class="fw-medium">Wednesday</th><td class="text-end">7:30am – 3:00pm</td></tr>
+                <tr><th scope="row" class="fw-medium">Thursday</th><td class="text-end">7:30am – 3:00pm</td></tr>
+                <tr><th scope="row" class="fw-medium">Friday</th><td class="text-end">7:30am – 4:00pm</td></tr>
+                <tr><th scope="row" class="fw-medium">Saturday</th><td class="text-end">8:00am – 2:00pm</td></tr>
+                <tr><th scope="row" class="fw-medium">Sunday</th><td class="text-end">8:30am – 1:00pm</td></tr>
+              </tbody>
+            </table>
+            <div class="sans small rounded-3 px-3 py-2" style="background:#fef3c7; color:#78350f">Bank holidays: open Saturday hours. We take a fortnight off in August and the week after Christmas.</div>
+          </div>
+          <div class="col-md-6" id="find">
+            <h2 class="fw-bold text-brown">Where to find us</h2>
+            <address class="mb-3">Crumb &amp; Co<br>61 Orford Road<br>Walthamstow Village<br>London E17 9NJ</address>
+            <svg class="w-100 rounded-3 border bg-white" viewBox="0 0 400 220" role="img" aria-label="Sketch map: the bakery on Orford Road, between Walthamstow Central station to the west and Hoe Street">
+              <rect width="400" height="220" fill="#fbf6ee"/>
+              <path d="M0 120h400" stroke="#d6c4a8" stroke-width="18"/>
+              <path d="M120 0v220M290 0v220" stroke="#d6c4a8" stroke-width="12"/>
+              <path d="M0 60h120" stroke="#d6c4a8" stroke-width="8"/>
+              <text x="200" y="110" text-anchor="middle" font-size="11" fill="#7c6a52" font-family="sans-serif">ORFORD ROAD</text>
+              <text x="110" y="200" text-anchor="end" font-size="10" fill="#7c6a52" font-family="sans-serif" transform="rotate(-90 110 200)">HOE ST</text>
+              <text x="300" y="30" font-size="10" fill="#7c6a52" font-family="sans-serif">EDEN RD</text>
+              <circle cx="60" cy="60" r="7" fill="#1d4ed8"/><text x="72" y="64" font-size="10" fill="#1d4ed8" font-family="sans-serif">Walthamstow Central</text>
+              <circle cx="215" cy="120" r="10" fill="#b45309"/><circle cx="215" cy="120" r="4" fill="#fff"/>
+              <text x="215" y="150" text-anchor="middle" font-size="12" font-weight="700" fill="#78350f" font-family="serif">Crumb &amp; Co</text>
+              <rect x="330" y="140" width="50" height="40" fill="#cfe3c6" rx="4"/><text x="355" y="195" text-anchor="middle" font-size="9" fill="#4d7c3a" font-family="sans-serif">Vestry House</text>
+            </svg>
+            <ul class="sans small list-unstyled mt-3 mb-0">
+              <li class="mb-2"><strong>By tube or train:</strong> 6 minutes' walk from Walthamstow Central (Victoria line, Overground).</li>
+              <li class="mb-2"><strong>By bus:</strong> routes 212 and 275 stop on Hoe Street, two minutes away.</li>
+              <li><strong>By bike:</strong> stands outside the shop. Dogs on leads are welcome, there's a water bowl by the door.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="orders" class="crust py-5" style="color:#fffbeb">
+      <div class="container d-md-flex align-items-center justify-content-between gap-5" style="max-width: 1000px;">
+        <div style="max-width: 560px;">
+          <h2 class="fw-bold">Save yourself a loaf</h2>
+          <p class="mb-0" style="color:#fde68a">Pre-order by 6pm and your bread will be waiting with your name on it the next morning. Cakes need two days. For anything over twenty loaves, email us and we'll sort a wholesale price.</p>
+        </div>
+        <div class="sans d-grid gap-2 mt-4 mt-md-0">
+          <a href="tel:+442085550194" class="btn btn-light rounded-pill fw-semibold text-brown px-4">Call 020 8555 0194</a>
+          <a href="mailto:hello@crumbandco.co.uk" class="btn btn-outline-light rounded-pill fw-semibold px-4">hello@crumbandco.co.uk</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="sans small text-secondary py-4">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2" style="max-width: 1000px;">
+      <p class="mb-0">&copy; 2026 Crumb &amp; Co Bakery Ltd. Registered in England no. 11482930.</p>
+      <div class="d-flex gap-4">
+        <a href="#" class="text-secondary text-decoration-none">Instagram</a>
+        <a href="#" class="text-secondary text-decoration-none">Wholesale</a>
+        <a href="#" class="text-secondary text-decoration-none">Privacy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

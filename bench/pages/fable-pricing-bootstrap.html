@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fernhook Pricing — SMS API plans</title>
+  <meta name="description" content="Simple per-message pricing for the Fernhook SMS API. Start free, scale to millions of messages, no contracts.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root { --fh-violet: #6d28d9; --fh-violet-dark: #5b21b6; }
+    html { scroll-behavior: smooth; }
+    .btn-fh { background-color: var(--fh-violet); border-color: var(--fh-violet); color: #fff; }
+    .btn-fh:hover, .btn-fh:focus { background-color: var(--fh-violet-dark); border-color: var(--fh-violet-dark); color: #fff; }
+    .text-fh { color: var(--fh-violet) !important; }
+    .bg-fh { background-color: var(--fh-violet) !important; }
+    .plan-popular { border: 2px solid var(--fh-violet); }
+    .price { font-size: 2.5rem; font-weight: 800; }
+    .check { color: var(--fh-violet); flex-shrink: 0; margin-top: .2rem; }
+    pre.code { background: #09090b; color: #f4f4f5; border: 1px solid #3f3f46; font-size: .875rem; }
+    .accordion-button:not(.collapsed) { background-color: #f5f3ff; color: #3b0764; }
+    .accordion-button:focus { box-shadow: 0 0 0 .25rem rgba(109, 40, 217, .25); }
+  </style>
+</head>
+<body>
+
+  <header class="border-bottom">
+    <nav class="navbar navbar-expand-md py-3" aria-label="Main navigation">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="#">
+          <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" rx="7" fill="#7c3aed"/><path d="M8 18V8h7M8 13h5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="17" cy="17" r="2" fill="#fff"/></svg>
+          Fernhook
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="navbar-nav mx-auto">
+            <li class="nav-item"><a class="nav-link" href="#">Docs</a></li>
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Pricing</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Coverage</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Status</a></li>
+          </ul>
+          <div class="d-flex align-items-center gap-2">
+            <a href="#" class="btn btn-link text-secondary text-decoration-none">Sign in</a>
+            <a href="#" class="btn btn-fh fw-semibold">Get API key</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="container text-center pt-5 pb-3">
+      <h1 class="display-4 fw-bold text-dark mt-4">Pay per message. Nothing else.</h1>
+      <p class="lead text-secondary mx-auto" style="max-width: 680px;">No platform fees, no minimum commitments, no surprise charges for delivery receipts. Prices below are for the UK and US; see the coverage page for 190 other countries.</p>
+      <div class="btn-group mt-3" role="group" aria-label="Billing period">
+        <button type="button" class="btn btn-dark btn-sm px-3" aria-pressed="true">Monthly</button>
+        <button type="button" class="btn btn-outline-dark btn-sm px-3" aria-pressed="false">Annual <span class="text-fh">−15%</span></button>
+      </div>
+    </section>
+
+    <section aria-labelledby="plans-heading" class="container py-5">
+      <h2 id="plans-heading" class="visually-hidden">Plans</h2>
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <article class="card h-100 rounded-4">
+            <div class="card-body p-4 d-flex flex-column">
+              <h3 class="h5 fw-semibold mb-0">Developer</h3>
+              <p class="small text-secondary">For side projects and prototypes</p>
+              <p class="price mb-0 mt-3">$0<span class="fs-6 fw-normal text-secondary">/month</span></p>
+              <p class="small text-secondary">then <strong>$0.0095</strong> per message</p>
+              <ul class="list-unstyled small flex-grow-1 mt-3">
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>500 free messages per month</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>1 shared short code or alphanumeric sender</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Delivery webhooks</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>10 requests per second</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Community support</li>
+              </ul>
+              <a href="#" class="btn btn-outline-dark fw-semibold mt-3">Start for free</a>
+            </div>
+          </article>
+        </div>
+        <div class="col-lg-4">
+          <article class="card h-100 rounded-4 plan-popular shadow position-relative">
+            <span class="badge rounded-pill bg-fh position-absolute top-0 start-0 translate-middle-y ms-4">Most teams pick this</span>
+            <div class="card-body p-4 d-flex flex-column">
+              <h3 class="h5 fw-semibold mb-0">Scale</h3>
+              <p class="small text-secondary">For products sending OTPs and notifications</p>
+              <p class="price mb-0 mt-3">$49<span class="fs-6 fw-normal text-secondary">/month</span></p>
+              <p class="small text-secondary">then <strong>$0.0072</strong> per message</p>
+              <ul class="list-unstyled small flex-grow-1 mt-3">
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>10,000 messages included</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Dedicated long numbers from $1.50/month</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Two-way messaging and inbound webhooks</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>200 requests per second</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Email support, 1 business day</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Up to 5 team members</li>
+              </ul>
+              <a href="#" class="btn btn-fh fw-semibold mt-3">Start 14-day trial</a>
+            </div>
+          </article>
+        </div>
+        <div class="col-lg-4">
+          <article class="card h-100 rounded-4">
+            <div class="card-body p-4 d-flex flex-column">
+              <h3 class="h5 fw-semibold mb-0">Enterprise</h3>
+              <p class="small text-secondary">For high-volume and regulated senders</p>
+              <p class="price mb-0 mt-3">Custom</p>
+              <p class="small text-secondary">volume pricing from <strong>$0.0041</strong> per message</p>
+              <ul class="list-unstyled small flex-grow-1 mt-3">
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Everything in Scale</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Dedicated short codes and 10DLC registration</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>99.99% uptime SLA with credits</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Custom rate limits and direct carrier routes</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>SSO, audit logs, data residency</li>
+                <li class="d-flex gap-2 mb-2"><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>24/7 support with a named engineer</li>
+              </ul>
+              <a href="#" class="btn btn-outline-dark fw-semibold mt-3">Talk to sales</a>
+            </div>
+          </article>
+        </div>
+      </div>
+      <p class="small text-secondary text-center mt-4 mb-0">Prices exclude VAT. Message prices apply to standard 160-character segments. Inbound messages are free on all plans.</p>
+    </section>
+
+    <section class="bg-dark text-white py-5">
+      <div class="container py-lg-3">
+        <div class="row align-items-center g-5">
+          <div class="col-lg-6">
+            <h2 class="fw-bold">One request. That's the integration.</h2>
+            <p class="text-white-50">Send your first message in under five minutes with the REST API or our SDKs for Node, Python, Go, Ruby and PHP. Delivery status comes back to your webhook, with retries if your server is having a bad day.</p>
+            <a href="#" class="link-light fw-semibold text-decoration-none">Read the quickstart &rarr;</a>
+          </div>
+          <div class="col-lg-6">
+<pre class="code rounded-3 p-4 mb-0"><code>curl https://api.fernhook.com/v1/messages \
+  -u "$FERNHOOK_API_KEY:" \
+  -d to="+447700900123" \
+  -d from="Fernhook" \
+  -d body="Your verification code is 482913."
+
+{
+  "id": "msg_01J9ZK3P7Q",
+  "status": "queued",
+  "segments": 1,
+  "price": "0.0072"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="faq-heading" class="container py-5" style="max-width: 800px;">
+      <h2 id="faq-heading" class="fw-bold text-center text-dark mb-4 mt-3">Frequently asked questions</h2>
+      <div class="accordion" id="faq">
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#q1" aria-expanded="true" aria-controls="q1">What happens if I go over the messages included in my plan?</button></h3>
+          <div id="q1" class="accordion-collapse collapse show" data-bs-parent="#faq"><div class="accordion-body text-secondary">Nothing dramatic. Extra messages are billed at your plan's per-message rate at the end of the month. We never pause delivery because you've grown. You can set a monthly spend cap in the dashboard if you'd like a hard limit.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#q2" aria-expanded="false" aria-controls="q2">How are long messages counted?</button></h3>
+          <div id="q2" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body text-secondary">A standard GSM-7 message is 160 characters. Anything longer is split into 153-character segments and each segment is billed as one message. Messages with emoji or non-Latin characters use UCS-2 encoding, where a single segment is 70 characters. The API response tells you the segment count before you're charged.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#q3" aria-expanded="false" aria-controls="q3">Do you charge for failed or undelivered messages?</button></h3>
+          <div id="q3" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body text-secondary">Messages rejected before they reach a carrier (invalid number, blocked destination, unregistered sender) are free. Messages the carrier accepts but can't deliver, for example to a phone that's switched off for seven days, are charged, because the carrier charges us.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#q4" aria-expanded="false" aria-controls="q4">Can I send to countries other than the UK and US?</button></h3>
+          <div id="q4" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body text-secondary">Yes, 192 countries on every plan. Per-message prices vary by destination and are listed on the coverage page, updated monthly. Some countries require sender registration, which our team handles for Scale and Enterprise customers.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#q5" aria-expanded="false" aria-controls="q5">Can I switch plans or cancel at any time?</button></h3>
+          <div id="q5" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body text-secondary">Upgrades take effect immediately and are prorated. Downgrades and cancellations apply at the end of the current billing month. Annual plans can be cancelled with a prorated refund within the first 30 days.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#q6" aria-expanded="false" aria-controls="q6">Is there a sandbox for testing without sending real messages?</button></h3>
+          <div id="q6" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body text-secondary">Every account has test API keys. Messages sent with a test key are validated, priced and logged exactly like live ones but never leave our servers, and you can use magic numbers to simulate delivery failures and replies.</div></div>
+        </div>
+      </div>
+      <p class="text-center text-secondary mt-4">Still have a question? <a href="#" class="text-fh fw-semibold">Email support@fernhook.com</a> and a real engineer will reply.</p>
+    </section>
+  </main>
+
+  <footer class="border-top py-4">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 small text-secondary">
+      <p class="mb-0">&copy; 2026 Fernhook Communications, Inc.</p>
+      <nav class="d-flex gap-4" aria-label="Footer">
+        <a href="#" class="text-secondary text-decoration-none">Terms</a>
+        <a href="#" class="text-secondary text-decoration-none">Privacy</a>
+        <a href="#" class="text-secondary text-decoration-none">Acceptable use</a>
+        <a href="#" class="text-secondary text-decoration-none">Status</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

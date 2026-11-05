@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crumb &amp; Co - Neighbourhood bakery</title>
+  <meta name="description" content="Crumb &amp; Co bakes sourdough, pastries and birthday cakes every morning. See what is fresh today, our opening hours and where to find us.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: Georgia, "Times New Roman", serif; }
+    .font-sans-ui { font-family: var(--bs-body-font-family); }
+    .bakery-brown { color: #78350f; }
+    .bg-cream { background-color: #fffbeb; }
+    .btn-bakery { --bs-btn-color: #fffbeb; --bs-btn-bg: #92400e; --bs-btn-border-color: #92400e; --bs-btn-hover-color: #fffbeb; --bs-btn-hover-bg: #78350f; --bs-btn-hover-border-color: #78350f; --bs-btn-active-bg: #78350f; --bs-btn-active-border-color: #78350f; }
+    .btn-bakery-outline { --bs-btn-color: #78350f; --bs-btn-border-color: #78350f; --bs-btn-hover-color: #fffbeb; --bs-btn-hover-bg: #78350f; --bs-btn-hover-border-color: #78350f; }
+    .wheat-pattern { background-image: radial-gradient(circle at 1px 1px, rgba(120, 53, 15, .07) 1px, transparent 0); background-size: 18px 18px; }
+    .hours-dark { background-color: #78350f; color: #fffbeb; }
+    .hours-dark .text-muted-cream { color: rgba(255, 251, 235, .75); }
+    .card-bakery { border-color: #fde68a !important; }
+    .map-frame { min-height: 18rem; }
+  </style>
+</head>
+<body class="bg-cream text-body-emphasis">
+
+  <header class="sticky-top bg-cream border-bottom border-warning-subtle">
+    <nav class="navbar navbar-expand-md container py-3">
+      <a class="navbar-brand bakery-brown fw-semibold fs-3" href="#">Crumb &amp; Co</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#bakeryNav" aria-controls="bakeryNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="bakeryNav">
+        <ul class="navbar-nav mx-auto gap-md-3 mt-3 mt-md-0">
+          <li class="nav-item"><a class="nav-link" href="#bakes">What we bake</a></li>
+          <li class="nav-item"><a class="nav-link" href="#hours">Opening hours</a></li>
+          <li class="nav-item"><a class="nav-link" href="#find-us">Find us</a></li>
+          <li class="nav-item"><a class="nav-link" href="#orders">Cake orders</a></li>
+        </ul>
+        <a href="#find-us" class="btn btn-bakery rounded-pill px-4 mt-3 mt-md-0">Get directions</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="wheat-pattern">
+      <div class="container py-5">
+        <div class="row align-items-center g-5 py-lg-4">
+          <div class="col-lg-6">
+            <p class="small text-uppercase fw-semibold font-sans-ui mb-3 text-warning-emphasis" style="letter-spacing:.2em;">Neighbourhood bakery since 2011</p>
+            <h1 class="display-4 fw-semibold bakery-brown text-balance">Bread that is still warm when you get here.</h1>
+            <p class="lead mt-4 text-body-secondary">We mix, shape and bake everything on Elm Street, starting at 4:30 every morning. Sourdough, croissants and cakes for the whole street.</p>
+            <div class="d-flex flex-column flex-sm-row gap-3 mt-4">
+              <a href="#bakes" class="btn btn-bakery btn-lg rounded-pill px-4 font-sans-ui">See today's bakes</a>
+              <a href="#hours" class="btn btn-bakery-outline btn-lg rounded-pill px-4 font-sans-ui">Opening hours</a>
+            </div>
+            <p class="mt-4 d-inline-flex align-items-center gap-2 bg-white rounded-pill px-3 py-2 shadow-sm font-sans-ui small">
+              <span class="d-inline-block rounded-circle bg-success" style="width:.5rem;height:.5rem;"></span>
+              Open now until 4:00 pm
+            </p>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="position-relative mx-auto" style="max-width: 28rem;">
+              <div class="position-absolute top-50 start-50 translate-middle rounded-circle bg-warning-subtle" style="width:88%;height:88%;"></div>
+              <svg viewBox="0 0 400 400" class="position-relative w-100 h-auto" role="img" aria-label="Illustration of a round sourdough loaf with a scored top">
+                <ellipse cx="200" cy="330" rx="150" ry="18" fill="#b45309" opacity=".18"/>
+                <path d="M70 250 C60 150 130 80 200 80 C270 80 340 150 330 250 C325 300 280 320 200 320 C120 320 75 300 70 250 Z" fill="#d97706"/>
+                <path d="M90 240 C85 170 140 110 200 110 C260 110 315 170 310 240" fill="none" stroke="#fbbf24" stroke-width="10" stroke-linecap="round" opacity=".6"/>
+                <path d="M140 150 C170 120 230 120 260 150" fill="none" stroke="#78350f" stroke-width="6" stroke-linecap="round"/>
+                <path d="M150 175 C180 150 220 150 250 175" fill="none" stroke="#78350f" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+                <circle cx="120" cy="230" r="5" fill="#92400e" opacity=".35"/>
+                <circle cx="280" cy="210" r="4" fill="#92400e" opacity=".35"/>
+                <circle cx="205" cy="265" r="6" fill="#92400e" opacity=".3"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bakes -->
+    <section id="bakes" class="container py-5 my-lg-4">
+      <div class="row align-items-end g-3 mb-4">
+        <div class="col-md-8">
+          <h2 class="display-6 fw-semibold bakery-brown">What we bake</h2>
+          <p class="text-body-secondary mt-2 mb-0">Breads ferment for 24 to 36 hours. Pastries are laminated by hand. Cakes are made to order.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <p class="small text-body-secondary font-sans-ui mb-0">Baked fresh daily. Quantities vary, so come early for the good stuff.</p>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 border card-bakery rounded-4 shadow-sm"><div class="card-body p-4">
+            <p class="small text-uppercase fw-semibold text-warning-emphasis font-sans-ui mb-1">Breads</p>
+            <h3 class="h4 fw-semibold bakery-brown">Country sourdough</h3>
+            <p class="text-body-secondary font-sans-ui small">Stone-ground flour, 36-hour ferment, a crackling crust and an open, chewy crumb.</p>
+            <p class="fw-semibold font-sans-ui mb-0">$7.50 / loaf</p>
+          </div></div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 border card-bakery rounded-4 shadow-sm"><div class="card-body p-4">
+            <p class="small text-uppercase fw-semibold text-warning-emphasis font-sans-ui mb-1">Pastries</p>
+            <h3 class="h4 fw-semibold bakery-brown">Butter croissants</h3>
+            <p class="text-body-secondary font-sans-ui small">Three days of lamination, eight layers of French butter and a shatter-thin finish.</p>
+            <p class="fw-semibold font-sans-ui mb-0">$3.40 each</p>
+          </div></div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 border card-bakery rounded-4 shadow-sm"><div class="card-body p-4">
+            <p class="small text-uppercase fw-semibold text-warning-emphasis font-sans-ui mb-1">Pastries</p>
+            <h3 class="h4 fw-semibold bakery-brown">Cardamom buns</h3>
+            <p class="text-body-secondary font-sans-ui small">Soft enriched dough, brown sugar and cardamom, finished with pearl sugar.</p>
+            <p class="fw-semibold font-sans-ui mb-0">$3.80 each</p>
+          </div></div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 border card-bakery rounded-4 shadow-sm"><div class="card-body p-4">
+            <p class="small text-uppercase fw-semibold text-warning-emphasis font-sans-ui mb-1">Breads</p>
+            <h3 class="h4 fw-semibold bakery-brown">Rye and seed</h3>
+            <p class="text-body-secondary font-sans-ui small">Dense, dark and nutty, with sunflower, pumpkin and flax seeds from the local mill.</p>
+            <p class="fw-semibold font-sans-ui mb-0">$8.00 / loaf</p>
+          </div></div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 border card-bakery rounded-4 shadow-sm"><div class="card-body p-4">
+            <p class="small text-uppercase fw-semibold text-warning-emphasis font-sans-ui mb-1">Cakes</p>
+            <h3 class="h4 fw-semibold bakery-brown">Celebration cakes</h3>
+            <p class="text-body-secondary font-sans-ui small">Lemon and elderflower, dark chocolate, or classic Victoria sponge. Order 48 hours ahead.</p>
+            <p class="fw-semibold font-sans-ui mb-0">From $38</p>
+          </div></div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 border card-bakery rounded-4 shadow-sm"><div class="card-body p-4">
+            <p class="small text-uppercase fw-semibold text-warning-emphasis font-sans-ui mb-1">Coffee</p>
+            <h3 class="h4 fw-semibold bakery-brown">Filter coffee</h3>
+            <p class="text-body-secondary font-sans-ui small">Roasted by our neighbours at Ember Roasters. Refills are free if you stay in.</p>
+            <p class="fw-semibold font-sans-ui mb-0">$2.90</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hours -->
+    <section id="hours" class="hours-dark py-5">
+      <div class="container py-4">
+        <div class="row g-5">
+          <div class="col-md-6">
+            <h2 class="display-6 fw-semibold">Opening hours</h2>
+            <p class="mt-3 text-muted-cream">We sell out most days by early afternoon. Closed on Mondays so the team can rest.</p>
+            <p class="small mt-4 font-sans-ui" style="color:#fde68a;">Holiday hours are posted on our door and on Instagram.</p>
+          </div>
+          <div class="col-md-6">
+            <ul class="list-group list-group-flush rounded-4 overflow-hidden font-sans-ui" style="background: rgba(69, 26, 3, .45);">
+              <li class="list-group-item bg-transparent text-reset d-flex justify-content-between py-3 px-4 border-secondary"><span class="fw-medium">Tuesday to Friday</span><span>6:30 am - 4:00 pm</span></li>
+              <li class="list-group-item bg-transparent text-reset d-flex justify-content-between py-3 px-4 border-secondary"><span class="fw-medium">Saturday</span><span>7:00 am - 3:00 pm</span></li>
+              <li class="list-group-item bg-transparent text-reset d-flex justify-content-between py-3 px-4 border-secondary"><span class="fw-medium">Sunday</span><span>8:00 am - 1:00 pm</span></li>
+              <li class="list-group-item bg-transparent text-reset d-flex justify-content-between py-3 px-4 border-secondary"><span class="fw-medium">Monday</span><span style="color:#fde68a;">Closed</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Find us -->
+    <section id="find-us" class="container py-5 my-lg-4">
+      <div class="row g-5 align-items-center">
+        <div class="col-md-6">
+          <h2 class="display-6 fw-semibold bakery-brown">Find us</h2>
+          <address class="fs-5 mt-4 mb-4 lh-lg">Crumb &amp; Co<br>14 Elm Street<br>Northgate, NG4 2PR</address>
+          <ul class="list-unstyled font-sans-ui mb-4">
+            <li class="mb-2"><span class="fw-semibold">Phone:</span> <a href="#" class="link-warning-emphasis">0115 496 0142</a></li>
+            <li class="mb-2"><span class="fw-semibold">Bus:</span> Stop 6 on the Elm Street route, 40 seconds away</li>
+            <li><span class="fw-semibold">Parking:</span> Two bays on the side street, 30 minutes free</li>
+          </ul>
+          <a href="#" class="btn btn-bakery rounded-pill px-4 font-sans-ui">Open in maps</a>
+        </div>
+        <div class="col-md-6">
+          <div class="map-frame d-flex align-items-center justify-content-center rounded-4 border border-warning-subtle bg-white p-4">
+            <svg viewBox="0 0 320 240" class="w-100" style="max-width: 24rem;" role="img" aria-label="Simple street map showing Elm Street and the bakery">
+              <rect width="320" height="240" rx="16" fill="#fffbeb"/>
+              <path d="M0 120 H320" stroke="#e7e5e4" stroke-width="22"/>
+              <path d="M160 0 V240" stroke="#e7e5e4" stroke-width="18"/>
+              <path d="M20 40 H300" stroke="#fde68a" stroke-width="10" stroke-linecap="round"/>
+              <rect x="60" y="150" width="50" height="40" rx="6" fill="#d6d3d1"/>
+              <rect x="200" y="60" width="60" height="36" rx="6" fill="#d6d3d1"/>
+              <circle cx="210" cy="132" r="16" fill="#92400e"/>
+              <text x="232" y="136" font-size="13" font-family="Georgia, serif" fill="#78350f">Crumb &amp; Co</text>
+              <text x="172" y="100" font-size="11" fill="#78716c">Elm St</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cake orders -->
+    <section id="orders" class="container pb-5 mb-lg-4">
+      <div class="card border-0 rounded-5 shadow-sm text-center">
+        <div class="card-body p-4 p-md-5">
+          <h2 class="display-6 fw-semibold bakery-brown">Planning a birthday or a dinner party?</h2>
+          <p class="text-body-secondary mx-auto mt-3 mb-4" style="max-width: 36rem;">Order cakes, savoury tarts or a bread platter by email or in the shop. We need 48 hours' notice for custom cakes.</p>
+          <a href="#" class="btn btn-bakery btn-lg rounded-pill px-4 font-sans-ui">Email an order</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-top border-warning-subtle bg-cream">
+    <div class="container py-4 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 small text-body-secondary font-sans-ui">
+      <p class="mb-0">&copy; 2026 Crumb &amp; Co. 14 Elm Street, Northgate.</p>
+      <div class="d-flex gap-4">
+        <a href="#" class="link-secondary text-decoration-none">Instagram</a>
+        <a href="#" class="link-secondary text-decoration-none">Allergens</a>
+        <a href="#" class="link-secondary text-decoration-none">Gift cards</a>
+        <a href="#" class="link-secondary text-decoration-none">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

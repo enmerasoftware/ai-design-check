@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brightmoss - AI writing assistant for customer-support teams</title>
+  <meta name="description" content="Brightmoss drafts, rewrites and translates customer replies in your brand voice, so support agents answer faster without sounding like a template.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    :root { --bm-violet: #6d28d9; --bm-fuchsia: #c026d3; }
+    .text-brand { color: var(--bm-violet); }
+    .btn-brand { --bs-btn-bg: var(--bm-violet); --bs-btn-border-color: var(--bm-violet); --bs-btn-hover-bg: #5b21b6; --bs-btn-hover-border-color: #5b21b6; --bs-btn-color: #fff; --bs-btn-hover-color: #fff; --bs-btn-active-bg: #5b21b6; --bs-btn-active-border-color: #5b21b6; --bs-btn-active-color: #fff; }
+    .bg-brand-soft { background-color: #f5f3ff; }
+    .brand-logo { width: 2rem; height: 2rem; background: linear-gradient(135deg, var(--bm-violet), var(--bm-fuchsia)); }
+    .hero-glow { position: absolute; inset: -1rem; z-index: -1; border-radius: 2rem; background: radial-gradient(circle at 30% 20%, #ddd6fe, transparent 60%), radial-gradient(circle at 80% 80%, #fae8ff, transparent 55%); filter: blur(12px); }
+    .caret::after { content: "|"; margin-left: 2px; color: var(--bm-violet); animation: caret 1s steps(1) infinite; }
+    @keyframes caret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    .stat-num { font-size: 3rem; font-weight: 600; letter-spacing: -.02em; }
+  </style>
+</head>
+<body class="bg-brand-soft text-body">
+
+  <header class="sticky-top bg-white border-bottom">
+    <nav class="navbar navbar-expand-md container py-3">
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-semibold fs-5" href="#">
+        <span class="brand-logo rounded-2 d-inline-flex align-items-center justify-content-center text-white">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+        </span>
+        Brightmoss
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="topNav">
+        <ul class="navbar-nav mx-auto gap-md-3 mt-3 mt-md-0">
+          <li class="nav-item"><a class="nav-link" href="#product">Product</a></li>
+          <li class="nav-item"><a class="nav-link" href="#results">Results</a></li>
+          <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+          <li class="nav-item"><a class="nav-link" href="#security">Security</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-2 mt-3 mt-md-0">
+          <a href="#" class="btn btn-link link-body-emphasis text-decoration-none">Sign in</a>
+          <a href="#demo" class="btn btn-dark rounded-pill px-4">Book a demo</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="container py-5 mt-lg-4">
+      <div class="row align-items-center g-5 py-lg-5">
+        <div class="col-lg-6">
+          <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis fw-semibold px-3 py-2">New: tone presets for escalations</span>
+          <h1 class="display-4 fw-semibold mt-4 text-balance">Replies your customers can tell are written by a person.</h1>
+          <p class="lead text-secondary mt-4 pe-lg-4">Brightmoss drafts, rewrites and translates support replies in your brand voice. Your agents stay in control, your customers get answers in minutes instead of hours.</p>
+          <div id="demo" class="d-flex flex-column flex-sm-row gap-3 mt-5">
+            <a href="#" class="btn btn-brand btn-lg rounded-pill px-4">Book a 20-minute demo</a>
+            <a href="#product" class="btn btn-outline-dark btn-lg rounded-pill px-4">See how it works</a>
+          </div>
+          <p class="small text-secondary mt-4 mb-0">Works with Zendesk, Intercom, Freshdesk and Help Scout.</p>
+        </div>
+
+        <div class="col-lg-6 position-relative">
+          <div class="hero-glow"></div>
+          <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-header bg-white d-flex align-items-center gap-2 py-3 border-bottom">
+              <span class="rounded-circle bg-secondary-subtle" style="width:.65rem;height:.65rem;"></span>
+              <span class="rounded-circle bg-secondary-subtle" style="width:.65rem;height:.65rem;"></span>
+              <span class="rounded-circle bg-secondary-subtle" style="width:.65rem;height:.65rem;"></span>
+              <span class="small text-secondary ms-2">Ticket #48213 - Refund request</span>
+            </div>
+            <div class="card-body p-4">
+              <div class="bg-body-secondary rounded-4 rounded-top-0 px-3 py-3 small mw-100" style="max-width: 85%;">
+                Hi, I was charged twice for my March renewal and I need one of the charges back today.
+              </div>
+              <div class="border border-primary-subtle bg-primary-subtle rounded-4 px-3 py-3 small mt-4 ms-auto" style="max-width: 92%;">
+                <p class="fw-semibold text-primary-emphasis mb-2">Brightmoss draft - warm, direct</p>
+                <p class="caret mb-0">Hi Maya, I'm sorry about the double charge. I've found the duplicate payment from March 3 and started the refund now. It should appear on your card within 3 to 5 business days.</p>
+              </div>
+              <div class="d-flex flex-wrap gap-2 mt-4">
+                <span class="badge rounded-pill text-bg-light border">Shorter</span>
+                <span class="badge rounded-pill text-bg-light border">More formal</span>
+                <span class="badge rounded-pill text-bg-light border">Translate to German</span>
+                <span class="badge rounded-pill bg-primary">Send reply</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Logos -->
+    <section class="bg-white border-top border-bottom">
+      <div class="container py-4 d-flex flex-wrap justify-content-center gap-4 gap-lg-5 small fw-semibold text-secondary text-uppercase" style="letter-spacing:.18em;">
+        <span>Lumen Telecom</span><span>Parcelly</span><span>Northwind Rail</span><span>Fieldbook</span><span>Ostrava Health</span>
+      </div>
+    </section>
+
+    <!-- Product -->
+    <section id="product" class="container py-5 my-lg-4">
+      <div class="col-lg-7">
+        <p class="small fw-semibold text-uppercase text-brand mb-2" style="letter-spacing:.08em;">Product</p>
+        <h2 class="display-6 fw-semibold">Stay in your helpdesk. Keep your voice.</h2>
+        <p class="lead text-secondary mt-3">Brightmoss sits in the reply box you already use. It reads the ticket, your help-centre articles and past replies, then writes a draft your agent can accept, edit or throw away.</p>
+      </div>
+      <div class="row g-4 mt-3">
+        <div class="col-md-4">
+          <div class="card h-100 border rounded-4 shadow-sm"><div class="card-body p-4">
+            <h3 class="h5 fw-semibold">Brand voice that learns</h3>
+            <p class="text-secondary small mb-0">Train tone on your best replies. Set rules for greetings, sign-offs and words you never use.</p>
+          </div></div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 border rounded-4 shadow-sm"><div class="card-body p-4">
+            <h3 class="h5 fw-semibold">Sourced answers</h3>
+            <p class="text-secondary small mb-0">Every factual claim links back to the article it came from, so agents can check before they send.</p>
+          </div></div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 border rounded-4 shadow-sm"><div class="card-body p-4">
+            <h3 class="h5 fw-semibold">Translation in one click</h3>
+            <p class="text-secondary small mb-0">Reply in 40 languages without a second team. Brightmoss keeps product names and policy terms intact.</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section id="results" class="bg-dark text-light py-5">
+      <div class="container py-4">
+        <h2 class="display-6 fw-semibold">Measured in real support queues</h2>
+        <p class="lead text-secondary-emphasis mt-3">Results from 60 teams that used Brightmoss for at least one full quarter.</p>
+        <div class="row g-4 mt-4 text-center text-md-start">
+          <div class="col-md-4"><div class="border border-secondary rounded-4 p-4 h-100">
+            <p class="small text-secondary-emphasis mb-2">Faster first response</p>
+            <p class="stat-num mb-0">38%</p>
+          </div></div>
+          <div class="col-md-4"><div class="border border-secondary rounded-4 p-4 h-100">
+            <p class="small text-secondary-emphasis mb-2">Tickets per agent per day</p>
+            <p class="stat-num mb-0">+22%</p>
+          </div></div>
+          <div class="col-md-4"><div class="border border-secondary rounded-4 p-4 h-100">
+            <p class="small text-secondary-emphasis mb-2">CSAT score change</p>
+            <p class="stat-num mb-0 text-info-emphasis">+6 pts</p>
+          </div></div>
+        </div>
+        <figure class="mt-5 border border-secondary rounded-4 p-4 p-md-5 mb-0" style="max-width: 48rem;">
+          <blockquote class="fs-5 mb-4">"Our agents used to rewrite every macro. Now they edit a draft that already sounds like us, and our escalations dropped by a third."</blockquote>
+          <figcaption class="small text-secondary-emphasis">Priya Raman, Head of Support, Parcelly</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="container py-5 my-lg-4">
+      <div class="text-center">
+        <h2 class="display-6 fw-semibold">Plans for every queue size</h2>
+        <p class="lead text-secondary mt-3">Priced per agent seat. Unlimited drafts on every plan.</p>
+      </div>
+      <div class="row g-4 mt-3">
+        <div class="col-lg-4">
+          <div class="card h-100 border rounded-4 shadow-none"><div class="card-body p-4 d-flex flex-column">
+            <h3 class="h5 fw-semibold">Starter</h3>
+            <p class="text-secondary small">For small teams getting started with AI replies.</p>
+            <p class="mt-3 mb-4"><span class="display-6 fw-semibold">$29</span> <span class="small text-secondary">/ agent / month</span></p>
+            <ul class="list-unstyled small flex-grow-1 mb-4">
+              <li class="mb-2">Drafts, rewrites and tone presets</li><li class="mb-2">One helpdesk integration</li><li>Email support</li>
+            </ul>
+            <a href="#demo" class="btn btn-outline-dark rounded-pill">Start free trial</a>
+          </div></div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card h-100 border-2 rounded-4 shadow" style="border-color: var(--bm-violet) !important;"><div class="card-body p-4 d-flex flex-column">
+            <span class="badge align-self-start mb-3 text-bg-primary">Most popular</span>
+            <h3 class="h5 fw-semibold">Growth</h3>
+            <p class="text-secondary small">For support teams that need brand voice and translation.</p>
+            <p class="mt-3 mb-4"><span class="display-6 fw-semibold">$59</span> <span class="small text-secondary">/ agent / month</span></p>
+            <ul class="list-unstyled small flex-grow-1 mb-4">
+              <li class="mb-2">Everything in Starter</li><li class="mb-2">Brand voice training</li><li class="mb-2">40-language translation</li><li>Source links on every claim</li>
+            </ul>
+            <a href="#demo" class="btn btn-brand rounded-pill">Start free trial</a>
+          </div></div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card h-100 border rounded-4 shadow-none"><div class="card-body p-4 d-flex flex-column">
+            <h3 class="h5 fw-semibold">Enterprise</h3>
+            <p class="text-secondary small">For large queues with compliance needs.</p>
+            <p class="mt-3 mb-4"><span class="display-6 fw-semibold">Custom</span></p>
+            <ul class="list-unstyled small flex-grow-1 mb-4">
+              <li class="mb-2">Everything in Growth</li><li class="mb-2">SSO and audit logs</li><li class="mb-2">Data residency options</li><li>Dedicated success manager</li>
+            </ul>
+            <a href="#demo" class="btn btn-outline-dark rounded-pill">Talk to sales</a>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security -->
+    <section id="security" class="container pb-5 mb-lg-4">
+      <div class="card border rounded-5 p-3 p-md-4 shadow-none">
+        <div class="card-body">
+          <div class="row g-5 align-items-center">
+            <div class="col-md-6">
+              <h2 class="display-6 fw-semibold">Your customer data stays yours</h2>
+              <p class="text-secondary mt-3 mb-0">Brightmoss does not train shared models on your tickets. Data is encrypted in transit and at rest, and you choose how long drafts are kept.</p>
+            </div>
+            <div class="col-md-6">
+              <div class="row g-3 small">
+                <div class="col-sm-6"><div class="bg-body-tertiary rounded-3 p-3 h-100"><p class="fw-semibold mb-1">SOC 2 Type II</p><span class="text-secondary">Audited every year</span></div></div>
+                <div class="col-sm-6"><div class="bg-body-tertiary rounded-3 p-3 h-100"><p class="fw-semibold mb-1">GDPR</p><span class="text-secondary">EU data processing agreement</span></div></div>
+                <div class="col-sm-6"><div class="bg-body-tertiary rounded-3 p-3 h-100"><p class="fw-semibold mb-1">PII redaction</p><span class="text-secondary">Card and ID numbers masked</span></div></div>
+                <div class="col-sm-6"><div class="bg-body-tertiary rounded-3 p-3 h-100"><p class="fw-semibold mb-1">Retention controls</p><span class="text-secondary">Delete drafts after 7, 30 or 90 days</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-top bg-white">
+    <div class="container py-4 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 small text-secondary">
+      <p class="mb-0">&copy; 2026 Brightmoss Inc. All rights reserved.</p>
+      <div class="d-flex gap-4">
+        <a href="#" class="link-secondary text-decoration-none">Privacy</a>
+        <a href="#" class="link-secondary text-decoration-none">Terms</a>
+        <a href="#" class="link-secondary text-decoration-none">Status</a>
+        <a href="#" class="link-secondary text-decoration-none">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -6,9 +6,9 @@
 [![license: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [Türkçe](README.tr.md) · [日本語](README.ja.md)
 
-For anyone building with Claude Code, Cursor or Codex: 137 design rules, a checker with no dependencies and no API key, and
-an agent skill that repairs the screen. It reads web projects (React, Vue, Svelte, Laravel Blade, HTML) and SwiftUI, Jetpack
-Compose, Flutter and React Native apps. Finding needs no agent, and neither do the mechanical fixes.
+For anyone building with Claude Code, Cursor or Codex: 141 design rules, a checker with no dependencies and no API key, and
+an agent skill that repairs the screen. It reads web projects (React, Vue, Svelte, Laravel Blade, HTML; Tailwind, Bootstrap or plain
+CSS) and SwiftUI, Jetpack Compose, Flutter and React Native apps. Finding needs no agent, and neither do the mechanical fixes.
 
 ## Start in three steps
 
@@ -72,7 +72,7 @@ it, and shows the count before and after. Features, data and words stay.
 
 ## What it catches
 
-67 rules read your code (33 of them in app code too) and 55 read the running page (`scan`), some of them both. The other 33 need eyes on the screen, so they
+67 rules read your code (33 of them in app code too) and 60 read the running page (`scan`), some of them both. The other 33 need eyes on the screen, so they
 are marked *review* and left to you and the fix skill. Each rule says what to do, why and how to fix it, in English and Turkish: [RULES.md](RULES.md).
 
 | Area | Examples |
@@ -83,7 +83,7 @@ are marked *review* and left to you and the fix skill. Each rule says what to do
 | Writing and copy | Sentence case, no tracked uppercase labels, no buzzwords, buttons that say what they do, errors that say what to do |
 | Components | Buttons and inputs from shared components, no outside styling, repeated markup becomes a component |
 | Layout | Spacing on a 4 px grid with one gap per level, wide tables span the page, room for each cell on a phone |
-| Visual language | Line icons instead of emoji, no gradient text or purple gradients, no side stripes, glow only in charts |
+| Visual language | Line icons instead of emoji, no gradient text or purple gradients, no side stripes, no coloured shadows, glow only in charts |
 | Motion | No `transition-all`, no bounce, reduced motion respected, pulse only for live data, answers within 300 ms, no endless loops |
 | Data | Numbers carry their comparison, tabular numerals, empty states |
 | Localisation | Locale-aware case changes (Turkish i/İ), numbers through the formatter, real plurals |
@@ -96,7 +96,14 @@ dashboard designs. Method and findings: [RESEARCH.md](RESEARCH.md).
 ## The running page and the redesign
 
 `scan` opens the page in your Chrome at desktop and phone width, with no model and no API key. It reads what the source can't
-show: real contrast, sizes, what covers what, broken images, script errors, content that never appears. Add `--format github`
+show: real contrast, sizes, what covers what, broken images, script errors, content that never appears. It reads every colour
+Chrome computes, Tailwind 4's `oklch()` included, and the habits of a generated page: an accent word in the headline,
+coloured shadows, an arrow on every call to action, lists strung on middle dots, a badge pill above the headline.
+
+A page that did not load, answers with an error or sends the browser to a sign-in page stops the scan with exit 2 instead of
+passing as clean. For a page behind a sign-in, pass `--cookie "name=value"` or `--header "Name: value"`, or set
+`AI_DESIGN_CHECK_COOKIE` and `AI_DESIGN_CHECK_HEADERS` to keep them out of shell history and CI logs. `--allow-redirect` and
+`--allow-status 404` check such a page on purpose. Several URLs are scanned in one run. Add `--format github`
 for pull requests. With `designSystem` in the config (`fonts`, `sizes`, `radii`, `colors`) it also names what drifts.
 
 `redesign` is the one part that needs your agent (Claude Code or Codex), because deciding what a page should show takes
@@ -104,7 +111,8 @@ judgement. The agent studies the screenshots, the code and the subject, and writ
 is wrong, the idea that comes from its own content, the colours it uses from your site. Those cards are checked against the
 measured page. Then the numbered fixes and the cards are applied pass by pass on a new git branch, and a pass that loses
 content, adds rule errors or looks worse is thrown away. `--plan` stops after the cards so you can read and edit them;
-`--brief` builds them.
+`--brief` builds them. It starts only on a clean working tree (commit or stash first), and Ctrl-C puts back the pass in
+progress.
 
 ## Mobile apps
 
@@ -222,9 +230,12 @@ For a new product or one with no tokens. Give it a character (`calm`, `precise`,
 |---|---|
 | Fonts | UI, display, numbers and code, from a library of 50. `fonts --character calm` lists the options |
 | Type scale | Eight roles that map to Dynamic Type and Material 3 |
-| Colours | Light and dark, with every text colour moved until it passes WCAG 2 |
+| Colours | Light and dark; every text and background pair passes WCAG 2 at 4.5:1, status pills and buttons included |
 | Shape | A 4 px spacing scale, radii that nest, control heights, card padding |
-| Files | `tokens.css`, Tailwind `theme.css`, `tokens.json`, `DesignSystem.swift`, `DesignSystem.kt`, `preview.html` |
+| Files | `tokens.css`, Tailwind `theme.css`, Bootstrap `bootstrap.css` and `_variables.scss`, `tokens.json`, `DesignSystem.swift`, `DesignSystem.kt`, `preview.html` |
+
+With Bootstrap 5.3, link `bootstrap.css` after Bootstrap's own CSS: light is the default and dark applies under
+`data-bs-theme="dark"`. A build from source imports `_variables.scss` before Bootstrap.
 
 ### `story`: a before/after video
 
@@ -285,8 +296,9 @@ used:
 2. Tailwind 4 `@theme`: `--spacing` is the grid, `--spacing-*` add steps.
 3. `tailwind.config.*`, read as text and never run: `theme.spacing` replaces the steps, `theme.extend.spacing` adds to the
    4 px grid. A function, a variable, a spread or a preset cannot be read that way.
-4. `:root` variables: `--spacing` is the grid, `--space-*` and `--spacing-*` add steps to the 4 px grid and never remove any.
-5. The 4 px grid.
+4. Bootstrap's `$spacer` and `$spacers` in your SCSS, read as text: their steps join the 4 px grid.
+5. `:root` variables: `--spacing` is the grid, `--space-*` and `--spacing-*` add steps to the 4 px grid and never remove any.
+6. The 4 px grid.
 
 A source that exists but cannot be read (`calc()`, `clamp()`, two files that disagree, a root font size that is not one
 number) leaves the 4 px grid and a note in the report. It is not guessed, and later sources are not tried. Set `spacing` to
@@ -302,9 +314,11 @@ nothing about the app.
 <details>
 <summary><strong>What the checker reads</strong></summary>
 
-`.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, Blade, CSS, i18n JSON, SwiftUI (`.swift`) and Jetpack Compose (`.kt`). It runs on
-plain Node 20+. Class rules read class strings only (`class`, `className`, `cn()`, `clsx()`, `cva()`, `twMerge()`), so comments
-and copy do not match.
+`.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, Blade, CSS and SCSS, i18n JSON, SwiftUI (`.swift`) and Jetpack Compose (`.kt`). It
+runs on plain Node 20+. Class rules read class strings only (`class`, `className`, `cn()`, `clsx()`, `cva()`, `twMerge()`), so
+comments and copy do not match; they know Tailwind's classes and Bootstrap's. CSS rules read stylesheets, `<style>` blocks and
+`style=""` attributes declaration by declaration. A framework's own stylesheet copied into the project (Bootstrap, Tailwind's
+output and others, known by their licence banner) is skipped: its values are the framework's choices, not yours.
 
 </details>
 
@@ -314,7 +328,9 @@ and copy do not match.
 Rules live in [`rules.json`](rules.json): `id`, `area`, `severity`, and `title`, `rule`, `why` and `fix` in `en` and `tr`, plus an
 optional `check`:
 
-- `class`: a pattern on class strings, with `unless`, `exceptElements`, `unlessBefore` and `css`
+- `class`: a pattern on class strings (or a list of them), with `unless`, `with`, `exceptElements`, `unlessBefore`, and `css`:
+  a pattern on stylesheets, or entries read declaration by declaration (`property`, `value`, `scale`, `gradient` with `hue`,
+  `selector`, `unless`, `unlessRule`)
 - `native`: one pattern per platform under `swift` and `kt`, with `notMultipleOf`, `min`, `max`, `unlessBefore`, `unlessAfter`
   and `onlyIf`
 - `regex`: a pattern on code with comments excluded, with `flags` and `files`

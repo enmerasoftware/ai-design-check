@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tallyhoo — Time tracking for freelance designers</title>
+<meta name="description" content="Tallyhoo tracks your billable hours by project and client, then turns them into invoices. Built for freelance designers.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f6f1e7; --ink: #1d1b16; --tomato: #d9482b; --moss: #3f5b3a; --sand: #e8dfcc;
+    --bs-body-bg: var(--paper); --bs-body-color: var(--ink); --bs-link-color: var(--tomato);
+    --bs-link-hover-color: var(--ink);
+    --display: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  }
+  body { background: var(--paper); }
+  .display { font-family: var(--display); letter-spacing: -.02em; }
+  .hero-title { font-size: clamp(2.6rem, 7vw, 4.6rem); line-height: 1.03; font-weight: 700; }
+  .btn-tomato { --bs-btn-bg: var(--tomato); --bs-btn-border-color: var(--tomato); --bs-btn-color: #fff;
+    --bs-btn-hover-bg: var(--ink); --bs-btn-hover-border-color: var(--ink); --bs-btn-hover-color: #fff; }
+  .btn-ink { --bs-btn-bg: var(--ink); --bs-btn-border-color: var(--ink); --bs-btn-color: var(--paper);
+    --bs-btn-hover-bg: var(--tomato); --bs-btn-hover-border-color: var(--tomato); --bs-btn-hover-color: #fff; }
+  .btn-outline-ink { --bs-btn-color: var(--ink); --bs-btn-border-color: rgba(29,27,22,.35);
+    --bs-btn-hover-bg: var(--ink); --bs-btn-hover-color: var(--paper); --bs-btn-hover-border-color: var(--ink); }
+  .kicker { color: var(--moss); text-transform: uppercase; letter-spacing: .14em; font-size: .8rem; font-weight: 600; }
+  .hard-card { background: #fff; border: 2px solid var(--ink); border-radius: 1.25rem; box-shadow: 8px 8px 0 var(--ink); }
+  .bar { height: 8px; border-radius: 4px; background: var(--sand); }
+  .bar > span { display: block; height: 100%; border-radius: 4px; }
+  .band { background: rgba(232,223,204,.6); border-block: 1px solid rgba(29,27,22,.15); }
+  .step-n { font-size: 3rem; color: var(--tomato); line-height: 1; }
+  .feature { border-top: 2px solid var(--ink); padding-top: 1rem; }
+  .price-feature { box-shadow: 6px 6px 0 var(--tomato); }
+  .navbar .nav-link { color: var(--ink); font-weight: 500; font-size: .9rem; }
+  .navbar .nav-link:hover { color: var(--tomato); }
+</style>
+</head>
+<body>
+<a href="#main" class="visually-hidden-focusable position-absolute p-3 bg-dark text-white">Skip to content</a>
+
+<nav class="navbar navbar-expand-md border-bottom" style="border-color:rgba(29,27,22,.15)!important" aria-label="Main">
+  <div class="container">
+    <a class="navbar-brand display fw-bold fs-3" href="#">Tallyhoo<span style="color:var(--tomato)">.</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav mx-auto gap-md-3">
+        <li class="nav-item"><a class="nav-link" href="#how">How it works</a></li>
+        <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+        <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+      </ul>
+      <a href="#pricing" class="btn btn-ink btn-sm rounded-pill px-3 fw-semibold">Start free</a>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+  <section class="py-5 py-lg-6">
+    <div class="container py-lg-5">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+          <p class="kicker mb-3">For freelance designers</p>
+          <h1 class="display hero-title">Know what every hour of design is worth.</h1>
+          <p class="lead mt-4 mb-4" style="max-width:34rem;color:rgba(29,27,22,.75)">Tallyhoo sits quietly beside Figma and your inbox, logs the time you spend on each client, and hands you an invoice at the end of the month. No timers to remember.</p>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="#pricing" class="btn btn-tomato btn-lg rounded-pill px-4 fw-semibold">Try it free for 30 days</a>
+            <a href="#how" class="btn btn-outline-ink btn-lg rounded-pill px-4 fw-semibold">See how it works</a>
+          </div>
+          <p class="small mt-3 mb-0 text-body-secondary">No card needed. Works on Mac, Windows and iPad.</p>
+        </div>
+        <div class="col-lg-5">
+          <div class="hard-card p-4" aria-label="Example week of tracked time">
+            <div class="d-flex justify-content-between align-items-baseline">
+              <h2 class="display h5 fw-bold mb-0">This week</h2>
+              <span class="small text-body-secondary">Mon 3 – Fri 7</span>
+            </div>
+            <p class="fs-2 fw-bold mb-3">31h 40m <span class="fs-6 fw-medium" style="color:var(--moss)">· $2,375 billable</span></p>
+            <ul class="list-unstyled small mb-3">
+              <li class="mb-3"><div class="d-flex justify-content-between fw-medium"><span>Oakline Coffee — brand refresh</span><span>14h 10m</span></div><div class="bar mt-1"><span style="width:72%;background:var(--tomato)"></span></div></li>
+              <li class="mb-3"><div class="d-flex justify-content-between fw-medium"><span>Northpier — app onboarding</span><span>11h 05m</span></div><div class="bar mt-1"><span style="width:56%;background:var(--moss)"></span></div></li>
+              <li><div class="d-flex justify-content-between fw-medium"><span>Studio Lume — pitch deck</span><span>6h 25m</span></div><div class="bar mt-1"><span style="width:33%;background:var(--ink)"></span></div></li>
+            </ul>
+            <p class="small rounded px-3 py-2 mb-0" style="background:var(--sand)">Tallyhoo noticed 52 minutes in Figma on “Oakline”. Add to today?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="band py-5">
+    <div class="container py-4">
+      <h2 class="display fw-bold col-lg-7 mb-5">Three steps, and the third one is getting paid.</h2>
+      <ol class="row g-4 list-unstyled mb-0">
+        <li class="col-md-4"><span class="display step-n">1</span><h3 class="h5 fw-bold mt-2">Pick your clients</h3><p class="text-body-secondary">Set a rate per client or per project. Hourly, day rate or fixed fee with a budget cap.</p></li>
+        <li class="col-md-4"><span class="display step-n">2</span><h3 class="h5 fw-bold mt-2">Design as usual</h3><p class="text-body-secondary">Tallyhoo suggests entries from the files and calls you work in. You confirm with one tap.</p></li>
+        <li class="col-md-4"><span class="display step-n">3</span><h3 class="h5 fw-bold mt-2">Send the invoice</h3><p class="text-body-secondary">One click makes a clean PDF with your logo, your terms and a link to pay by card or bank transfer.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="features" class="py-5">
+    <div class="container py-4">
+      <div class="row g-5">
+        <article class="col-md-6 feature"><h3 class="display h3 fw-bold">Budget alerts</h3><p class="text-body-secondary mb-0">Told a client “about 40 hours”? Tallyhoo nudges you at 75% so scope creep becomes a conversation, not a surprise.</p></article>
+        <article class="col-md-6 feature"><h3 class="display h3 fw-bold">Revision tracking</h3><p class="text-body-secondary mb-0">Tag rounds of feedback and see exactly how much time round three really cost.</p></article>
+        <article class="col-md-6 feature"><h3 class="display h3 fw-bold">Honest reports</h3><p class="text-body-secondary mb-0">See your effective hourly rate per client. Find out which projects pay and which ones just feel busy.</p></article>
+        <article class="col-md-6 feature"><h3 class="display h3 fw-bold">Offline by default</h3><p class="text-body-secondary mb-0">Everything is stored on your device first and syncs when you are back online. Train WiFi is no problem.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="text-center py-5" style="background:var(--ink);color:var(--paper)">
+    <figure class="container py-4 mb-0" style="max-width:48rem">
+      <blockquote class="display fs-2 mb-3">“I raised my day rate by 20% after seeing my real numbers. Two clients left. My income went up anyway.”</blockquote>
+      <figcaption class="small" style="opacity:.7">Priya Raman, brand designer, Leeds</figcaption>
+    </figure>
+  </section>
+
+  <section id="pricing" class="py-5">
+    <div class="container py-4">
+      <h2 class="display fw-bold">Simple pricing</h2>
+      <p class="text-body-secondary">Both plans include a 30-day free trial.</p>
+      <div class="row g-4 mt-1" style="max-width:48rem">
+        <div class="col-md-6">
+          <div class="card h-100 rounded-4 border-2 p-2">
+            <div class="card-body">
+              <h3 class="h5 fw-bold">Solo</h3>
+              <p class="display fs-1 fw-bold mb-3">$9<span class="fs-6 fw-medium text-body-secondary"> / month</span></p>
+              <ul class="small ps-3"><li>Unlimited clients and projects</li><li>PDF invoices</li><li>Weekly reports</li></ul>
+              <a href="#" class="btn btn-outline-ink rounded-pill w-100 fw-semibold mt-3 border-2">Start free</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100 rounded-4 border-2 border-dark p-2 price-feature">
+            <div class="card-body">
+              <h3 class="h5 fw-bold">Studio</h3>
+              <p class="display fs-1 fw-bold mb-3">$19<span class="fs-6 fw-medium text-body-secondary"> / month</span></p>
+              <ul class="small ps-3"><li>Everything in Solo</li><li>Online card payments</li><li>Up to 3 subcontractors</li></ul>
+              <a href="#" class="btn btn-ink rounded-pill w-100 fw-semibold mt-3">Start free</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="border-top py-4 small text-body-secondary" style="border-color:rgba(29,27,22,.15)!important">
+  <div class="container d-flex flex-column flex-sm-row justify-content-between gap-2">
+    <p class="mb-0">&copy; 2026 Tallyhoo Ltd. Made by designers in Bristol.</p>
+    <ul class="list-inline mb-0"><li class="list-inline-item me-3"><a href="#">Privacy</a></li><li class="list-inline-item me-3"><a href="#">Terms</a></li><li class="list-inline-item"><a href="#">hello@tallyhoo.app</a></li></ul>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -27,7 +27,7 @@ const manifest = `${JSON.stringify({
             interface: {
                 displayName: 'AI Design Check',
                 shortDescription: 'Fix generated-looking UI',
-                longDescription: 'AI Design Check finds what makes an interface built with an AI agent look generated, and repairs it. It has 137 design rules. A checker reads web projects (React, Vue, Svelte, Laravel Blade, HTML) and SwiftUI, Jetpack Compose, Flutter and React Native apps, and scans running pages at desktop and phone width, with no model and no API key. The fix skill measures a screen, writes a short brief from your product, repairs it in order of harm and reports the count before and after. Features, data and words stay. Mechanical fixes (spacing and corners to your scale, very heavy type to bold) need no judgement and are made by a command you can preview first.',
+                longDescription: 'AI Design Check finds what makes an interface built with an AI agent look generated, and repairs it. It has 141 design rules. A checker reads web projects (React, Vue, Svelte, Laravel Blade, HTML) and SwiftUI, Jetpack Compose, Flutter and React Native apps, and scans running pages at desktop and phone width, with no model and no API key. The fix skill measures a screen, writes a short brief from your product, repairs it in order of harm and reports the count before and after. Features, data and words stay. Mechanical fixes (spacing and corners to your scale, very heavy type to bold) need no judgement and are made by a command you can preview first.',
                 developerName: 'Enmera Software',
                 category: 'Productivity',
                 capabilities: [],

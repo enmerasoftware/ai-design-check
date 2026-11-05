@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tallyhoo — Time tracking for freelance designers</title>
+<meta name="description" content="Tallyhoo logs the hours behind your design work and turns them into invoices.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  :root {
+    --th-ink: #1f2430;
+    --th-accent: #e2603b;
+    --th-cream: #fbf8f3;
+    --bs-body-color: var(--th-ink);
+    --bs-body-bg: var(--th-cream);
+    --bs-link-color-rgb: 31, 36, 48;
+  }
+  .btn-accent { --bs-btn-bg: var(--th-accent); --bs-btn-border-color: var(--th-accent); --bs-btn-color: #fff; --bs-btn-hover-bg: #c44e2c; --bs-btn-hover-border-color: #c44e2c; --bs-btn-hover-color: #fff; }
+  .text-accent { color: var(--th-accent) !important; }
+  .display-title { font-family: Georgia, "Iowan Old Style", serif; letter-spacing: -0.01em; }
+  .timer { font-variant-numeric: tabular-nums; }
+  .bg-ink { background: var(--th-ink); }
+  .step-num { width: 2.5rem; height: 2.5rem; }
+</style>
+</head>
+<body>
+<nav class="navbar navbar-expand-md border-bottom bg-white" aria-label="Main">
+  <div class="container">
+    <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="#">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 6v6l4 2.5" stroke="#e2603b" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+      Tallyhoo
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav mx-auto">
+        <li class="nav-item"><a class="nav-link" href="#how">How it works</a></li>
+        <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+        <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+        <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+      </ul>
+      <div class="d-flex gap-2">
+        <a href="#" class="btn btn-link text-decoration-none">Sign in</a>
+        <a href="#pricing" class="btn btn-dark">Start free</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="py-5">
+    <div class="container py-lg-4">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+          <span class="badge rounded-pill text-bg-light border mb-3">New: automatic Figma file matching</span>
+          <h1 class="display-4 display-title mb-4">Stop guessing your hours on Friday night.</h1>
+          <p class="lead text-body-secondary mb-4">Tallyhoo tracks time while you design, files it under the right client and builds the invoice for you. Freelancers using it find an average of 6.5 billable hours a month they used to give away.</p>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="#pricing" class="btn btn-accent btn-lg">Start your 30-day trial</a>
+            <a href="#how" class="btn btn-outline-dark btn-lg">How it works</a>
+          </div>
+          <p class="small text-body-secondary mt-3 mb-0">No credit card. Cancel any time.</p>
+        </div>
+        <div class="col-lg-6">
+          <div class="card shadow border-0 rounded-4" role="img" aria-label="Weekly timesheet for a freelance designer">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <div class="small text-body-secondary">Tracking</div>
+                  <div class="fw-semibold">Harbor &amp; Pine — Website redesign</div>
+                </div>
+                <span class="badge text-bg-success-subtle text-success-emphasis">Running</span>
+              </div>
+              <div class="display-5 timer display-title mb-4">1:47:32</div>
+              <table class="table table-sm mb-3">
+                <thead><tr><th scope="col">Client</th><th scope="col" class="text-end">Hours</th><th scope="col" class="text-end">Amount</th></tr></thead>
+                <tbody class="timer">
+                  <tr><td>Harbor &amp; Pine</td><td class="text-end">14.5</td><td class="text-end">$1,160</td></tr>
+                  <tr><td>Okafor Ceramics</td><td class="text-end">6.0</td><td class="text-end">$480</td></tr>
+                  <tr><td>Lumen Yoga</td><td class="text-end">3.25</td><td class="text-end">$260</td></tr>
+                </tbody>
+                <tfoot><tr class="fw-semibold"><td>This week</td><td class="text-end timer">23.75</td><td class="text-end timer">$1,900</td></tr></tfoot>
+              </table>
+              <div class="small text-body-secondary">Retainer: Okafor Ceramics</div>
+              <div class="progress mt-1" role="progressbar" aria-label="Retainer used" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" style="height:8px"><div class="progress-bar" style="width:72%;background:var(--th-accent)"></div></div>
+              <div class="small text-body-secondary mt-1">14.4 of 20 hours used this month</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="py-5 bg-white border-top border-bottom">
+    <div class="container py-lg-4">
+      <h2 class="display-title h1 mb-5 text-center">Set it up once. It keeps going.</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="d-flex gap-3">
+            <div class="step-num rounded-circle bg-dark text-white d-flex align-items-center justify-content-center flex-shrink-0 fw-semibold">1</div>
+            <div><h3 class="h5">Connect your apps</h3><p class="text-body-secondary mb-0">Figma, Adobe CC, Webflow and Google Calendar connect in under two minutes.</p></div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex gap-3">
+            <div class="step-num rounded-circle bg-dark text-white d-flex align-items-center justify-content-center flex-shrink-0 fw-semibold">2</div>
+            <div><h3 class="h5">Design like normal</h3><p class="text-body-secondary mb-0">Tallyhoo matches files to clients and pauses itself when you step away.</p></div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex gap-3">
+            <div class="step-num rounded-circle bg-dark text-white d-flex align-items-center justify-content-center flex-shrink-0 fw-semibold">3</div>
+            <div><h3 class="h5">Invoice in one click</h3><p class="text-body-secondary mb-0">Review the week, apply your rounding rules and send with a Stripe payment link.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="py-5">
+    <div class="container py-lg-4">
+      <div class="row g-5">
+        <div class="col-lg-4">
+          <h2 class="display-title h1">Built around revisions, retainers and scope.</h2>
+          <p class="text-body-secondary">General time trackers treat every hour the same. Design work has feedback rounds, quick tweaks and retainers that quietly run over.</p>
+        </div>
+        <div class="col-lg-8">
+          <div class="row row-cols-1 row-cols-sm-2 g-4">
+            <div class="col"><div class="card h-100 border-0 shadow-sm"><div class="card-body"><h3 class="h6 text-accent">Revision rounds</h3><p class="mb-0 small">Tag feedback rounds and see the moment a project passes what the contract included.</p></div></div></div>
+            <div class="col"><div class="card h-100 border-0 shadow-sm"><div class="card-body"><h3 class="h6 text-accent">Retainer alerts</h3><p class="mb-0 small">Get a heads-up at 80% so you can talk to the client before the hours run out.</p></div></div></div>
+            <div class="col"><div class="card h-100 border-0 shadow-sm"><div class="card-body"><h3 class="h6 text-accent">Quote vs. actual</h3><p class="mb-0 small">Compare what you estimated with what it took, and price the next project better.</p></div></div></div>
+            <div class="col"><div class="card h-100 border-0 shadow-sm"><div class="card-body"><h3 class="h6 text-accent">Shareable timesheets</h3><p class="mb-0 small">Send clients a tidy read-only link instead of a spreadsheet.</p></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5 bg-ink text-white">
+    <div class="container py-lg-4">
+      <figure class="text-center mx-auto" style="max-width:46rem">
+        <blockquote class="blockquote"><p class="display-title fs-3">"The retainer alert alone paid for a year. I renegotiated two clients the same month."</p></blockquote>
+        <figcaption class="blockquote-footer text-white-50 mt-2">Marcus Feld, product illustrator, Berlin</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="pricing" class="py-5">
+    <div class="container py-lg-4">
+      <h2 class="display-title h1 text-center">Pricing</h2>
+      <p class="text-center text-body-secondary mb-5">30 days free on every plan.</p>
+      <div class="row justify-content-center g-4">
+        <div class="col-md-5 col-lg-4">
+          <div class="card h-100 rounded-4">
+            <div class="card-body p-4 d-flex flex-column">
+              <h3 class="h5">Solo</h3>
+              <p class="mb-3"><span class="display-5 display-title">$9</span> <span class="text-body-secondary">per month</span></p>
+              <ul class="list-unstyled small mb-4 flex-grow-1">
+                <li class="mb-2">Unlimited clients and projects</li>
+                <li class="mb-2">Automatic app tracking</li>
+                <li class="mb-2">10 invoices a month</li>
+              </ul>
+              <a href="#" class="btn btn-outline-dark">Start Solo trial</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5 col-lg-4">
+          <div class="card h-100 rounded-4 border-dark border-2">
+            <div class="card-body p-4 d-flex flex-column">
+              <h3 class="h5 d-flex justify-content-between">Studio <span class="badge text-bg-dark fw-normal">Most chosen</span></h3>
+              <p class="mb-3"><span class="display-5 display-title">$19</span> <span class="text-body-secondary">per month</span></p>
+              <ul class="list-unstyled small mb-4 flex-grow-1">
+                <li class="mb-2">Everything in Solo</li>
+                <li class="mb-2">Unlimited invoices and retainers</li>
+                <li class="mb-2">Up to 3 collaborators</li>
+              </ul>
+              <a href="#" class="btn btn-accent">Start Studio trial</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="py-5 bg-white border-top">
+    <div class="container py-lg-4" style="max-width:48rem">
+      <h2 class="display-title h1 mb-4">Questions</h2>
+      <div class="accordion accordion-flush" id="faqList">
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q1" aria-expanded="false" aria-controls="q1">Does Tallyhoo watch my screen?</button></h3>
+          <div id="q1" class="accordion-collapse collapse" data-bs-parent="#faqList"><div class="accordion-body">No. It reads the name of the active app and file, nothing else. No screenshots, no keystrokes.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q2" aria-expanded="false" aria-controls="q2">Can I import my old Toggl or Harvest data?</button></h3>
+          <div id="q2" class="accordion-collapse collapse" data-bs-parent="#faqList"><div class="accordion-body">Yes. Upload a CSV export and Tallyhoo maps clients and projects for you.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q3" aria-expanded="false" aria-controls="q3">Which currencies can I invoice in?</button></h3>
+          <div id="q3" class="accordion-collapse collapse" data-bs-parent="#faqList"><div class="accordion-body">Over 40, including USD, EUR, GBP, CAD and AUD, with VAT and GST handled per client.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="py-4 border-top">
+  <div class="container d-flex flex-column flex-sm-row justify-content-between gap-2 small text-body-secondary">
+    <span>© 2026 Tallyhoo Ltd.</span>
+    <span><a href="#" class="link-secondary me-3">Privacy</a><a href="#" class="link-secondary me-3">Terms</a><a href="mailto:hello@tallyhoo.app" class="link-secondary">hello@tallyhoo.app</a></span>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

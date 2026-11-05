@@ -34,6 +34,26 @@
 
 **Nasıl düzeltilir:** Etiketi kısaltın; yazıyı küçültmeyin.
 
+### Her çağrıda ok yok
+
+`no-arrow-suffix` · not · denetlenir
+
+**Kural:** Düğme ve bağlantılar alışkanlık olarak okla (→, ›, » ya da ok ikonu) bitmez; tek bir bağlantıda sorun yok.
+
+**Neden:** Etiket nereye gittiğini zaten söyler; her işlemdeki ok üretilmiş sayfa alışkanlığıdır.
+
+**Nasıl düzeltilir:** Okları kaldırın; yalnız sonraki adım gibi ilerlemeyi gösterdiği yerde bırakın.
+
+### Orta noktayla dizilmiş liste yok
+
+`no-middle-dot-lists` · not · denetlenir
+
+**Kural:** Kısa satırlar üç ya da daha çok öğeyi · ya da • ile dizmez ("Hızlı · Gizli · Ücretsiz"); alt bilgi satırı ve tarihli yazar satırı sorun değil.
+
+**Neden:** Noktalarla dizilmiş üç kelime bir cümleden azını söyler; bu biçim üretilmiş sayfa alışkanlığıdır.
+
+**Nasıl düzeltilir:** Tek cümle olarak yazın ya da önemli olan tek öğeyi bırakın.
+
 ### Düğme ve etiketlerde nokta yok
 
 `no-trailing-period-labels` · not · denetlenir
@@ -302,7 +322,7 @@
 
 `radius-scale` · hata · denetlenir
 
-**Kural:** rounded-md … rounded-3xl ve rounded-full kullanılır; tanıtım sitesinin büyük yüzeyleri tek bir ortak değer alır (rounded-panel). Elle köşe yalnız 5 px'e kadar mikro öğelerde ve cihaz/ikon çizimlerinde.
+**Kural:** rounded-md … rounded-3xl ve rounded-full kullanılır; tanıtım sitesinin büyük yüzeyleri tek bir ortak değer alır (rounded-panel). Elle köşe yalnız 5 px'e kadar mikro öğelerde ve cihaz/ikon çizimlerinde. CSS'te px köşe 6, 8, 12, 16, 20, 24 ya da 32 olur; 5'e kadar olanlar ile 999 ve üstü de geçer.
 
 **Neden:** Yan yana 28, 30 ve 32 px'lik köşeler sistem değil gürültü gibi okunur.
 
@@ -468,7 +488,7 @@
 
 `spacing-scale` · uyarı · denetlenir
 
-**Kural:** Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]) projenin ölçeğine oturur: ai-design-check.json'daki, yoksa Tailwind ya da CSS değişkenlerinden okunan, o da yoksa 4 px ızgarası. Uygulama kodu (SwiftUI, Compose, Flutter, React Native) yapılandırma dosyasını ya da 4 pt/dp kullanır. Tema basamakları tercih edilir.
+**Kural:** Piksel cinsinden keyfi boşluk ve boyutlar (mt-[13px], h-[31px], gap-[7px]; CSS'te margin, padding, gap ve konum değerleri) projenin ölçeğine oturur: ai-design-check.json'daki, yoksa Tailwind'den, Bootstrap'in $spacer ve $spacers değerlerinden ya da CSS değişkenlerinden okunan, o da yoksa 4 px ızgarası. Uygulama kodu (SwiftUI, Compose, Flutter, React Native) yapılandırma dosyasını ya da 4 pt/dp kullanır. Tema basamakları tercih edilir.
 
 **Neden:** Izgara dışı değerler modelin tahmin ederken yazdığı değerlerdir; satır ve aralıklar bir iki piksel kayar, ekran düzensiz görünür.
 
@@ -680,7 +700,7 @@
 
 ### Gradyan metin ve mor gradyan yok
 
-`no-ai-gradients` · hata · denetlenir
+`no-ai-gradients` · uyarı · denetlenir
 
 **Kural:** Metin düz renktir. Mor, menekşe ya da çivit gradyan ve bölümlerin arkasında süs amaçlı radyal parıltı yok.
 
@@ -732,11 +752,31 @@
 
 `no-announcement-pill` · uyarı · denetlenir
 
-**Kural:** Kahraman başlığının üstünde "✨ Introducing X 2.0" hapı yok; gerçek ve yeni bir habere gidiyorsa sade bir metin bağlantısıdır.
+**Kural:** Kahraman başlığının üstünde küçük hap ya da rozet ("✨ Introducing X 2.0", "Şimdi betada") yok; gerçek ve yeni bir habere gidiyorsa sade bir metin bağlantısıdır.
 
 **Neden:** En çok kopyalanan kahraman kalıbıdır; göz başlıktan önce ona takılır ve bir şey bulamaz.
 
 **Nasıl düzeltilir:** Kaldırın ya da tarihli düz bir bağlantıya çevirin.
+
+### Başlıkta renkle ayrılmış kelime yok
+
+`no-accent-word` · not · denetlenir
+
+**Kural:** Ana başlık tek renktir: hiçbir kelime ya da kısa söz öbeği vurgu rengiyle ya da gradyan metinle ayrılmaz.
+
+**Neden:** Üretilmiş sayfaların en çok tekrarlanan kahraman tarifidir: ölçtüğümüz 12 üretilmiş sayfanın 8'inde, 12 tasarlanmış sayfanın 1'inde vardı.
+
+**Nasıl düzeltilir:** Başlığı tek renkle yazın; vurguyu kelimeler taşısın.
+
+### Renkli gölge yok
+
+`no-colored-shadow` · not · denetlenir
+
+**Kural:** Kart, düğme ve görseller nötr gölge düşürür; gölge marka ya da vurgu rengine boyanmaz.
+
+**Neden:** Ölçtüğümüz 12 üretilmiş sayfanın 8'inde renkli gölge vardı, 12 tasarlanmış sayfanın hiçbirinde yoktu; derinlik değil parıltı gibi okunur.
+
+**Nasıl düzeltilir:** Nötr gölge (düşük opaklıkta siyah) ya da kenarlık kullanın; rengi dolguya saklayın.
 
 ### Yapay zekâ için ışıltı ikonu yok
 
@@ -820,7 +860,7 @@
 
 ### Varsayılan değil, seçilmiş zemin
 
-`no-default-cream` · not · denetlenir
+`no-default-cream` · uyarı · denetlenir
 
 **Kural:** Sayfa zemini, üretilmiş sayfaların refleksle seçtiği sıcak krem ya da bej değildir. Küçük krem alanlar sorun değil; tüm sayfa için gerekçe gerekir.
 
@@ -860,7 +900,7 @@
 
 ### İçeriğin arkasında dairesel parıltı yok
 
-`no-radial-halo` · uyarı · denetlenir
+`no-radial-halo` · not · denetlenir
 
 **Kural:** Saydama doğru solan doygun dairesel geçiş, arka planda spot ışığı ya da bulut olarak kullanılmaz.
 
@@ -1004,7 +1044,7 @@
 
 `focus-ring-removed` · hata · denetlenir
 
-**Kural:** outline-none / outline-hidden yalnız aynı öğede görünür bir focus-visible biçimiyle (ring, outline ya da border) birlikte kullanılır.
+**Kural:** outline-none / outline-hidden yalnız aynı öğede görünür bir focus-visible biçimiyle (ring, outline ya da border) birlikte kullanılır. CSS'te outline: none yalnız aynı kuralda box-shadow, border ya da outline ya da bir :focus-visible kuralı varsa yazılır; Bootstrap'te .btn ya da .form-control üzerindeki shadow-none için focus-ring gerekir.
 
 **Neden:** Klavye kullanan kişi nerede olduğunu kaybeder. WCAG 2.4.7 (görünür odak), 2.4.11 (odak gizlenmez).
 
@@ -1074,7 +1114,7 @@
 
 ### Kendiliğinden kayan şerit yok
 
-`no-marquee` · uyarı · denetlenir
+`no-marquee` · not · denetlenir
 
 **Kural:** İçerik kendiliğinden kaymaz.
 

@@ -39,7 +39,7 @@ export function findChrome() {
 const STYLE_PRINT = `(() => {
     let total = 0;
     for (const el of document.querySelectorAll('body *')) total += parseFloat(getComputedStyle(el).fontSize) || 0;
-    return [total, document.documentElement.scrollHeight, document.styleSheets.length, [...document.querySelectorAll('style')].reduce((sum, el) => sum + el.textContent.length, 0)].join();
+    return [total, document.documentElement?.scrollHeight ?? 0, document.styleSheets.length, [...document.querySelectorAll('style')].reduce((sum, el) => sum + el.textContent.length, 0)].join();
 })()`;
 
 export async function launch(chrome) {

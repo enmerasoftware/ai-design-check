@@ -230,7 +230,7 @@ function report(results, catalogue) {
         + 'Counts for every page and site are in [bench/results.json](bench/results.json).',
     );
 
-    lines.push('', '### At a glance', '', '| Group | Checker | Measured | With a generated-look finding | Generated-look findings, median | With an accessibility finding | Accessibility findings, median |', '|---|---|---:|---:|---:|---:|---:|');
+    lines.push('', '### At a glance', '', '| Group | Checker | Measured | With a style finding | Style findings, median | With an accessibility finding | Accessibility findings, median |', '|---|---|---:|---:|---:|---:|---:|');
     const glance = (label, entries, checker) => {
         const done = ran(entries, checker);
         const look = done.map((entry) => count(entry[checker].rules, 'look'));
@@ -244,7 +244,7 @@ function report(results, catalogue) {
         glance('Human sites, new', sites.filter((site) => !site.research), 'browser');
     }
     glance('AI pages', pages, 'source');
-    lines.push('', 'The browser rows compare like with like: one checker reads both groups. Human sites have no source to read, so the source row has no human counterpart.');
+    lines.push('', 'The browser rows compare like with like: one checker reads both groups. Human sites have no source to read, so the source row has no human counterpart. Almost every page, AI or human, has some style finding: the broad craft rules (line breaks, wrapping, measure) fire on both. What tells the groups apart is the next section.');
 
     const firedIn = (entries, checker) => new Set(entries.flatMap((entry) => Object.keys(entry[checker]?.rules ?? {})));
     const inBrowser = new Set([...firedIn(pages, 'browser'), ...firedIn(sites, 'browser')]);
@@ -254,7 +254,18 @@ function report(results, catalogue) {
 
         return done.length > 0 ? done.filter((entry) => entry[checker].rules[id]).length / done.length : null;
     };
-    for (const [kind, title] of [['look', 'Generated-look rules'], ['access', 'Accessibility rules']]) {
+    // The point of the benchmark: which rules fire on AI pages and not on human sites, and which fire on both.
+    const apart = [...inBrowser].filter((id) => kindOf(id) === 'look').map((id) => ({ id, title: rules.get(id)?.title.en ?? '', ai: ratio(pages, 'browser', id) ?? 0, human: ratio(sites, 'browser', id) ?? 0 }));
+    const tells = apart.filter((row) => row.ai - row.human >= 0.1).sort((a, b) => b.ai - b.human - (a.ai - a.human) || a.id.localeCompare(b.id));
+    const both = apart.filter((row) => row.human >= 0.1 && row.human >= row.ai).sort((a, b) => b.human - b.ai - (a.human - a.ai) || a.id.localeCompare(b.id));
+    lines.push('', '### Which rules tell them apart', '', 'Browser checker only, so both groups are read the same way. A rule is listed when its share on AI pages is at least 10 points above its share on human sites, or when it fires on at least 10% of human sites and no less often there.', '', '| Fires more on AI pages | AI pages | Human sites | Difference |', '|---|---:|---:|---:|');
+    for (const row of tells) lines.push(`| \`${row.id}\` ${cell(row.title)} | ${percent(row.ai)} | ${percent(row.human)} | +${Math.round((row.ai - row.human) * 100)} |`);
+    if (tells.length === 0) lines.push('| None | | | |');
+    lines.push('', '| Fires as often or more on human sites | AI pages | Human sites | Difference |', '|---|---:|---:|---:|');
+    for (const row of both) lines.push(`| \`${row.id}\` ${cell(row.title)} | ${percent(row.ai)} | ${percent(row.human)} | ${Math.round((row.ai - row.human) * 100)} |`);
+    if (both.length === 0) lines.push('| None | | | |');
+
+    for (const [kind, title] of [['look', 'Style rules'], ['access', 'Accessibility rules']]) {
         const rows = [...new Set([...inBrowser, ...inSource])].filter((id) => kindOf(id) === kind).map((id) => {
             const rule = rules.get(id);
             const browserReads = Boolean(rule?.check?.scan) || inBrowser.has(id);
@@ -268,7 +279,7 @@ function report(results, catalogue) {
         if (rows.length === 0) lines.push('| None fired | | | |');
     }
 
-    // Which generated-look rules most of these pages share, by either checker.
+    // Which style rules most of these pages share, by either checker.
     const common = (entries) => {
         const done = entries.filter((entry) => entry.browser?.rules || entry.source?.rules);
         const seen = new Map();
@@ -283,7 +294,7 @@ function report(results, catalogue) {
     lines.push('', 'In the tables below, as above, the measured count, the share and the first two medians come from the browser checker. The source column reads the AI pages\' HTML; the most common rules count a rule found by either checker.');
     const split = (title, label, groups, withSource) => {
         if (groups.length === 0) return;
-        lines.push('', `### ${title}`, '', `| ${label} | Measured | With a generated-look finding | Generated-look findings, median | Accessibility findings, median |${withSource ? ' Source: generated-look findings, median |' : ''} Most common generated-look rules |`, `|---|---:|---:|---:|---:|${withSource ? '---:|' : ''}---|`);
+        lines.push('', `### ${title}`, '', `| ${label} | Measured | With a style finding | Style findings, median | Accessibility findings, median |${withSource ? ' Source: style findings, median |' : ''} Most common style rules |`, `|---|---:|---:|---:|---:|${withSource ? '---:|' : ''}---|`);
         for (const [name, entries] of groups) {
             const done = ran(entries, 'browser');
             const look = done.map((entry) => count(entry.browser.rules, 'look'));

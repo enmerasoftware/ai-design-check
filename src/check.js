@@ -54,6 +54,10 @@ const REACT_NATIVE = /\bfrom\s+['"]react-native['"]|\brequire\(\s*['"]react-nati
 /** Interface code no rule reads yet: the report names it instead of calling the project clean. */
 const UNREAD = /\.(php|astro|ejs|erb|twig|hbs|liquid|njk|cshtml|razor|m|mm|java|sass|less|styl|mdx|pug|haml|slim)$/;
 const STYLESHEET = ['css', 'scss'];
+/** A framework's own stylesheet copied into the project, named by its licence banner: its values are the framework's choices. */
+/** The same, known by where it sits or what it is called: a library's stylesheet often has no banner (Swagger UI's has none). */
+const VENDOR_PATH = /(?:^|\/)(?:third[-_]?party|3rd[-_]?party|swagger-ui|tinymce|ckeditor|highlight\.js|mathjax|katex|codemirror|monaco-editor)\/|(?:^|\/)(?:bootstrap(?:[.-][\w.-]*)?|font-?awesome[\w.-]*|normalize|animate|select2[\w.-]*|flatpickr[\w.-]*|swiper[\w.-]*|slick(?:-theme)?|owl\.carousel[\w.-]*|datatables[\w.-]*|leaflet[\w.-]*|prism[\w.-]*|bulma[\w.-]*|materialize[\w.-]*|uikit[\w.-]*|swagger-ui[\w.-]*)\.s?css$/i;
+const VENDOR_CSS = /^\uFEFF?\s*\/\*!?(?:(?!\*\/)[\s\S]){0,600}?\b(?:Bootstrap|tailwindcss|Font Awesome|Bulma|Foundation for Sites|normalize\.css|animate\.css|Materialize|UIkit|Pico CSS|Bootswatch|AdminLTE)\b/i;
 /** Files that say nothing about an interface: one of these alone must not count as "something was checked". */
 const NOT_INTERFACE = /\.d\.ts$|(?:^|\/)[\w.-]+\.config\.\w+$/;
 /** A plain .js file written as JSX (Create React App, older Next.js projects). */
@@ -444,6 +448,7 @@ export function check(cwd, overrides = {}) {
         if (!markup && !STYLESHEET.includes(extension) && regexFor.length === 0 && !NATIVE.includes(extension) && !isI18n) continue;
 
         const raw = readFileSync(join(cwd, path), 'utf8');
+        if (STYLESHEET.includes(extension) && (VENDOR_PATH.test(path) || VENDOR_CSS.test(raw))) continue;
         skip = ignores(raw); // inline ignores live in comments, so they are read before comments are blanked
         const source = markup ? blankMarkupComments(raw) : raw;
         const reactNative = SCRIPT.includes(extension) && REACT_NATIVE.test(source);

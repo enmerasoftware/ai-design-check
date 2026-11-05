@@ -309,3 +309,13 @@ test('--fix moves CSS, inline and SCSS lengths, each number on its own; a tie go
         assert.match(run(cwd, '--fix').stdout, /Nothing to fix/);
     });
 });
+
+test('a framework stylesheet copied into the project is the framework\'s, not the project\'s', () => {
+    const vendor = '/*!\n * Bootstrap  v5.3.3 (https://getbootstrap.com/)\n * Licensed under MIT\n */\n.btn { padding: .375rem .75rem; margin-top: 13px; border-radius: 13px; }\n';
+    const tailwind = '/*! tailwindcss v4.1.11 | MIT License | https://tailwindcss.com */\n.mt-\\[13px\\] { margin-top: 13px; }\n';
+    const unbannered = '.swagger-ui .btn { margin-top: 13px; }\n';
+    project({ 'public/css/bootstrap.css': vendor, 'public/css/app.css': tailwind, 'static/swagger-ui/swagger-ui.css': unbannered, 'static/css/select2.min2.css': unbannered, 'src/site.css': '.hero { margin-top: 13px; }\n' }, (cwd) => {
+        const found = at(check(cwd), 'spacing-scale');
+        assert.deepEqual(found, ['src/site.css:1 13px']);
+    });
+});

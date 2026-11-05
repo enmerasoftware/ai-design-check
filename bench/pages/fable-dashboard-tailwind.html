@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ledgerly — Overview</title>
+  <meta name="description" content="Ledgerly home screen: revenue this month, invoices due, recent transactions and cash flow.">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .tabular { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-800 antialiased">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">Skip to content</a>
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="hidden w-60 shrink-0 flex-col border-r border-slate-200 bg-white lg:flex" aria-label="Sidebar">
+      <div class="flex items-center gap-2 px-5 py-5 text-lg font-bold text-slate-900">
+        <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" rx="6" fill="#1d4ed8"/><path d="M8 7v12h10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        Ledgerly
+      </div>
+      <nav class="flex-1 px-3" aria-label="Primary">
+        <ul class="space-y-1 text-sm font-medium">
+          <li><a href="#" aria-current="page" class="flex items-center gap-3 rounded-md bg-blue-50 px-3 py-2 text-blue-700"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Overview</a></li>
+          <li><a href="#" class="flex items-center gap-3 rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Invoices</a></li>
+          <li><a href="#" class="flex items-center gap-3 rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7h18v10H3z"/><path d="M3 11h18"/></svg>Expenses</a></li>
+          <li><a href="#" class="flex items-center gap-3 rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 10h16M10 4v16"/></svg>Banking</a></li>
+          <li><a href="#" class="flex items-center gap-3 rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 20h18"/><path d="M6 16V9M11 16V5M16 16v-6"/></svg>Reports</a></li>
+          <li><a href="#" class="flex items-center gap-3 rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Contacts</a></li>
+        </ul>
+      </nav>
+      <div class="border-t border-slate-200 px-5 py-4 text-xs text-slate-500">
+        <p class="font-semibold text-slate-700">Marlow Joinery Ltd</p>
+        <p>Financial year ends 31 Mar 2027</p>
+      </div>
+    </aside>
+
+    <div class="flex min-w-0 flex-1 flex-col">
+      <!-- Top bar -->
+      <header class="flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 py-3 sm:px-6">
+        <div class="flex items-center gap-3">
+          <button type="button" class="rounded-md p-2 text-slate-600 hover:bg-slate-100 lg:hidden" aria-label="Open menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <h1 class="text-lg font-semibold text-slate-900">Good morning, Helen</h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <label for="search" class="sr-only">Search</label>
+          <input id="search" type="search" placeholder="Search invoices, contacts…" class="hidden w-64 rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 md:block">
+          <button type="button" class="rounded-md bg-blue-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-800">New invoice</button>
+          <span class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-xs font-bold text-white" aria-label="Helen Marlow">HM</span>
+        </div>
+      </header>
+
+      <main id="main" class="flex-1 px-4 py-6 sm:px-6">
+        <p class="mb-6 text-sm text-slate-500">Thursday, 5 November 2026 · Bank feeds last synced 08:12</p>
+
+        <!-- KPI cards -->
+        <section aria-labelledby="kpi-heading" class="mb-6">
+          <h2 id="kpi-heading" class="sr-only">Key figures</h2>
+          <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div class="rounded-lg border border-slate-200 bg-white p-5">
+              <p class="text-sm font-medium text-slate-500">Revenue this month</p>
+              <p class="tabular mt-2 text-3xl font-bold text-slate-900">£42,780</p>
+              <p class="mt-1 text-sm"><span class="font-semibold text-emerald-700">+12.4%</span> <span class="text-slate-500">vs October</span></p>
+            </div>
+            <div class="rounded-lg border border-slate-200 bg-white p-5">
+              <p class="text-sm font-medium text-slate-500">Invoices due</p>
+              <p class="tabular mt-2 text-3xl font-bold text-slate-900">£18,350</p>
+              <p class="mt-1 text-sm"><span class="font-semibold text-amber-700">7 invoices</span> <span class="text-slate-500">· 2 overdue</span></p>
+            </div>
+            <div class="rounded-lg border border-slate-200 bg-white p-5">
+              <p class="text-sm font-medium text-slate-500">Expenses this month</p>
+              <p class="tabular mt-2 text-3xl font-bold text-slate-900">£27,115</p>
+              <p class="mt-1 text-sm"><span class="font-semibold text-rose-700">+3.1%</span> <span class="text-slate-500">vs October</span></p>
+            </div>
+            <div class="rounded-lg border border-slate-200 bg-white p-5">
+              <p class="text-sm font-medium text-slate-500">Cash in bank</p>
+              <p class="tabular mt-2 text-3xl font-bold text-slate-900">£61,204</p>
+              <p class="mt-1 text-sm text-slate-500">Across 2 accounts</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="grid gap-6 xl:grid-cols-3">
+          <!-- Cash-flow chart -->
+          <section aria-labelledby="cashflow-heading" class="rounded-lg border border-slate-200 bg-white p-5 xl:col-span-2">
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 id="cashflow-heading" class="font-semibold text-slate-900">Cash flow</h2>
+                <p class="text-sm text-slate-500">Money in and out, last six months</p>
+              </div>
+              <div class="flex items-center gap-4 text-xs text-slate-600">
+                <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-sm bg-blue-600"></span>Money in</span>
+                <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-sm bg-slate-300"></span>Money out</span>
+              </div>
+            </div>
+            <figure>
+              <svg viewBox="0 0 640 260" class="h-auto w-full" role="img" aria-labelledby="chart-title chart-desc">
+                <title id="chart-title">Monthly cash flow, June to November 2026</title>
+                <desc id="chart-desc">Money in rose from 31 thousand in June to 43 thousand in November; money out stayed between 24 and 29 thousand.</desc>
+                <g stroke="#e2e8f0" stroke-width="1">
+                  <line x1="50" y1="30" x2="620" y2="30"/><line x1="50" y1="80" x2="620" y2="80"/><line x1="50" y1="130" x2="620" y2="130"/><line x1="50" y1="180" x2="620" y2="180"/><line x1="50" y1="230" x2="620" y2="230"/>
+                </g>
+                <g fill="#64748b" font-size="11" text-anchor="end">
+                  <text x="42" y="34">£50k</text><text x="42" y="84">£40k</text><text x="42" y="134">£30k</text><text x="42" y="184">£20k</text><text x="42" y="234">£10k</text>
+                </g>
+                <!-- Bars: baseline y=230 for £10k, 5px per £1k. in/out values in £k -->
+                <g>
+                  <rect x="70"  y="125" width="32" height="105" rx="3" fill="#2563eb"/><rect x="106" y="160" width="32" height="70" rx="3" fill="#cbd5e1"/>
+                  <rect x="165" y="110" width="32" height="120" rx="3" fill="#2563eb"/><rect x="201" y="150" width="32" height="80" rx="3" fill="#cbd5e1"/>
+                  <rect x="260" y="140" width="32" height="90" rx="3" fill="#2563eb"/><rect x="296" y="145" width="32" height="85" rx="3" fill="#cbd5e1"/>
+                  <rect x="355" y="95"  width="32" height="135" rx="3" fill="#2563eb"/><rect x="391" y="155" width="32" height="75" rx="3" fill="#cbd5e1"/>
+                  <rect x="450" y="90"  width="32" height="140" rx="3" fill="#2563eb"/><rect x="486" y="140" width="32" height="90" rx="3" fill="#cbd5e1"/>
+                  <rect x="545" y="66"  width="32" height="164" rx="3" fill="#2563eb"/><rect x="581" y="144" width="32" height="86" rx="3" fill="#cbd5e1"/>
+                </g>
+                <g fill="#475569" font-size="12" text-anchor="middle">
+                  <text x="104" y="252">Jun</text><text x="199" y="252">Jul</text><text x="294" y="252">Aug</text><text x="389" y="252">Sep</text><text x="484" y="252">Oct</text><text x="579" y="252">Nov</text>
+                </g>
+              </svg>
+              <figcaption class="mt-3 text-sm text-slate-600">Net cash position improved by <span class="font-semibold text-slate-900">£15,665</span> this month. November money-in includes the Ashdown Hotel balance payment.</figcaption>
+            </figure>
+          </section>
+
+          <!-- Invoices due -->
+          <section aria-labelledby="due-heading" class="rounded-lg border border-slate-200 bg-white">
+            <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+              <h2 id="due-heading" class="font-semibold text-slate-900">Invoices due</h2>
+              <a href="#" class="text-sm font-medium text-blue-700 hover:underline">View all</a>
+            </div>
+            <ul class="divide-y divide-slate-100">
+              <li class="flex items-center justify-between px-5 py-3">
+                <div><p class="text-sm font-medium text-slate-900">Ashdown Hotel Group</p><p class="text-xs text-slate-500">INV-1042 · due 28 Oct</p></div>
+                <div class="text-right"><p class="tabular text-sm font-semibold text-slate-900">£6,400.00</p><span class="rounded bg-rose-100 px-1.5 py-0.5 text-xs font-semibold text-rose-700">8 days overdue</span></div>
+              </li>
+              <li class="flex items-center justify-between px-5 py-3">
+                <div><p class="text-sm font-medium text-slate-900">Bramble &amp; Finch Interiors</p><p class="text-xs text-slate-500">INV-1047 · due 2 Nov</p></div>
+                <div class="text-right"><p class="tabular text-sm font-semibold text-slate-900">£2,150.00</p><span class="rounded bg-rose-100 px-1.5 py-0.5 text-xs font-semibold text-rose-700">3 days overdue</span></div>
+              </li>
+              <li class="flex items-center justify-between px-5 py-3">
+                <div><p class="text-sm font-medium text-slate-900">Hollis Residential</p><p class="text-xs text-slate-500">INV-1051 · due 9 Nov</p></div>
+                <div class="text-right"><p class="tabular text-sm font-semibold text-slate-900">£4,800.00</p><span class="rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800">Due in 4 days</span></div>
+              </li>
+              <li class="flex items-center justify-between px-5 py-3">
+                <div><p class="text-sm font-medium text-slate-900">St Jude's Primary School</p><p class="text-xs text-slate-500">INV-1053 · due 14 Nov</p></div>
+                <div class="text-right"><p class="tabular text-sm font-semibold text-slate-900">£3,275.00</p><span class="rounded bg-slate-100 px-1.5 py-0.5 text-xs font-semibold text-slate-600">Due in 9 days</span></div>
+              </li>
+              <li class="flex items-center justify-between px-5 py-3">
+                <div><p class="text-sm font-medium text-slate-900">Peakwood Developments</p><p class="text-xs text-slate-500">INV-1054 · due 20 Nov</p></div>
+                <div class="text-right"><p class="tabular text-sm font-semibold text-slate-900">£1,725.00</p><span class="rounded bg-slate-100 px-1.5 py-0.5 text-xs font-semibold text-slate-600">Due in 15 days</span></div>
+              </li>
+            </ul>
+            <div class="border-t border-slate-200 px-5 py-3">
+              <button type="button" class="w-full rounded-md border border-slate-300 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Send reminders for overdue</button>
+            </div>
+          </section>
+        </div>
+
+        <!-- Recent transactions -->
+        <section aria-labelledby="tx-heading" class="mt-6 rounded-lg border border-slate-200 bg-white">
+          <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+            <h2 id="tx-heading" class="font-semibold text-slate-900">Recent transactions</h2>
+            <a href="#" class="text-sm font-medium text-blue-700 hover:underline">Go to banking</a>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead class="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th scope="col" class="px-5 py-3 font-semibold">Date</th>
+                  <th scope="col" class="px-5 py-3 font-semibold">Description</th>
+                  <th scope="col" class="px-5 py-3 font-semibold">Category</th>
+                  <th scope="col" class="px-5 py-3 font-semibold">Account</th>
+                  <th scope="col" class="px-5 py-3 text-right font-semibold">Amount</th>
+                  <th scope="col" class="px-5 py-3 font-semibold">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr>
+                  <td class="whitespace-nowrap px-5 py-3 text-slate-600">5 Nov</td>
+                  <td class="px-5 py-3 font-medium text-slate-900">Ashdown Hotel Group — INV-1038</td>
+                  <td class="px-5 py-3 text-slate-600">Sales</td>
+                  <td class="px-5 py-3 text-slate-600">Business current</td>
+                  <td class="tabular whitespace-nowrap px-5 py-3 text-right font-semibold text-emerald-700">+£9,600.00</td>
+                  <td class="px-5 py-3"><span class="rounded bg-emerald-100 px-1.5 py-0.5 text-xs font-semibold text-emerald-700">Reconciled</span></td>
+                </tr>
+                <tr>
+                  <td class="whitespace-nowrap px-5 py-3 text-slate-600">4 Nov</td>
+                  <td class="px-5 py-3 font-medium text-slate-900">Timberline Supplies Ltd</td>
+                  <td class="px-5 py-3 text-slate-600">Materials</td>
+                  <td class="px-5 py-3 text-slate-600">Business current</td>
+                  <td class="tabular whitespace-nowrap px-5 py-3 text-right font-semibold text-slate-900">−£3,842.60</td>
+                  <td class="px-5 py-3"><span class="rounded bg-emerald-100 px-1.5 py-0.5 text-xs font-semibold text-emerald-700">Reconciled</span></td>
+                </tr>
+                <tr>
+                  <td class="whitespace-nowrap px-5 py-3 text-slate-600">4 Nov</td>
+                  <td class="px-5 py-3 font-medium text-slate-900">Payroll — October</td>
+                  <td class="px-5 py-3 text-slate-600">Wages</td>
+                  <td class="px-5 py-3 text-slate-600">Business current</td>
+                  <td class="tabular whitespace-nowrap px-5 py-3 text-right font-semibold text-slate-900">−£14,210.00</td>
+                  <td class="px-5 py-3"><span class="rounded bg-emerald-100 px-1.5 py-0.5 text-xs font-semibold text-emerald-700">Reconciled</span></td>
+                </tr>
+                <tr>
+                  <td class="whitespace-nowrap px-5 py-3 text-slate-600">3 Nov</td>
+                  <td class="px-5 py-3 font-medium text-slate-900">Card payment — Screwfix Trade</td>
+                  <td class="px-5 py-3 text-slate-600"><span class="italic text-slate-400">Uncategorised</span></td>
+                  <td class="px-5 py-3 text-slate-600">Company card</td>
+                  <td class="tabular whitespace-nowrap px-5 py-3 text-right font-semibold text-slate-900">−£186.40</td>
+                  <td class="px-5 py-3"><span class="rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800">Needs review</span></td>
+                </tr>
+                <tr>
+                  <td class="whitespace-nowrap px-5 py-3 text-slate-600">2 Nov</td>
+                  <td class="px-5 py-3 font-medium text-slate-900">Hollis Residential — deposit</td>
+                  <td class="px-5 py-3 text-slate-600">Sales</td>
+                  <td class="px-5 py-3 text-slate-600">Business current</td>
+                  <td class="tabular whitespace-nowrap px-5 py-3 text-right font-semibold text-emerald-700">+£2,400.00</td>
+                  <td class="px-5 py-3"><span class="rounded bg-emerald-100 px-1.5 py-0.5 text-xs font-semibold text-emerald-700">Reconciled</span></td>
+                </tr>
+                <tr>
+                  <td class="whitespace-nowrap px-5 py-3 text-slate-600">1 Nov</td>
+                  <td class="px-5 py-3 font-medium text-slate-900">Unit 4 rent — Oakfield Estates</td>
+                  <td class="px-5 py-3 text-slate-600">Rent</td>
+                  <td class="px-5 py-3 text-slate-600">Business current</td>
+                  <td class="tabular whitespace-nowrap px-5 py-3 text-right font-semibold text-slate-900">−£2,950.00</td>
+                  <td class="px-5 py-3"><span class="rounded bg-emerald-100 px-1.5 py-0.5 text-xs font-semibold text-emerald-700">Reconciled</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

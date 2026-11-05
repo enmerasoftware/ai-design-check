@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brightmoss — Write better support replies, faster</title>
+<meta name="description" content="Brightmoss drafts accurate, on-brand replies for customer-support teams, grounded in your help center and past tickets.">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-moss-50: #f2f6ef;
+    --color-moss-100: #dfe9d8;
+    --color-moss-600: #4b6b3c;
+    --color-moss-800: #2c4023;
+    --color-moss-950: #141d10;
+    --color-sun: #f2c14e;
+  }
+</style>
+</head>
+<body class="bg-white text-moss-950 antialiased">
+<header class="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-moss-100">
+  <nav class="mx-auto max-w-6xl px-5 h-16 flex items-center justify-between" aria-label="Main">
+    <a href="#" class="flex items-center gap-2 font-semibold">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18c0-7 5-12 16-14-1 11-6 16-13 16" fill="#4b6b3c"/><circle cx="17" cy="6" r="2" fill="#f2c14e"/></svg>
+      Brightmoss
+    </a>
+    <ul class="hidden md:flex gap-7 text-sm text-moss-800">
+      <li><a href="#product" class="hover:text-moss-600">Product</a></li>
+      <li><a href="#integrations" class="hover:text-moss-600">Integrations</a></li>
+      <li><a href="#security" class="hover:text-moss-600">Security</a></li>
+      <li><a href="#results" class="hover:text-moss-600">Customers</a></li>
+    </ul>
+    <a href="#demo" class="rounded-lg bg-moss-800 text-white text-sm px-4 py-2 hover:bg-moss-600">Book a demo</a>
+  </nav>
+</header>
+
+<main>
+  <section class="bg-moss-50">
+    <div class="mx-auto max-w-6xl px-5 py-20 lg:py-28 grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight">Every reply sounds like your best agent wrote it.</h1>
+        <p class="mt-6 text-lg text-moss-800 max-w-lg">Brightmoss reads the ticket, checks your help center and past resolutions, and drafts a reply in your brand voice. Agents review, tweak and send. Customers get answers that are right the first time.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#demo" class="rounded-lg bg-moss-800 text-white px-5 py-3 font-medium hover:bg-moss-600">Book a 20-minute demo</a>
+          <a href="#product" class="rounded-lg bg-white border border-moss-100 px-5 py-3 font-medium hover:border-moss-600">See it in a ticket</a>
+        </div>
+        <p class="mt-5 text-sm text-moss-600">Works inside Zendesk, Intercom, Front and Freshdesk.</p>
+      </div>
+
+      <figure class="rounded-xl bg-white border border-moss-100 shadow-xl shadow-moss-800/10 overflow-hidden" aria-label="Example ticket with a drafted reply">
+        <div class="px-5 py-3 border-b border-moss-100 text-xs text-moss-600 flex justify-between"><span>Ticket #48213 · Billing</span><span>Waiting 3m</span></div>
+        <div class="p-5 space-y-4 text-sm">
+          <div>
+            <p class="font-medium">Dana Whitfield</p>
+            <p class="mt-1 text-moss-800">Hi, I was charged twice for March. Can you refund one of them? It's the annual plan.</p>
+          </div>
+          <div class="rounded-lg bg-moss-50 border border-moss-100 p-4">
+            <p class="text-xs font-medium text-moss-600 flex items-center gap-1.5"><span class="size-2 rounded-full bg-sun"></span>Draft by Brightmoss · 2 sources</p>
+            <p class="mt-2 leading-relaxed">Hi Dana, thanks for flagging this, and sorry for the double charge. I can see two payments of $348 on March 3. I've refunded the second one just now; it should reach your card within 5–7 business days. Your annual plan stays active until March 2027.</p>
+            <div class="mt-3 flex flex-wrap gap-2 text-xs">
+              <span class="rounded bg-white border border-moss-100 px-2 py-0.5">Refund policy</span>
+              <span class="rounded bg-white border border-moss-100 px-2 py-0.5">Stripe: ch_3PqA…</span>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" class="rounded-md bg-moss-800 text-white px-3 py-1.5 text-xs">Send</button>
+            <button type="button" class="rounded-md border border-moss-100 px-3 py-1.5 text-xs">Edit</button>
+            <button type="button" class="rounded-md border border-moss-100 px-3 py-1.5 text-xs">Shorter</button>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="results" class="mx-auto max-w-6xl px-5 py-16">
+    <dl class="grid sm:grid-cols-3 gap-8 text-center">
+      <div><dt class="text-sm text-moss-600">Faster first response</dt><dd class="text-4xl font-semibold mt-1">41%</dd></div>
+      <div><dt class="text-sm text-moss-600">Fewer reopened tickets</dt><dd class="text-4xl font-semibold mt-1">28%</dd></div>
+      <div><dt class="text-sm text-moss-600">Drafts sent with light edits or none</dt><dd class="text-4xl font-semibold mt-1">83%</dd></div>
+    </dl>
+    <p class="mt-6 text-center text-xs text-moss-600">Median across 120 teams in their first 90 days, 2026.</p>
+  </section>
+
+  <section id="product" class="border-t border-moss-100">
+    <div class="mx-auto max-w-6xl px-5 py-24">
+      <h2 class="text-3xl font-semibold tracking-tight max-w-2xl">An assistant that knows your product, not just the language.</h2>
+      <div class="mt-14 grid md:grid-cols-3 gap-10">
+        <article>
+          <h3 class="font-semibold text-lg">Grounded in your sources</h3>
+          <p class="mt-2 text-moss-800">Drafts cite the help-center article, macro or past ticket they came from. If Brightmoss isn't sure, it says so and asks the agent.</p>
+        </article>
+        <article>
+          <h3 class="font-semibold text-lg">Your voice, enforced</h3>
+          <p class="mt-2 text-moss-800">Set tone rules once: no "unfortunately", always use first names, sign off as the team. Every draft follows them.</p>
+        </article>
+        <article>
+          <h3 class="font-semibold text-lg">Account-aware</h3>
+          <p class="mt-2 text-moss-800">Pulls plan, order status and recent payments from Stripe, Shopify or your own API so replies include real details.</p>
+        </article>
+        <article>
+          <h3 class="font-semibold text-lg">Translation built in</h3>
+          <p class="mt-2 text-moss-800">Agents write in English; customers read in any of 32 languages. Glossary terms stay exactly as you define them.</p>
+        </article>
+        <article>
+          <h3 class="font-semibold text-lg">Gap reports</h3>
+          <p class="mt-2 text-moss-800">See the questions your docs don't answer yet, ranked by ticket volume, with a suggested article outline.</p>
+        </article>
+        <article>
+          <h3 class="font-semibold text-lg">QA on every reply</h3>
+          <p class="mt-2 text-moss-800">Before sending, Brightmoss checks for missing steps, wrong links and promises your policy doesn't allow.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="integrations" class="bg-moss-950 text-moss-50">
+    <div class="mx-auto max-w-6xl px-5 py-20 grid lg:grid-cols-2 gap-10 items-center">
+      <div>
+        <h2 class="text-3xl font-semibold tracking-tight">Lives in the helpdesk you already use.</h2>
+        <p class="mt-4 text-moss-100/80">Install the app, connect your knowledge sources and agents see drafts in the reply box the same afternoon. No new tab to babysit.</p>
+      </div>
+      <ul class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+        <li class="rounded-lg border border-white/15 px-4 py-3">Zendesk</li>
+        <li class="rounded-lg border border-white/15 px-4 py-3">Intercom</li>
+        <li class="rounded-lg border border-white/15 px-4 py-3">Front</li>
+        <li class="rounded-lg border border-white/15 px-4 py-3">Freshdesk</li>
+        <li class="rounded-lg border border-white/15 px-4 py-3">Help Scout</li>
+        <li class="rounded-lg border border-white/15 px-4 py-3">Salesforce</li>
+        <li class="rounded-lg border border-white/15 px-4 py-3">Confluence</li>
+        <li class="rounded-lg border border-white/15 px-4 py-3">Notion</li>
+        <li class="rounded-lg border border-white/15 px-4 py-3">Shopify</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="security" class="mx-auto max-w-6xl px-5 py-24 grid md:grid-cols-[1fr_2fr] gap-10">
+    <h2 class="text-3xl font-semibold tracking-tight">Your customers' data stays yours.</h2>
+    <ul class="space-y-4 text-moss-800">
+      <li><strong class="text-moss-950">SOC 2 Type II and GDPR.</strong> Audited yearly, with a DPA ready to sign.</li>
+      <li><strong class="text-moss-950">No training on your tickets.</strong> Your conversations never improve anyone else's model.</li>
+      <li><strong class="text-moss-950">PII redaction.</strong> Card numbers, addresses and IDs are masked before anything leaves your helpdesk.</li>
+      <li><strong class="text-moss-950">EU or US hosting.</strong> Pick the region at setup.</li>
+    </ul>
+  </section>
+
+  <section id="demo" class="bg-moss-50 border-t border-moss-100">
+    <div class="mx-auto max-w-3xl px-5 py-20 text-center">
+      <h2 class="text-3xl font-semibold tracking-tight">Try it on your own tickets.</h2>
+      <p class="mt-3 text-moss-800">We'll connect a sandbox to your help center and show drafts for last week's real questions.</p>
+      <form class="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Thanks, we will be in touch';">
+        <label for="email" class="sr-only">Work email</label>
+        <input id="email" type="email" required placeholder="you@company.com" class="flex-1 rounded-lg border border-moss-100 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-moss-600">
+        <button type="submit" class="rounded-lg bg-moss-800 text-white px-5 py-3 font-medium hover:bg-moss-600">Book a demo</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-moss-100">
+  <div class="mx-auto max-w-6xl px-5 py-8 flex flex-col sm:flex-row justify-between gap-3 text-sm text-moss-600">
+    <p>© 2026 Brightmoss, Inc.</p>
+    <ul class="flex gap-5"><li><a href="#" class="hover:text-moss-950">Privacy</a></li><li><a href="#" class="hover:text-moss-950">Trust center</a></li><li><a href="#" class="hover:text-moss-950">Careers</a></li></ul>
+  </div>
+</footer>
+</body>
+</html>

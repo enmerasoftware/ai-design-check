@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ledgerly — Overview</title>
+  <meta name="description" content="Ledgerly home screen: revenue this month, invoices due, recent transactions and cash flow.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f1f5f9; }
+    .sidebar { width: 240px; min-height: 100vh; }
+    .sidebar .nav-link { color: #475569; border-radius: .375rem; }
+    .sidebar .nav-link.active { background-color: #eff6ff; color: #1d4ed8; }
+    .sidebar .nav-link:hover { background-color: #f1f5f9; }
+    .tabular { font-variant-numeric: tabular-nums; }
+    .kpi-value { font-size: 1.875rem; font-weight: 700; }
+    .avatar { width: 32px; height: 32px; font-size: .75rem; }
+    .legend-swatch { width: 12px; height: 12px; display: inline-block; border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="visually-hidden-focusable position-absolute top-0 start-0 m-2 bg-white px-3 py-2 rounded">Skip to content</a>
+
+  <div class="d-flex">
+    <aside class="sidebar bg-white border-end d-none d-lg-flex flex-column" aria-label="Sidebar">
+      <div class="d-flex align-items-center gap-2 fw-bold fs-5 px-4 py-4">
+        <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" rx="6" fill="#1d4ed8"/><path d="M8 7v12h10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        Ledgerly
+      </div>
+      <nav class="flex-grow-1 px-3" aria-label="Primary">
+        <ul class="nav flex-column gap-1 small fw-medium">
+          <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Overview</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Invoices</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Expenses</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Banking</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Contacts</a></li>
+        </ul>
+      </nav>
+      <div class="border-top px-4 py-3 small text-secondary">
+        <p class="fw-semibold text-dark mb-0">Marlow Joinery Ltd</p>
+        <p class="mb-0">Financial year ends 31 Mar 2027</p>
+      </div>
+    </aside>
+
+    <div class="flex-grow-1 min-w-0">
+      <header class="bg-white border-bottom px-3 px-sm-4 py-2 d-flex align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <button type="button" class="btn btn-light d-lg-none" aria-label="Open menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <h1 class="h5 fw-semibold mb-0">Good morning, Helen</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <label for="search" class="visually-hidden">Search</label>
+          <input id="search" type="search" class="form-control form-control-sm d-none d-md-block" style="width: 260px" placeholder="Search invoices, contacts…">
+          <button type="button" class="btn btn-primary btn-sm fw-semibold">New invoice</button>
+          <span class="avatar rounded-circle bg-dark text-white fw-bold d-flex align-items-center justify-content-center" aria-label="Helen Marlow">HM</span>
+        </div>
+      </header>
+
+      <main id="main" class="p-3 p-sm-4">
+        <p class="small text-secondary mb-4">Thursday, 5 November 2026 · Bank feeds last synced 08:12</p>
+
+        <section aria-labelledby="kpi-heading" class="mb-4">
+          <h2 id="kpi-heading" class="visually-hidden">Key figures</h2>
+          <div class="row g-3">
+            <div class="col-sm-6 col-xl-3">
+              <div class="card h-100"><div class="card-body">
+                <p class="small text-secondary fw-medium mb-1">Revenue this month</p>
+                <p class="kpi-value tabular mb-1">£42,780</p>
+                <p class="small mb-0"><span class="fw-semibold text-success">+12.4%</span> <span class="text-secondary">vs October</span></p>
+              </div></div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card h-100"><div class="card-body">
+                <p class="small text-secondary fw-medium mb-1">Invoices due</p>
+                <p class="kpi-value tabular mb-1">£18,350</p>
+                <p class="small mb-0"><span class="fw-semibold text-warning-emphasis">7 invoices</span> <span class="text-secondary">· 2 overdue</span></p>
+              </div></div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card h-100"><div class="card-body">
+                <p class="small text-secondary fw-medium mb-1">Expenses this month</p>
+                <p class="kpi-value tabular mb-1">£27,115</p>
+                <p class="small mb-0"><span class="fw-semibold text-danger">+3.1%</span> <span class="text-secondary">vs October</span></p>
+              </div></div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card h-100"><div class="card-body">
+                <p class="small text-secondary fw-medium mb-1">Cash in bank</p>
+                <p class="kpi-value tabular mb-1">£61,204</p>
+                <p class="small text-secondary mb-0">Across 2 accounts</p>
+              </div></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="row g-4">
+          <div class="col-xl-8">
+            <section aria-labelledby="cashflow-heading" class="card h-100">
+              <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                  <div>
+                    <h2 id="cashflow-heading" class="h6 fw-semibold mb-0">Cash flow</h2>
+                    <p class="small text-secondary mb-0">Money in and out, last six months</p>
+                  </div>
+                  <div class="d-flex gap-3 small text-secondary">
+                    <span><span class="legend-swatch me-1" style="background:#2563eb"></span>Money in</span>
+                    <span><span class="legend-swatch me-1" style="background:#cbd5e1"></span>Money out</span>
+                  </div>
+                </div>
+                <figure class="mb-0">
+                  <svg viewBox="0 0 640 260" class="w-100 h-auto" role="img" aria-labelledby="chart-title chart-desc">
+                    <title id="chart-title">Monthly cash flow, June to November 2026</title>
+                    <desc id="chart-desc">Money in rose from 31 thousand in June to 43 thousand in November; money out stayed between 24 and 29 thousand.</desc>
+                    <g stroke="#e2e8f0" stroke-width="1">
+                      <line x1="50" y1="30" x2="620" y2="30"/><line x1="50" y1="80" x2="620" y2="80"/><line x1="50" y1="130" x2="620" y2="130"/><line x1="50" y1="180" x2="620" y2="180"/><line x1="50" y1="230" x2="620" y2="230"/>
+                    </g>
+                    <g fill="#64748b" font-size="11" text-anchor="end">
+                      <text x="42" y="34">£50k</text><text x="42" y="84">£40k</text><text x="42" y="134">£30k</text><text x="42" y="184">£20k</text><text x="42" y="234">£10k</text>
+                    </g>
+                    <g>
+                      <rect x="70"  y="125" width="32" height="105" rx="3" fill="#2563eb"/><rect x="106" y="160" width="32" height="70" rx="3" fill="#cbd5e1"/>
+                      <rect x="165" y="110" width="32" height="120" rx="3" fill="#2563eb"/><rect x="201" y="150" width="32" height="80" rx="3" fill="#cbd5e1"/>
+                      <rect x="260" y="140" width="32" height="90" rx="3" fill="#2563eb"/><rect x="296" y="145" width="32" height="85" rx="3" fill="#cbd5e1"/>
+                      <rect x="355" y="95"  width="32" height="135" rx="3" fill="#2563eb"/><rect x="391" y="155" width="32" height="75" rx="3" fill="#cbd5e1"/>
+                      <rect x="450" y="90"  width="32" height="140" rx="3" fill="#2563eb"/><rect x="486" y="140" width="32" height="90" rx="3" fill="#cbd5e1"/>
+                      <rect x="545" y="66"  width="32" height="164" rx="3" fill="#2563eb"/><rect x="581" y="144" width="32" height="86" rx="3" fill="#cbd5e1"/>
+                    </g>
+                    <g fill="#475569" font-size="12" text-anchor="middle">
+                      <text x="104" y="252">Jun</text><text x="199" y="252">Jul</text><text x="294" y="252">Aug</text><text x="389" y="252">Sep</text><text x="484" y="252">Oct</text><text x="579" y="252">Nov</text>
+                    </g>
+                  </svg>
+                  <figcaption class="small text-secondary mt-2">Net cash position improved by <strong class="text-dark">£15,665</strong> this month. November money-in includes the Ashdown Hotel balance payment.</figcaption>
+                </figure>
+              </div>
+            </section>
+          </div>
+
+          <div class="col-xl-4">
+            <section aria-labelledby="due-heading" class="card h-100">
+              <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h2 id="due-heading" class="h6 fw-semibold mb-0">Invoices due</h2>
+                <a href="#" class="small text-decoration-none">View all</a>
+              </div>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div><p class="small fw-medium mb-0">Ashdown Hotel Group</p><p class="text-secondary mb-0" style="font-size:.75rem">INV-1042 · due 28 Oct</p></div>
+                  <div class="text-end"><p class="small fw-semibold tabular mb-0">£6,400.00</p><span class="badge bg-danger-subtle text-danger-emphasis">8 days overdue</span></div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div><p class="small fw-medium mb-0">Bramble &amp; Finch Interiors</p><p class="text-secondary mb-0" style="font-size:.75rem">INV-1047 · due 2 Nov</p></div>
+                  <div class="text-end"><p class="small fw-semibold tabular mb-0">£2,150.00</p><span class="badge bg-danger-subtle text-danger-emphasis">3 days overdue</span></div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div><p class="small fw-medium mb-0">Hollis Residential</p><p class="text-secondary mb-0" style="font-size:.75rem">INV-1051 · due 9 Nov</p></div>
+                  <div class="text-end"><p class="small fw-semibold tabular mb-0">£4,800.00</p><span class="badge bg-warning-subtle text-warning-emphasis">Due in 4 days</span></div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div><p class="small fw-medium mb-0">St Jude's Primary School</p><p class="text-secondary mb-0" style="font-size:.75rem">INV-1053 · due 14 Nov</p></div>
+                  <div class="text-end"><p class="small fw-semibold tabular mb-0">£3,275.00</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Due in 9 days</span></div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div><p class="small fw-medium mb-0">Peakwood Developments</p><p class="text-secondary mb-0" style="font-size:.75rem">INV-1054 · due 20 Nov</p></div>
+                  <div class="text-end"><p class="small fw-semibold tabular mb-0">£1,725.00</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Due in 15 days</span></div>
+                </li>
+              </ul>
+              <div class="card-footer bg-white">
+                <button type="button" class="btn btn-outline-secondary btn-sm w-100">Send reminders for overdue</button>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <section aria-labelledby="tx-heading" class="card mt-4">
+          <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h2 id="tx-heading" class="h6 fw-semibold mb-0">Recent transactions</h2>
+            <a href="#" class="small text-decoration-none">Go to banking</a>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 small">
+              <thead class="table-light text-uppercase text-secondary" style="font-size:.7rem; letter-spacing:.04em">
+                <tr>
+                  <th scope="col">Date</th><th scope="col">Description</th><th scope="col">Category</th><th scope="col">Account</th><th scope="col" class="text-end">Amount</th><th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="text-nowrap text-secondary">5 Nov</td><td class="fw-medium">Ashdown Hotel Group — INV-1038</td><td class="text-secondary">Sales</td><td class="text-secondary">Business current</td><td class="text-end text-nowrap fw-semibold text-success tabular">+£9,600.00</td><td><span class="badge bg-success-subtle text-success-emphasis">Reconciled</span></td></tr>
+                <tr><td class="text-nowrap text-secondary">4 Nov</td><td class="fw-medium">Timberline Supplies Ltd</td><td class="text-secondary">Materials</td><td class="text-secondary">Business current</td><td class="text-end text-nowrap fw-semibold tabular">−£3,842.60</td><td><span class="badge bg-success-subtle text-success-emphasis">Reconciled</span></td></tr>
+                <tr><td class="text-nowrap text-secondary">4 Nov</td><td class="fw-medium">Payroll — October</td><td class="text-secondary">Wages</td><td class="text-secondary">Business current</td><td class="text-end text-nowrap fw-semibold tabular">−£14,210.00</td><td><span class="badge bg-success-subtle text-success-emphasis">Reconciled</span></td></tr>
+                <tr><td class="text-nowrap text-secondary">3 Nov</td><td class="fw-medium">Card payment — Screwfix Trade</td><td class="text-secondary fst-italic">Uncategorised</td><td class="text-secondary">Company card</td><td class="text-end text-nowrap fw-semibold tabular">−£186.40</td><td><span class="badge bg-warning-subtle text-warning-emphasis">Needs review</span></td></tr>
+                <tr><td class="text-nowrap text-secondary">2 Nov</td><td class="fw-medium">Hollis Residential — deposit</td><td class="text-secondary">Sales</td><td class="text-secondary">Business current</td><td class="text-end text-nowrap fw-semibold text-success tabular">+£2,400.00</td><td><span class="badge bg-success-subtle text-success-emphasis">Reconciled</span></td></tr>
+                <tr><td class="text-nowrap text-secondary">1 Nov</td><td class="fw-medium">Unit 4 rent — Oakfield Estates</td><td class="text-secondary">Rent</td><td class="text-secondary">Business current</td><td class="text-end text-nowrap fw-semibold tabular">−£2,950.00</td><td><span class="badge bg-success-subtle text-success-emphasis">Reconciled</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

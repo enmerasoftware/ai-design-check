@@ -34,6 +34,26 @@
 
 **How to fix:** Shorten the label; do not shrink the font.
 
+### No arrow on every call to action
+
+`no-arrow-suffix` · note · checked
+
+**Rule:** Buttons and links do not end in an arrow (→, ›, » or an arrow icon) as a habit; one such link is fine.
+
+**Why:** The label already says where it goes; an arrow on every action is a generated-page habit.
+
+**How to fix:** Remove the arrows; keep one only where it marks moving on, such as the next step.
+
+### No lists strung on middle dots
+
+`no-middle-dot-lists` · note · checked
+
+**Rule:** Short lines do not string three or more items on · or • ("Fast · Private · Free"); a footer line and a dated byline are fine.
+
+**Why:** Three words on dots say less than a sentence would; the shape is a generated-page habit.
+
+**How to fix:** Write it as one sentence, or keep the one item that matters.
+
 ### No full stop on buttons and labels
 
 `no-trailing-period-labels` · note · checked
@@ -302,7 +322,7 @@
 
 `radius-scale` · error · checked
 
-**Rule:** Use rounded-md … rounded-3xl and rounded-full; large marketing surfaces get one shared token (rounded-panel). Arbitrary radii only for micro elements up to 5 px and for drawn device or icon shapes.
+**Rule:** Use rounded-md … rounded-3xl and rounded-full; large marketing surfaces get one shared token (rounded-panel). Arbitrary radii only for micro elements up to 5 px and for drawn device or icon shapes. In CSS a px radius is 6, 8, 12, 16, 20, 24 or 32, up to 5, or 999 and more.
 
 **Why:** 28, 30 and 32 px side by side read as noise, not as a system.
 
@@ -468,7 +488,7 @@
 
 `spacing-scale` · warning · checked
 
-**Rule:** Arbitrary spacing and sizes in px (mt-[13px], h-[31px], gap-[7px]) sit on the project's scale: the one in ai-design-check.json, else the one read from Tailwind or CSS variables, else the 4 px grid. App code (SwiftUI, Compose, Flutter, React Native) uses the config file or 4 pt/dp. Prefer the theme steps.
+**Rule:** Arbitrary spacing and sizes in px (mt-[13px], h-[31px], gap-[7px]; margin, padding, gap and offsets in CSS) sit on the project's scale: the one in ai-design-check.json, else the one read from Tailwind, Bootstrap's $spacer and $spacers, or CSS variables, else the 4 px grid. App code (SwiftUI, Compose, Flutter, React Native) uses the config file or 4 pt/dp. Prefer the theme steps.
 
 **Why:** Off-grid values are what a model types when it guesses; rows and gaps drift apart by a pixel or two and the screen looks uneven.
 
@@ -680,7 +700,7 @@
 
 ### No gradient text or purple gradients
 
-`no-ai-gradients` · error · checked
+`no-ai-gradients` · warning · checked
 
 **Rule:** Text is solid colour. No purple, violet or indigo gradients and no decorative radial halos behind sections.
 
@@ -732,11 +752,31 @@
 
 `no-announcement-pill` · warning · checked
 
-**Rule:** No "✨ Introducing X 2.0" pill above a hero headline unless it links to real, recent news; then it is a quiet text link.
+**Rule:** No small pill or badge ("✨ Introducing X 2.0", "Now in beta") above a hero headline unless it links to real, recent news; then it is a quiet text link.
 
 **Why:** It is the most copied hero template; the eye lands on it before the headline and finds nothing.
 
 **How to fix:** Remove it, or turn it into a plain link with a date.
+
+### No accent word in the headline
+
+`no-accent-word` · note · checked
+
+**Rule:** The main headline is one colour: no word or short run is picked out in an accent colour or in gradient text.
+
+**Why:** It is the most repeated hero recipe of generated pages: 8 of the 12 generated pages we measured had it, 1 of the 12 designed ones.
+
+**How to fix:** Set the headline in one colour and let the words carry the emphasis.
+
+### No coloured shadows
+
+`no-colored-shadow` · note · checked
+
+**Rule:** Cards, buttons and pictures cast a neutral shadow; it is not tinted with the brand or accent colour.
+
+**Why:** 8 of the 12 generated pages we measured had a coloured shadow and none of the 12 designed ones; it reads as glow, not depth.
+
+**How to fix:** Use a neutral shadow (black at low opacity) or a border, and keep the colour for the fill.
 
 ### No sparkle icon for anything AI
 
@@ -820,7 +860,7 @@
 
 ### A background chosen, not defaulted
 
-`no-default-cream` · note · checked
+`no-default-cream` · warning · checked
 
 **Rule:** The page ground is not the warm cream or beige that generated pages reach for by reflex. Small cream areas are fine; the whole page needs a reason.
 
@@ -860,7 +900,7 @@
 
 ### No radial glow behind content
 
-`no-radial-halo` · warning · checked
+`no-radial-halo` · note · checked
 
 **Rule:** A saturated radial gradient fading to transparent is not used as a background spotlight or cloud.
 
@@ -1004,7 +1044,7 @@
 
 `focus-ring-removed` · error · checked
 
-**Rule:** outline-none / outline-hidden only together with a visible focus-visible style (ring, outline or border) on the same element.
+**Rule:** outline-none / outline-hidden only together with a visible focus-visible style (ring, outline or border) on the same element. In CSS, outline: none needs a box-shadow, border or outline in the same rule or a :focus-visible rule; Bootstrap's shadow-none on a .btn or .form-control needs focus-ring.
 
 **Why:** Keyboard users lose their place. WCAG 2.4.7 (focus visible), 2.4.11 (focus not obscured).
 
@@ -1074,7 +1114,7 @@
 
 ### No auto-scrolling strips
 
-`no-marquee` · warning · checked
+`no-marquee` · note · checked
 
 **Rule:** Content does not scroll by itself.
 

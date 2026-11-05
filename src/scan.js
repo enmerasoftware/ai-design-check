@@ -21,7 +21,7 @@ export async function scanWith(browser, url, { width = 1440, config = {}, quick 
         const landed = await assertLanded(browser, url, { allowRedirect });
         if (landed) onLanded?.(landed);
         // Lazy images and on-scroll reveals get their chance before anything counts as hidden.
-        await browser.evaluate('(async () => { document.documentElement.style.scrollBehavior = "auto"; for (let y = 0; y < Math.min(document.documentElement.scrollHeight, 40000); y += innerHeight / 2) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 40)); } scrollTo(0, 0); await document.fonts.ready; await new Promise((r) => setTimeout(r, ' + (quick ? 0 : 200) + ')); })()');
+        await browser.evaluate('(async () => { const root = () => document.documentElement; if (root()) root().style.scrollBehavior = "auto"; for (let y = 0; y < Math.min(root()?.scrollHeight ?? 0, 40000); y += innerHeight / 2) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 40)); } scrollTo(0, 0); await document.fonts.ready; await new Promise((r) => setTimeout(r, ' + (quick ? 0 : 200) + ')); })()');
         // A page with nothing on it has no findings, and that is not good news (an empty #root whose bundle failed).
         if (requireContent && await browser.evaluate('!document.body || (!document.body.innerText.trim() && !document.querySelector("img,svg,canvas,video,iframe"))')) throw new Error(`${url} rendered an empty page${errors[0] ? `: ${errors[0]}` : ''}`);
         const hits = await browser.evaluate(`(${scanPage.toString()})(${JSON.stringify(config.designSystem ?? null)})`);

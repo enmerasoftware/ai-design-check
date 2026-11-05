@@ -261,7 +261,8 @@ export function scanPage(designSystem) {
             const apart = ink && base && ink.a >= 0.5 && chroma(ink) > 0.2 && Math.abs(ink.r - base.r) + Math.abs(ink.g - base.g) + Math.abs(ink.b - base.b) >= 80;
             // A badge or a highlight has a ground of its own; an italic serif word is no-italic-serif-hero's.
             if ((!gradient && (parse(look.backgroundColor)?.a ?? 0) >= 0.1) || (italicHero && hero.el === h1.el && italicSerif(look))) continue;
-            if (gradient || apart) {
+            // Gradient text is no-ai-gradients' already, an error of its own: one thing, one finding.
+            if (apart && !gradient) {
                 hit('no-accent-word', `"${short(value)}" in "${short(whole)}"`);
                 break;
             }
@@ -496,7 +497,23 @@ export function scanPage(designSystem) {
     if (/^(Inter|Roboto|Fraunces|Geist|Plus Jakarta Sans|Space Grotesk|DM Sans|Poppins|Open Sans)\b/.test(topFont ?? '')) hit('no-overused-font', topFont);
     const page = parse(getComputedStyle(document.body).backgroundColor) ?? parse(getComputedStyle(document.documentElement).backgroundColor);
     if (page && lum(page) > 0.7 && hue(page) >= 30 && hue(page) <= 65 && chroma(page) >= 0.015 && chroma(page) <= 0.12) hit('no-default-cream', hex(page));
-    if (document.documentElement.scrollWidth > vw + 1) hit('no-horizontal-overflow', `${document.documentElement.scrollWidth} px at ${vw} px`);
+    if (document.documentElement.scrollWidth > vw + 1) {
+        // Name what sticks out, so the fix has a place to start: the outermost elements past the right edge (a Bootstrap
+        // .row with gutters wider than its container's padding is the usual one). Fixed layers do not widen the page.
+        const wide = [];
+        for (const el of document.body.querySelectorAll('*')) {
+            if (wide.length >= 2) break;
+            const box = el.getBoundingClientRect();
+            if (box.right <= vw + 1 || box.width === 0 || wide.some((outer) => outer.contains(el)) || getComputedStyle(el).position === 'fixed') continue;
+            let held = false;
+            for (let node = el.parentElement; node && node !== document.body; node = node.parentElement) {
+                if (/(auto|scroll|hidden|clip)/.test(getComputedStyle(node).overflowX)) { held = true; break; }
+            }
+            if (!held) wide.push(el);
+        }
+        const label = (el) => el.tagName.toLowerCase() + [...el.classList].slice(0, 3).map((name) => `.${name}`).join('');
+        hit('no-horizontal-overflow', `${document.documentElement.scrollWidth} px at ${vw} px${wide.length ? `: ${wide.map(label).join(', ')}` : ''}`);
+    }
     for (const img of document.images) {
         if (!img.getAttribute('src') || (img.complete && !img.naturalWidth && getComputedStyle(img).display !== 'none')) hit('image-not-broken', img.getAttribute('src')?.slice(0, 80) || '(empty src)');
     }

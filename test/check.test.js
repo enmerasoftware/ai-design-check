@@ -162,7 +162,8 @@ test('accessibility is told apart from style', () => {
     const severity = (id) => rules.find((rule) => rule.id === id).severity;
     assert.equal(severity('focus-ring-removed'), 'error');
     assert.equal(severity('no-gradient-buttons'), 'warn');
-    assert.equal(severity('no-ai-gradients'), 'error');
+    // A warning since the benchmark: purple gradients fired on a quarter of human-designed sites and on no AI page.
+    assert.equal(severity('no-ai-gradients'), 'warn');
 
     const bin = join(dirname(fileURLToPath(import.meta.url)), '..', 'bin', 'ai-design-check.js');
     const { stdout } = spawnSync(process.execPath, [bin], { cwd: app, encoding: 'utf8' });

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ledgerly - Home</title>
+  <meta name="description" content="Ledgerly home: revenue this month, invoices due, recent transactions and cash flow.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .sidebar { width: 15rem; min-height: 100vh; }
+    .brand-mark { width: 2rem; height: 2rem; background: var(--bs-teal); }
+    .bar { transition: height .4s ease; border-radius: .25rem .25rem 0 0; }
+    .chart-area { height: 14rem; }
+    .kpi-value { font-variant-numeric: tabular-nums; }
+    @media (max-width: 991.98px) { .sidebar { display: none; } }
+  </style>
+</head>
+<body class="bg-body-tertiary text-body">
+  <div class="d-flex">
+
+    <!-- Sidebar -->
+    <aside class="sidebar sidebar bg-body border-end d-flex flex-column flex-shrink-0">
+      <div class="d-flex align-items-center gap-2 px-4 py-3 border-bottom" style="height:4rem;">
+        <span class="brand-mark rounded-2 d-inline-flex align-items-center justify-content-center text-white fw-bold">L</span>
+        <span class="fw-semibold fs-5">Ledgerly</span>
+      </div>
+      <nav class="nav nav-pills flex-column gap-1 p-3 small">
+        <a class="nav-link active" href="#" aria-current="page">Home</a>
+        <a class="nav-link link-body-emphasis" href="#">Invoices</a>
+        <a class="nav-link link-body-emphasis" href="#">Bills</a>
+        <a class="nav-link link-body-emphasis" href="#">Transactions</a>
+        <a class="nav-link link-body-emphasis" href="#">Customers</a>
+        <a class="nav-link link-body-emphasis" href="#">Reports</a>
+        <a class="nav-link link-body-emphasis" href="#">Settings</a>
+      </nav>
+      <div class="mt-auto border-top p-3 small">
+        <p class="fw-semibold mb-0">Harbour &amp; Co.</p>
+        <p class="text-secondary mb-0">Books close on Nov 30</p>
+      </div>
+    </aside>
+
+    <div class="flex-grow-1 min-w-0 d-flex flex-column">
+      <!-- Top bar -->
+      <header class="bg-body border-bottom d-flex align-items-center justify-content-between gap-3 px-4" style="height:4rem;">
+        <div>
+          <h1 class="h5 fw-semibold mb-0">Good morning, Dana</h1>
+          <p class="small text-secondary mb-0">Thursday, 5 November 2026</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-outline-secondary btn-sm">Export</button>
+          <button class="btn btn-success btn-sm">New invoice</button>
+          <span class="badge rounded-circle bg-secondary-subtle text-secondary-emphasis d-inline-flex align-items-center justify-content-center" style="width:2.25rem;height:2.25rem;">DM</span>
+        </div>
+      </header>
+
+      <main class="p-4">
+        <!-- KPI cards -->
+        <div class="row g-3">
+          <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+              <p class="small text-secondary mb-1">Revenue this month</p>
+              <p class="h4 fw-semibold kpi-value mb-2">$84,260</p>
+              <p class="small mb-0"><span class="text-success fw-medium">+12.4%</span> <span class="text-secondary">vs October</span></p>
+            </div></div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+              <p class="small text-secondary mb-1">Invoices due</p>
+              <p class="h4 fw-semibold kpi-value mb-2">$18,940</p>
+              <p class="small text-secondary mb-0">14 invoices, 3 overdue</p>
+            </div></div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+              <p class="small text-secondary mb-1">Expenses this month</p>
+              <p class="h4 fw-semibold kpi-value mb-2">$31,075</p>
+              <p class="small mb-0"><span class="text-danger fw-medium">+4.1%</span> <span class="text-secondary">vs October</span></p>
+            </div></div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+              <p class="small text-secondary mb-1">Cash on hand</p>
+              <p class="h4 fw-semibold kpi-value mb-2">$126,410</p>
+              <p class="small text-secondary mb-0">Across 3 accounts</p>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="row g-3 mt-1">
+          <!-- Cash flow chart -->
+          <div class="col-xl-8">
+            <section class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                  <div>
+                    <h2 class="h6 fw-semibold mb-0">Cash flow</h2>
+                    <p class="small text-secondary mb-0">Money in vs money out, last 8 weeks</p>
+                  </div>
+                  <div class="d-flex gap-3 small text-secondary">
+                    <span class="d-flex align-items-center gap-1"><span class="rounded-1 d-inline-block bg-success" style="width:.6rem;height:.6rem;"></span>Inflow</span>
+                    <span class="d-flex align-items-center gap-1"><span class="rounded-1 d-inline-block bg-secondary-subtle" style="width:.6rem;height:.6rem;"></span>Outflow</span>
+                  </div>
+                </div>
+                <!-- week: inflow %, outflow % -->
+                <div class="chart-area d-flex align-items-end gap-3 border-bottom mt-4 pb-2" role="img" aria-label="Weekly inflow and outflow bars for the last eight weeks">
+                  <div class="flex-fill d-flex align-items-end justify-content-center gap-1 h-100"><div class="bar bg-success w-100" style="height:58%"></div><div class="bar bg-secondary-subtle w-100" style="height:46%"></div></div>
+                  <div class="flex-fill d-flex align-items-end justify-content-center gap-1 h-100"><div class="bar bg-success w-100" style="height:64%"></div><div class="bar bg-secondary-subtle w-100" style="height:52%"></div></div>
+                  <div class="flex-fill d-flex align-items-end justify-content-center gap-1 h-100"><div class="bar bg-success w-100" style="height:49%"></div><div class="bar bg-secondary-subtle w-100" style="height:55%"></div></div>
+                  <div class="flex-fill d-flex align-items-end justify-content-center gap-1 h-100"><div class="bar bg-success w-100" style="height:72%"></div><div class="bar bg-secondary-subtle w-100" style="height:50%"></div></div>
+                  <div class="flex-fill d-flex align-items-end justify-content-center gap-1 h-100"><div class="bar bg-success w-100" style="height:68%"></div><div class="bar bg-secondary-subtle w-100" style="height:57%"></div></div>
+                  <div class="flex-fill d-flex align-items-end justify-content-center gap-1 h-100"><div class="bar bg-success w-100" style="height:81%"></div><div class="bar bg-secondary-subtle w-100" style="height:61%"></div></div>
+                  <div class="flex-fill d-flex align-items-end justify-content-center gap-1 h-100"><div class="bar bg-success w-100" style="height:76%"></div><div class="bar bg-secondary-subtle w-100" style="height:63%"></div></div>
+                  <div class="flex-fill d-flex align-items-end justify-content-center gap-1 h-100"><div class="bar bg-success w-100" style="height:88%"></div><div class="bar bg-secondary-subtle w-100" style="height:66%"></div></div>
+                </div>
+                <div class="d-flex justify-content-between small text-secondary mt-2">
+                  <span>Oct 9</span><span>Oct 16</span><span>Oct 23</span><span>Oct 30</span><span>Nov 5</span>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Invoices due -->
+          <div class="col-xl-4">
+            <section class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h2 class="h6 fw-semibold mb-0">Invoices due</h2>
+                  <a href="#" class="small text-success text-decoration-none fw-medium">View all</a>
+                </div>
+                <ul class="list-group list-group-flush mt-3 small">
+                  <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><div><p class="fw-medium mb-0">Alder Architects</p><span class="text-danger">Overdue 6 days</span></div><span class="fw-semibold">$4,200</span></li>
+                  <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><div><p class="fw-medium mb-0">Brimley Bakery</p><span class="text-danger">Overdue 2 days</span></div><span class="fw-semibold">$1,380</span></li>
+                  <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><div><p class="fw-medium mb-0">Coastline Dental</p><span class="text-secondary">Due Nov 8</span></div><span class="fw-semibold">$6,015</span></li>
+                  <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><div><p class="fw-medium mb-0">Juniper Yoga</p><span class="text-secondary">Due Nov 12</span></div><span class="fw-semibold">$2,400</span></li>
+                </ul>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Recent transactions -->
+        <section class="card border-0 shadow-sm mt-3">
+          <div class="card-header bg-body d-flex justify-content-between align-items-center py-3">
+            <h2 class="h6 fw-semibold mb-0">Recent transactions</h2>
+            <a href="#" class="small text-success text-decoration-none fw-medium">See all transactions</a>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 small">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" class="px-4 py-3 fw-medium">Date</th>
+                  <th scope="col" class="px-4 py-3 fw-medium">Description</th>
+                  <th scope="col" class="px-4 py-3 fw-medium">Category</th>
+                  <th scope="col" class="px-4 py-3 fw-medium text-end">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="px-4 text-secondary">Nov 4</td>
+                  <td class="px-4 fw-medium">Payment from Alder Architects</td>
+                  <td class="px-4"><span class="badge rounded-pill text-bg-success-subtle text-success-emphasis">Sales</span></td>
+                  <td class="px-4 text-end fw-semibold text-success font-monospace">+$3,800.00</td>
+                </tr>
+                <tr>
+                  <td class="px-4 text-secondary">Nov 3</td>
+                  <td class="px-4 fw-medium">Figma Professional</td>
+                  <td class="px-4"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">Software</span></td>
+                  <td class="px-4 text-end fw-semibold font-monospace">-$45.00</td>
+                </tr>
+                <tr>
+                  <td class="px-4 text-secondary">Nov 3</td>
+                  <td class="px-4 fw-medium">Payroll - October</td>
+                  <td class="px-4"><span class="badge rounded-pill text-bg-warning-subtle text-warning-emphasis">Payroll</span></td>
+                  <td class="px-4 text-end fw-semibold font-monospace">-$12,640.00</td>
+                </tr>
+                <tr>
+                  <td class="px-4 text-secondary">Nov 2</td>
+                  <td class="px-4 fw-medium">Coastline Dental deposit</td>
+                  <td class="px-4"><span class="badge rounded-pill text-bg-success-subtle text-success-emphasis">Sales</span></td>
+                  <td class="px-4 text-end fw-semibold text-success font-monospace">+$1,500.00</td>
+                </tr>
+                <tr>
+                  <td class="px-4 text-secondary">Oct 31</td>
+                  <td class="px-4 fw-medium">Office rent - November</td>
+                  <td class="px-4"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">Rent</span></td>
+                  <td class="px-4 text-end fw-semibold font-monospace">-$2,950.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

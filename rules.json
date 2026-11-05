@@ -508,7 +508,7 @@
     {
       "id": "no-ai-gradients",
       "area": "visual",
-      "severity": "error",
+      "severity": "warn",
       "title": {
         "en": "No gradient text or purple gradients",
         "tr": "Gradyan metin ve mor gradyan yok"
@@ -641,7 +641,7 @@
     {
       "id": "no-marquee",
       "area": "motion",
-      "severity": "warn",
+      "severity": "info",
       "title": {
         "en": "No auto-scrolling strips",
         "tr": "Kendiliğinden kayan şerit yok"
@@ -1943,7 +1943,7 @@
     {
       "id": "no-accent-word",
       "area": "visual",
-      "severity": "warn",
+      "severity": "info",
       "title": {
         "en": "No accent word in the headline",
         "tr": "Başlıkta renkle ayrılmış kelime yok"
@@ -1969,7 +1969,7 @@
     {
       "id": "no-colored-shadow",
       "area": "visual",
-      "severity": "warn",
+      "severity": "info",
       "title": {
         "en": "No coloured shadows",
         "tr": "Renkli gölge yok"
@@ -3054,7 +3054,7 @@
     {
       "id": "no-default-cream",
       "area": "visual",
-      "severity": "info",
+      "severity": "warn",
       "title": {
         "en": "A background chosen, not defaulted",
         "tr": "Varsayılan değil, seçilmiş zemin"
@@ -3447,7 +3447,7 @@
     {
       "id": "no-radial-halo",
       "area": "visual",
-      "severity": "warn",
+      "severity": "info",
       "title": {
         "en": "No radial glow behind content",
         "tr": "İçeriğin arkasında dairesel parıltı yok"

@@ -6,7 +6,7 @@
 [![license: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [English](README.md) · [Türkçe](README.tr.md)
 
-Claude Code、Cursor、Codex で開発するすべての人へ。137 のデザインルール、依存関係も API キーも不要なチェッカー、そして画面を修復するエージェントスキルを提供します。Web プロジェクト（React、Vue、Svelte、Laravel Blade、HTML）と、SwiftUI、Jetpack Compose、Flutter、React Native のアプリを読み取れます。問題の検出にエージェントは不要で、機械的な修正にも必要ありません。
+Claude Code、Cursor、Codex で開発するすべての人へ。141 のデザインルール、依存関係も API キーも不要なチェッカー、そして画面を修復するエージェントスキルを提供します。Web プロジェクト（React、Vue、Svelte、Laravel Blade、HTML。Tailwind、Bootstrap、素の CSS のいずれでも）と、SwiftUI、Jetpack Compose、Flutter、React Native のアプリを読み取れます。問題の検出にエージェントは不要で、機械的な修正にも必要ありません。
 
 ## 3 ステップで始める
 
@@ -68,7 +68,7 @@ npx skills add enmerasoftware/ai-design-check
 
 ## 検出できること
 
-67 のルールがコードを読み（うち 33 はアプリのコードも対象）、55 のルールが実行中のページを読みます（`scan`）。両方に当てはまるルールもあります。残りの 33 は画面を目で確認する必要があるため *review* として扱い、あなたと修正スキルに任せます。各ルールには、何をすべきか、その理由、修正方法が英語とトルコ語で書かれています：[RULES.md](RULES.md)。
+67 のルールがコードを読み（うち 33 はアプリのコードも対象）、60 のルールが実行中のページを読みます（`scan`）。両方に当てはまるルールもあります。残りの 33 は画面を目で確認する必要があるため *review* として扱い、あなたと修正スキルに任せます。各ルールには、何をすべきか、その理由、修正方法が英語とトルコ語で書かれています：[RULES.md](RULES.md)。
 
 | 分野 | 例 |
 |---|---|
@@ -78,7 +78,7 @@ npx skills add enmerasoftware/ai-design-check
 | 文章とコピー | センテンスケース、字間を広げた大文字ラベルを使わない、バズワードを使わない、動作がわかるボタン、対処法がわかるエラー |
 | コンポーネント | ボタンと入力欄は共有コンポーネントから、外部からのスタイル指定をしない、繰り返されるマークアップはコンポーネントにする |
 | レイアウト | 4 px グリッドに沿った余白と階層ごとに 1 つの間隔、幅の広い表はページ全体に広げる、スマートフォンでも各セルに十分な幅 |
-| ビジュアル言語 | 絵文字ではなく線画アイコン、グラデーション文字や紫のグラデーションを使わない、サイドのストライプを使わない、グローはグラフのみ |
+| ビジュアル言語 | 絵文字ではなく線画アイコン、グラデーション文字や紫のグラデーションを使わない、サイドのストライプを使わない、色付きの影を使わない、グローはグラフのみ |
 | モーション | `transition-all` を使わない、バウンスを使わない、モーション軽減の設定を尊重する、パルスはライブデータのみ、反応は 300 ms 以内、終わりのないループを使わない |
 | データ | 数値には比較対象を添える、等幅数字、空の状態 |
 | ローカライズ | ロケールに応じた大文字・小文字の変換（トルコ語の i/İ）、数値はフォーマッター経由、正しい複数形 |
@@ -88,9 +88,11 @@ npx skills add enmerasoftware/ai-design-check
 
 ## 実行中のページとリデザイン
 
-`scan` は、モデルも API キーも使わずに、お使いの Chrome でページをデスクトップとスマートフォンの幅で開きます。ソースからはわからないもの、つまり実際のコントラスト、サイズ、何が何を覆っているか、壊れた画像、スクリプトエラー、いつまでも表示されないコンテンツを読み取ります。プルリクエスト向けには `--format github` を付けます。設定に `designSystem`（`fonts`、`sizes`、`radii`、`colors`）があれば、そこから外れているものも指摘します。
+`scan` は、モデルも API キーも使わずに、お使いの Chrome でページをデスクトップとスマートフォンの幅で開きます。ソースからはわからないもの、つまり実際のコントラスト、サイズ、何が何を覆っているか、壊れた画像、スクリプトエラー、いつまでも表示されないコンテンツを読み取ります。Chrome が計算するすべての色（Tailwind 4 の `oklch()` を含む）を読み、生成されたページによく見られる癖も見つけます。見出しの中で色を変えた 1 語、色付きの影、すべての行動喚起ボタンの末尾に付いた矢印、中黒（·）でつないだリスト、見出しの上に置かれたバッジです。
 
-`redesign` は、エージェント（Claude Code または Codex）が必要な唯一の機能です。ページが何を見せるべきかを決めるには判断が必要だからです。エージェントはスクリーンショット、コード、主題を調べ、セクションごとに 1 枚のカードを書きます。カードには、何を伝えているか、何が問題か、そのコンテンツ自体から生まれるアイデア、サイトから使う色を記します。カードは計測したページと照合されます。その後、番号付きの修正とカードが新しい git ブランチ上で 1 段階ずつ適用され、コンテンツが失われたり、ルールのエラーが増えたり、見た目が悪くなったりした段階は破棄されます。`--plan` はカードを書いた時点で止まるので、内容を読んで編集できます。`--brief` はそのカードをもとに実装します。
+読み込めなかったページ、エラーを返したページ、サインインページへ転送されたページは、問題なしとはみなさず、終了コード 2 で止まります。サインインが必要なページには `--cookie "name=value"` や `--header "Name: value"` を渡します。シェルの履歴や CI のログに残したくない場合は、環境変数 `AI_DESIGN_CHECK_COOKIE` と `AI_DESIGN_CHECK_HEADERS` を使えます。そうしたページを意図して確認するには `--allow-redirect` や `--allow-status 404` を使います。複数の URL を渡すと 1 回の実行でまとめて確認します。プルリクエスト向けには `--format github` を付けます。設定に `designSystem`（`fonts`、`sizes`、`radii`、`colors`）があれば、そこから外れているものも指摘します。
+
+`redesign` は、エージェント（Claude Code または Codex）が必要な唯一の機能です。ページが何を見せるべきかを決めるには判断が必要だからです。エージェントはスクリーンショット、コード、主題を調べ、セクションごとに 1 枚のカードを書きます。カードには、何を伝えているか、何が問題か、そのコンテンツ自体から生まれるアイデア、サイトから使う色を記します。カードは計測したページと照合されます。その後、番号付きの修正とカードが新しい git ブランチ上で 1 段階ずつ適用され、コンテンツが失われたり、ルールのエラーが増えたり、見た目が悪くなったりした段階は破棄されます。`--plan` はカードを書いた時点で止まるので、内容を読んで編集できます。`--brief` はそのカードをもとに実装します。作業ツリーがクリーンなときだけ開始し（先にコミットするか stash してください）、Ctrl-C を押すと途中の段階を元に戻します。
 
 ## モバイルアプリ
 
@@ -140,7 +142,7 @@ Claude Code では、同じスキルをプラグインとしてインストー�
 - run: npx @enmera/ai-design-check
 ```
 
-エラーがあると終了コード 1 で終了し、`--strict` を付けると警告でも同様に終了します。`--json` は機械向けの形式で出力し、`--format github` はプルリクエストのアノテーションを書き込みます。
+エラーがあると終了コード 1 で終了し、`--strict` を付けると警告でも同様に終了します。何も確認できなかったとき、またはオプションや設定が間違っているときは終了コード 2 で終了するため、パスの打ち間違いが合格扱いになることはありません。`--json` は機械向けの形式で出力し、`--format github` はプルリクエストのアノテーションを書き込みます。
 
 ### 既存のプロジェクトから始める
 
@@ -192,9 +194,11 @@ npx @enmera/ai-design-check system --character calm --brand "#1E5A63" --kind app
 |---|---|
 | フォント | UI、ディスプレイ、数字、コード用のフォントを、50 種類を収録したライブラリから選びます。`fonts --character calm` で候補を一覧表示できます |
 | 文字サイズのスケール | Dynamic Type と Material 3 に対応する 8 つの役割 |
-| 色 | ライトとダーク。すべての文字色は WCAG 2 を満たすまで調整されます |
+| 色 | ライトとダーク。ステータスのピルやボタンを含め、文字と背景のすべての組み合わせが WCAG 2 の 4.5:1 を満たします |
 | 形状 | 4 px の余白スケール、入れ子にできる角丸、コントロールの高さ、カードのパディング |
-| ファイル | `tokens.css`、Tailwind の `theme.css`、`tokens.json`、`DesignSystem.swift`、`DesignSystem.kt`、`preview.html` |
+| ファイル | `tokens.css`、Tailwind の `theme.css`、Bootstrap の `bootstrap.css` と `_variables.scss`、`tokens.json`、`DesignSystem.swift`、`DesignSystem.kt`、`preview.html` |
+
+Bootstrap 5.3 では、`bootstrap.css` を Bootstrap 本体の CSS の後に読み込みます。ライトが既定で、ダークは `data-bs-theme="dark"` の下で適用されます。ソースからビルドする場合は、Bootstrap より前に `_variables.scss` をインポートします。
 
 ### `story`：修正前後の動画
 
@@ -252,8 +256,9 @@ npx @enmera/ai-design-check init     # write a config with the defaults
 1. 設定ファイルの `spacing`。
 2. Tailwind 4 の `@theme`：`--spacing` がグリッドになり、`--spacing-*` がステップを追加します。
 3. `tailwind.config.*`。テキストとして読むだけで、実行はしません。`theme.spacing` はステップを置き換え、`theme.extend.spacing` は 4 px グリッドに追加します。関数、変数、スプレッド、プリセットはこの方法では読み取れません。
-4. `:root` の変数：`--spacing` がグリッドになり、`--space-*` と `--spacing-*` は 4 px グリッドにステップを追加するだけで、削除はしません。
-5. 4 px グリッド。
+4. SCSS 内の Bootstrap の `$spacer` と `$spacers`。テキストとして読み、そのステップを 4 px グリッドに追加します。
+5. `:root` の変数：`--spacing` がグリッドになり、`--space-*` と `--spacing-*` は 4 px グリッドにステップを追加するだけで、削除はしません。
+6. 4 px グリッド。
 
 存在するのに読み取れないソース（`calc()`、`clamp()`、内容が食い違う 2 つのファイル、1 つの数値ではないルートのフォントサイズ）の場合は、4 px グリッドのままレポートに注記を残します。推測はせず、後のソースも試しません。自分で決めるには `spacing` を設定してください。`base` のないリストを指定した場合、マージン、パディング、ギャップはリスト上の値でなければなりません。幅、高さ、オフセットはリストの公約数で割り切れれば十分です。
 
@@ -264,7 +269,7 @@ npx @enmera/ai-design-check init     # write a config with the defaults
 <details>
 <summary><strong>チェッカーが読み取るもの</strong></summary>
 
-`.tsx`、`.jsx`、`.vue`、`.svelte`、`.html`、Blade、CSS、i18n JSON、SwiftUI（`.swift`）、Jetpack Compose（`.kt`）。素の Node 20+ で動作します。クラスに関するルールはクラス文字列（`class`、`className`、`cn()`、`clsx()`、`cva()`、`twMerge()`）だけを読むため、コメントや文言にはマッチしません。
+`.tsx`、`.jsx`、`.vue`、`.svelte`、`.html`、Blade、CSS と SCSS、i18n JSON、SwiftUI（`.swift`）、Jetpack Compose（`.kt`）。素の Node 20+ で動作します。クラスに関するルールはクラス文字列（`class`、`className`、`cn()`、`clsx()`、`cva()`、`twMerge()`）だけを読むため、コメントや文言にはマッチしません。Tailwind のクラスも Bootstrap のクラスも理解します。CSS のルールは、スタイルシート、`<style>` ブロック、`style=""` 属性を宣言ごとに読みます。プロジェクトにコピーされたフレームワーク自身のスタイルシート（ライセンスのバナーで判別できる Bootstrap や Tailwind の出力など）は読みません。そこにある値はあなたではなくフレームワークが決めたものだからです。
 
 </details>
 
@@ -273,7 +278,7 @@ npx @enmera/ai-design-check init     # write a config with the defaults
 
 ルールは [`rules.json`](rules.json) にあります：`id`、`area`、`severity`、そして `en` と `tr` の `title`、`rule`、`why`、`fix`、さらに任意の `check` です。
 
-- `class`：クラス文字列に対するパターン。`unless`、`exceptElements`、`unlessBefore`、`css` を指定できます
+- `class`：クラス文字列に対するパターン（またはその一覧）。`unless`、`with`、`exceptElements`、`unlessBefore`、`css` を指定できます。`css` はスタイルシートに対するパターン、または宣言ごとに読む項目（`property`、`value`、`scale`、`hue` 付きの `gradient`、`selector`、`unless`、`unlessRule`）です
 - `native`：`swift` と `kt` の下にプラットフォームごとに 1 つのパターン。`notMultipleOf`、`min`、`max`、`unlessBefore`、`unlessAfter`、`onlyIf` を指定できます
 - `regex`：コメントを除いたコードに対するパターン。`flags` と `files` を指定できます
 - または構造的なチェック

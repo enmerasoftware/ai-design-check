@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tallyhoo — Time tracking for freelance designers</title>
+  <meta name="description" content="Tallyhoo tracks your design hours, turns them into invoices and shows you which clients are actually worth your time.">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .timer-ring { stroke-dasharray: 283; stroke-dashoffset: 70; transform: rotate(-90deg); transform-origin: 50% 50%; }
+  </style>
+</head>
+<body class="bg-white text-slate-800 antialiased">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+      <a href="#" class="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900" aria-label="Tallyhoo home">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <circle cx="14" cy="14" r="12" stroke="#0f766e" stroke-width="3"/>
+          <path d="M14 7v7l4 3" stroke="#0f766e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Tallyhoo
+      </a>
+      <nav class="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex" aria-label="Main">
+        <a href="#features" class="hover:text-slate-900">Features</a>
+        <a href="#how" class="hover:text-slate-900">How it works</a>
+        <a href="#pricing" class="hover:text-slate-900">Pricing</a>
+        <a href="#testimonials" class="hover:text-slate-900">Stories</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="#" class="hidden text-sm font-medium text-slate-600 hover:text-slate-900 sm:block">Log in</a>
+        <a href="#pricing" class="rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">Start free trial</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="relative overflow-hidden bg-gradient-to-b from-teal-50 to-white">
+      <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:py-28">
+        <div>
+          <p class="mb-4 inline-flex items-center gap-2 rounded-full border border-teal-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-teal-700">
+            <span class="h-2 w-2 rounded-full bg-teal-500"></span> Built for independent designers
+          </p>
+          <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+            Track every billable minute without breaking your flow.
+          </h1>
+          <p class="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
+            Tallyhoo sits quietly in your menu bar, notices when you switch between Figma, email and client calls, and turns your week into a clean, ready-to-send invoice.
+          </p>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a href="#pricing" class="rounded-lg bg-teal-700 px-6 py-3 text-center text-base font-semibold text-white shadow-md hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">Start your 14-day free trial</a>
+            <a href="#how" class="rounded-lg border border-slate-300 bg-white px-6 py-3 text-center text-base font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2">See how it works</a>
+          </div>
+          <p class="mt-4 text-sm text-slate-500">No credit card required. Cancel in two clicks.</p>
+        </div>
+
+        <!-- Product illustration -->
+        <div class="relative" aria-hidden="true">
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Currently tracking</p>
+                <p class="mt-1 text-lg font-bold text-slate-900">Harbour Coffee — Brand refresh</p>
+              </div>
+              <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Running</span>
+            </div>
+            <div class="mt-6 flex items-center gap-6">
+              <svg width="120" height="120" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" stroke-width="8"/>
+                <circle class="timer-ring" cx="50" cy="50" r="45" fill="none" stroke="#0f766e" stroke-width="8" stroke-linecap="round"/>
+                <text x="50" y="55" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">2:47</text>
+              </svg>
+              <ul class="flex-1 space-y-3 text-sm">
+                <li class="flex items-center justify-between"><span class="text-slate-600">Figma</span><span class="font-semibold text-slate-900">1h 52m</span></li>
+                <li class="flex items-center justify-between"><span class="text-slate-600">Client call</span><span class="font-semibold text-slate-900">35m</span></li>
+                <li class="flex items-center justify-between"><span class="text-slate-600">Email</span><span class="font-semibold text-slate-900">20m</span></li>
+              </ul>
+            </div>
+            <div class="mt-6 grid grid-cols-3 gap-3 border-t border-slate-100 pt-5 text-center">
+              <div><p class="text-xs text-slate-500">This week</p><p class="text-base font-bold text-slate-900">31.5h</p></div>
+              <div><p class="text-xs text-slate-500">Billable</p><p class="text-base font-bold text-teal-700">92%</p></div>
+              <div><p class="text-xs text-slate-500">Earned</p><p class="text-base font-bold text-slate-900">$2,835</p></div>
+            </div>
+          </div>
+          <div class="absolute -bottom-6 -left-6 hidden rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-lg sm:block">
+            <p class="text-xs text-slate-500">Invoice #0142 sent</p>
+            <p class="text-sm font-semibold text-slate-900">$4,120.00 · due in 14 days</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Logos / social proof -->
+    <section class="border-y border-slate-100 bg-slate-50 py-8">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <p class="text-center text-sm font-medium text-slate-500">Trusted by 12,000+ designers billing clients like</p>
+        <ul class="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-base font-bold text-slate-400">
+          <li>Northwind Studio</li><li>Pebble &amp; Pine</li><li>Lumen Labs</li><li>Orchard Health</li><li>Kestrel Finance</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="py-20">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <div class="mx-auto max-w-2xl text-center">
+          <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Everything you need to get paid for the work you actually do</h2>
+          <p class="mt-4 text-lg text-slate-600">Most time trackers were built for agencies with managers. Tallyhoo was built for one person wearing every hat.</p>
+        </div>
+        <div class="mt-14 grid gap-8 md:grid-cols-3">
+          <article class="rounded-2xl border border-slate-200 p-6">
+            <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-teal-100 text-teal-700">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-900">Automatic app detection</h3>
+            <p class="mt-2 text-slate-600">Tallyhoo notices when you open a client's Figma file or jump on a Zoom call and starts the right timer for you. Forgot to stop it? It asks before counting idle time.</p>
+          </article>
+          <article class="rounded-2xl border border-slate-200 p-6">
+            <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-teal-100 text-teal-700">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-900">One-click invoices</h3>
+            <p class="mt-2 text-slate-600">Pick a client and a date range. Tallyhoo groups the hours by task, applies your rate and sends a branded PDF with a Stripe payment link.</p>
+          </article>
+          <article class="rounded-2xl border border-slate-200 p-6">
+            <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-teal-100 text-teal-700">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M6 16V9M11 16V5M16 16v-6M21 16v-3"/></svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-900">Honest profitability reports</h3>
+            <p class="mt-2 text-slate-600">See your real hourly rate per client once revisions and unbilled calls are counted. You'll know which retainers to renegotiate before the next one lands.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="bg-slate-900 py-20 text-white">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Up and running before your coffee cools</h2>
+        <ol class="mt-12 grid gap-10 md:grid-cols-3">
+          <li>
+            <span class="text-sm font-bold text-teal-400">Step 1</span>
+            <h3 class="mt-2 text-xl font-semibold">Add your clients and rates</h3>
+            <p class="mt-2 text-slate-300">Import from your invoicing tool or type them in. Hourly, day rate or fixed fee per project, all supported.</p>
+          </li>
+          <li>
+            <span class="text-sm font-bold text-teal-400">Step 2</span>
+            <h3 class="mt-2 text-xl font-semibold">Work like you normally do</h3>
+            <p class="mt-2 text-slate-300">The menu bar app does the tracking. You can also tap a timer on your phone when you're sketching away from the desk.</p>
+          </li>
+          <li>
+            <span class="text-sm font-bold text-teal-400">Step 3</span>
+            <h3 class="mt-2 text-xl font-semibold">Review Friday, invoice Monday</h3>
+            <p class="mt-2 text-slate-300">A weekly digest shows what was tracked. Fix anything that looks off, then send the invoice from the same screen.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-20">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <h2 class="text-center text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Designers who stopped guessing</h2>
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
+          <blockquote class="rounded-2xl bg-slate-50 p-6">
+            <p class="text-slate-700">"I used to lose about four hours a week to untracked calls and quick fixes. Now they're on the invoice, and nobody has ever questioned a line item."</p>
+            <footer class="mt-4 flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-teal-700 text-sm font-bold text-white" aria-hidden="true">MR</span>
+              <div><p class="text-sm font-semibold text-slate-900">Maya Reyes</p><p class="text-xs text-slate-500">Brand designer, Lisbon</p></div>
+            </footer>
+          </blockquote>
+          <blockquote class="rounded-2xl bg-slate-50 p-6">
+            <p class="text-slate-700">"The profitability report was uncomfortable to look at the first time. It also got me to raise my rate with two clients, and both said yes."</p>
+            <footer class="mt-4 flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600 text-sm font-bold text-white" aria-hidden="true">DO</span>
+              <div><p class="text-sm font-semibold text-slate-900">Daniel Okafor</p><p class="text-xs text-slate-500">Product designer, Manchester</p></div>
+            </footer>
+          </blockquote>
+          <blockquote class="rounded-2xl bg-slate-50 p-6">
+            <p class="text-slate-700">"Invoicing used to take a whole evening at month end. With Tallyhoo it's fifteen minutes on a Friday, and I get paid faster because the payment link is right there."</p>
+            <footer class="mt-4 flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold text-white" aria-hidden="true">SK</span>
+              <div><p class="text-sm font-semibold text-slate-900">Sofia Kowalski</p><p class="text-xs text-slate-500">UX designer, Toronto</p></div>
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="bg-slate-50 py-20">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <div class="mx-auto max-w-2xl text-center">
+          <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Simple pricing, no per-seat nonsense</h2>
+          <p class="mt-4 text-lg text-slate-600">You're one person. You pay one price.</p>
+        </div>
+        <div class="mx-auto mt-12 grid max-w-4xl gap-6 md:grid-cols-2">
+          <div class="rounded-2xl border border-slate-200 bg-white p-8">
+            <h3 class="text-lg font-semibold text-slate-900">Solo</h3>
+            <p class="mt-2 text-4xl font-extrabold text-slate-900">$9<span class="text-base font-medium text-slate-500">/month</span></p>
+            <ul class="mt-6 space-y-3 text-sm text-slate-600">
+              <li class="flex gap-2"><span class="text-teal-700" aria-hidden="true">&#10003;</span> Unlimited clients and projects</li>
+              <li class="flex gap-2"><span class="text-teal-700" aria-hidden="true">&#10003;</span> Automatic app detection</li>
+              <li class="flex gap-2"><span class="text-teal-700" aria-hidden="true">&#10003;</span> 10 invoices per month</li>
+              <li class="flex gap-2"><span class="text-teal-700" aria-hidden="true">&#10003;</span> Mac, Windows and mobile apps</li>
+            </ul>
+            <a href="#" class="mt-8 block rounded-lg border border-slate-300 py-3 text-center font-semibold text-slate-800 hover:bg-slate-50">Start free trial</a>
+          </div>
+          <div class="relative rounded-2xl border-2 border-teal-700 bg-white p-8 shadow-lg">
+            <span class="absolute -top-3 left-6 rounded-full bg-teal-700 px-3 py-1 text-xs font-semibold text-white">Most popular</span>
+            <h3 class="text-lg font-semibold text-slate-900">Studio</h3>
+            <p class="mt-2 text-4xl font-extrabold text-slate-900">$19<span class="text-base font-medium text-slate-500">/month</span></p>
+            <ul class="mt-6 space-y-3 text-sm text-slate-600">
+              <li class="flex gap-2"><span class="text-teal-700" aria-hidden="true">&#10003;</span> Everything in Solo</li>
+              <li class="flex gap-2"><span class="text-teal-700" aria-hidden="true">&#10003;</span> Unlimited invoices with Stripe payment links</li>
+              <li class="flex gap-2"><span class="text-teal-700" aria-hidden="true">&#10003;</span> Profitability and retainer reports</li>
+              <li class="flex gap-2"><span class="text-teal-700" aria-hidden="true">&#10003;</span> Client portal for approving hours</li>
+            </ul>
+            <a href="#" class="mt-8 block rounded-lg bg-teal-700 py-3 text-center font-semibold text-white hover:bg-teal-800">Start free trial</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20">
+      <div class="mx-auto max-w-3xl px-4 text-center sm:px-6">
+        <h2 class="text-3xl font-bold tracking-tight text-slate-900">Your next invoice could be your most accurate one.</h2>
+        <p class="mt-4 text-lg text-slate-600">Join thousands of freelance designers who stopped estimating hours after the fact.</p>
+        <form class="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row" action="#" method="post">
+          <label for="email" class="sr-only">Email address</label>
+          <input id="email" name="email" type="email" required placeholder="you@yourstudio.com" class="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-base focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500">
+          <button type="submit" class="rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">Get started</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 py-10">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-sm text-slate-500 sm:px-6 md:flex-row">
+      <p>&copy; 2026 Tallyhoo Software Ltd. All rights reserved.</p>
+      <nav class="flex gap-6" aria-label="Footer">
+        <a href="#" class="hover:text-slate-800">Privacy</a>
+        <a href="#" class="hover:text-slate-800">Terms</a>
+        <a href="#" class="hover:text-slate-800">Changelog</a>
+        <a href="#" class="hover:text-slate-800">Support</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fernhook Pricing — SMS API plans</title>
+  <meta name="description" content="Simple per-message pricing for the Fernhook SMS API. Start free, scale to millions of messages, no contracts.">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] .chev { transform: rotate(180deg); }
+  </style>
+</head>
+<body class="bg-white text-zinc-800 antialiased">
+
+  <header class="border-b border-zinc-200">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+      <a href="#" class="flex items-center gap-2 text-lg font-bold text-zinc-900" aria-label="Fernhook home">
+        <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" rx="7" fill="#7c3aed"/><path d="M8 18V8h7M8 13h5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="17" cy="17" r="2" fill="#fff"/></svg>
+        Fernhook
+      </a>
+      <nav class="hidden gap-8 text-sm font-medium text-zinc-600 md:flex" aria-label="Main">
+        <a href="#" class="hover:text-zinc-900">Docs</a>
+        <a href="#" class="text-zinc-900" aria-current="page">Pricing</a>
+        <a href="#" class="hover:text-zinc-900">Coverage</a>
+        <a href="#" class="hover:text-zinc-900">Status</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="#" class="hidden text-sm font-medium text-zinc-600 hover:text-zinc-900 sm:block">Sign in</a>
+        <a href="#" class="rounded-md bg-violet-700 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2">Get API key</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="mx-auto max-w-6xl px-4 pb-8 pt-16 text-center sm:px-6">
+      <h1 class="text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl">Pay per message. Nothing else.</h1>
+      <p class="mx-auto mt-4 max-w-2xl text-lg text-zinc-600">No platform fees, no minimum commitments, no surprise charges for delivery receipts. Prices below are for the UK and US; see the coverage page for 190 other countries.</p>
+      <div class="mt-8 inline-flex rounded-lg border border-zinc-300 p-1 text-sm font-medium" role="group" aria-label="Billing period">
+        <button type="button" class="rounded-md bg-zinc-900 px-4 py-1.5 text-white" aria-pressed="true">Monthly</button>
+        <button type="button" class="rounded-md px-4 py-1.5 text-zinc-600 hover:text-zinc-900" aria-pressed="false">Annual <span class="text-violet-700">−15%</span></button>
+      </div>
+    </section>
+
+    <!-- Plans -->
+    <section aria-labelledby="plans-heading" class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <h2 id="plans-heading" class="sr-only">Plans</h2>
+      <div class="grid gap-6 lg:grid-cols-3">
+        <!-- Developer -->
+        <article class="flex flex-col rounded-2xl border border-zinc-200 p-8">
+          <h3 class="text-lg font-semibold text-zinc-900">Developer</h3>
+          <p class="mt-1 text-sm text-zinc-500">For side projects and prototypes</p>
+          <p class="mt-6 text-4xl font-extrabold text-zinc-900">$0<span class="text-base font-medium text-zinc-500">/month</span></p>
+          <p class="mt-1 text-sm text-zinc-600">then <strong>$0.0095</strong> per message</p>
+          <ul class="mt-8 flex-1 space-y-3 text-sm text-zinc-700">
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>500 free messages per month</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>1 shared short code or alphanumeric sender</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Delivery webhooks</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>10 requests per second</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Community support</li>
+          </ul>
+          <a href="#" class="mt-8 block rounded-md border border-zinc-300 py-2.5 text-center font-semibold text-zinc-800 hover:bg-zinc-50">Start for free</a>
+        </article>
+
+        <!-- Scale -->
+        <article class="relative flex flex-col rounded-2xl border-2 border-violet-700 p-8 shadow-lg">
+          <span class="absolute -top-3 left-8 rounded-full bg-violet-700 px-3 py-1 text-xs font-semibold text-white">Most teams pick this</span>
+          <h3 class="text-lg font-semibold text-zinc-900">Scale</h3>
+          <p class="mt-1 text-sm text-zinc-500">For products sending OTPs and notifications</p>
+          <p class="mt-6 text-4xl font-extrabold text-zinc-900">$49<span class="text-base font-medium text-zinc-500">/month</span></p>
+          <p class="mt-1 text-sm text-zinc-600">then <strong>$0.0072</strong> per message</p>
+          <ul class="mt-8 flex-1 space-y-3 text-sm text-zinc-700">
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>10,000 messages included</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Dedicated long numbers from $1.50/month</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Two-way messaging and inbound webhooks</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>200 requests per second</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Email support, 1 business day</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Up to 5 team members</li>
+          </ul>
+          <a href="#" class="mt-8 block rounded-md bg-violet-700 py-2.5 text-center font-semibold text-white hover:bg-violet-800">Start 14-day trial</a>
+        </article>
+
+        <!-- Enterprise -->
+        <article class="flex flex-col rounded-2xl border border-zinc-200 p-8">
+          <h3 class="text-lg font-semibold text-zinc-900">Enterprise</h3>
+          <p class="mt-1 text-sm text-zinc-500">For high-volume and regulated senders</p>
+          <p class="mt-6 text-4xl font-extrabold text-zinc-900">Custom</p>
+          <p class="mt-1 text-sm text-zinc-600">volume pricing from <strong>$0.0041</strong> per message</p>
+          <ul class="mt-8 flex-1 space-y-3 text-sm text-zinc-700">
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Everything in Scale</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Dedicated short codes and 10DLC registration</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>99.99% uptime SLA with credits</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Custom rate limits and direct carrier routes</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>SSO, audit logs, data residency</li>
+            <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 shrink-0 text-violet-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>24/7 support with a named engineer</li>
+          </ul>
+          <a href="#" class="mt-8 block rounded-md border border-zinc-300 py-2.5 text-center font-semibold text-zinc-800 hover:bg-zinc-50">Talk to sales</a>
+        </article>
+      </div>
+      <p class="mt-6 text-center text-sm text-zinc-500">Prices exclude VAT. Message prices apply to standard 160-character segments. Inbound messages are free on all plans.</p>
+    </section>
+
+    <!-- Code sample -->
+    <section class="bg-zinc-900 py-16 text-white">
+      <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2">
+        <div>
+          <h2 class="text-3xl font-bold tracking-tight">One request. That's the integration.</h2>
+          <p class="mt-4 text-zinc-300">Send your first message in under five minutes with the REST API or our SDKs for Node, Python, Go, Ruby and PHP. Delivery status comes back to your webhook, with retries if your server is having a bad day.</p>
+          <a href="#" class="mt-6 inline-block text-sm font-semibold text-violet-300 hover:text-violet-200">Read the quickstart &rarr;</a>
+        </div>
+        <pre class="overflow-x-auto rounded-xl border border-zinc-700 bg-zinc-950 p-5 text-sm leading-relaxed text-zinc-100"><code>curl https://api.fernhook.com/v1/messages \
+  -u "$FERNHOOK_API_KEY:" \
+  -d to="+447700900123" \
+  -d from="Fernhook" \
+  -d body="Your verification code is 482913."
+
+{
+  "id": "msg_01J9ZK3P7Q",
+  "status": "queued",
+  "segments": 1,
+  "price": "0.0072"
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section aria-labelledby="faq-heading" class="mx-auto max-w-3xl px-4 py-20 sm:px-6">
+      <h2 id="faq-heading" class="text-center text-3xl font-bold tracking-tight text-zinc-900">Frequently asked questions</h2>
+      <div class="mt-10 divide-y divide-zinc-200 border-y border-zinc-200">
+        <details class="group py-5">
+          <summary class="flex cursor-pointer items-center justify-between gap-4 text-left font-semibold text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500">
+            What happens if I go over the messages included in my plan?
+            <svg class="chev h-5 w-5 shrink-0 text-zinc-500 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <p class="mt-3 text-zinc-600">Nothing dramatic. Extra messages are billed at your plan's per-message rate at the end of the month. We never pause delivery because you've grown. You can set a monthly spend cap in the dashboard if you'd like a hard limit.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer items-center justify-between gap-4 text-left font-semibold text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500">
+            How are long messages counted?
+            <svg class="chev h-5 w-5 shrink-0 text-zinc-500 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <p class="mt-3 text-zinc-600">A standard GSM-7 message is 160 characters. Anything longer is split into 153-character segments and each segment is billed as one message. Messages with emoji or non-Latin characters use UCS-2 encoding, where a single segment is 70 characters. The API response tells you the segment count before you're charged.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer items-center justify-between gap-4 text-left font-semibold text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500">
+            Do you charge for failed or undelivered messages?
+            <svg class="chev h-5 w-5 shrink-0 text-zinc-500 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <p class="mt-3 text-zinc-600">Messages rejected before they reach a carrier (invalid number, blocked destination, unregistered sender) are free. Messages the carrier accepts but can't deliver, for example to a phone that's switched off for seven days, are charged, because the carrier charges us.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer items-center justify-between gap-4 text-left font-semibold text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500">
+            Can I send to countries other than the UK and US?
+            <svg class="chev h-5 w-5 shrink-0 text-zinc-500 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <p class="mt-3 text-zinc-600">Yes, 192 countries on every plan. Per-message prices vary by destination and are listed on the coverage page, updated monthly. Some countries require sender registration, which our team handles for Scale and Enterprise customers.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer items-center justify-between gap-4 text-left font-semibold text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500">
+            Can I switch plans or cancel at any time?
+            <svg class="chev h-5 w-5 shrink-0 text-zinc-500 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <p class="mt-3 text-zinc-600">Upgrades take effect immediately and are prorated. Downgrades and cancellations apply at the end of the current billing month. Annual plans can be cancelled with a prorated refund within the first 30 days.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer items-center justify-between gap-4 text-left font-semibold text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500">
+            Is there a sandbox for testing without sending real messages?
+            <svg class="chev h-5 w-5 shrink-0 text-zinc-500 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <p class="mt-3 text-zinc-600">Every account has test API keys. Messages sent with a test key are validated, priced and logged exactly like live ones but never leave our servers, and you can use magic numbers to simulate delivery failures and replies.</p>
+        </details>
+      </div>
+      <p class="mt-8 text-center text-zinc-600">Still have a question? <a href="#" class="font-semibold text-violet-700 hover:underline">Email support@fernhook.com</a> and a real engineer will reply.</p>
+    </section>
+  </main>
+
+  <footer class="border-t border-zinc-200 py-10">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-sm text-zinc-500 sm:px-6 md:flex-row">
+      <p>&copy; 2026 Fernhook Communications, Inc.</p>
+      <nav class="flex gap-6" aria-label="Footer">
+        <a href="#" class="hover:text-zinc-900">Terms</a>
+        <a href="#" class="hover:text-zinc-900">Privacy</a>
+        <a href="#" class="hover:text-zinc-900">Acceptable use</a>
+        <a href="#" class="hover:text-zinc-900">Status</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

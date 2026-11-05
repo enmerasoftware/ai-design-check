@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fernhook - SMS API pricing</title>
+  <meta name="description" content="Fernhook pricing: three plans for sending SMS through a developer API, with pay-as-you-go rates and answers to common questions.">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body class="bg-white text-slate-900 antialiased">
+
+  <header class="border-b border-slate-200">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <a href="#" class="flex items-center gap-2 font-semibold tracking-tight">
+        <span class="grid size-8 place-items-center rounded-md bg-emerald-600 text-white">
+          <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 20c0-8 4-14 16-16-1 9-5 16-13 16"/></svg>
+        </span>
+        Fernhook
+      </a>
+      <div class="hidden gap-8 text-sm font-medium text-slate-600 md:flex">
+        <a href="#" class="hover:text-slate-900">Docs</a>
+        <a href="#" class="hover:text-slate-900">API reference</a>
+        <a href="#pricing" class="text-slate-900">Pricing</a>
+        <a href="#faq" class="hover:text-slate-900">FAQ</a>
+      </div>
+      <div class="flex items-center gap-3 text-sm">
+        <a href="#" class="hidden font-medium text-slate-600 hover:text-slate-900 sm:inline">Log in</a>
+        <a href="#" class="rounded-md bg-slate-900 px-4 py-2 font-medium text-white hover:bg-slate-700">Get API key</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Intro -->
+    <section class="mx-auto max-w-6xl px-6 pt-20 pb-12 text-center">
+      <p class="text-sm font-semibold uppercase tracking-wider text-emerald-700">Pricing</p>
+      <h1 class="mx-auto mt-4 max-w-3xl text-5xl font-semibold tracking-tight text-balance sm:text-6xl">Pay for messages that get delivered.</h1>
+      <p class="mx-auto mt-6 max-w-2xl text-lg text-slate-600">Every plan includes the same API, delivery reports and 99.95% uptime. Pick a monthly allowance, or pay as you go.</p>
+
+      <div class="mt-10 inline-flex rounded-full border border-slate-200 bg-slate-50 p-1 text-sm font-medium" role="radiogroup" aria-label="Billing period">
+        <button type="button" role="radio" aria-checked="true" class="rounded-full bg-white px-5 py-2 text-slate-900 shadow-sm">Monthly</button>
+        <button type="button" role="radio" aria-checked="false" class="rounded-full px-5 py-2 text-slate-500 hover:text-slate-900">Annual <span class="ml-1 text-xs text-emerald-700">save 20%</span></button>
+      </div>
+    </section>
+
+    <!-- Plans -->
+    <section id="pricing" class="mx-auto max-w-6xl px-6 pb-24">
+      <div class="grid gap-6 lg:grid-cols-3">
+
+        <div class="flex flex-col rounded-2xl border border-slate-200 p-8">
+          <h2 class="text-lg font-semibold">Starter</h2>
+          <p class="mt-2 text-sm text-slate-600">For prototypes and small apps sending one-time codes.</p>
+          <p class="mt-6 flex items-baseline gap-1"><span class="text-4xl font-semibold tracking-tight">$19</span><span class="text-sm text-slate-500">/ month</span></p>
+          <p class="mt-1 text-sm text-slate-500">Includes 1,000 messages. Then $0.012 each.</p>
+          <a href="#" class="mt-8 rounded-md border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold hover:bg-slate-50">Start building</a>
+          <ul class="mt-8 space-y-3 text-sm text-slate-700">
+            <li class="flex gap-3"><span class="text-emerald-600">&#10003;</span>REST API and SDKs for 4 languages</li>
+            <li class="flex gap-3"><span class="text-emerald-600">&#10003;</span>Delivery receipts via webhook</li>
+            <li class="flex gap-3"><span class="text-emerald-600">&#10003;</span>Two sender IDs</li>
+            <li class="flex gap-3"><span class="text-emerald-600">&#10003;</span>Community support</li>
+          </ul>
+        </div>
+
+        <div class="relative flex flex-col rounded-2xl border-2 border-emerald-600 p-8 shadow-xl shadow-emerald-900/10">
+          <span class="absolute -top-3 left-8 rounded-full bg-emerald-600 px-3 py-0.5 text-xs font-semibold text-white">Most popular</span>
+          <h2 class="text-lg font-semibold">Growth</h2>
+          <p class="mt-2 text-sm text-slate-600">For products sending verification and alerts at scale.</p>
+          <p class="mt-6 flex items-baseline gap-1"><span class="text-4xl font-semibold tracking-tight">$79</span><span class="text-sm text-slate-500">/ month</span></p>
+          <p class="mt-1 text-sm text-slate-500">Includes 10,000 messages. Then $0.008 each.</p>
+          <a href="#" class="mt-8 rounded-md bg-emerald-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-emerald-700">Start building</a>
+          <ul class="mt-8 space-y-3 text-sm text-slate-700">
+            <li class="flex gap-3"><span class="text-emerald-600">&#10003;</span>Everything in Starter</li>
+            <li class="flex gap-3"><span class="text-emerald-600">&#10003;</span>Scheduled and bulk sends</li>
+            <li class="flex gap-3"><span class="text-emerald-600">&#10003;</span>Unlimited sender IDs</li>
+            <li class="flex gap-3"><span class="text-emerald-600">&#10003;</span>Email support within 24 hours</li>
+          </ul>
+        </div>
+
+        <div class="flex flex-col rounded-2xl border border-slate-200 p-8">
+          <h2 class="text-lg font-semibold">Scale</h2>
+          <p class="mt-2 text-sm text-slate-600">For high-volume senders who need dedicated routes.</p>
+          <p class="mt-6 flex items-baseline gap-1"><span class="text-4xl font-semibold tracking-tight">Custom</span></p>
+          <p class="mt-1 text-sm text-slate-500">Volume rates from $0.004 per message.</p>
+          <a href="#" class="mt-8 rounded-md border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold hover:bg-slate-50">Talk to sales</a>
+          <ul class="mt-8 space-y-3 text-sm text-slate-700">
+            <li class="flex gap-3"><span class="text-emerald-600">&#10003;</span>Everything in Growth</li>
+            <li class="flex gap-3"><span class="text-emerald-600">&#10003;</span>Dedicated short code or toll-free number</li>
+            <li class="flex gap-3"><span class="text-emerald-600">&#10003;</span>99.99% uptime SLA</li>
+            <li class="flex gap-3"><span class="text-emerald-600">&#10003;</span>Named engineer and 1-hour response</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Pay as you go strip -->
+      <div class="mt-10 flex flex-col items-start justify-between gap-4 rounded-2xl bg-slate-50 p-6 sm:flex-row sm:items-center">
+        <div>
+          <p class="font-semibold">Pay as you go</p>
+          <p class="text-sm text-slate-600">No monthly fee. Send to 180+ countries at published per-message rates.</p>
+        </div>
+        <a href="#" class="text-sm font-semibold text-emerald-700 hover:underline">See country rates</a>
+      </div>
+    </section>
+
+    <!-- Rate comparison -->
+    <section class="border-y border-slate-200 bg-slate-50">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        <h2 class="text-3xl font-semibold tracking-tight">Typical rates per message</h2>
+        <div class="mt-8 overflow-x-auto rounded-xl border border-slate-200 bg-white">
+          <table class="w-full min-w-[32rem] text-left text-sm">
+            <thead class="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+              <tr>
+                <th scope="col" class="px-6 py-3 font-medium">Destination</th>
+                <th scope="col" class="px-6 py-3 font-medium">Starter</th>
+                <th scope="col" class="px-6 py-3 font-medium">Growth</th>
+                <th scope="col" class="px-6 py-3 font-medium">Scale</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr><td class="px-6 py-4 font-medium">United States and Canada</td><td class="px-6 py-4 tabular-nums">$0.012</td><td class="px-6 py-4 tabular-nums">$0.008</td><td class="px-6 py-4 tabular-nums">$0.004</td></tr>
+              <tr><td class="px-6 py-4 font-medium">United Kingdom</td><td class="px-6 py-4 tabular-nums">$0.035</td><td class="px-6 py-4 tabular-nums">$0.030</td><td class="px-6 py-4 tabular-nums">$0.022</td></tr>
+              <tr><td class="px-6 py-4 font-medium">Germany</td><td class="px-6 py-4 tabular-nums">$0.060</td><td class="px-6 py-4 tabular-nums">$0.052</td><td class="px-6 py-4 tabular-nums">$0.041</td></tr>
+              <tr><td class="px-6 py-4 font-medium">Brazil</td><td class="px-6 py-4 tabular-nums">$0.045</td><td class="px-6 py-4 tabular-nums">$0.038</td><td class="px-6 py-4 tabular-nums">$0.029</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="mx-auto max-w-3xl px-6 py-24">
+      <h2 class="text-3xl font-semibold tracking-tight">Frequently asked questions</h2>
+      <div class="mt-10 divide-y divide-slate-200 border-y border-slate-200">
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between font-medium">Do unused messages roll over? <span class="text-slate-400 transition group-open:rotate-45">+</span></summary>
+          <p class="mt-3 text-sm leading-relaxed text-slate-600">No. Your monthly allowance resets on the billing date. Messages beyond the allowance are billed at the plan's overage rate.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between font-medium">Am I charged for failed deliveries? <span class="text-slate-400 transition group-open:rotate-45">+</span></summary>
+          <p class="mt-3 text-sm leading-relaxed text-slate-600">Messages that the carrier rejects before delivery are not billed. You can see the status of every message in the dashboard and in webhook events.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between font-medium">Can I switch plans mid-month? <span class="text-slate-400 transition group-open:rotate-45">+</span></summary>
+          <p class="mt-3 text-sm leading-relaxed text-slate-600">Yes. Upgrades take effect immediately and are prorated. Downgrades apply at the next billing date.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between font-medium">Do you support sender ID registration? <span class="text-slate-400 transition group-open:rotate-45">+</span></summary>
+          <p class="mt-3 text-sm leading-relaxed text-slate-600">We handle registration for countries that require it, such as the UK and India. Registration typically takes 3 to 10 business days.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between font-medium">Is there a free sandbox? <span class="text-slate-400 transition group-open:rotate-45">+</span></summary>
+          <p class="mt-3 text-sm leading-relaxed text-slate-600">Yes. The sandbox accepts test numbers and returns realistic delivery events, with no charges and no sign-up limits.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="mx-auto max-w-6xl px-6 pb-24">
+      <div class="flex flex-col items-start justify-between gap-6 rounded-3xl bg-slate-900 p-10 text-white md:flex-row md:items-center md:p-14">
+        <div>
+          <h2 class="text-2xl font-semibold tracking-tight">Send your first message in five minutes.</h2>
+          <p class="mt-2 text-slate-300">Get an API key and run the quickstart in the sandbox, free.</p>
+        </div>
+        <a href="#" class="rounded-md bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400">Get API key</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-slate-500 sm:flex-row">
+      <p>&copy; 2026 Fernhook Inc. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a href="#" class="hover:text-slate-900">Docs</a>
+        <a href="#" class="hover:text-slate-900">Status</a>
+        <a href="#" class="hover:text-slate-900">Privacy</a>
+        <a href="#" class="hover:text-slate-900">Terms</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

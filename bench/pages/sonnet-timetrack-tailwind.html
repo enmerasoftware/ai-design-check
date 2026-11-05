@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tallyhoo — Time tracking for freelance designers</title>
+<meta name="description" content="Tallyhoo tracks your billable hours by project and client, then turns them into invoices. Built for freelance designers.">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-paper: #f6f1e7;
+    --color-ink: #1d1b16;
+    --color-tomato: #d9482b;
+    --color-moss: #3f5b3a;
+    --color-sand: #e8dfcc;
+    --font-display: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  }
+  .grain { background-image: radial-gradient(rgba(29,27,22,.08) 1px, transparent 1px); background-size: 14px 14px; }
+</style>
+</head>
+<body class="bg-paper text-ink font-sans antialiased">
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:p-3 focus:bg-ink focus:text-paper">Skip to content</a>
+
+<header class="border-b border-ink/15">
+  <nav class="mx-auto max-w-6xl flex items-center justify-between px-5 py-4" aria-label="Main">
+    <a href="#" class="font-display text-2xl font-bold tracking-tight">Tallyhoo<span class="text-tomato">.</span></a>
+    <ul class="hidden md:flex gap-8 text-sm font-medium">
+      <li><a class="hover:text-tomato" href="#how">How it works</a></li>
+      <li><a class="hover:text-tomato" href="#features">Features</a></li>
+      <li><a class="hover:text-tomato" href="#pricing">Pricing</a></li>
+    </ul>
+    <a href="#pricing" class="rounded-full bg-ink text-paper px-4 py-2 text-sm font-semibold hover:bg-tomato transition-colors">Start free</a>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="grain">
+    <div class="mx-auto max-w-6xl px-5 py-16 md:py-24 grid lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-7">
+        <p class="text-sm font-semibold uppercase tracking-widest text-moss">For freelance designers</p>
+        <h1 class="font-display mt-4 text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">Know what every hour of design is worth.</h1>
+        <p class="mt-6 max-w-xl text-lg text-ink/75">Tallyhoo sits quietly beside Figma and your inbox, logs the time you spend on each client, and hands you an invoice at the end of the month. No timers to remember.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#pricing" class="rounded-full bg-tomato px-6 py-3 font-semibold text-white hover:bg-ink transition-colors">Try it free for 30 days</a>
+          <a href="#how" class="rounded-full border border-ink/30 px-6 py-3 font-semibold hover:border-ink">See how it works</a>
+        </div>
+        <p class="mt-4 text-sm text-ink/60">No card needed. Works on Mac, Windows and iPad.</p>
+      </div>
+
+      <div class="lg:col-span-5" aria-label="Example week of tracked time">
+        <div class="rounded-2xl bg-white shadow-[8px_8px_0_0_var(--color-ink)] border-2 border-ink p-5">
+          <div class="flex items-baseline justify-between">
+            <h2 class="font-display text-xl font-bold">This week</h2>
+            <span class="text-sm text-ink/60">Mon 3 – Fri 7</span>
+          </div>
+          <p class="mt-1 text-3xl font-bold">31h 40m <span class="text-base font-medium text-moss">· $2,375 billable</span></p>
+          <ul class="mt-5 space-y-4 text-sm">
+            <li>
+              <div class="flex justify-between font-medium"><span>Oakline Coffee — brand refresh</span><span>14h 10m</span></div>
+              <div class="mt-1 h-2 rounded bg-sand"><div class="h-2 rounded bg-tomato" style="width:72%"></div></div>
+            </li>
+            <li>
+              <div class="flex justify-between font-medium"><span>Northpier — app onboarding</span><span>11h 05m</span></div>
+              <div class="mt-1 h-2 rounded bg-sand"><div class="h-2 rounded bg-moss" style="width:56%"></div></div>
+            </li>
+            <li>
+              <div class="flex justify-between font-medium"><span>Studio Lume — pitch deck</span><span>6h 25m</span></div>
+              <div class="mt-1 h-2 rounded bg-sand"><div class="h-2 rounded bg-ink" style="width:33%"></div></div>
+            </li>
+          </ul>
+          <p class="mt-5 rounded-lg bg-sand px-3 py-2 text-xs">Tallyhoo noticed 52 minutes in Figma on “Oakline”. Add to today?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="border-y border-ink/15 bg-sand/60">
+    <div class="mx-auto max-w-6xl px-5 py-16">
+      <h2 class="font-display text-3xl md:text-4xl font-bold max-w-2xl">Three steps, and the third one is getting paid.</h2>
+      <ol class="mt-10 grid md:grid-cols-3 gap-8">
+        <li><span class="font-display text-5xl text-tomato">1</span><h3 class="mt-2 text-lg font-bold">Pick your clients</h3><p class="mt-2 text-ink/75">Set a rate per client or per project. Hourly, day rate or fixed fee with a budget cap.</p></li>
+        <li><span class="font-display text-5xl text-tomato">2</span><h3 class="mt-2 text-lg font-bold">Design as usual</h3><p class="mt-2 text-ink/75">Tallyhoo suggests entries from the files and calls you work in. You confirm with one tap.</p></li>
+        <li><span class="font-display text-5xl text-tomato">3</span><h3 class="mt-2 text-lg font-bold">Send the invoice</h3><p class="mt-2 text-ink/75">One click makes a clean PDF with your logo, your terms and a link to pay by card or bank transfer.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="features" class="mx-auto max-w-6xl px-5 py-16">
+    <div class="grid md:grid-cols-2 gap-x-12 gap-y-10">
+      <article class="border-t-2 border-ink pt-4"><h3 class="font-display text-2xl font-bold">Budget alerts</h3><p class="mt-2 text-ink/75">Told a client “about 40 hours”? Tallyhoo nudges you at 75% so scope creep becomes a conversation, not a surprise.</p></article>
+      <article class="border-t-2 border-ink pt-4"><h3 class="font-display text-2xl font-bold">Revision tracking</h3><p class="mt-2 text-ink/75">Tag rounds of feedback and see exactly how much time round three really cost.</p></article>
+      <article class="border-t-2 border-ink pt-4"><h3 class="font-display text-2xl font-bold">Honest reports</h3><p class="mt-2 text-ink/75">See your effective hourly rate per client. Find out which projects pay and which ones just feel busy.</p></article>
+      <article class="border-t-2 border-ink pt-4"><h3 class="font-display text-2xl font-bold">Offline by default</h3><p class="mt-2 text-ink/75">Everything is stored on your device first and syncs when you are back online. Train WiFi is no problem.</p></article>
+    </div>
+  </section>
+
+  <section class="bg-ink text-paper">
+    <figure class="mx-auto max-w-3xl px-5 py-16 text-center">
+      <blockquote class="font-display text-2xl md:text-3xl leading-snug">“I raised my day rate by 20% after seeing my real numbers. Two clients left. My income went up anyway.”</blockquote>
+      <figcaption class="mt-5 text-sm text-paper/70">Priya Raman, brand designer, Leeds</figcaption>
+    </figure>
+  </section>
+
+  <section id="pricing" class="mx-auto max-w-6xl px-5 py-16">
+    <h2 class="font-display text-3xl md:text-4xl font-bold">Simple pricing</h2>
+    <p class="mt-2 text-ink/70">Both plans include a 30-day free trial.</p>
+    <div class="mt-8 grid md:grid-cols-2 gap-6 max-w-3xl">
+      <div class="rounded-2xl border-2 border-ink/20 bg-white p-6">
+        <h3 class="text-lg font-bold">Solo</h3>
+        <p class="mt-2 font-display text-4xl font-bold">$9<span class="text-base font-sans font-medium text-ink/60"> / month</span></p>
+        <ul class="mt-4 space-y-2 text-sm"><li>Unlimited clients and projects</li><li>PDF invoices</li><li>Weekly reports</li></ul>
+        <a href="#" class="mt-6 block rounded-full border-2 border-ink py-2.5 text-center font-semibold hover:bg-ink hover:text-paper">Start free</a>
+      </div>
+      <div class="rounded-2xl border-2 border-ink bg-white p-6 shadow-[6px_6px_0_0_var(--color-tomato)]">
+        <h3 class="text-lg font-bold">Studio</h3>
+        <p class="mt-2 font-display text-4xl font-bold">$19<span class="text-base font-sans font-medium text-ink/60"> / month</span></p>
+        <ul class="mt-4 space-y-2 text-sm"><li>Everything in Solo</li><li>Online card payments</li><li>Up to 3 subcontractors</li></ul>
+        <a href="#" class="mt-6 block rounded-full bg-ink py-2.5 text-center font-semibold text-paper hover:bg-tomato">Start free</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-ink/15">
+  <div class="mx-auto max-w-6xl px-5 py-8 flex flex-col sm:flex-row justify-between gap-3 text-sm text-ink/70">
+    <p>&copy; 2026 Tallyhoo Ltd. Made by designers in Bristol.</p>
+    <ul class="flex gap-5"><li><a href="#" class="hover:text-tomato">Privacy</a></li><li><a href="#" class="hover:text-tomato">Terms</a></li><li><a href="#" class="hover:text-tomato">hello@tallyhoo.app</a></li></ul>
+  </div>
+</footer>
+</body>
+</html>

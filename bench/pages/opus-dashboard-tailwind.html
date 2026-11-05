@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview · Ledgerly</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-brand: #2453a6;
+    --color-brand-soft: #e8eefa;
+    --color-pos: #1f7a4d;
+    --color-neg: #b4372f;
+  }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+<div class="min-h-screen lg:grid lg:grid-cols-[232px_1fr]">
+  <aside class="hidden lg:flex flex-col border-r border-slate-200 bg-white px-4 py-5">
+    <a href="#" class="flex items-center gap-2 px-2 font-semibold text-lg">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4" fill="#2453a6"/><path d="M8 7v10h8" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>
+      Ledgerly
+    </a>
+    <nav class="mt-8 flex-1" aria-label="Primary">
+      <ul class="space-y-1 text-sm">
+        <li><a href="#" aria-current="page" class="flex items-center gap-3 rounded-md px-3 py-2 bg-brand-soft text-brand font-medium">Overview</a></li>
+        <li><a href="#" class="flex items-center gap-3 rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100">Invoices</a></li>
+        <li><a href="#" class="flex items-center gap-3 rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100">Bills</a></li>
+        <li><a href="#" class="flex items-center gap-3 rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100">Transactions</a></li>
+        <li><a href="#" class="flex items-center gap-3 rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100">Customers</a></li>
+        <li><a href="#" class="flex items-center gap-3 rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100">Reports</a></li>
+        <li><a href="#" class="flex items-center gap-3 rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100">Taxes</a></li>
+      </ul>
+    </nav>
+    <div class="border-t border-slate-200 pt-4 px-2 text-sm">
+      <p class="font-medium">Greenleaf Plumbing LLC</p>
+      <p class="text-slate-500">Owner · Maya Chen</p>
+    </div>
+  </aside>
+
+  <div class="min-w-0">
+    <header class="flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-5 lg:px-8 h-16">
+      <div>
+        <h1 class="text-lg font-semibold">Good morning, Maya</h1>
+        <p class="text-xs text-slate-500">Wednesday, November 5, 2026</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="search" class="sr-only">Search</label>
+        <input id="search" type="search" placeholder="Search invoices, payees…" class="hidden md:block w-64 rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40">
+        <button type="button" class="rounded-md bg-brand text-white text-sm px-3.5 py-2 hover:bg-brand/90">New invoice</button>
+      </div>
+    </header>
+
+    <main class="px-5 lg:px-8 py-6 space-y-6">
+      <section aria-label="Key figures" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="rounded-lg border border-slate-200 bg-white p-5">
+          <p class="text-sm text-slate-500">Revenue, November</p>
+          <p class="mt-2 text-2xl font-semibold tabular-nums">$18,420.00</p>
+          <p class="mt-1 text-xs text-pos">+12.4% vs. October to date</p>
+        </div>
+        <div class="rounded-lg border border-slate-200 bg-white p-5">
+          <p class="text-sm text-slate-500">Expenses, November</p>
+          <p class="mt-2 text-2xl font-semibold tabular-nums">$7,915.36</p>
+          <p class="mt-1 text-xs text-slate-500">Largest: Ferguson Supply, $2,140</p>
+        </div>
+        <div class="rounded-lg border border-slate-200 bg-white p-5">
+          <p class="text-sm text-slate-500">Invoices due</p>
+          <p class="mt-2 text-2xl font-semibold tabular-nums">$11,286.50</p>
+          <p class="mt-1 text-xs text-neg">$3,240.00 overdue across 2 invoices</p>
+        </div>
+        <div class="rounded-lg border border-slate-200 bg-white p-5">
+          <p class="text-sm text-slate-500">Cash in bank</p>
+          <p class="mt-2 text-2xl font-semibold tabular-nums">$42,608.19</p>
+          <p class="mt-1 text-xs text-slate-500">Chase Business ••4821 · synced 8:02 AM</p>
+        </div>
+      </section>
+
+      <div class="grid gap-6 xl:grid-cols-3">
+        <section class="xl:col-span-2 rounded-lg border border-slate-200 bg-white p-5" aria-labelledby="cf-title">
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="cf-title" class="font-semibold">Cash flow</h2>
+            <div class="flex gap-4 text-xs text-slate-600">
+              <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm bg-brand"></span>Money in</span>
+              <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm bg-slate-300"></span>Money out</span>
+              <span class="flex items-center gap-1.5"><span class="h-0.5 w-4 bg-pos"></span>Net</span>
+            </div>
+          </div>
+          <p class="text-sm text-slate-500 mt-1">Last 6 months · net $31,870</p>
+          <svg viewBox="0 0 640 260" class="mt-4 w-full h-auto" role="img" aria-labelledby="cf-desc">
+            <desc id="cf-desc">Monthly money in and money out from June to November 2026. Money in ranged from 18.4 to 27.1 thousand dollars; money out from 7.9 to 19.2 thousand.</desc>
+            <g stroke="#e2e8f0" stroke-width="1">
+              <line x1="48" y1="20" x2="630" y2="20"/><line x1="48" y1="70" x2="630" y2="70"/><line x1="48" y1="120" x2="630" y2="120"/><line x1="48" y1="170" x2="630" y2="170"/>
+            </g>
+            <line x1="48" y1="220" x2="630" y2="220" stroke="#94a3b8"/>
+            <g font-size="11" fill="#64748b" text-anchor="end">
+              <text x="40" y="224">$0</text><text x="40" y="174">$7.5k</text><text x="40" y="124">$15k</text><text x="40" y="74">$22.5k</text><text x="40" y="24">$30k</text>
+            </g>
+            <!-- scale: 1k = 6.667px -->
+            <g>
+              <rect x="70" y="73" width="30" height="147" rx="2" fill="#2453a6"/><rect x="104" y="141" width="30" height="79" rx="2" fill="#cbd5e1"/>
+              <rect x="167" y="49" width="30" height="171" rx="2" fill="#2453a6"/><rect x="201" y="107" width="30" height="113" rx="2" fill="#cbd5e1"/>
+              <rect x="264" y="39" width="30" height="181" rx="2" fill="#2453a6"/><rect x="298" y="92" width="30" height="128" rx="2" fill="#cbd5e1"/>
+              <rect x="361" y="61" width="30" height="159" rx="2" fill="#2453a6"/><rect x="395" y="92" width="30" height="128" rx="2" fill="#cbd5e1"/>
+              <rect x="458" y="87" width="30" height="133" rx="2" fill="#2453a6"/><rect x="492" y="148" width="30" height="72" rx="2" fill="#cbd5e1"/>
+              <rect x="555" y="97" width="30" height="123" rx="2" fill="#2453a6"/><rect x="589" y="167" width="30" height="53" rx="2" fill="#cbd5e1"/>
+            </g>
+            <polyline points="102,175 199,162 296,167 393,189 490,159 587,150" fill="none" stroke="#1f7a4d" stroke-width="2.5" stroke-linejoin="round"/>
+            <g fill="#1f7a4d"><circle cx="102" cy="175" r="3.5"/><circle cx="199" cy="162" r="3.5"/><circle cx="296" cy="167" r="3.5"/><circle cx="393" cy="189" r="3.5"/><circle cx="490" cy="159" r="3.5"/><circle cx="587" cy="150" r="3.5"/></g>
+            <g font-size="12" fill="#475569" text-anchor="middle">
+              <text x="102" y="242">Jun</text><text x="199" y="242">Jul</text><text x="296" y="242">Aug</text><text x="393" y="242">Sep</text><text x="490" y="242">Oct</text><text x="587" y="242">Nov*</text>
+            </g>
+          </svg>
+          <p class="text-xs text-slate-500">*November to date.</p>
+        </section>
+
+        <section class="rounded-lg border border-slate-200 bg-white" aria-labelledby="due-title">
+          <div class="flex items-center justify-between px-5 pt-5">
+            <h2 id="due-title" class="font-semibold">Invoices due</h2>
+            <a href="#" class="text-sm text-brand hover:underline">View all</a>
+          </div>
+          <ul class="mt-3 divide-y divide-slate-100 text-sm">
+            <li class="flex items-center justify-between px-5 py-3">
+              <div><p class="font-medium">Harlow Property Group</p><p class="text-xs text-neg">INV-1042 · 18 days overdue</p></div>
+              <p class="tabular-nums font-medium">$2,150.00</p>
+            </li>
+            <li class="flex items-center justify-between px-5 py-3">
+              <div><p class="font-medium">Dr. Alan Reyes, DDS</p><p class="text-xs text-neg">INV-1047 · 4 days overdue</p></div>
+              <p class="tabular-nums font-medium">$1,090.00</p>
+            </li>
+            <li class="flex items-center justify-between px-5 py-3">
+              <div><p class="font-medium">Oak Street Bakery</p><p class="text-xs text-slate-500">INV-1051 · due Nov 9</p></div>
+              <p class="tabular-nums font-medium">$684.50</p>
+            </li>
+            <li class="flex items-center justify-between px-5 py-3">
+              <div><p class="font-medium">Brennan Residence</p><p class="text-xs text-slate-500">INV-1053 · due Nov 14</p></div>
+              <p class="tabular-nums font-medium">$4,962.00</p>
+            </li>
+            <li class="flex items-center justify-between px-5 py-3">
+              <div><p class="font-medium">Westside Montessori</p><p class="text-xs text-slate-500">INV-1055 · due Nov 21</p></div>
+              <p class="tabular-nums font-medium">$2,400.00</p>
+            </li>
+          </ul>
+          <div class="px-5 py-4 border-t border-slate-100">
+            <button type="button" class="w-full rounded-md border border-slate-300 py-2 text-sm hover:bg-slate-50">Send reminders for overdue (2)</button>
+          </div>
+        </section>
+      </div>
+
+      <section class="rounded-lg border border-slate-200 bg-white" aria-labelledby="tx-title">
+        <div class="flex items-center justify-between px-5 pt-5">
+          <h2 id="tx-title" class="font-semibold">Recent transactions</h2>
+          <a href="#" class="text-sm text-brand hover:underline">All transactions</a>
+        </div>
+        <div class="overflow-x-auto mt-3">
+          <table class="w-full text-sm">
+            <thead class="text-left text-xs uppercase tracking-wide text-slate-500 border-b border-slate-200">
+              <tr><th scope="col" class="px-5 py-2 font-medium">Date</th><th scope="col" class="px-5 py-2 font-medium">Description</th><th scope="col" class="px-5 py-2 font-medium">Category</th><th scope="col" class="px-5 py-2 font-medium">Status</th><th scope="col" class="px-5 py-2 font-medium text-right">Amount</th></tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr><td class="px-5 py-3 whitespace-nowrap text-slate-500">Nov 4</td><td class="px-5 py-3">Payment · Oak Street Bakery</td><td class="px-5 py-3">Sales</td><td class="px-5 py-3"><span class="rounded bg-green-50 text-pos px-2 py-0.5 text-xs">Matched</span></td><td class="px-5 py-3 text-right tabular-nums text-pos">+$1,240.00</td></tr>
+              <tr><td class="px-5 py-3 whitespace-nowrap text-slate-500">Nov 4</td><td class="px-5 py-3">Ferguson Supply #88213</td><td class="px-5 py-3">Materials</td><td class="px-5 py-3"><span class="rounded bg-green-50 text-pos px-2 py-0.5 text-xs">Matched</span></td><td class="px-5 py-3 text-right tabular-nums">−$2,140.00</td></tr>
+              <tr><td class="px-5 py-3 whitespace-nowrap text-slate-500">Nov 3</td><td class="px-5 py-3">Shell Oil 5521</td><td class="px-5 py-3">Vehicle fuel</td><td class="px-5 py-3"><span class="rounded bg-amber-50 text-amber-700 px-2 py-0.5 text-xs">Review</span></td><td class="px-5 py-3 text-right tabular-nums">−$86.42</td></tr>
+              <tr><td class="px-5 py-3 whitespace-nowrap text-slate-500">Nov 3</td><td class="px-5 py-3">Stripe payout</td><td class="px-5 py-3">Sales</td><td class="px-5 py-3"><span class="rounded bg-green-50 text-pos px-2 py-0.5 text-xs">Matched</span></td><td class="px-5 py-3 text-right tabular-nums text-pos">+$3,815.60</td></tr>
+              <tr><td class="px-5 py-3 whitespace-nowrap text-slate-500">Nov 1</td><td class="px-5 py-3">Gusto payroll</td><td class="px-5 py-3">Wages</td><td class="px-5 py-3"><span class="rounded bg-green-50 text-pos px-2 py-0.5 text-xs">Matched</span></td><td class="px-5 py-3 text-right tabular-nums">−$4,912.18</td></tr>
+              <tr><td class="px-5 py-3 whitespace-nowrap text-slate-500">Nov 1</td><td class="px-5 py-3">State Farm business policy</td><td class="px-5 py-3">Insurance</td><td class="px-5 py-3"><span class="rounded bg-amber-50 text-amber-700 px-2 py-0.5 text-xs">Review</span></td><td class="px-5 py-3 text-right tabular-nums">−$412.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,338 @@
+[
+  {
+    "file": "opus-timetrack-tailwind.html",
+    "model": "opus",
+    "framework": "tailwind",
+    "brief": "timetrack",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A landing page for Tallyhoo, a time-tracking app for freelance designers."
+  },
+  {
+    "file": "opus-timetrack-bootstrap.html",
+    "model": "opus",
+    "framework": "bootstrap",
+    "brief": "timetrack",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A landing page for Tallyhoo, a time-tracking app for freelance designers."
+  },
+  {
+    "file": "opus-aiwriter-tailwind.html",
+    "model": "opus",
+    "framework": "tailwind",
+    "brief": "aiwriter",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A landing page for Brightmoss, an AI writing assistant for customer-support teams."
+  },
+  {
+    "file": "opus-aiwriter-bootstrap.html",
+    "model": "opus",
+    "framework": "bootstrap",
+    "brief": "aiwriter",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A landing page for Brightmoss, an AI writing assistant for customer-support teams."
+  },
+  {
+    "file": "opus-dashboard-tailwind.html",
+    "model": "opus",
+    "framework": "tailwind",
+    "brief": "dashboard",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: The home screen of Ledgerly, an accounting web app for small businesses: revenue this month, invoices due, recent transactions and a cash-flow chart."
+  },
+  {
+    "file": "opus-dashboard-bootstrap.html",
+    "model": "opus",
+    "framework": "bootstrap",
+    "brief": "dashboard",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home screen of Ledgerly, an accounting web app for small businesses: revenue this month, invoices due, recent transactions and a cash-flow chart."
+  },
+  {
+    "file": "opus-pricing-tailwind.html",
+    "model": "opus",
+    "framework": "tailwind",
+    "brief": "pricing",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A pricing page for Fernhook, a developer API for sending SMS, with three plans and an FAQ."
+  },
+  {
+    "file": "opus-pricing-bootstrap.html",
+    "model": "opus",
+    "framework": "bootstrap",
+    "brief": "pricing",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A pricing page for Fernhook, a developer API for sending SMS, with three plans and an FAQ."
+  },
+  {
+    "file": "opus-bakery-tailwind.html",
+    "model": "opus",
+    "framework": "tailwind",
+    "brief": "bakery",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A home page for Crumb & Co, a neighbourhood bakery: what they bake, opening hours and where to find them."
+  },
+  {
+    "file": "opus-bakery-bootstrap.html",
+    "model": "opus",
+    "framework": "bootstrap",
+    "brief": "bakery",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A home page for Crumb & Co, a neighbourhood bakery: what they bake, opening hours and where to find them."
+  },
+  {
+    "file": "opus-portfolio-tailwind.html",
+    "model": "opus",
+    "framework": "tailwind",
+    "brief": "portfolio",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
+  },
+  {
+    "file": "opus-portfolio-bootstrap.html",
+    "model": "opus",
+    "framework": "bootstrap",
+    "brief": "portfolio",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
+  },
+  {
+    "file": "sonnet-timetrack-tailwind.html",
+    "model": "sonnet",
+    "framework": "tailwind",
+    "brief": "timetrack",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A landing page for Tallyhoo, a time-tracking app for freelance designers."
+  },
+  {
+    "file": "sonnet-timetrack-bootstrap.html",
+    "model": "sonnet",
+    "framework": "bootstrap",
+    "brief": "timetrack",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A landing page for Tallyhoo, a time-tracking app for freelance designers."
+  },
+  {
+    "file": "sonnet-aiwriter-tailwind.html",
+    "model": "sonnet",
+    "framework": "tailwind",
+    "brief": "aiwriter",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A landing page for Brightmoss, an AI writing assistant for customer-support teams."
+  },
+  {
+    "file": "sonnet-aiwriter-bootstrap.html",
+    "model": "sonnet",
+    "framework": "bootstrap",
+    "brief": "aiwriter",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A landing page for Brightmoss, an AI writing assistant for customer-support teams."
+  },
+  {
+    "file": "sonnet-dashboard-tailwind.html",
+    "model": "sonnet",
+    "framework": "tailwind",
+    "brief": "dashboard",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: The home screen of Ledgerly, an accounting web app for small businesses: revenue this month, invoices due, recent transactions and a cash-flow chart."
+  },
+  {
+    "file": "sonnet-dashboard-bootstrap.html",
+    "model": "sonnet",
+    "framework": "bootstrap",
+    "brief": "dashboard",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home screen of Ledgerly, an accounting web app for small businesses: revenue this month, invoices due, recent transactions and a cash-flow chart."
+  },
+  {
+    "file": "sonnet-pricing-tailwind.html",
+    "model": "sonnet",
+    "framework": "tailwind",
+    "brief": "pricing",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A pricing page for Fernhook, a developer API for sending SMS, with three plans and an FAQ."
+  },
+  {
+    "file": "sonnet-pricing-bootstrap.html",
+    "model": "sonnet",
+    "framework": "bootstrap",
+    "brief": "pricing",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A pricing page for Fernhook, a developer API for sending SMS, with three plans and an FAQ."
+  },
+  {
+    "file": "sonnet-bakery-tailwind.html",
+    "model": "sonnet",
+    "framework": "tailwind",
+    "brief": "bakery",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A home page for Crumb & Co, a neighbourhood bakery: what they bake, opening hours and where to find them."
+  },
+  {
+    "file": "sonnet-bakery-bootstrap.html",
+    "model": "sonnet",
+    "framework": "bootstrap",
+    "brief": "bakery",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A home page for Crumb & Co, a neighbourhood bakery: what they bake, opening hours and where to find them."
+  },
+  {
+    "file": "sonnet-portfolio-tailwind.html",
+    "model": "sonnet",
+    "framework": "tailwind",
+    "brief": "portfolio",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
+  },
+  {
+    "file": "sonnet-portfolio-bootstrap.html",
+    "model": "sonnet",
+    "framework": "bootstrap",
+    "brief": "portfolio",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
+  },
+  {
+    "file": "haiku-timetrack-tailwind.html",
+    "model": "haiku",
+    "framework": "tailwind",
+    "brief": "timetrack",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A landing page for Tallyhoo, a time-tracking app for freelance designers."
+  },
+  {
+    "file": "haiku-timetrack-bootstrap.html",
+    "model": "haiku",
+    "framework": "bootstrap",
+    "brief": "timetrack",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A landing page for Tallyhoo, a time-tracking app for freelance designers."
+  },
+  {
+    "file": "haiku-aiwriter-tailwind.html",
+    "model": "haiku",
+    "framework": "tailwind",
+    "brief": "aiwriter",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A landing page for Brightmoss, an AI writing assistant for customer-support teams."
+  },
+  {
+    "file": "haiku-aiwriter-bootstrap.html",
+    "model": "haiku",
+    "framework": "bootstrap",
+    "brief": "aiwriter",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A landing page for Brightmoss, an AI writing assistant for customer-support teams."
+  },
+  {
+    "file": "haiku-dashboard-tailwind.html",
+    "model": "haiku",
+    "framework": "tailwind",
+    "brief": "dashboard",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: The home screen of Ledgerly, an accounting web app for small businesses: revenue this month, invoices due, recent transactions and a cash-flow chart."
+  },
+  {
+    "file": "haiku-dashboard-bootstrap.html",
+    "model": "haiku",
+    "framework": "bootstrap",
+    "brief": "dashboard",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home screen of Ledgerly, an accounting web app for small businesses: revenue this month, invoices due, recent transactions and a cash-flow chart."
+  },
+  {
+    "file": "haiku-pricing-tailwind.html",
+    "model": "haiku",
+    "framework": "tailwind",
+    "brief": "pricing",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A pricing page for Fernhook, a developer API for sending SMS, with three plans and an FAQ."
+  },
+  {
+    "file": "haiku-pricing-bootstrap.html",
+    "model": "haiku",
+    "framework": "bootstrap",
+    "brief": "pricing",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A pricing page for Fernhook, a developer API for sending SMS, with three plans and an FAQ."
+  },
+  {
+    "file": "haiku-bakery-tailwind.html",
+    "model": "haiku",
+    "framework": "tailwind",
+    "brief": "bakery",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A home page for Crumb & Co, a neighbourhood bakery: what they bake, opening hours and where to find them."
+  },
+  {
+    "file": "haiku-bakery-bootstrap.html",
+    "model": "haiku",
+    "framework": "bootstrap",
+    "brief": "bakery",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A home page for Crumb & Co, a neighbourhood bakery: what they bake, opening hours and where to find them."
+  },
+  {
+    "file": "haiku-portfolio-tailwind.html",
+    "model": "haiku",
+    "framework": "tailwind",
+    "brief": "portfolio",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
+  },
+  {
+    "file": "haiku-portfolio-bootstrap.html",
+    "model": "haiku",
+    "framework": "bootstrap",
+    "brief": "portfolio",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
+  },
+  {
+    "file": "fable-timetrack-tailwind.html",
+    "model": "fable",
+    "framework": "tailwind",
+    "brief": "timetrack",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A landing page for Tallyhoo, a time-tracking app for freelance designers."
+  },
+  {
+    "file": "fable-timetrack-bootstrap.html",
+    "model": "fable",
+    "framework": "bootstrap",
+    "brief": "timetrack",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A landing page for Tallyhoo, a time-tracking app for freelance designers."
+  },
+  {
+    "file": "fable-aiwriter-tailwind.html",
+    "model": "fable",
+    "framework": "tailwind",
+    "brief": "aiwriter",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A landing page for Brightmoss, an AI writing assistant for customer-support teams."
+  },
+  {
+    "file": "fable-aiwriter-bootstrap.html",
+    "model": "fable",
+    "framework": "bootstrap",
+    "brief": "aiwriter",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A landing page for Brightmoss, an AI writing assistant for customer-support teams."
+  },
+  {
+    "file": "fable-dashboard-tailwind.html",
+    "model": "fable",
+    "framework": "tailwind",
+    "brief": "dashboard",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: The home screen of Ledgerly, an accounting web app for small businesses: revenue this month, invoices due, recent transactions and a cash-flow chart."
+  },
+  {
+    "file": "fable-dashboard-bootstrap.html",
+    "model": "fable",
+    "framework": "bootstrap",
+    "brief": "dashboard",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home screen of Ledgerly, an accounting web app for small businesses: revenue this month, invoices due, recent transactions and a cash-flow chart."
+  },
+  {
+    "file": "fable-pricing-tailwind.html",
+    "model": "fable",
+    "framework": "tailwind",
+    "brief": "pricing",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A pricing page for Fernhook, a developer API for sending SMS, with three plans and an FAQ."
+  },
+  {
+    "file": "fable-pricing-bootstrap.html",
+    "model": "fable",
+    "framework": "bootstrap",
+    "brief": "pricing",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A pricing page for Fernhook, a developer API for sending SMS, with three plans and an FAQ."
+  },
+  {
+    "file": "fable-bakery-tailwind.html",
+    "model": "fable",
+    "framework": "tailwind",
+    "brief": "bakery",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: A home page for Crumb & Co, a neighbourhood bakery: what they bake, opening hours and where to find them."
+  },
+  {
+    "file": "fable-bakery-bootstrap.html",
+    "model": "fable",
+    "framework": "bootstrap",
+    "brief": "bakery",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: A home page for Crumb & Co, a neighbourhood bakery: what they bake, opening hours and where to find them."
+  },
+  {
+    "file": "fable-portfolio-tailwind.html",
+    "model": "fable",
+    "framework": "tailwind",
+    "brief": "portfolio",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Tailwind CSS v4, loaded with <script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>; style with utility classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
+  },
+  {
+    "file": "fable-portfolio-bootstrap.html",
+    "model": "fable",
+    "framework": "bootstrap",
+    "brief": "portfolio",
+    "prompt": "Build a single-file web page. Write complete, production-quality HTML with any extra CSS in the file and realistic English copy. Do not use images that need downloading; inline SVG or CSS is fine.\nFramework: Bootstrap 5.3, loaded with <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"> (and its bundle script if you use components); style with Bootstrap classes.\nBrief: The home page of Ada Lindqvist, a freelance product designer: selected work, about and contact."
+  }
+]

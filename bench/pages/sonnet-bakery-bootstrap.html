@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crumb &amp; Co — Neighbourhood bakery</title>
+<meta name="description" content="Sourdough, pastries and cakes baked every morning at Crumb &amp; Co on Alder Street. See what is in the oven, our opening hours and how to find us.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  :root { --crust: #8a4b1f; --flour: #fbf6ec; --cocoa: #2c1a10; --butter: #f2c75c; --berry: #9b2c4a;
+    --bs-body-bg: var(--flour); --bs-body-color: var(--cocoa); --bs-link-color: var(--berry); --bs-link-hover-color: var(--cocoa);
+    --serif: "Baskerville", "Hoefler Text", Georgia, serif; }
+  .serif { font-family: var(--serif); }
+  .topbar { background: var(--cocoa); color: var(--flour); font-size: .85rem; }
+  .brand { font-family: var(--serif); font-style: italic; font-weight: 700; font-size: 1.9rem; color: var(--cocoa); }
+  .brand span { color: var(--berry); }
+  .navbar .nav-link { color: var(--cocoa); font-weight: 600; font-size: .9rem; }
+  .navbar .nav-link:hover { color: var(--berry); }
+  .hero-title { font-family: var(--serif); font-weight: 700; font-size: clamp(2.8rem, 8vw, 4.6rem); line-height: 1.02; }
+  .btn-crust { --bs-btn-bg: var(--crust); --bs-btn-border-color: var(--crust); --bs-btn-color: var(--flour);
+    --bs-btn-hover-bg: var(--cocoa); --bs-btn-hover-border-color: var(--cocoa); --bs-btn-hover-color: var(--flour); }
+  .menu-item { display: flex; align-items: baseline; gap: .75rem; border-bottom: 1px dashed rgba(44,26,16,.3); padding-bottom: .75rem; }
+  .menu-item > div { flex: 1; }
+  .note { background: rgba(242,199,92,.4); border-radius: .5rem; }
+  .dark-band { background: var(--cocoa); color: var(--flour); }
+  .dark-band a { color: var(--flour); }
+</style>
+</head>
+<body>
+
+<div class="topbar py-2">
+  <div class="container d-flex justify-content-between gap-3"><span>Fresh bread out of the oven from 7:30 am</span><span class="d-none d-sm-inline">14 Alder Street, Hollin Green</span></div>
+</div>
+
+<nav class="navbar navbar-expand-sm py-3" aria-label="Main">
+  <div class="container">
+    <a class="navbar-brand brand" href="#">Crumb <span>&amp;</span> Co</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav gap-sm-3">
+        <li class="nav-item"><a class="nav-link" href="#bakes">The bakes</a></li>
+        <li class="nav-item"><a class="nav-link" href="#hours">Hours</a></li>
+        <li class="nav-item"><a class="nav-link" href="#find">Find us</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="container pt-4 pb-5">
+    <div class="row g-5 align-items-center">
+      <div class="col-md-7">
+        <h1 class="hero-title">Baked before you woke up.</h1>
+        <p class="lead mt-4" style="max-width:34rem">We are a small bakery on Alder Street. Every loaf is shaped by hand, fermented for 36 hours and baked in a stone-floor oven that is older than any of us.</p>
+        <a href="#hours" class="btn btn-crust btn-lg rounded-pill px-4 fw-semibold mt-2">Plan your visit</a>
+      </div>
+      <div class="col-md-5" aria-hidden="true">
+        <svg viewBox="0 0 320 300" class="w-100">
+          <circle cx="160" cy="150" r="140" fill="#f2c75c"/>
+          <ellipse cx="160" cy="165" rx="110" ry="70" fill="#8a4b1f"/>
+          <ellipse cx="160" cy="150" rx="110" ry="70" fill="#c47a3a"/>
+          <g stroke="#f6dca8" stroke-width="9" stroke-linecap="round"><path d="M95 135 l28 -22"/><path d="M135 140 l28 -22"/><path d="M175 143 l28 -22"/><path d="M212 140 l22 -16"/></g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section id="bakes" class="bg-white border-top border-bottom py-5">
+    <div class="container py-4">
+      <h2 class="serif display-6 fw-bold">What is in the oven</h2>
+      <p class="text-body-secondary">The menu changes with the seasons. These are the ones that never leave.</p>
+      <ul class="list-unstyled row g-4 mt-3">
+        <li class="col-sm-6"><div class="menu-item"><div><h3 class="h6 fw-bold mb-0">Country sourdough</h3><p class="small text-body-secondary mb-0">Wheat, a little rye, a long slow rise.</p></div><span class="fw-semibold">£4.80</span></div></li>
+        <li class="col-sm-6"><div class="menu-item"><div><h3 class="h6 fw-bold mb-0">Butter croissant</h3><p class="small text-body-secondary mb-0">Laminated three days, 27 layers.</p></div><span class="fw-semibold">£3.00</span></div></li>
+        <li class="col-sm-6"><div class="menu-item"><div><h3 class="h6 fw-bold mb-0">Cardamom bun</h3><p class="small text-body-secondary mb-0">Sticky, spiced and pearl sugar on top.</p></div><span class="fw-semibold">£3.40</span></div></li>
+        <li class="col-sm-6"><div class="menu-item"><div><h3 class="h6 fw-bold mb-0">Seeded rye</h3><p class="small text-body-secondary mb-0">Dense, nutty, brilliant with cheese.</p></div><span class="fw-semibold">£5.20</span></div></li>
+        <li class="col-sm-6"><div class="menu-item"><div><h3 class="h6 fw-bold mb-0">Lemon drizzle loaf</h3><p class="small text-body-secondary mb-0">Whole slice or whole cake, we won't judge.</p></div><span class="fw-semibold">£3.60</span></div></li>
+        <li class="col-sm-6"><div class="menu-item"><div><h3 class="h6 fw-bold mb-0">Custard tart</h3><p class="small text-body-secondary mb-0">Nutmeg on top. Gone by eleven.</p></div><span class="fw-semibold">£3.20</span></div></li>
+      </ul>
+      <p class="note small px-3 py-3 mt-4 mb-0"><strong>Celebration cakes:</strong> order three days ahead by calling the shop or leaving a note at the counter. Vegan and gluten-free options available.</p>
+    </div>
+  </section>
+
+  <section class="container py-5">
+    <div class="row g-5 py-4">
+      <div id="hours" class="col-md-6">
+        <h2 class="serif display-6 fw-bold">Opening hours</h2>
+        <table class="table table-borderless align-middle mt-4 mb-2" style="--bs-table-bg:transparent">
+          <caption class="visually-hidden">Opening hours by day</caption>
+          <tbody>
+            <tr class="border-bottom"><th scope="row" class="py-3">Monday</th><td>Closed</td></tr>
+            <tr class="border-bottom"><th scope="row" class="py-3">Tuesday – Friday</th><td>7:30 am – 4:00 pm</td></tr>
+            <tr class="border-bottom"><th scope="row" class="py-3">Saturday</th><td>7:00 am – 3:00 pm</td></tr>
+            <tr><th scope="row" class="py-3">Sunday</th><td>8:00 am – 1:00 pm</td></tr>
+          </tbody>
+        </table>
+        <p class="small text-body-secondary">When the shelves are empty we close early. Come before ten for the best choice.</p>
+      </div>
+      <div id="find" class="col-md-6">
+        <h2 class="serif display-6 fw-bold">Find us</h2>
+        <address class="fs-5 mt-4">Crumb &amp; Co<br>14 Alder Street<br>Hollin Green, HG4 2RT</address>
+        <ul class="small ps-3">
+          <li>Two minutes from Hollin Green station, exit B.</li>
+          <li>Buses 12 and 47 stop outside.</li>
+          <li>Bike racks by the front door.</li>
+        </ul>
+        <p class="mb-0"><a href="tel:+441632960123" class="fw-semibold">01632 960123</a> · <a href="mailto:hello@crumbandco.example" class="fw-semibold">hello@crumbandco.example</a></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="dark-band py-4 small">
+  <div class="container d-flex flex-column flex-sm-row justify-content-between gap-2">
+    <p class="mb-0">&copy; 2026 Crumb &amp; Co. Baked on Alder Street.</p><p class="mb-0"><a href="#">Instagram</a> · <a href="#">Allergen information</a></p>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

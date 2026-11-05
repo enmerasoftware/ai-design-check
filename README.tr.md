@@ -6,9 +6,9 @@
 [![lisans: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [English](README.md) · [日本語](README.ja.md)
 
-Claude Code, Cursor ya da Codex ile geliştirenler için: 137 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
-denetçi ve ekranı onaran bir ajan becerisi. Web projelerini (React, Vue, Svelte, Laravel Blade, HTML) ve SwiftUI, Jetpack
-Compose, Flutter, React Native uygulamalarını okur. Bulmak için ajan gerekmez, mekanik düzeltmeler için de gerekmez.
+Claude Code, Cursor ya da Codex ile geliştirenler için: 141 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
+denetçi ve ekranı onaran bir ajan becerisi. Web projelerini (React, Vue, Svelte, Laravel Blade, HTML; Tailwind, Bootstrap ya da düz CSS)
+ve SwiftUI, Jetpack Compose, Flutter, React Native uygulamalarını okur. Bulmak için ajan gerekmez, mekanik düzeltmeler için de gerekmez.
 
 ## Üç adımda başlayın
 
@@ -72,7 +72,7 @@ ile sonraki sayıları gösterir. Özellikler, veriler ve metinler yerinde kalı
 
 ## Neleri yakalar
 
-67 kural kodunuzu (33 tanesi uygulama kodunu da), 55 kural çalışan sayfayı (`scan`) okur, bir kısmı ikisini de. Kalan 33 kural ekrana bakmayı gerektirir; *gözden geçirilecek* olarak işaretlenir ve size ve
+67 kural kodunuzu (33 tanesi uygulama kodunu da), 60 kural çalışan sayfayı (`scan`) okur, bir kısmı ikisini de. Kalan 33 kural ekrana bakmayı gerektirir; *gözden geçirilecek* olarak işaretlenir ve size ve
 düzelten beceriye bırakılır. Her kural ne yapılacağını, nedenini ve nasıl düzeltileceğini Türkçe ve İngilizce anlatır:
 [RULES.tr.md](RULES.tr.md).
 
@@ -84,7 +84,7 @@ düzelten beceriye bırakılır. Her kural ne yapılacağını, nedenini ve nas�
 | Yazım ve metin | Yalnız ilk kelime büyük, aralıklı büyük harfli etiket yok, boş söz yok, ne yaptığını söyleyen düğme, ne yapılacağını söyleyen hata |
 | Bileşenler | Düğme ve form öğeleri ortak bileşenden, dışarıdan biçim yok, tekrarlanan kod bileşene dönüşür |
 | Yerleşim | Projenin ölçeğinde (okunamazsa 4 px) düzey başına tek boşluk, geniş tablolar sayfayı kaplar, telefonda her hücreye yer |
-| Görsel dil | Emoji yerine çizgi ikon, gradyan yazı ve mor gradyan yok, yan şerit yok, parıltı yalnız grafikte |
+| Görsel dil | Emoji yerine çizgi ikon, gradyan yazı ve mor gradyan yok, yan şerit yok, renkli gölge yok, parıltı yalnız grafikte |
 | Hareket | `transition-all` yok, sıçrama yok, hareket azaltma ayarına uyum, nabız yalnız canlı veride, yanıt 300 ms içinde, sonsuz döngü yok |
 | Veri | Sayı neyle kıyaslandığını söyler, sabit genişlikte rakamlar, boş durumlar |
 | Yerelleştirme | Dile uygun büyük/küçük harf (Türkçe i/İ), biçimlendirici ile sayılar, gerçek çoğul kuralları |
@@ -98,14 +98,23 @@ Yöntem ve bulgular: [RESEARCH.md](RESEARCH.md).
 
 `scan` sayfayı Chrome'unuzda masaüstü ve telefon genişliğinde açar; model ve API anahtarı gerekmez. Kaynak kodun
 gösteremediğini okur: gerçek kontrast, boyutlar, neyin neyi kapattığı, kırık görseller, betik hataları, hiç görünmeyen
-içerik. Pull request için `--format github` ekleyin. Yapılandırmada `designSystem` (`fonts`, `sizes`, `radii`, `colors`)
+içerik. Chrome'un hesapladığı her rengi okur, Tailwind 4'ün `oklch()` renkleri de buna dahildir. Üretilmiş sayfanın
+alışkanlıklarını da yakalar: başlıkta renkle ayrılmış kelime, renkli gölge, her çağrı düğmesinin sonunda ok, orta noktayla
+dizilmiş listeler, başlığın üstünde rozet.
+
+Açılamayan, hata döndüren ya da tarayıcıyı giriş sayfasına yönlendiren bir sayfa temiz sayılmaz; tarama 2 koduyla durur.
+Giriş gerektiren sayfa için `--cookie "ad=değer"` ya da `--header "Ad: değer"` verin; kabuk geçmişinde ve CI kayıtlarında
+görünmesinler diye `AI_DESIGN_CHECK_COOKIE` ve `AI_DESIGN_CHECK_HEADERS` ortam değişkenlerini de kullanabilirsiniz. Böyle bir
+sayfayı bilerek denetlemek için `--allow-redirect` ve `--allow-status 404` var. Birden çok adres tek seferde taranır. Pull
+request için `--format github` ekleyin. Yapılandırmada `designSystem` (`fonts`, `sizes`, `radii`, `colors`)
 varsa sistemden sapanları da adıyla söyler.
 
 `redesign` ajanınıza (Claude Code ya da Codex) ihtiyaç duyan tek kısımdır, çünkü sayfanın ne göstermesi gerektiğine karar
 vermek muhakeme ister. Ajan ekran görüntülerini, kodu ve konuyu inceler; her bölüm için bir kart yazar: ne söylediği, neyin
 yanlış olduğu, kendi içeriğinden çıkan fikir, sitenizden kullandığı renkler. Kartlar ölçülen sayfaya karşı denetlenir. Sonra
 numaralı düzeltmeler ve kartlar yeni bir git dalında geçiş geçiş uygulanır; içerik kaybeden, kural hatası ekleyen ya da daha
-kötü görünen geçiş atılır. `--plan` kartlardan sonra durur, okuyup düzenlersiniz; `--brief` onları uygular.
+kötü görünen geçiş atılır. `--plan` kartlardan sonra durur, okuyup düzenlersiniz; `--brief` onları uygular. Yalnızca
+çalışma ağacı temizken başlar (önce commit edin ya da stash'e alın); Ctrl-C yarım kalan geçişi geri alır.
 
 ## Mobil uygulamalar
 
@@ -221,9 +230,13 @@ Yeni ya da değişkenleri olmayan ürünler için. Bir karakter (`calm`, `precis
 |---|---|
 | Yazı tipleri | Arayüz, başlık, sayı ve kod için 50 yazı tipli kitaplıktan. `fonts --character calm` seçenekleri listeler |
 | Yazı ölçeği | Dynamic Type ve Material 3 ile eşleşen sekiz rol |
-| Renkler | Açık ve koyu; her yazı rengi WCAG 2'yi geçene kadar ayarlanır |
+| Renkler | Açık ve koyu; durum etiketleri ve düğmeler dahil her yazı ve zemin çifti WCAG 2'de 4,5:1'i geçer |
 | Biçim | 4 px boşluk ölçeği, iç içe uyumlu köşeler, denetim yükseklikleri, kart iç boşluğu |
-| Dosyalar | `tokens.css`, Tailwind `theme.css`, `tokens.json`, `DesignSystem.swift`, `DesignSystem.kt`, `preview.html` |
+| Dosyalar | `tokens.css`, Tailwind `theme.css`, Bootstrap `bootstrap.css` ve `_variables.scss`, `tokens.json`, `DesignSystem.swift`, `DesignSystem.kt`, `preview.html` |
+
+Bootstrap 5.3 ile `bootstrap.css` dosyasını Bootstrap'in kendi CSS'inden sonra bağlayın: açık tema varsayılandır, koyu tema
+`data-bs-theme="dark"` altında geçerli olur. Kaynaktan derleyen projeler `_variables.scss` dosyasını Bootstrap'ten önce içe
+aktarır.
 
 ### `story`: önce/sonra videosu
 
@@ -284,8 +297,9 @@ yazar:
 2. Tailwind 4 `@theme`: `--spacing` ızgaradır, `--spacing-*` basamak ekler.
 3. `tailwind.config.*`, metin olarak okunur, asla çalıştırılmaz: `theme.spacing` basamakların yerini alır, `theme.extend.spacing`
    4 px ızgarasına ekler. İşlev, değişken, yayma (spread) ve preset bu yolla okunamaz.
-4. `:root` değişkenleri: `--spacing` ızgaradır, `--space-*` ve `--spacing-*` 4 px ızgarasına basamak ekler, hiçbirini çıkarmaz.
-5. 4 px ızgarası.
+4. SCSS dosyalarınızdaki Bootstrap `$spacer` ve `$spacers` değerleri, metin olarak okunur: basamakları 4 px ızgarasına eklenir.
+5. `:root` değişkenleri: `--spacing` ızgaradır, `--space-*` ve `--spacing-*` 4 px ızgarasına basamak ekler, hiçbirini çıkarmaz.
+6. 4 px ızgarası.
 
 Var olup okunamayan kaynak (`calc()`, `clamp()`, birbirini tutmayan iki dosya, tek sayıyla anlatılamayan kök yazı boyutu) 4 px
 ızgarasını bırakır ve rapora not düşer. Tahmin yürütülmez, sonraki kaynaklar denenmez. Kararı siz vermek için `spacing` ayarlayın.
@@ -301,9 +315,12 @@ yanındaki web teması da uygulama hakkında bir şey söylemez.
 <details>
 <summary><strong>Denetçinin okuduğu dosyalar</strong></summary>
 
-`.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, Blade, CSS, çeviri JSON'u, SwiftUI (`.swift`) ve Jetpack Compose (`.kt`). Düz Node 20+ ile
-çalışır. Sınıf kuralları yalnız sınıf dizgilerini okur (`class`, `className`, `cn()`, `clsx()`, `cva()`, `twMerge()`), yorum ve
-metinlerle eşleşmez.
+`.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, Blade, CSS ve SCSS, çeviri JSON'u, SwiftUI (`.swift`) ve Jetpack Compose (`.kt`). Düz
+Node 20+ ile çalışır. Sınıf kuralları yalnız sınıf dizgilerini okur (`class`, `className`, `cn()`, `clsx()`, `cva()`,
+`twMerge()`), yorum ve metinlerle eşleşmez; Tailwind'in sınıflarını da Bootstrap'inkileri de tanır. CSS kuralları stil
+dosyalarını, `<style>` bloklarını ve `style=""` niteliklerini bildirim bildirim okur. Projeye kopyalanmış bir çatının kendi
+stil dosyası (lisans başlığından tanınan Bootstrap, Tailwind çıktısı ve benzerleri) okunmaz: oradaki değerler sizin değil,
+çatının seçimidir.
 
 </details>
 
@@ -313,7 +330,9 @@ metinlerle eşleşmez.
 Kurallar [`rules.json`](rules.json) içinde: `id`, `area`, `severity`, `en` ve `tr` altında `title`, `rule`, `why`, `fix` ve isteğe bağlı
 `check`:
 
-- `class`: sınıf dizgisinde desen; `unless`, `exceptElements`, `unlessBefore`, `css` ile
+- `class`: sınıf dizgisinde desen (ya da desen listesi); `unless`, `with`, `exceptElements`, `unlessBefore` ve `css` ile.
+  `css` stil dosyalarında bir desendir ya da bildirim bildirim okunan girdilerdir (`property`, `value`, `scale`, `hue` ile
+  `gradient`, `selector`, `unless`, `unlessRule`)
 - `native`: `swift` ve `kt` altında platform başına desen; `notMultipleOf`, `min`, `max`, `unlessBefore`, `unlessAfter`, `onlyIf` ile
 - `regex`: yorumlar hariç kodda desen; `flags` ve `files` ile
 - ya da yapısal denetim
