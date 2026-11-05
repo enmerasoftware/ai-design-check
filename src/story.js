@@ -21,11 +21,13 @@ export function findChrome() {
         process.env.CHROME_PATH,
         '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
         '/Applications/Chromium.app/Contents/MacOS/Chromium',
+        '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
         'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+        'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
     ].filter(Boolean);
     const found = candidates.find((path) => existsSync(path));
     if (found) return found;
-    for (const name of ['google-chrome', 'google-chrome-stable', 'chromium', 'chromium-browser']) {
+    for (const name of ['google-chrome', 'google-chrome-stable', 'chromium', 'chromium-browser', 'microsoft-edge']) {
         const which = spawnSync('which', [name], { encoding: 'utf8' });
         if (which.status === 0 && which.stdout.trim()) return which.stdout.trim();
     }
@@ -43,7 +45,11 @@ const STYLE_PRINT = `(() => {
 export async function launch(chrome) {
     const profile = mkdtempSync(join(tmpdir(), 'ai-design-check-chrome-'));
     // DevTools over a pipe, not a WebSocket: Node 20 has no global WebSocket, and there is no port to look up.
-    const proc = spawn(chrome, ['--headless=new', '--remote-debugging-pipe', `--user-data-dir=${profile}`, '--hide-scrollbars', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--allow-file-access-from-files', 'about:blank'], { stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe'] });
+    const proc = spawn(chrome, ['--headless=new', '--remote-debugging-pipe', `--user-data-dir=${profile}`, '--hide-scrollbars', '--disable-gpu', '--no-first-run', '--no-default-browser-check', 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe', 'pipe', 'pipe'] });
+    // Chrome says why it would not start (no sandbox in a container, a missing library) only here.
+    let reason = '';
+    proc.stderr.setEncoding('utf8');
+    proc.stderr.on('data', (chunk) => { reason = (reason + chunk).slice(-1500); });
     const [input, output] = [proc.stdio[3], proc.stdio[4]];
 
     let id = 0;
@@ -56,7 +62,7 @@ export async function launch(chrome) {
         pending.clear();
     };
     proc.on('error', abort);
-    proc.on('exit', () => abort(new Error('Chrome exited before it finished')));
+    proc.on('exit', () => abort(new Error(`Chrome exited before it finished${reason.includes('sandbox') ? ' (in a container: Chrome needs a sandbox or a wrapper set in CHROME_PATH that passes --no-sandbox)' : ''}${reason.trim() ? `\n${reason.trim().split('\n').slice(-3).join('\n')}` : ''}`)));
     input.on('error', () => {}); // A closed pipe also shows up as the exit above.
     output.setEncoding('utf8');
     output.on('data', (chunk) => {
@@ -72,7 +78,14 @@ export async function launch(chrome) {
         }
     });
     const send = (method, params = {}) => new Promise((done, fail) => {
-        pending.set(++id, { done, fail });
+        const current = ++id;
+        // A page that never answers (a hung script) must end the run, not hang it.
+        const timer = setTimeout(() => {
+            pending.delete(current);
+            fail(new Error(`The page did not answer within 2 minutes (${method})`));
+        }, 120000);
+        timer.unref();
+        pending.set(current, { done: (value) => { clearTimeout(timer); done(value); }, fail: (error) => { clearTimeout(timer); fail(error); } });
         input.write(`${JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) })}\0`);
     });
     const once = (method, timeout = 20000) => new Promise((done) => {
@@ -96,6 +109,7 @@ export async function launch(chrome) {
         }
         input.destroy();
         output.destroy();
+        proc.stderr.destroy();
         try {
             rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
         } catch {
@@ -104,12 +118,13 @@ export async function launch(chrome) {
     };
 
     // A Chrome left running keeps Node alive for ever, so any failure while starting closes it.
-    const starting = setTimeout(() => abort(new Error('Chrome did not answer within 30 seconds')), 30000);
+    const starting = setTimeout(() => abort(new Error('Chrome did not answer within 60 seconds')), 60000);
     try {
         let page;
         while (!(page = (await send('Target.getTargets')).targetInfos.find((target) => target.type === 'page'))) await new Promise((done) => setTimeout(done, 50));
         ({ sessionId } = await send('Target.attachToTarget', { targetId: page.targetId, flatten: true }));
         await send('Page.enable');
+        await send('Network.enable');
     } catch (error) {
         await close();
         throw error;
@@ -117,26 +132,37 @@ export async function launch(chrome) {
         clearTimeout(starting);
     }
 
+    /** Every event of one kind until the returned function is called. */
+    const on = (method, listener) => {
+        let live = true;
+        const again = (params) => {
+            if (!live) return;
+            listener(params);
+            listeners.set(method, [...(listeners.get(method) ?? []), again]);
+        };
+        listeners.set(method, [...(listeners.get(method) ?? []), again]);
+
+        return () => { live = false; };
+    };
+    // An alert() would block every later call on the page.
+    on('Page.javascriptDialogOpening', () => { send('Page.handleJavaScriptDialog', { accept: true }).catch(() => {}); });
+
     return {
         send,
         evaluate,
-        /** Every event of one kind until the returned function is called. */
-        on(method, listener) {
-            let live = true;
-            const again = (params) => {
-                if (!live) return;
-                listener(params);
-                listeners.set(method, [...(listeners.get(method) ?? []), again]);
-            };
-            listeners.set(method, [...(listeners.get(method) ?? []), again]);
-
-            return () => { live = false; };
-        },
+        on,
         async open(url, { width, height, settle = 1200, mobile = false, steady = true }) {
             await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: mobile ? 2 : 1, mobile });
+            let response = null;
+            const stop = on('Network.responseReceived', ({ type, response: received }) => { if (type === 'Document') response = received; });
             const loaded = once('Page.loadEventFired');
-            await send('Page.navigate', { url });
+            const { errorText } = await send('Page.navigate', { url });
+            if (errorText) {
+                stop();
+                throw new Error(`Could not open ${url}: ${errorText}`);
+            }
             await loaded;
+            stop();
             await new Promise((done) => setTimeout(done, settle)); // CDN styles and fonts
             // A fixed wait loses to a slow machine: go on only when the styles have stopped changing, within reason.
             let last = null;
@@ -146,9 +172,18 @@ export async function launch(chrome) {
                 last = now;
                 await new Promise((done) => setTimeout(done, 300));
             }
+
+            return response && { status: response.status, mimeType: response.mimeType, url: response.url };
         },
         close,
     };
+}
+
+/** An error page or a JSON answer is not the page that was asked for: measuring it would report a clean page. */
+export function assertPage(response, url, allowStatus = []) {
+    if (!response) return;
+    if (response.status >= 400 && !allowStatus.includes(response.status)) throw new Error(`${url} answered HTTP ${response.status}, so there is no page to check. Is it the right address, and is the server up? (--allow-status ${response.status} checks that page anyway.)`);
+    if (response.mimeType && !/html|xml|svg/.test(response.mimeType)) throw new Error(`${url} answered ${response.mimeType}, not a page.`);
 }
 
 /** A local copy of the page for the checker, and the URL Chrome opens. */
@@ -215,7 +250,7 @@ const BOXES = (values, view) => `(() => {
 const STAGE = (data) => `<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0;background:#0e0f12">
 <canvas id="c" width="${SIZE}" height="${SIZE}"></canvas>
 <script>
-const data = ${JSON.stringify(data)};
+const data = ${JSON.stringify(data).replace(/</g, '\\u003c').replace(/\u2028|\u2029/g, (char) => `\\u${char.charCodeAt(0).toString(16)}`)};
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 const load = (src) => new Promise((done) => { const image = new Image(); image.onload = () => done(image); image.src = src; });

@@ -746,7 +746,7 @@
       },
       "check": {
         "type": "class",
-        "css": "[^{}\\s,;]*:hover\\b[^{}]*(?=\\{)",
+        "css": "(?<![^{}\\s,;])(?!@|\\()[^{}\\s,;]*:hover\\b[^{}]*(?=\\{)",
         "unlessMedia": "hover\\s*:\\s*hover|any-hover|pointer\\s*:\\s*fine",
         "cssOnePerFile": true
       }
@@ -977,7 +977,7 @@
       "check": {
         "type": "class",
         "pattern": "(?:^|\\s)(?:[\\w-]+:)*outline-(?:none|hidden)(?=\\s|$)",
-        "unless": "(?:focus-visible|focus|focus-within|group-focus-visible|peer-focus-visible|data-focus-visible|data-\\[focus-visible\\]|data-\\[focused\\]|data-focused|has-focus-visible):(?:ring|outline|shadow|border|bg|underline)",
+        "unless": "(?:focus-visible|focus|focus-within|group-focus-visible|peer-focus-visible|data-focus-visible|data-\\[focus-visible\\]|data-\\[focused\\]|data-focused|has-focus-visible):(?:ring(?!-0(?:\\s|$))|outline(?!-none|-hidden|-0)|shadow(?!-none)|border|bg|underline)",
         "exceptElements": "^(?:\\w*(?:Dialog|Popover|Modal|Sheet|Drawer|Menu|ListBox|Listbox|Tooltip|Command|Overlay|Popup|Viewport|Panel)\\w*|[A-Z]\\w*Content)$",
         "unlessBefore": "(?:focus-within|has-\\[:focus-visible\\]|has-focus-visible|has-\\[\\[[^\\]]*\\]:focus-visible\\]):(?:ring|outline|shadow|border)"
       }
@@ -1246,7 +1246,7 @@
       },
       "check": {
         "type": "regex",
-        "pattern": "\\bt\\([^()\\n]*\\)\\s*\\+\\s*(?:['\"`][^'\"`\\n]*\\p{L}|t\\(|['\"`][^'\"`\\n]*['\"`]\\s*\\+\\s*t\\()|['\"`][^'\"`\\n]*\\p{L}[^'\"`\\n]*['\"`]\\s*\\+\\s*t\\(",
+        "pattern": "\\bt\\([^()\\n]*\\)\\s*\\+\\s*(?:['\"`][^'\"`\\n]*\\p{L}|t\\(|['\"`][^'\"`\\n]*['\"`]\\s*\\+\\s*t\\()|['\"`](?=[^'\"`\\n]*\\p{L})[^'\"`\\n]*['\"`]\\s*\\+\\s*t\\(",
         "files": [
           "tsx",
           "jsx",

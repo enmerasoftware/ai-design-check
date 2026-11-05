@@ -54,7 +54,7 @@ body { background: var(--color-bg); color: var(--color-text); font-family: var(-
 
 /** Tailwind v4: the same variables inside @theme, so bg-surface, text-text-secondary, text-body, rounded-md work. */
 export function tailwind(system) {
-    return css(system).replace(':root {', '@theme {').replace('body {', '@layer base {\n    body {').replace(/\.tabular \{[^}]*\}\n$/, '}\n');
+    return css(system).replace(':root {', '@theme {').replace('    color-scheme: light;\n}', '}\n\n:root {\n    color-scheme: light;\n}').replace('body {', '@layer base {\n    body {').replace(/\.tabular \{[^}]*\}\n$/, '}\n');
 }
 
 export const json = (system) => `${JSON.stringify(system, null, 2)}\n`;

@@ -16,7 +16,14 @@ import { check } from '../check.js';
 
 export const OUT = '.ai-design-check/redesign';
 
-const git = (cwd, ...args) => spawnSync('git', args, { cwd, encoding: 'utf8' });
+// quotePath off: a non-ASCII file name stays a usable path. The buffer: a long list cut short would read as files gone.
+const git = (cwd, ...args) => spawnSync('git', ['-c', 'core.quotePath=false', ...args], { cwd, encoding: 'utf8', maxBuffer: 1 << 30 });
+const gitOk = (cwd, ...args) => {
+    const result = git(cwd, ...args);
+    if (result.status !== 0) throw new Error(`git ${args[0]} failed, so nothing more is touched: ${result.stderr.trim() || result.error?.message || `exit ${result.status}`}`);
+
+    return result.stdout;
+};
 const lines = (text) => text.split('\n').filter(Boolean);
 
 /**
@@ -25,22 +32,25 @@ const lines = (text) => text.split('\n').filter(Boolean);
  * the snapshot is put back or committed.
  */
 function snapshot(cwd) {
+    // A failed stash is not a clean tree: taking HEAD for the snapshot would make restore wipe uncommitted work.
     return {
-        commit: git(cwd, 'stash', 'create').stdout.trim() || git(cwd, 'rev-parse', 'HEAD').stdout.trim(),
-        untracked: new Set(lines(git(cwd, 'ls-files', '--others', '--exclude-standard').stdout)),
+        // A repository with no commit yet has nothing to go back to: only new files are tracked, and removed.
+        commit: git(cwd, 'rev-parse', '--verify', '-q', 'HEAD').status !== 0 ? null : gitOk(cwd, 'stash', 'create').trim() || gitOk(cwd, 'rev-parse', 'HEAD').trim(),
+        untracked: new Set(lines(gitOk(cwd, 'ls-files', '--others', '--exclude-standard'))),
     };
 }
 
 function changedSince(cwd, snap) {
     return {
-        tracked: lines(git(cwd, 'diff', '--name-only', snap.commit).stdout),
-        added: lines(git(cwd, 'ls-files', '--others', '--exclude-standard').stdout).filter((file) => !snap.untracked.has(file)),
+        // --relative: from a subfolder of the repository git would otherwise name paths from its root.
+        tracked: snap.commit ? lines(gitOk(cwd, 'diff', '--name-only', '--relative', snap.commit)) : [],
+        added: lines(gitOk(cwd, 'ls-files', '--others', '--exclude-standard')).filter((file) => !snap.untracked.has(file)),
     };
 }
 
 function restore(cwd, snap) {
     const { tracked, added } = changedSince(cwd, snap);
-    if (tracked.length) git(cwd, 'restore', `--source=${snap.commit}`, '--worktree', '--', ...tracked);
+    if (tracked.length) gitOk(cwd, 'restore', `--source=${snap.commit}`, '--worktree', '--', ...tracked);
     for (const file of added) rmSync(join(cwd, file), { force: true });
 }
 
@@ -364,7 +374,7 @@ export async function redesign({ cwd, url, path = '/', agent = 'claude', build, 
         }
         if (problems.length) {
             // Thrown away from the branch, not from the disk: hours of an agent's work stay available to read or apply.
-            writeFileSync(`${prefix}.rejected.patch`, git(cwd, 'diff', snap.commit).stdout);
+            writeFileSync(`${prefix}.rejected.patch`, (snap.commit ? git(cwd, 'diff', snap.commit).stdout : ''));
             restore(cwd, snap);
             rebuild();
             restore(cwd, snap); // build output that is tracked goes back to exactly what it was
@@ -374,8 +384,9 @@ export async function redesign({ cwd, url, path = '/', agent = 'claude', build, 
         }
         const { tracked, added } = changedSince(cwd, snap);
         const changed = [...tracked, ...added];
-        git(cwd, 'add', '--', ...changed);
-        git(cwd, 'commit', '-q', '-m', `Design: ${pass.name} (${pass.items.map((item) => item.id).join(', ')})`, '--', ...changed);
+        // A commit that fails (a hook, no identity) must not be reported as a kept pass.
+        gitOk(cwd, 'add', '--', ...changed);
+        gitOk(cwd, 'commit', '-q', '-m', `Design: ${pass.name} (${pass.items.map((item) => item.id).join(', ')})`, '--', ...changed);
         Object.assign(errors, errorsBy(check(cwd, { include: changed })));
         log(`  kept: ${JSON.stringify(summary(baseline))} → ${JSON.stringify(summary(after))}`);
         result.passes.push({ name: pass.name, kept: true, after: summary(after) });

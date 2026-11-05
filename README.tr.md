@@ -104,7 +104,7 @@ varsa sistemden sapanları da adıyla söyler.
 `redesign` ajanınıza (Claude Code ya da Codex) ihtiyaç duyan tek kısımdır, çünkü sayfanın ne göstermesi gerektiğine karar
 vermek muhakeme ister. Ajan ekran görüntülerini, kodu ve konuyu inceler; her bölüm için bir kart yazar: ne söylediği, neyin
 yanlış olduğu, kendi içeriğinden çıkan fikir, sitenizden kullandığı renkler. Kartlar ölçülen sayfaya karşı denetlenir. Sonra
-ölçülmüş düzeltmeler ve kartlar yeni bir git dalında geçiş geçiş uygulanır; içerik kaybeden, kural hatası ekleyen ya da daha
+numaralı düzeltmeler ve kartlar yeni bir git dalında geçiş geçiş uygulanır; içerik kaybeden, kural hatası ekleyen ya da daha
 kötü görünen geçiş atılır. `--plan` kartlardan sonra durur, okuyup düzenlersiniz; `--brief` onları uygular.
 
 ## Mobil uygulamalar
@@ -162,7 +162,8 @@ sessizce çıkar; bulgular stderr'e yazılır ve çıkış kodu 2 olur.
 - run: npx @enmera/ai-design-check
 ```
 
-Hatalarda, `--strict` ile uyarılarda da 1 koduyla çıkar. `--json` makineler için yazdırır, `--format github` pull request
+Hatalarda, `--strict` ile uyarılarda da 1 koduyla çıkar. Hiçbir şey denetlenemediyse ya da bir seçenek veya ayar yanlışsa 2 koduyla
+çıkar; böylece yanlış yazılmış bir yol geçmiş sayılmaz. `--json` makineler için yazdırır, `--format github` pull request
 notları üretir.
 
 ### Var olan projede başlayın

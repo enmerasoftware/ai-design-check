@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { loadRules } from './check.js';
-import { findChrome, launch } from './story.js';
+import { assertPage, findChrome, launch } from './story.js';
 
 /**
  * Narrow-screen check: renders the page at a phone width and at a desktop width in Chrome and reports what only a
@@ -67,7 +67,7 @@ const finding = (rule, severity, path, value, message) => ({ rule, area: loadRul
  * @param {string} input file or URL
  * @param {{width?: number, desktop?: number, stress?: boolean}} options
  */
-export async function narrow(input, { width = 320, desktop = 1280, stress = false } = {}) {
+export async function narrow(input, { width = 320, desktop = 1280, stress = false, allowStatus = [] } = {}) {
     const chrome = findChrome();
     if (!chrome) throw new Error('Chrome or Chromium not found; set CHROME_PATH');
     const url = /^https?:\/\//.test(input) ? input : pathToFileURL(resolve(input)).href;
@@ -75,7 +75,7 @@ export async function narrow(input, { width = 320, desktop = 1280, stress = fals
 
     const browser = await launch(chrome);
     try {
-        await browser.open(url, { width: desktop, height: 900 });
+        assertPage(await browser.open(url, { width: desktop, height: 900 }), url, allowStatus);
         const wide = await browser.evaluate(MEASURE);
         await browser.open(url, { width, height: 800, mobile: true });
         const phone = await browser.evaluate(MEASURE);

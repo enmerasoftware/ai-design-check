@@ -161,7 +161,8 @@ exits silently; findings exit 2 on stderr.
 - run: npx @enmera/ai-design-check
 ```
 
-It exits 1 on errors, and on warnings too with `--strict`. `--json` prints for machines, and `--format github` writes pull
+It exits 1 on errors, and on warnings too with `--strict`. It exits 2 when nothing could be checked or an option or the config
+is wrong, so a mistyped path cannot pass. `--json` prints for machines, and `--format github` writes pull
 request annotations.
 
 ### Start from an existing project

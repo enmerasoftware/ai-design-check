@@ -1,5 +1,53 @@
 # Changelog
 
+## 0.13.0
+
+An end-to-end audit, tried against real projects. The theme: a green result now means something was checked.
+
+**A pass has to be earned**
+- A run that read no interface file exits 2 with "Nothing checked": a wrong path, an empty folder, a config file on its own.
+  SCSS, Less, MDX and Pug files are named as unread.
+- `scan`, `narrow` and `redesign` stop on a page that did not load, answered HTTP 400 or above, or is not HTML. `scan` also stops
+  on an empty page. `--allow-status 404` checks an error page you designed.
+- An unknown option, a mistyped one, or `--dry-run=true` stops the run with exit 2 instead of being dropped.
+- A wrong severity or a wrong type in the config, or a broken baseline, is reported in one line with exit 2. Before, it could turn
+  errors off and pass CI.
+- `init` includes the whole project. It used to write `resources/js` and `src`, which hid most other layouts.
+
+**Security**
+- Chrome no longer runs with `--allow-file-access-from-files`, which let a local HTML page read any file you can read.
+- A page's title can no longer break out of `story`'s stage script.
+- `--format github` escapes file names and messages, so they cannot start a workflow command.
+- Baseline, `init` and `system` refuse to write through a symbolic link. `system` no longer overwrites other files without `--force`.
+- The hook bounds each finding to one short line of repository text.
+- The release job runs the full Node matrix first, with no publishing rights in reach of the tests.
+
+**Your work stays safe**
+- `--fix` leaves files that are not UTF-8 alone. It used to destroy their non-ASCII letters.
+- `--fix` lowers the baseline, so what it fixed cannot become an allowance for new findings.
+- `--fix` writes only steps Tailwind 3 also has; other values stay in brackets.
+- `redesign` stops if git cannot record the working tree, instead of taking HEAD for it and wiping uncommitted work. It handles
+  repository subfolders and non-ASCII file names, and a failed commit is no longer reported as a kept pass.
+
+**Fewer false results**
+- `.gitignore` is respected, and `.next`, `.nuxt`, `.output`, `.svelte-kit`, `.turbo`, `out`, `coverage` and similar are skipped.
+- JSX in `.js` files is read.
+- `icon-button-name` knows icons imported from lucide, Heroicons, react-icons, Phosphor, Tabler, Radix and Feather.
+- `focus-ring-removed` no longer accepts `focus:outline-none` as its own replacement.
+- Commented-out markup is not read as markup.
+- `ai-design-check-ignore-next-line` covers one line, or one unfinished tag. It used to reach up to 11 lines in code.
+- An `allow` entry can hold a value with a colon, such as `hover:mt-[13px]`.
+- Two slow patterns are linear now. An inlined font or image could stall a run for many minutes.
+
+**Smaller**
+- `-h` and `--version` work, and a value may hold an equals sign.
+- From a subfolder, the project's config and baseline apply.
+- The hook applies the baseline and the config's `ignore`, and finds files reached through a symlink.
+- `narrow` honours `--strict`, `--quiet`, `--format github` and the config's rules.
+- A hung page ends the run after 2 minutes, `alert()` no longer blocks it, and Chrome's own reason is shown when it will not start.
+- Microsoft Edge is found as a browser.
+- The generated `theme.css` compiles in Tailwind 4, and the generated `DesignSystem.kt` passes the checker.
+
 ## 0.12.0
 
 - Every rule `scan` runs now has at least four shapes it must flag and five close ones it must leave alone. Writing them found

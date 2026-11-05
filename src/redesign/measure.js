@@ -1,5 +1,5 @@
 import { writeFileSync } from 'node:fs';
-import { findChrome, launch } from '../story.js';
+import { findChrome, launch, assertPage } from '../story.js';
 
 /**
  * Renders a page in Chrome and measures what a designer looks at, from the computed styles of what is on screen:
@@ -300,7 +300,7 @@ export async function measure(url, { screenshots, widths = [1440, 390] } = {}) {
         const out = {};
         for (const width of widths) {
             const mobile = width < 768;
-            await browser.open(url, { width, height: mobile ? 844 : 900, mobile, settle: 1800 });
+            assertPage(await browser.open(url, { width, height: mobile ? 844 : 900, mobile, settle: 1800 }), url);
             await browser.evaluate(`document.documentElement.style.scrollBehavior = 'auto'; (${clearOverlays.toString()})()`); // a smooth scroll would still be moving when things are measured
             // Lazy images and on-scroll reveals: walk down the page once, then freeze motion before measuring.
             await browser.evaluate(`(async () => { for (let y = 0; y < document.documentElement.scrollHeight; y += innerHeight / 2) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); } scrollTo(0, 0); await document.fonts.ready; await new Promise((r) => setTimeout(r, 400)); })()`);

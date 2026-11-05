@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, dirname, join, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,7 +18,7 @@ export const CONFIG_FILE = 'ai-design-check.json';
 /** Also read: the neutral dotfile and the name used by @enmera/design 0.1. */
 export const CONFIG_FILES = [CONFIG_FILE, '.design-rules.json', 'enmera-design.json'];
 
-const DEFAULT_IGNORE = ['**/node_modules/**', '**/vendor/**', '**/dist/**', '**/build/**', '**/public/build/**', '**/.git/**', '**/storage/**', '**/*.min.*', '**/Pods/**', '**/DerivedData/**', '**/.build/**', '**/.gradle/**', '**/generated/**', '**/.dart_tool/**', '**/*.g.dart', '**/*.freezed.dart', '**/*Tests.swift', '**/*Test.kt', '**/*Tests.kt', '**/*_test.dart', '**/*.test.*', '**/*.spec.*', '**/__tests__/**'];
+const DEFAULT_IGNORE = ['**/node_modules/**', '**/vendor/**', '**/dist/**', '**/build/**', '**/public/build/**', '**/.git/**', '**/storage/**', '**/*.min.*', '**/Pods/**', '**/DerivedData/**', '**/.build/**', '**/.gradle/**', '**/generated/**', '**/.dart_tool/**', '**/*.g.dart', '**/*.freezed.dart', '**/*Tests.swift', '**/*Test.kt', '**/*Tests.kt', '**/*_test.dart', '**/*.test.*', '**/*.spec.*', '**/__tests__/**', '**/.next/**', '**/.nuxt/**', '**/.output/**', '**/.svelte-kit/**', '**/.astro/**', '**/.turbo/**', '**/.vercel/**', '**/.netlify/**', '**/.cache/**', '**/.expo/**', '**/.angular/**', '**/out/**', '**/coverage/**', '**/storybook-static/**'];
 
 /** Names that keep their capitals inside a sentence-case label. Projects add their own in config.properNouns. */
 const PROPER_NOUNS = [
@@ -48,12 +49,37 @@ const NATIVE = ['swift', 'kt', 'dart'];
 const SCRIPT = ['tsx', 'jsx', 'ts', 'js'];
 const REACT_NATIVE = /\bfrom\s+['"]react-native['"]|\brequire\(\s*['"]react-native['"]\s*\)/;
 /** Interface code no rule reads yet: the report names it instead of calling the project clean. */
-const UNREAD = /\.(php|astro|ejs|erb|twig|hbs|liquid|njk|cshtml|razor|m|mm|java)$/;
+const UNREAD = /\.(php|astro|ejs|erb|twig|hbs|liquid|njk|cshtml|razor|m|mm|java|scss|sass|less|styl|mdx|pug|haml|slim)$/;
+/** Files that say nothing about an interface: one of these alone must not count as "something was checked". */
+const NOT_INTERFACE = /\.d\.ts$|(?:^|\/)[\w.-]+\.config\.\w+$/;
+/** A plain .js file written as JSX (Create React App, older Next.js projects). */
+const looksLikeJsx = (source) => /\bclassName=|(?:return|=>)\s*\(?\s*<[A-Za-z]/.test(source) && /<\/[A-Za-z]|\/>/.test(source);
+const SEVERITIES = ['error', 'warn', 'info', 'off'];
+const blankKeepingLines = (text) => text.replace(/[^\n]/g, ' ');
+/** Commented-out markup is not markup: blanked, with every line number and offset unchanged. */
+const blankMarkupComments = (source) => source.replace(/<!--[\s\S]*?-->|\{\s*\/\*[\s\S]*?\*\/\s*\}/g, blankKeepingLines);
 const LAYOUT_XML = /(?:^|\/)res\/layout[^/]*\/[^/]+\.(xml)$/;
+
+function readConfigFile(file) {
+    let config;
+    try {
+        config = JSON.parse(readFileSync(file, 'utf8'));
+    } catch (error) {
+        throw new Error(`${basename(file)} is not valid JSON: ${error.message}`);
+    }
+    for (const key of ['include', 'ignore', 'properNouns', 'componentDirs']) {
+        if (config[key] !== undefined && !(Array.isArray(config[key]) && config[key].every((item) => typeof item === 'string'))) throw new Error(`${basename(file)}: "${key}" must be a list of strings`);
+    }
+    for (const [rule, severity] of Object.entries(config.rules ?? {})) {
+        if (!SEVERITIES.includes(severity)) throw new Error(`${basename(file)}: rule "${rule}" has severity ${JSON.stringify(severity)}; use ${SEVERITIES.join(', ')}`);
+    }
+
+    return config;
+}
 
 export function loadConfig(cwd) {
     const file = CONFIG_FILES.map((name) => join(cwd, name)).find((path) => existsSync(path));
-    const config = file ? JSON.parse(readFileSync(file, 'utf8')) : {};
+    const config = file ? readConfigFile(file) : {};
 
     return {
         include: config.include ?? ['.'],
@@ -100,17 +126,28 @@ export function globToRegExp(glob) {
 
 export const matches = (globs, path) => globs.some((glob) => globToRegExp(glob).test(path) || globToRegExp(`${glob}/**`).test(path));
 
+/** What git would keep, relative to cwd: tracked files and new ones .gitignore lets through. Null outside a repository. */
+function gitVisible(cwd) {
+    const listed = spawnSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z'], { cwd, encoding: 'utf8', maxBuffer: 1 << 30 });
+
+    return listed.status === 0 ? new Set(listed.stdout.split('\0').filter(Boolean)) : null;
+}
+
+function walkFolder(cwd, start, ignore, visible, files) {
+    for (const entry of readdirSync(join(cwd, start), { withFileTypes: true })) {
+        const path = (start === '.' ? entry.name : `${start}/${entry.name}`).split(sep).join('/');
+        if (matches(ignore, path)) continue;
+        if (entry.isDirectory()) walkFolder(cwd, path, ignore, visible, files);
+        else if (!visible || visible.has(path)) files.push(path);
+    }
+}
+
 export function walk(cwd, start, ignore, files = []) {
     const full = join(cwd, start);
     if (!existsSync(full)) return files;
-    if (statSync(full).isFile()) return [...files, start];
+    if (statSync(full).isFile()) return [...files, start]; // named outright: read even if ignored
 
-    for (const entry of readdirSync(full, { withFileTypes: true })) {
-        const path = (start === '.' ? entry.name : `${start}/${entry.name}`).split(sep).join('/');
-        if (matches(ignore, path)) continue;
-        if (entry.isDirectory()) walk(cwd, path, ignore, files);
-        else files.push(path);
-    }
+    walkFolder(cwd, start, ignore, gitVisible(cwd), files);
 
     return files;
 }
@@ -147,8 +184,9 @@ function atRulesAround(css, index) {
 /** allow: { ruleId: ["glob", "glob:exact match"] } */
 function allowed(config, rule, path, value) {
     return (config.allow[rule] ?? []).some((entry) => {
-        const split = entry.lastIndexOf(':');
-        const hasValue = split > 0 && !entry.slice(split).includes('/') && !entry.endsWith('**');
+        // The first colon: a value may hold more of them (hover:mt-[13px]) and a slash (w-1/2).
+        const split = entry.indexOf(':');
+        const hasValue = split > 0 && !entry.endsWith('**');
         const glob = hasValue ? entry.slice(0, split) : entry;
 
         return matches([glob], path) && (!hasValue || entry.slice(split + 1) === value);
@@ -171,10 +209,10 @@ function ignores(source) {
         if (match[1] === 'file') ids.forEach((id) => file.add(id));
         else if (match[1] === 'line') byLine.set(index + 1, [...(byLine.get(index + 1) ?? []), ...ids]);
         else {
-            // next-line covers the whole next element: a tag spread over several lines ends at its first ">".
+            // next-line covers the next line; a tag opened there and left unfinished runs on to its first ">".
             for (let next = index + 1; next < Math.min(lines.length, index + 12); next++) {
                 byLine.set(next + 1, [...(byLine.get(next + 1) ?? []), ...ids]);
-                if (/>\s*$|\/>|>[^<]*</.test(lines[next])) break;
+                if (next === index + 1 ? !/<[A-Za-z][^>]*$/.test(lines[next]) : lines[next].includes('>')) break;
             }
         }
     });
@@ -252,14 +290,18 @@ function checkLabels(config, path, source, report) {
 
 const NAME_ATTRS = ['aria-label', 'aria-labelledby', 'title', 'label', 'tooltip'];
 
+/** Names imported from an icon set: lucide's <Trash2 /> has no "Icon" in it. */
+const ICON_IMPORT = /import\s*\{([^}]*)\}\s*from\s*['"](?:lucide-react|lucide-vue-next|lucide-svelte|@heroicons\/[^'"]+|react-icons\/[^'"]+|@phosphor-icons\/[^'"]+|phosphor-react|@tabler\/icons-react|@radix-ui\/react-icons|react-feather)['"]/g;
+
 function checkIconButtons(path, source, report) {
+    const iconNames = new Set([...source.matchAll(ICON_IMPORT)].flatMap((match) => match[1].split(',').map((name) => name.trim().split(/\s+as\s+/).pop()).filter(Boolean)));
     for (const tag of tags(source, ['button', 'Button', 'IconButton', 'a', 'Link', 'LinkButton'])) {
         const attrs = parseAttrs(tag.attrs);
         // A spread may carry the label; a react-aria slot ("previous", "next") is labelled by its parent.
         if (NAME_ATTRS.some((name) => attrs[name] !== undefined) || attrs.slot !== undefined || /\{\s*\.\.\./.test(tag.attrs)) continue;
         const inner = children(source, tag);
         if (inner === null || inner === '') continue;
-        const hasIcon = /<(?:svg|[A-Z]\w*Icon|Icon|[A-Z]\w*Logo)\b/.test(inner);
+        const hasIcon = /<(?:svg|[A-Z]\w*Icon|Icon|[A-Z]\w*Logo)\b/.test(inner) || [...inner.matchAll(/<([A-Z]\w*)\b/g)].some((match) => iconNames.has(match[1]));
         if (hasIcon && visibleText(inner) === '') report('icon-button-name', path, lineOf(source, tag.start), tag.name, `Icon-only <${tag.name}> has no aria-label`);
     }
 }
@@ -362,14 +404,16 @@ export function check(cwd, overrides = {}) {
     const groups = new Map();
 
     for (const path of files) {
-        const extension = extensionOf(path);
+        let extension = extensionOf(path);
+        if (extension === 'js' && looksLikeJsx(readFileSync(join(cwd, path), 'utf8'))) extension = 'jsx';
         const isI18n = config.i18n.files.length > 0 && matches(config.i18n.files, path);
         const markup = MARKUP.includes(extension);
         const regexFor = regexRules.filter((rule) => rule.check.files.includes(extension) && !(isI18n && !['no-buzzwords', 'error-copy', 'ellipsis-character'].includes(rule.id)));
         if (!markup && extension !== 'css' && regexFor.length === 0 && !NATIVE.includes(extension) && !isI18n) continue;
 
-        const source = readFileSync(join(cwd, path), 'utf8');
-        skip = ignores(source);
+        const raw = readFileSync(join(cwd, path), 'utf8');
+        skip = ignores(raw); // inline ignores live in comments, so they are read before comments are blanked
+        const source = markup ? blankMarkupComments(raw) : raw;
         const reactNative = SCRIPT.includes(extension) && REACT_NATIVE.test(source);
         const platform = reactNative ? 'rn' : extension;
         const nativeFor = NATIVE.includes(extension) || reactNative ? active.filter((rule) => rule.check.native?.[platform]) : [];
@@ -489,7 +533,8 @@ export function coverage(cwd, overrides = {}) {
     for (const path of files) {
         const other = (UNREAD.test(path) && !path.endsWith('.blade.php') ? UNREAD : LAYOUT_XML).exec(path)?.[1];
         if (other) unread[other] = (unread[other] ?? 0) + 1;
-        else if ([...MARKUP, ...NATIVE, ...SCRIPT, 'css'].includes(extensionOf(path))) read++;
+        else if (NOT_INTERFACE.test(path)) continue;
+        else if ([...MARKUP, ...NATIVE, ...SCRIPT, 'css'].includes(extensionOf(path)) || config.include.includes(path) || matches(config.i18n.files, path)) read++;
     }
 
     return { read, unread };

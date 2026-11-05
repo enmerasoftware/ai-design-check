@@ -14,6 +14,8 @@ const RADIUS_CLASS = /^(.*?)(rounded(?:-[a-z]{1,2})?)-\[(\d+(?:\.\d+)?)px\]$/;
 /** The steps Tailwind 3 and 4 name the same. */
 const RADIUS_STEPS = [[6, 'md'], [8, 'lg'], [12, 'xl'], [16, '2xl'], [24, '3xl']];
 const LAST_NUMBER = /\d+(?:\.\d+)?(?!.*\d)/;
+/** Tailwind 3 names only these steps; 4 names them all. Anything else stays a bracket value, which works on both. */
+const NAMED_STEPS = new Set([0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]);
 const nearestStep = (value, step) => Math.floor(value / step + 0.5) * step;
 const hasThemeSteps = ({ base, source }) => Boolean(base) && (source === 'default' || /@theme|tailwind/i.test(source));
 
@@ -29,7 +31,9 @@ function spacing(value, scales) {
     const number = nearestOnScale(scales.web, Number(raw));
     const onGrid = scales.web.base && number % scales.web.base === 0;
 
-    return `${prefix}${minus}${utility}-${onGrid && hasThemeSteps(scales.web) ? number / scales.web.base : `[${number}px]`}`;
+    const step = number / scales.web.base;
+
+    return `${prefix}${minus}${utility}-${onGrid && hasThemeSteps(scales.web) && NAMED_STEPS.has(step) ? step : `[${number}px]`}`;
 }
 
 function radius(value, themed) {
@@ -78,13 +82,20 @@ export function applyFixes(cwd, findings, scales, { write = true } = {}) {
         'no-heavy-headings': (value) => weight(value),
     };
     const changes = [];
+    changes.skipped = [];
     const byFile = new Map();
     for (const finding of findings) {
         const to = answer[finding.rule]?.(finding.value);
         if (to && to !== finding.value) byFile.set(finding.path, [...(byFile.get(finding.path) ?? []), { finding, to }]);
     }
     for (const [path, items] of byFile) {
-        const source = readFileSync(join(cwd, path), 'utf8');
+        const bytes = readFileSync(join(cwd, path));
+        const source = bytes.toString('utf8');
+        // Writing back text decoded from another encoding (Windows-1254, Latin-1) would destroy every non-ASCII letter.
+        if (!Buffer.from(source).equals(bytes)) {
+            changes.skipped.push(path);
+            continue;
+        }
         const edits = [];
         const taken = new Set();
         for (const { finding, to } of items) {

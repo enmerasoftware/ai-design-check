@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { existsSync, mkdirSync, readFileSync, writeFileSync, writeSync } from 'node:fs';
-import { join, relative, resolve, sep } from 'node:path';
-import { CONFIG_FILE, applyBaseline, check, coverage, loadConfig, loadRules, spacingScales, toBaseline } from '../src/check.js';
+import { existsSync, lstatSync, mkdirSync, readFileSync, realpathSync, writeFileSync, writeSync } from 'node:fs';
+import { dirname, join, relative, resolve, sep } from 'node:path';
+import { CONFIG_FILE, CONFIG_FILES, applyBaseline, check, coverage, loadConfig, loadRules, matches, spacingScales, toBaseline } from '../src/check.js';
 import { applyFixes } from '../src/fix.js';
 import { inventory } from '../src/inventory.js';
 import { scaleLines } from '../src/spacing.js';
@@ -52,6 +52,9 @@ Options
   --write-baseline            Record current findings in ${BASELINE}; later runs report only new ones
   --no-baseline               Ignore the baseline file
   --tr                        Turkish rule texts
+  --allow-status 404          scan, narrow: check a page that answers this HTTP status (an error page you designed)
+  --force                     system: overwrite existing files
+  --version                   Print the version
 
 Inline ignore (a reason is required):
   // ai-design-check-ignore-next-line rule-id -- why
@@ -59,28 +62,73 @@ Inline ignore (a reason is required):
 
 Rules and reasons: https://github.com/enmerasoftware/ai-design-check/blob/main/RULES.md`;
 
+// A bad config or baseline is the person's to fix: one line, exit 2 (a usage problem), no stack trace.
+process.on('uncaughtException', (error) => {
+    console.error(`ai-design-check: ${error.message}`);
+    process.exit(2);
+});
+
 const args = process.argv.slice(2);
-const flags = new Set(args.filter((arg) => arg.startsWith('--') && !arg.includes('=')));
+const SWITCHES = ['json', 'strict', 'quiet', 'fix', 'dry-run', 'write-baseline', 'no-baseline', 'tr', 'help', 'version', 'all', 'stress', 'plan', 'force'];
+const VALUES = ['format', 'out', 'still', 'title', 'music', 'width', 'character', 'brand', 'kind', 'ui', 'display', 'source', 'path', 'agent', 'build', 'only', 'brief', 'allow-status'];
+// An option that is not understood must stop the run: silently dropped, --strict is off and --dry-run writes files.
+const usageError = (message) => {
+    console.error(`${message}\nSee: ai-design-check --help`);
+    process.exit(2);
+};
+args.forEach((arg, index) => {
+    if (VALUES.includes(args[index - 1]?.slice(2)) || !arg.startsWith('-') || arg === '-h' || arg === '-v') return;
+    const name = arg.replace(/^--?/, '').split('=')[0];
+    if (arg.startsWith('--') && SWITCHES.includes(name)) {
+        if (arg.includes('=')) usageError(`${arg}: --${name} takes no value.`);
+    } else if (arg.startsWith('--') && VALUES.includes(name)) {
+        if (!arg.includes('=') && (args[index + 1] === undefined || args[index + 1].startsWith('--'))) usageError(`--${name} needs a value.`);
+    } else usageError(`Unknown option ${arg}.`);
+});
+const flags = new Set(args.filter((arg) => arg.startsWith('-') && !arg.includes('=')));
 const valueOf = (name) => {
     const inline = args.find((arg) => arg.startsWith(`--${name}=`));
-    if (inline) return inline.split('=')[1];
+    if (inline) return inline.slice(name.length + 3);
     const index = args.indexOf(`--${name}`);
 
     return index >= 0 ? args[index + 1] : undefined;
 };
 const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story', 'narrow', 'system', 'fonts', 'redesign', 'scan'];
-const positional = args.filter((arg, index) => !arg.startsWith('--') && !['--format', '--out', '--still', '--title', '--music', '--width', '--character', '--brand', '--kind', '--ui', '--display', '--source', '--path', '--agent', '--build', '--only', '--brief'].includes(args[index - 1]));
+const positional = args.filter((arg, index) => !arg.startsWith('-') && !VALUES.includes(args[index - 1]?.slice(2)));
 // "ai-design-check src lang" is a check of those paths; the command word is optional.
 const [command, ...named] = COMMANDS.includes(positional[0]) ? positional : ['check', ...positional];
 // "./src/a.tsx" and absolute paths name the same file as "src/a.tsx"; the walker and the globs expect the last form.
 const rest = named.map((path) => (/^(?:https?|data|file):/.test(path) ? path : relative(process.cwd(), resolve(path)).split(sep).join('/') || '.'));
 const format = flags.has('--json') ? 'json' : (valueOf('format') ?? 'text');
+if (!['text', 'json', 'github'].includes(format)) usageError(`--format takes text, json or github, not ${format}.`);
+const allowStatus = (valueOf('allow-status') ?? '').split(',').filter(Boolean).map(Number);
+// Workflow commands: a file name or a line of page text must stay data, never start a command of its own.
+const escapeData = (text) => String(text).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+const escapeProperty = (text) => escapeData(text).replace(/:/g, '%3A').replace(/,/g, '%2C');
+const LEVEL = { error: 'error', warn: 'warning', info: 'notice' };
+const annotation = (item) => `::${LEVEL[item.severity]} ${item.line ? `file=${escapeProperty(item.path)},line=${item.line},` : ''}title=${escapeProperty(item.rule)}::${escapeData(item.message)}`;
+/** A repository may hold a symlink under a name this tool writes; following it would overwrite a file outside. */
+const writeOwn = (file, content) => {
+    let link = false;
+    try {
+        link = lstatSync(file).isSymbolicLink();
+    } catch {}
+    if (link) throw new Error(`${file} is a symbolic link; not writing through it.`);
+    writeFileSync(file, content);
+};
 const lang = flags.has('--tr') ? 'tr' : 'en';
 const cwd = process.cwd();
 const color = process.stdout.isTTY && !process.env.NO_COLOR;
 const paint = (code, text) => (color ? `\x1b[${code}m${text}\x1b[0m` : text);
 const SEVERITY = { error: (text) => paint(31, text), warn: (text) => paint(33, text), info: (text) => paint(36, text) };
 // Output is collected and written once; exiting only after the write flushes keeps large piped output (--json) whole.
+const readBaseline = (file) => {
+    try {
+        return JSON.parse(readFileSync(file, 'utf8')).counts ?? {};
+    } catch (error) {
+        throw new Error(`${BASELINE} is not valid JSON: ${error.message}. Fix it, or write it again with --write-baseline.`);
+    }
+};
 const lines = [];
 const print = (...parts) => lines.push(parts.join(' '));
 const done = (code) => {
@@ -101,6 +149,11 @@ const done = (code) => {
 
 if (flags.has('--help') || flags.has('-h') || command === 'help') {
     print(HELP);
+    done(0);
+}
+
+if (flags.has('--version') || flags.has('-v')) {
+    print(JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version);
     done(0);
 }
 
@@ -128,10 +181,10 @@ if (command === 'scan') {
     }
     const { scan } = await import('../src/scan.js');
     try {
-        const results = await scan(target, { config: loadConfig(cwd) });
+        const results = await scan(target, { config: loadConfig(cwd), allowStatus });
         const total = (severity) => results.filter((item) => item.severity === severity).length;
         if (format === 'json') print(JSON.stringify({ findings: results, errors: total('error'), warnings: total('warn'), notes: total('info') }, null, 2));
-        else if (format === 'github') for (const item of results) print(`::${{ error: 'error', warn: 'warning', info: 'notice' }[item.severity]} title=${item.rule}::${item.message.replace(/\n/g, ' ')}`);
+        else if (format === 'github') for (const item of results) print(annotation(item));
         else {
             const groups = [[loadRules().areas.accessibility[lang], results.filter((item) => item.area === 'accessibility' || item.rule === 'legible-contrast')], [lang === 'tr' ? 'Stil' : 'Style', results.filter((item) => item.area !== 'accessibility' && item.rule !== 'legible-contrast')]];
             for (const [title, items] of groups) {
@@ -156,14 +209,19 @@ if (command === 'narrow') {
     const { narrow } = await import('../src/narrow.js');
     try {
         const width = Number(valueOf('width') ?? 320);
-        const results = await narrow(named[0], { width, stress: flags.has('--stress') });
+        if (!(width > 0)) throw new Error(`--width takes a number of pixels, got ${valueOf('width')}`);
+        const config = loadConfig(cwd);
+        const results = (await narrow(named[0], { width, stress: flags.has('--stress'), allowStatus }))
+            .map((item) => ({ ...item, severity: config.rules[item.rule] ?? item.severity }))
+            .filter((item) => item.severity !== 'off');
         if (format === 'json') print(JSON.stringify({ findings: results }, null, 2));
+        else if (format === 'github') for (const item of results) print(annotation(item));
         else {
-            for (const item of results) print(`  ${SEVERITY[item.severity](item.severity.padEnd(5))}  ${item.message}  ${paint(2, item.rule)}`);
+            if (!flags.has('--quiet')) for (const item of results) print(`  ${SEVERITY[item.severity](item.severity.padEnd(5))}  ${item.message}  ${paint(2, item.rule)}`);
             const errors = results.filter((item) => item.severity === 'error').length;
             print(`\n${results.length === 0 ? paint(32, `No problems at ${width} px.`) : `${errors} errors, ${results.length - errors} warnings and notes at ${width} px.`}`);
         }
-        done(results.some((item) => item.severity === 'error') ? 1 : 0);
+        done(results.some((item) => item.severity === 'error' || (flags.has('--strict') && item.severity === 'warn')) ? 1 : 0);
     } catch (error) {
         console.error(error.message);
         done(1);
@@ -194,10 +252,13 @@ if (command === 'system') {
             'theme.css': tokens.tailwind(system),
             'tokens.json': tokens.json(system),
             'DesignSystem.swift': tokens.swift(system),
-            'DesignSystem.kt': tokens.kotlin(system),
+            // The file that defines the scale holds every size once; that is not a screen breaking it.
+            'DesignSystem.kt': `// ai-design-check-ignore-file type-scale -- generated: this file defines the type scale\n${tokens.kotlin(system)}`,
             'preview.html': preview(system, css),
         };
-        for (const [name, content] of Object.entries(files)) writeFileSync(join(out, name), content);
+        const taken = Object.keys(files).filter((name) => existsSync(join(out, name)) && readFileSync(join(out, name), 'utf8') !== files[name]);
+        if (taken.length && !flags.has('--force')) throw new Error(`${relative(cwd, out) || '.'} already has ${taken.join(', ')}; they would be overwritten. Use another --out, or --force.`);
+        for (const [name, content] of Object.entries(files)) writeOwn(join(out, name), content);
         if (format === 'json') {
             print(tokens.json(system).trimEnd());
             done(0);
@@ -306,15 +367,15 @@ if (command === 'init') {
         done(1);
     }
     const config = {
-        include: ['resources/js', 'src'],
+        include: ['.'],
         ignore: [],
-        i18n: { files: ['lang/*.json'], keysAreSource: true },
+        i18n: { files: [], keysAreSource: true },
         properNouns: [],
         componentDirs: ['**/components/ui/**'],
         rules: {},
         allow: { 'type-scale': [], 'radius-scale': [], 'glow-in-charts-only': [] },
     };
-    writeFileSync(file, `${JSON.stringify(config, null, 4)}\n`);
+    writeOwn(file, `${JSON.stringify(config, null, 4)}\n`);
     print(`Wrote ${CONFIG_FILE}. Add exceptions under "allow" as "path/glob" or "path/glob:exact match".`);
     done(0);
 }
@@ -344,12 +405,21 @@ if (command === 'hook') {
     } catch {}
     const file = input.tool_input?.file_path ?? input.tool_input?.path ?? input.file_path ?? input.path;
     if (!file) done(0);
-    const path = relative(cwd, file).split(sep).join('/');
+    // Both sides resolved: through a symlink (/tmp on macOS) a file in the project would look like one outside it.
+    let path;
+    try {
+        path = relative(realpathSync(cwd), realpathSync(resolve(cwd, file))).split(sep).join('/');
+    } catch {
+        done(0); // the file is gone
+    }
     if (path.startsWith('..')) done(0);
-    const findings = check(cwd, { include: [path] }).filter((item) => item.rule !== 'repeated-markup' && item.severity !== 'info');
+    if (matches(loadConfig(cwd).ignore, path)) done(0);
+    const baselineCounts = existsSync(join(cwd, BASELINE)) ? readBaseline(join(cwd, BASELINE)) : {};
+    const findings = applyBaseline(check(cwd, { include: [path] }), baselineCounts).filter((item) => item.rule !== 'repeated-markup' && item.severity !== 'info');
     if (findings.length === 0) done(0);
     console.error(`ai-design-check found ${findings.length} design rule issue(s) in ${path}. Fix them, or add "// ai-design-check-ignore-next-line <rule> -- <reason>" when the rule does not apply:`);
-    for (const item of findings) console.error(`  ${path}:${item.line}  ${item.rule}  ${item.message}`);
+    // Repository text goes back to an agent: one bounded line, so a file cannot write it a page of instructions.
+    for (const item of findings) console.error(`  ${path}:${item.line}  ${item.rule}  ${item.message.replace(/\s+/g, ' ').slice(0, 200)}`);
     console.error('Rules and how to fix them: npx @enmera/ai-design-check rules');
     done(2);
 }
@@ -359,17 +429,37 @@ if (command !== 'check') {
     done(2);
 }
 
-const scales = loadConfig(cwd).rules['spacing-scale'] === 'off' ? null : spacingScales(cwd);
-let findings = check(cwd, { ...(rest.length > 0 ? { include: rest } : {}), ...(scales ? { scales } : {}) });
-const include = rest.length > 0 ? { include: rest } : {};
-const seen = coverage(cwd, include);
+// Run from a subfolder, the project's config, baseline and scale still apply.
+function projectRoot(start) {
+    for (let dir = start; ; dir = dirname(dir)) {
+        if ([...CONFIG_FILES, BASELINE].some((name) => existsSync(join(dir, name)))) return dir;
+        if (existsSync(join(dir, '.git')) || dirname(dir) === dir) return start;
+    }
+}
+const root = projectRoot(cwd);
+const missing = rest.filter((path) => !existsSync(resolve(cwd, path)));
+if (missing.length) usageError(`Not found: ${missing.join(', ')}`);
+const paths = rest.length > 0 ? rest.map((path) => relative(root, resolve(cwd, path)).split(sep).join('/') || '.') : root === cwd ? [] : [relative(root, cwd).split(sep).join('/')];
+const scales = loadConfig(root).rules['spacing-scale'] === 'off' ? null : spacingScales(root);
+const include = paths.length > 0 ? { include: paths } : {};
+let findings = check(root, { ...include, ...(scales ? { scales } : {}) });
+const seen = coverage(root, include);
 const dryRun = flags.has('--dry-run');
-const fixes = flags.has('--fix') ? applyFixes(cwd, findings, scales ?? spacingScales(cwd), { write: !dryRun }) : null;
-if (fixes?.length && !dryRun) findings = check(cwd, { ...include, ...(scales ? { scales } : {}) });
-const baselineFile = join(cwd, BASELINE);
+const fixes = flags.has('--fix') ? applyFixes(root, findings, scales ?? spacingScales(root), { write: !dryRun }) : null;
+if (fixes?.length && !dryRun) findings = check(root, { ...include, ...(scales ? { scales } : {}) });
+// A run that read nothing has found nothing: a wrong path, an empty folder or an unread language is not a pass.
+if (seen.read === 0 && findings.length === 0) {
+    const list = Object.entries(seen.unread).map(([extension, total]) => `${total} .${extension} file${total === 1 ? '' : 's'}`).join(', ');
+    const message = list ? `Nothing checked: ${list}. No rule reads these yet, so this says nothing about their design.` : `Nothing checked: no interface files under ${(include.include ?? loadConfig(root).include).join(', ')}.`;
+    if (format === 'json') print(JSON.stringify({ findings: [], errors: 0, warnings: 0, notes: 0, nothingChecked: true, unread: seen.unread, message }, null, 2));
+    else print(message);
+    done(2);
+}
+
+const baselineFile = join(root, BASELINE);
 
 if (flags.has('--write-baseline')) {
-    writeFileSync(baselineFile, `${JSON.stringify({ version: 1, note: 'Findings that existed when the baseline was written; only new ones are reported.', counts: toBaseline(findings) }, null, 2)}\n`);
+    writeOwn(baselineFile, `${JSON.stringify({ version: 1, note: 'Findings that existed when the baseline was written; only new ones are reported.', counts: toBaseline(findings) }, null, 2)}\n`);
     print(`Wrote ${BASELINE} with ${findings.length} existing findings. Commit it; later runs report only new findings.`);
     done(0);
 }
@@ -377,7 +467,16 @@ if (flags.has('--write-baseline')) {
 let baselined = 0;
 if (!flags.has('--no-baseline') && existsSync(baselineFile)) {
     const before = findings.length;
-    findings = applyBaseline(findings, JSON.parse(readFileSync(baselineFile, 'utf8')).counts ?? {});
+    const counts = readBaseline(baselineFile);
+    // Fixed findings leave the baseline; otherwise their allowance would let as many new ones through unseen.
+    if (fixes?.length && !dryRun) {
+        const now = toBaseline(findings);
+        const tightened = Object.fromEntries(Object.entries(counts).map(([key, total]) => [key, Math.min(total, now[key] ?? 0)]).filter(([, total]) => total > 0));
+        writeOwn(baselineFile, `${JSON.stringify({ ...JSON.parse(readFileSync(baselineFile, 'utf8')), counts: tightened }, null, 2)}\n`);
+        Object.keys(counts).forEach((key) => delete counts[key]);
+        Object.assign(counts, tightened);
+    }
+    findings = applyBaseline(findings, counts);
     baselined = before - findings.length;
 }
 
@@ -388,8 +487,7 @@ const review = rules.filter((rule) => !rule.check).length;
 if (format === 'json') {
     print(JSON.stringify({ findings, errors: count('error'), warnings: count('warn'), notes: count('info'), baselined, reviewRules: review, unread: seen.unread, ...(fixes ? { fixes } : {}), ...(scales ? { spacing: { web: scales.web, native: scales.native } } : {}) }, null, 2));
 } else if (format === 'github') {
-    const LEVEL = { error: 'error', warn: 'warning', info: 'notice' };
-    for (const item of findings) print(`::${LEVEL[item.severity]} file=${item.path},line=${item.line},title=${item.rule}::${item.message.replace(/\n/g, ' ')}`);
+    for (const item of findings) print(annotation(item));
     if (scales) print(...scaleLines(scales));
 } else {
     if (!flags.has('--quiet')) {
@@ -413,19 +511,15 @@ if (format === 'json') {
     }
     if (scales && !flags.has('--quiet')) print(`\n${paint(2, scaleLines(scales).join('\n'))}`);
     if (fixes) {
+        for (const path of fixes.skipped) print(paint(33, `  ${path}: not UTF-8, left as it is. Convert it first; writing it back would destroy its letters.`));
         for (const item of fixes) print(`  ${`${item.path}:${item.line}`.padEnd(32)} ${item.from} → ${item.to}  ${paint(2, item.rule)}`);
         const made = `${fixes.length} change${fixes.length === 1 ? '' : 's'}`;
         print(paint(1, `\n${fixes.length === 0 ? 'Nothing to fix.' : dryRun ? `${made} would be made (--dry-run, nothing written).` : `${made} made. Check them with git diff.`}`));
     }
     const list = Object.entries(seen.unread).map(([extension, total]) => `${total} .${extension} file${total === 1 ? '' : 's'}`).join(', ');
-    if (list && seen.read === 0) {
-        print(`\nNothing checked: ${list}. No rule reads these yet, so this says nothing about their design.`);
-        done(2);
-    }
     if (list) print(paint(2, `\nNot read, no rule covers them yet: ${list}.`));
     const summary = findings.length === 0 ? paint(32, 'No findings.') : `${findings.filter((item) => item.area === 'accessibility').length} accessibility, ${findings.filter((item) => item.area !== 'accessibility').length} style: ${count('error')} errors, ${count('warn')} warnings, ${count('info')} notes.`;
     print(`\n${summary}${baselined ? ` ${baselined} known findings hidden by the baseline.` : ''} ${paint(2, `${rules.filter((rule) => rule.check && (rule.check.type !== 'render' || rule.check.native)).length} rules read the code; scan <url> reads the running page; ${review} need a look at the screen (npx @enmera/ai-design-check rules).`)}`);
 }
 
-if (format !== 'text' && seen.read === 0 && Object.keys(seen.unread).length > 0) done(2);
 done(count('error') > 0 || (flags.has('--strict') && count('warn') > 0) ? 1 : 0);
