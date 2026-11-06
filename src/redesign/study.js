@@ -89,6 +89,9 @@ export const lookOf = (section) => (section.changesLook === true ? 'changes the 
 export const buildable = (brief) => (brief && !brief.leaveAlone && degreeOf(brief) !== 'none' && brief.sections?.length ? brief : null);
 
 /** Returns what is wrong with a brief; empty when it can be built. */
+// A card that changes text but lists none: the agent forgot a field, not the idea.
+export const UNLISTED_TEXT = 'this card changes text; list it';
+
 export function validateBrief(brief, page) {
     if (brief?.leaveAlone) return brief.reason ? [] : ['leaveAlone needs a reason'];
     const problems = [];
@@ -160,7 +163,7 @@ export function validateBrief(brief, page) {
         // A card whose idea changes words without saying which ones is thrown away by the word check after the work.
         // An empty addsText says on purpose that it changes none.
         const says = `${textOf(section.idea)} ${textOf(section.problem)}`;
-        if (CHANGES_TEXT.test(says) && !('addsText' in section) && !('replacesText' in section) && !(DECORATION.test(says) && !NEW_TEXT.test(says))) problems.push(`${name}: this card changes text; list it in addsText/replacesText or the word check will reject the pass (an empty "addsText": [] says it changes none)`);
+        if (CHANGES_TEXT.test(says) && !('addsText' in section) && !('replacesText' in section) && !(DECORATION.test(says) && !NEW_TEXT.test(says))) problems.push(`${name}: ${UNLISTED_TEXT} in addsText/replacesText or the word check will reject the pass (an empty "addsText": [] says it changes none)`);
         if ('addsText' in section && (!Array.isArray(section.addsText) || section.addsText.some((item) => typeof item !== 'string' || !item.trim()))) problems.push(`${name}: addsText is a list of the exact new strings`);
         if (!('replacesText' in section)) continue;
         if (!Array.isArray(section.replacesText)) {

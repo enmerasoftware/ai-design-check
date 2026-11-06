@@ -7,7 +7,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { detectStack, locateByMarkers, pageFiles } from './detect.js';
 import { designMd, diagnose } from './diagnose.js';
 import { measure, sizesInUse } from './measure.js';
-import { PAGE_CONTENT_NOTE, briefMd, buildable, craftPrompt, degreeOf, intentOf, lookOf, onlyOf, pageContent, quoted, studyPrompt, validateBrief } from './study.js';
+import { PAGE_CONTENT_NOTE, briefMd, buildable, craftPrompt, degreeOf, intentOf, lookOf, onlyOf, pageContent, quoted, studyPrompt, UNLISTED_TEXT, validateBrief } from './study.js';
 import { check } from '../check.js';
 
 /**
@@ -624,6 +624,12 @@ async function study(ctx, out, context) {
         await agentRun(ctx, work, withProblems(prompt, 'Your last brief had the problems below; they quote the page and your brief. Write the whole file again with them fixed.', problems), { minutes: 15, edits: false }, join(out, 'study.retry.log'));
         brief = read();
         problems = brief ? validateBrief(brief, context.page) : ['No readable brief.json was written'];
+    }
+    // Still only unlisted text after the second try: the cards say they change none, and the word check after each pass decides.
+    if (brief && problems.length && problems.every((item) => item.includes(UNLISTED_TEXT))) {
+        for (const section of brief.sections ?? []) if (problems.some((item) => item.startsWith(`${section.heading ?? '(no heading)'}: `)) && !('replacesText' in section)) section.addsText = section.addsText ?? [];
+        ctx.log(`  ${problems.length} card(s) changed text without listing it; set to "addsText": [], the word check after each pass decides`);
+        problems = validateBrief(brief, context.page);
     }
     putBack(ctx.cwd, work); // the study reads; anything it changed goes back
     ctx.current = null;

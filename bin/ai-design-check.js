@@ -457,6 +457,10 @@ if (command === 'redesign') {
             prompt.question('Apply these passes? [y/N] ', (answer) => end(['y', 'yes', 'e', 'evet'].includes(answer.trim().toLocaleLowerCase('tr'))));
         });
     };
+    // --files limits what may change, not what is measured: the page's own shell would count against the module.
+    if (valueOf('files') && !area().scope?.length) console.error('Note: --files limits the edits, but the whole page is measured, including what those files do not render. Add --scope "<selector of their root>", such as --scope "[data-block-type=module-1]".');
+    // An agent ran and nothing was kept: a script must not read that as success.
+    const failedRun = (result) => !flags.has('--plan') && !result.notApproved && valueOf('agent') !== 'none' && (result.studyProblems || !result.passes.some((pass) => pass.kept));
     try {
         const result = await redesign({
             cwd, url, html, path: valueOf('path'), agent: valueOf('agent') ?? 'claude', build: valueOf('build'),
@@ -467,7 +471,7 @@ if (command === 'redesign') {
         });
         if (format === 'json') {
             print(JSON.stringify(result, null, 2));
-            done(0);
+            done(failedRun(result) ? 1 : 0);
         }
         const { diagnosis, study } = result;
         if (diagnosis.sound && !result.passes.length && (!study || study.leaveAlone)) {
@@ -507,7 +511,8 @@ if (command === 'redesign') {
                 ? `\nNo changes made. Edit ${result.out}/brief.json if you like, then: npx @enmera/ai-design-check redesign ${input} --brief ${result.out}/brief.json`
                 : `\nNo changes made. Prompts: ${result.out}/study.md and ${result.out}/pass-*.md (give them to your agent, or run with --agent claude).`);
             if (flags.has('--plan')) print(result.outside ? `${result.out} is outside the project, so git never sees it.` : `${result.out} is git-ignored: nothing in it goes into a commit.`);
-            done(0);
+            if (failedRun(result)) print(paint(31, 'FAILED: the agent ran and nothing was changed.'));
+            done(failedRun(result) ? 1 : 0);
         }
         print('');
         for (const pass of result.passes) {
@@ -523,7 +528,8 @@ if (command === 'redesign') {
             print(`\nIn place, nothing committed. Changed: ${result.changed.length ? result.changed.join(', ') : 'nothing'}. Screenshots, logs and patches in ${result.out}.`);
             if (result.undo.length) print(`To undo, newest first:\n${result.undo.map((command) => `  ${command}`).join('\n')}`);
         } else print(`\nBranch ${result.branch}. Screenshots and logs in ${result.out}. To undo everything: git checkout ${result.start} && git branch -D ${result.branch}`);
-        done(0);
+        if (failedRun(result)) print(paint(31, 'FAILED: every pass was thrown away, nothing was kept.'));
+        done(failedRun(result) ? 1 : 0);
     } catch (error) {
         // Stopped with Ctrl-C: 130, as a shell expects; the message says where the person is and how to go back.
         console.error(error.message);

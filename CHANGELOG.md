@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.15.1
+
+- **A forgotten field no longer ends the run.** A card whose idea changes text but lists no `addsText` or
+  `replacesText` still goes back to the study once. If that is the only problem left after the second try, the card is
+  set to `"addsText": []` and the run goes on; the word check after each pass decides.
+- **A run that changed nothing fails.** When an agent ran (not `--plan`, not `--agent none`) and no pass was kept, or
+  the study did not pass its check, `redesign` prints `FAILED` and exits 1, in text and JSON output alike.
+- **`--files` without `--scope` says what is measured.** `--files` limits the edits, not the measurement, so the page's
+  own shell counted against the module. The run now says so and suggests `--scope`.
+
 ## 0.15.0
 
 - **Decoration is not content, and thrown-away work stays in reach.** A good hero pass (a terminal panel of five real
