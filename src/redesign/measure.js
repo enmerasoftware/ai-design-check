@@ -403,7 +403,27 @@ export async function measure(url, { screenshots, widths = [1440, 390], signal, 
             await new Promise((done) => setTimeout(done, 1200)); // entrance animations finish; frozen they would stick invisible
             await browser.evaluate(`(${clearOverlays.toString()})()`);
             out[mobile ? 'mobile' : 'desktop'] = await browser.evaluate(`(${inPage.toString()})(${JSON.stringify({ scope, ignore })})`);
-            if (screenshots) {
+            if (screenshots && scope.length) {
+                // Only the scoped part: fixed bars and panels outside it are hidden, every shot is clipped to its box.
+                const box = await browser.evaluate(`((scope) => {
+                    const roots = [...document.querySelectorAll(scope)];
+                    for (const el of document.querySelectorAll('body *')) {
+                        const position = getComputedStyle(el).position;
+                        if ((position === 'fixed' || position === 'sticky') && !roots.some((root) => root.contains(el) || el.contains(root))) el.style.setProperty('visibility', 'hidden', 'important');
+                    }
+                    const rects = roots.map((el) => el.getBoundingClientRect()).filter((r) => r.width && r.height);
+                    if (!rects.length) return null;
+                    const x = Math.min(...rects.map((r) => r.left)) + scrollX, y = Math.min(...rects.map((r) => r.top)) + scrollY;
+                    return { x: Math.max(0, x), y: Math.max(0, y), width: Math.max(...rects.map((r) => r.right)) + scrollX - x, height: Math.max(...rects.map((r) => r.bottom)) + scrollY - y };
+                })(${JSON.stringify(scope.join(', '))})`);
+                if (box) {
+                    const fold = { ...box, height: Math.min(box.height, mobile ? 844 : 900), scale: 1 };
+                    const save = async (name, clip) => writeFileSync(name, Buffer.from((await browser.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true, clip })).data, 'base64'));
+                    await save(`${screenshots}-fold-${width}.png`, fold);
+                    if (!mobile && box.height > fold.height) await save(`${screenshots}-next-${width}.png`, { ...fold, y: fold.y + fold.height, height: Math.min(fold.height, box.height - fold.height) });
+                    await save(`${screenshots}-${width}.png`, { ...box, height: Math.min(box.height, 14000), scale: 1 });
+                }
+            } else if (screenshots) {
                 // The first screen and the next one as a visitor sees them, for the visual comparison.
                 await browser.evaluate(`(${clearOverlays.toString()})(); scrollTo(0, 0)`);
                 await new Promise((done) => setTimeout(done, 200));

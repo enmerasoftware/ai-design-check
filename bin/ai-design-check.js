@@ -31,7 +31,7 @@ Usage
                                                  pass contrast, radius and spacing, as CSS, Tailwind, Bootstrap (CSS and
                                                  Sass), JSON, SwiftUI, Compose and a preview page (--ui/--display pick
                                                  fonts, --source any)
-  npx @enmera/ai-design-check redesign <url|page.html> [--agent claude|codex|none] [--plan] [--brief brief.json] [--build "npm run build"] [--path /] [--only type,color,craft] [--in-place] [--files "a,b/**"] [--out dir] [--intent "..."] [--serve dir] [--render "cmd"] [--yes]
+  npx @enmera/ai-design-check redesign <url|page.html> [--agent claude|codex|none] [--plan] [--brief brief.json] [--build "npm run build"] [--path /] [--only type,color,craft] [--in-place] [--files "a,b/**"] [--out dir] [--intent "..."] [--degree heavy|polish|none] [--images openai|gemini] [--images-max 6] [--serve dir] [--render "cmd"] [--yes]
                                                  Your coding agent studies the running page, its code and its subject and
                                                  writes one card per section; the numbered fixes (type, colour, rhythm,
                                                  details, phone) and the cards are then applied pass by pass on a new git
@@ -58,6 +58,15 @@ Usage
                                                  (default: those files in the project root, when present). Without a
                                                  PRODUCT.md the study writes a draft to the --out folder for you to
                                                  review and move to the root.
+                                                 --degree heavy|polish|none: how far this run goes, chosen by you; the
+                                                 study has to write that degree, and a --brief brief takes it. heavy
+                                                 rebuilds every section that is not kept, composes the first screen as
+                                                 one picture and lets cards use tints and shades of the site's colours.
+                                                 --images openai|gemini: cards may ask for generated photos or
+                                                 illustrations (at most 1 per card, --images-max per run, default 6,
+                                                 up to 12). The key comes from OPENAI_API_KEY or GEMINI_API_KEY only.
+                                                 Each image and an estimated cost are printed first; nothing is
+                                                 generated without a yes (or --yes). Images go to <out>/images.
                                                  --serve <dir>: serve that folder on 127.0.0.1 and redesign a page in it
                                                  (redesign module-1.html --serve dist). --render "<command>": draws the
                                                  page (a CMS module into static HTML) before the first measurement and
@@ -123,7 +132,7 @@ process.on('uncaughtException', (error) => {
 
 const args = process.argv.slice(2);
 const SWITCHES = ['json', 'strict', 'quiet', 'fix', 'dry-run', 'nearest-type', 'write-baseline', 'no-baseline', 'tr', 'help', 'version', 'all', 'stress', 'plan', 'force', 'allow-redirect', 'in-place', 'yes', 'full'];
-const VALUES = ['format', 'out', 'still', 'title', 'music', 'width', 'character', 'brand', 'kind', 'ui', 'display', 'source', 'path', 'agent', 'build', 'only', 'brief', 'allow-status', 'cookie', 'header', 'scope', 'ignore', 'files', 'html', 'product', 'design', 'intent', 'serve', 'render', 'build-minutes'];
+const VALUES = ['format', 'out', 'still', 'title', 'music', 'width', 'character', 'brand', 'kind', 'ui', 'display', 'source', 'path', 'agent', 'build', 'only', 'brief', 'allow-status', 'cookie', 'header', 'scope', 'ignore', 'files', 'html', 'product', 'design', 'intent', 'degree', 'images', 'images-max', 'serve', 'render', 'build-minutes'];
 // The option before an argument takes it as its value ("redesign" is no option, though it ends in "design").
 const takesValue = (arg) => Boolean(arg?.startsWith('--') && VALUES.includes(arg.slice(2)));
 // An option that is not understood must stop the run: silently dropped, --strict is off and --dry-run writes files.
@@ -434,6 +443,22 @@ if (command === 'redesign') {
     if (html && !existsSync(resolve(cwd, html))) usageError(`Not found: ${html}`);
     const minutes = valueOf('build-minutes') === undefined ? 10 : Number(valueOf('build-minutes'));
     if (!(minutes > 0)) usageError('--build-minutes takes a number of minutes above 0, such as 20.');
+    const degree = valueOf('degree');
+    if (degree !== undefined && !['heavy', 'polish', 'none'].includes(degree)) usageError('--degree takes heavy, polish or none.');
+    // --images: a usage problem is said here, before any agent starts; the key itself is never printed.
+    const images = valueOf('images');
+    let imagesMax = null;
+    if (valueOf('images-max') !== undefined && images === undefined) usageError('--images-max goes with --images openai|gemini.');
+    if (images !== undefined) {
+        const { imageKey, imagesMaxOf } = await import('../src/redesign/images.js');
+        try {
+            imagesMax = imagesMaxOf(valueOf('images-max'));
+            if (!flags.has('--plan') && valueOf('agent') !== 'none') imageKey(images);
+            else if (!['openai', 'gemini'].includes(images)) imageKey(images);
+        } catch (error) {
+            usageError(error.message);
+        }
+    }
     if (!html && !serve && (!url || !/^https?:\/\//.test(url))) {
         console.error('Usage: ai-design-check redesign <url of the running page, e.g. http://localhost:8000 | saved page.html> [--agent claude|codex|none] [--plan] [--brief brief.json] [--build "npm run build"] [--in-place] [--files "a,b/**"] [--out dir]\nApps have no page to open: use the checker, --fix and the fix skill.');
         done(1);
@@ -441,7 +466,7 @@ if (command === 'redesign') {
     const input = html ?? url ?? '';
     // Asked only with a person at the terminal: an agent or CI gets the summary and the run goes on.
     const ask = process.stdin.isTTY && process.stdout.isTTY && !flags.has('--yes') && !flags.has('--plan') && valueOf('agent') !== 'none';
-    const confirm = !ask ? null : async () => {
+    const confirm = !ask ? null : async (question = 'Apply these passes? [y/N] ') => {
         const { createInterface } = await import('node:readline');
         const prompt = createInterface({ input: process.stdin, output: process.stderr });
         return new Promise((done) => {
@@ -454,7 +479,7 @@ if (command === 'redesign') {
             };
             prompt.on('SIGINT', () => end(false));
             prompt.on('close', () => end(false));
-            prompt.question('Apply these passes? [y/N] ', (answer) => end(['y', 'yes', 'e', 'evet'].includes(answer.trim().toLocaleLowerCase('tr'))));
+            prompt.question(question, (answer) => end(['y', 'yes', 'e', 'evet'].includes(answer.trim().toLocaleLowerCase('tr'))));
         });
     };
     // --files limits what may change, not what is measured: the page's own shell would count against the module.
@@ -467,7 +492,7 @@ if (command === 'redesign') {
             only: valueOf('only')?.split(','), kind: valueOf('kind') ?? 'marketing', plan: flags.has('--plan'), briefFile: valueOf('brief'),
             allowRedirect: flags.has('--allow-redirect'), auth: signInFrom(), ...area(), inPlace: flags.has('--in-place'),
             files: valueOf('files')?.split(',').map((item) => item.trim()).filter(Boolean), out: valueOf('out'), log: (line) => console.error(line),
-            render: valueOf('render'), serve, buildMinutes: minutes, product: valueOf('product'), design: valueOf('design'), intent: valueOf('intent'), confirm,
+            render: valueOf('render'), serve, buildMinutes: minutes, product: valueOf('product'), design: valueOf('design'), intent: valueOf('intent'), degree: degree ?? null, images: images ?? null, imagesMax, yes: flags.has('--yes'), confirm,
         });
         if (format === 'json') {
             print(JSON.stringify(result, null, 2));
@@ -524,6 +549,7 @@ if (command === 'redesign') {
         if (result.testsChanged?.length) print(paint(33, `\nTests changed by the kept passes, read them first: ${result.testsChanged.join(', ')}`));
         for (const pass of result.passes.filter((item) => item.rejectedPatch)) print(`To apply the ${pass.name} pass anyway: npx @enmera/ai-design-check redesign apply ${pass.rejectedPatch}`);
         if (result.compare) print(`Before and after, pass by pass: ${result.compare}`);
+        if (result.images) print(result.images.length ? `\nGenerated images:\n${result.images.map((item) => `  ${item.card}: ${item.for}\n    ${item.file}`).join('\n')}` : '\nNo image was generated (see the lines above).');
         if (result.inPlace) {
             print(`\nIn place, nothing committed. Changed: ${result.changed.length ? result.changed.join(', ') : 'nothing'}. Screenshots, logs and patches in ${result.out}.`);
             if (result.undo.length) print(`To undo, newest first:\n${result.undo.map((command) => `  ${command}`).join('\n')}`);

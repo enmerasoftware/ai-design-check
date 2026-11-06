@@ -161,7 +161,18 @@ kopyasından geri yüklenir.
 <dosya>` ve `--design <dosya>` başka bir yeri gösterir. `PRODUCT.md` yoksa çalışma README'den, paket açıklamasından ve
 sayfalardan `--out` klasörüne bir taslak yazar; çıktı tek satırda taslağı gözden geçirip köke taşımanızı söyler. Araç köke
 kendisi hiçbir şey yazmaz. `--intent "<metin>"` bu çalışmadan ne istediğinizi söyler: çalışmaya ve kartlara yön verir,
-`brief.json` içinde saklanır. `product` alanına koyduğunuz öteki alanlar (`context`, `audience`, `voice`, `competitors`,
+`brief.json` içinde saklanır. `--degree heavy|polish|none` çalışmanın ne kadar ileri gideceğini çalışmaya bırakmadan
+seçer; çalışma bu dereceyi yazmak zorundadır (`--brief` ile verilen brief de bu dereceyi alır). Heavy, korunmayan her
+bölümü yeniden kurar, ilk ekranı gerçek bir ürün yüzeyiyle tek bir resim gibi kurgular, birbirinin aynısı kartları içeriğe
+özgü görsellere çevirir; logo, marka rengi, yazı tipleri, sözcükler ve bölüm sırası aynı kalır. Heavy kartları sitenin
+renklerinin açık ve koyu tonlarını kullanabilir (8 derece içinde aynı ton ya da nötr bir gri); polish ve none yalnızca
+sitenin renklerinin kendisini kullanır. `--images openai|gemini` kartların üretilmiş fotoğraf ya da çizim istemesine izin
+verir (ilk ekran için bir sahne, birbirinin aynısı simge kartları yerine her sektöre bir fotoğraf): kart başına en çok 1,
+çalışma başına en çok `--images-max` görsel (varsayılan 6, en fazla 12). Anahtar yalnızca `OPENAI_API_KEY` ya da
+`GEMINI_API_KEY` ortam değişkeninden okunur ve hiçbir yere yazılmaz; anahtar yoksa çalışma hiçbir ajan başlamadan durur.
+Çalışmadan sonra her görsel tahmini maliyetiyle listelenir (bu bir tahmindir, sağlayıcınızın fiyatlarına bakın);
+terminalde onay vermeden ya da `--yes` olmadan hiçbir görsel üretilmez. Görseller `<out>/images/` klasörüne yazılır,
+craft adımı onları sayfanın kendi görsel klasörüne kopyalar ve gerçek alt metniyle kullanır. `product` alanına koyduğunuz öteki alanlar (`context`, `audience`, `voice`, `competitors`,
 `avoid` ya da kendi alanınız) iki isteme de ulaşır. Görünüşü değiştiren her kart içeriğine göre bir yerleşim seçer
 (`split`, `product`, `photo`, `place`, `editorial`, `statement`, `collage`; görseli olmayan kısa bir bölüm için `centred`)
 ve nedenini bir satırda söyler; görseli olan ortalı bir karşılama ekranı ya da yan yana aynı yerleşimi alan iki değişen

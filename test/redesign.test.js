@@ -12,6 +12,7 @@ import { diagnose, typeScale } from '../src/redesign/diagnose.js';
 import { OUT, agentCommand, approvalSummary, brief, codexStream, comparePage, looksLikeTest, lookPrompt, onlyReads, readVerdict, redesign, seeing, serveDir, verify } from '../src/redesign/run.js';
 import { measure } from '../src/redesign/measure.js';
 import { briefMd, buildable, craftPrompt, studyPrompt, validateBrief } from '../src/redesign/study.js';
+import { costLines, generateImage, generateImages, imageKey, imagesMaxOf, slug } from '../src/redesign/images.js';
 import { findChrome, shot } from '../src/story.js';
 
 const laravel = join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'laravel');
@@ -972,4 +973,128 @@ test('shot writes a png of the page, clipped to --scope', { skip: !findChrome() 
     } finally {
         rmSync(dir, { recursive: true, force: true });
     }
+});
+
+test('--degree: the brief has to be the chosen degree, and the study prompt says so', () => {
+    assert.deepEqual(validateBrief(decided(), studied(), { degree: 'heavy' }), []);
+    assert.match(validateBrief(decided({ degree: 'polish' }), studied(), { degree: 'heavy' }).join('\n'), /degree is "polish"; the person chose "heavy" with --degree/);
+    assert.match(validateBrief(goodBrief(), studied(), { degree: 'heavy' }).join('\n'), /degree is missing; the person chose "heavy"/);
+    assert.match(studyOf({ degree: 'heavy' }), /The person chose the degree with --degree: heavy\. Write "degree": "heavy"/);
+    assert.match(studyOf(), /First decide how much to change/);
+    // Heavy rebuilds: every section changes the look, the hero is one picture, identity stays.
+    assert.match(studyOf(), /Every section gets a card that changes the look/);
+    assert.match(craftPrompt({ stack: html, files: [], brief: decided(), url: 'http://x/', out: 'x' }), /The degree is heavy: rebuild, do not tidy\.[\s\S]*composed as one picture[\s\S]*Identity stays/);
+    assert.doesNotMatch(craftPrompt({ stack: html, files: [], brief: decided({ degree: 'polish' }), url: 'http://x/', out: 'x' }), /rebuild, do not tidy/);
+});
+
+test('heavy allows tints and shades of the site\'s colours; polish stays exact', () => {
+    const tinted = (degree, ground, text = '#111111') => validateBrief(decided({ degree, sections: [card({ changesLook: true, visible: 'Kilns drawn', tell: 'eyebrows', colors: { ground, text } })] }), (() => {
+        const site = studied();
+        site.desktop.metrics.eyebrows = ['NEW'];
+        return site;
+    })()).join('\n');
+    assert.equal(tinted('heavy', '#d9f6f1'), ''); // a light tint of the teal
+    assert.equal(tinted('heavy', '#00453e', '#ffffff'), ''); // a dark shade of it
+    assert.equal(tinted('heavy', '#f4f4f4'), ''); // a neutral grey: the site has white
+    assert.match(tinted('heavy', '#3b82f6', '#ffffff'), /#3b82f6 is not in the site's colours .*tint or shade/); // another hue
+    assert.match(tinted('heavy', '#d9f6f1', '#b0b0b0'), /only 1\.\d:1/); // contrast still checked
+    assert.match(tinted('polish', '#d9f6f1'), /#d9f6f1 is not in the site's colours/);
+    assert.match(tinted('none', '#d9f6f1'), /#d9f6f1 is not in the site's colours/);
+    assert.match(studyOf(), /tints and shades of these pass too: the same hue within 8 degrees/);
+    assert.match(studyOf({ degree: 'polish' }), /With polish, exactly these and no others\./);
+});
+
+const scene = { for: 'The three kilns firing at dusk', prompt: 'A photograph of three brick kilns in a pottery yard at dusk, glowing doors, stacked pots, warm light, shot at eye level', size: '1536x1024' };
+
+test('--images: generateImages is allowed only with it, one per card, within the cap, and the prompts say so', () => {
+    const asks = (images, extra = {}) => validateBrief(decided({ sections: [card({ changesLook: true, visible: 'A photo of the kilns', generateImages: [scene], ...extra })] }), studied(), { images }).join('\n');
+    assert.match(asks(null), /Our work: generateImages needs image generation; add --images openai\|gemini/);
+    assert.equal(asks('openai'), '');
+    assert.match(asks('openai', { generateImages: [scene, scene] }), /at most 1 per card/);
+    assert.match(asks('openai', { generateImages: [{ ...scene, size: '800x600' }] }), /size is "800x600"/);
+    assert.match(validateBrief(decided({ sections: [card({ changesLook: true, visible: 'A photo', generateImages: [scene] })] }), studied(), { images: 'gemini', imagesMax: 0 }).join('\n'), /asks? for 1 generated images; at most 0 in a run \(--images-max\)/);
+    assert.equal(imagesMaxOf(undefined), 6);
+    assert.equal(imagesMaxOf('12'), 12);
+    assert.throws(() => imagesMaxOf('13'), (error) => error.exitCode === 2 && /1 to 12/.test(error.message));
+    // The study hears of the field only with --images.
+    assert.doesNotMatch(studyOf(), /generateImages/);
+    assert.match(studyOf({ images: 'openai', imagesMax: 4 }), /"generateImages"[\s\S]*at most 1 per card and at most 4 in all/);
+    assert.match(studyOf({ images: 'openai' }), /never a stock cliché[\s\S]*No text, letters, numbers or logos inside the image/);
+    // The craft pass gets the files, not the prompts, and is told where they go.
+    const brief = decided({ sections: [card({ changesLook: true, visible: 'A photo', generateImages: [scene] })] });
+    const craft = craftPrompt({ stack: html, files: [], brief, url: 'http://x/', out: 'x', images: [{ card: 'Our work', for: scene.for, file: 'x/images/our-work-1.png' }], served: ['/img/logo.png'] });
+    assert.match(craft, /x\/images\/our-work-1\.png/);
+    assert.match(craft, /public image folder[\s\S]*\/img\/logo\.png[\s\S]*real alt text/);
+    assert.doesNotMatch(craft, /brick kilns in a pottery yard/);
+    assert.equal(slug('Sektörlere Özel Çözümler'), 'sektorlere-ozel-cozumler');
+});
+
+test('the cost is said before anything is generated, as an estimate', () => {
+    const lines = costLines([{ card: 'Our work', for: 'Kilns', size: '1536x1024' }, { card: 'Hello', for: 'Yard', size: '1024x1024' }], 'openai').join('\n');
+    assert.match(lines, /Our work: Kilns \(1536x1024\)/);
+    assert.match(lines, /Estimated cost: about \$0\.12 for 2 images \(estimate, check your provider's pricing\)/);
+    assert.match(costLines([{ card: 'Hello', for: 'Yard', size: '1024x1024' }], 'gemini').join('\n'), /about \$0\.04 for 1 image \(/);
+});
+
+test('openai and gemini answers are read, and a failure is one short line without the key', async () => {
+    const real = globalThis.fetch;
+    const calls = [];
+    const png = Buffer.from('fake png bytes');
+    try {
+        globalThis.fetch = async (url, init) => {
+            calls.push({ url, init, body: JSON.parse(init.body) });
+            const answer = String(url).includes('openai.com')
+                ? { data: [{ b64_json: png.toString('base64') }] }
+                : { candidates: [{ content: { parts: [{ text: 'Here it is' }, { inlineData: { mimeType: 'image/png', data: png.toString('base64') } }] } }] };
+            return new Response(JSON.stringify(answer), { status: 200 });
+        };
+        assert.deepEqual(await generateImage({ provider: 'openai', key: 'sk-test-123456', prompt: 'kilns', size: '1024x1536' }), png);
+        assert.equal(calls[0].url, 'https://api.openai.com/v1/images/generations');
+        assert.equal(calls[0].init.headers.authorization, 'Bearer sk-test-123456');
+        assert.deepEqual({ ...calls[0].body, prompt: undefined }, { model: 'gpt-image-1', prompt: undefined, size: '1024x1536', quality: 'medium', n: 1 });
+        assert.match(calls[0].body.prompt, /^kilns[\s\S]*No text/);
+        assert.deepEqual(await generateImage({ provider: 'gemini', key: 'AIzaTest', prompt: 'kilns', size: '1536x1024' }), png);
+        assert.equal(calls[1].url, 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent');
+        assert.equal(calls[1].init.headers['x-goog-api-key'], 'AIzaTest');
+        assert.match(calls[1].body.contents[0].parts[0].text, /kilns[\s\S]*Aspect ratio 3:2 landscape/);
+
+        const key = 'sk-secret-abcdefghijkl';
+        globalThis.fetch = async () => new Response(`Incorrect API key provided: ${key}. ${'x'.repeat(500)}`, { status: 401 });
+        const said = [];
+        const out = mkdtempSync(join(tmpdir(), 'adc-images-'));
+        const made = await generateImages({ provider: 'openai', key, planned: [{ card: 'Our work', for: 'Kilns', prompt: 'kilns', size: '1536x1024', file: join(out, 'images', 'our-work-1.png') }], log: (line) => said.push(line) });
+        assert.deepEqual(made, []);
+        assert.equal(said.length, 1);
+        assert.match(said[0], /image for "Our work" not made, the card goes ahead without it: openai answered 401/);
+        assert.doesNotMatch(said[0], /abcdefghijkl/);
+        assert.ok(said[0].length < 320);
+        assert.ok(!existsSync(join(out, 'images', 'our-work-1.png')));
+        rmSync(out, { recursive: true, force: true });
+    } finally {
+        globalThis.fetch = real;
+    }
+});
+
+test('a missing key is a usage error before anything starts, naming the variable', () => {
+    assert.throws(() => imageKey('openai', {}), (error) => error.exitCode === 2 && /OPENAI_API_KEY/.test(error.message));
+    assert.throws(() => imageKey('gemini', { GEMINI_API_KEY: ' ' }), (error) => error.exitCode === 2 && /GEMINI_API_KEY/.test(error.message));
+    assert.equal(imageKey('gemini', { GEMINI_API_KEY: 'k' }), 'k');
+    const env = { ...process.env };
+    delete env.OPENAI_API_KEY;
+    const cli = join(dirname(fileURLToPath(import.meta.url)), '..', 'bin', 'ai-design-check.js');
+    const ran = spawnSync(process.execPath, [cli, 'redesign', 'http://127.0.0.1:9/', '--images', 'openai'], { env, encoding: 'utf8', cwd: tmpdir() });
+    assert.equal(ran.status, 2);
+    assert.match(ran.stderr, /--images openai needs OPENAI_API_KEY/);
+    const bad = spawnSync(process.execPath, [cli, 'redesign', 'http://127.0.0.1:9/', '--images', 'openai', '--images-max', '20'], { env: { ...env, OPENAI_API_KEY: 'k' }, encoding: 'utf8', cwd: tmpdir() });
+    assert.equal(bad.status, 2);
+});
+
+test('the plan warns about names a card shows that are not on the page and lists no addsText', async () => {
+    const { unlistedNames } = await import('../src/redesign/study.js');
+    const page = { desktop: { inventory: { words: ['yazılımla', 'terminal', 'laravel'] } } };
+    const brief = { product: { proof: 'Docker, AWS ve Laravel ile kuruyoruz' }, sections: [
+        { heading: 'Hero', changesLook: true, idea: 'A terminal panel with Docker commands', addsText: [] },
+        { heading: 'Listed', changesLook: true, idea: 'Docker panel', addsText: ['docker run'] },
+    ] };
+    assert.deepEqual(unlistedNames(brief, page), [{ heading: 'Hero', names: ['Docker', 'AWS'] }]);
 });

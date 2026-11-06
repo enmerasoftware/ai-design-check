@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.16.0
+
+- **The agent can see its own work.** Its prompt told it to run the `shot` command and the `--build` or `--render`
+  command, but the agent was not allowed to run them, so a retry worked blind. Those exact commands are now allowed,
+  and nothing else is. A retry also gets the screenshots of the page as it stands after the build.
+- **Rule errors say which rule and where.** "5 new rule errors in view.blade.php" now lists each new error with its
+  rule id, file:line and the offending value, in the log, in the result and in the retry prompt.
+- **Screenshots stay in `--scope`.** Pass screenshots are clipped to the scoped element. Fixed and sticky bars outside
+  it are hidden, so the test page's own shell no longer covers the module.
+- **The plan warns about names that are not on the page.** When a card's idea names products or brands that are not
+  on the page and it lists no `addsText`, the run warns before any pass starts that the word check will reject it.
+- `npm test` exits after the last test, even when a test leaves a handle open.
+- **`--degree heavy|polish|none`, and a heavy that rebuilds.** The person can choose how far a redesign goes; the study
+  has to write that degree, and a `--brief` brief takes it. Heavy now asks for a card that changes the look in every
+  section not kept, a first screen composed as one picture (a visual from the product's world, the headline in its quiet
+  space, a real product surface), and content-specific pictures in place of repeated identical cards, while the logo,
+  brand colour, fonts, words and section order stay. With heavy, card colours may be tints and shades of the site's own
+  (the same hue within 8 degrees at any lightness, or a neutral grey); polish and none stay exact, and contrast is
+  still checked.
+- **`--images openai|gemini`: generated images, only with a yes to the cost.** Cards may ask for a photo or
+  illustration (`generateImages`, at most 1 per card and `--images-max` per run, default 6, up to 12); without
+  `--images` a brief that asks for one fails its check. The key comes from `OPENAI_API_KEY` or `GEMINI_API_KEY` only
+  and is never printed; a missing key is a usage error (exit 2) before any agent starts. After the study each image is
+  listed with an estimated cost, and nothing is generated or applied without a yes at the terminal or `--yes`. Images
+  go to `<out>/images/`, the craft pass copies them into the page's image folder with real alt text, a failed one is
+  said in one line and its card goes ahead without it, and the result lists them (`images`).
+
 ## 0.15.1
 
 - **A forgotten field no longer ends the run.** A card whose idea changes text but lists no `addsText` or

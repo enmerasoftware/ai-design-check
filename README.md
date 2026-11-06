@@ -156,7 +156,17 @@ avoid, rivals) and a `DESIGN.md` (the visual system you keep) go into the study 
 `--product <file>` and `--design <file>` point elsewhere. Without a `PRODUCT.md` the study writes a draft to the `--out`
 folder from the README, the package description and the pages, and the run says in one line to review it and move it to
 the root; the tool never writes there itself. `--intent "<text>"` says what you want from this run: it leads the study and
-the cards, and is kept in `brief.json`. Any other field you put in `product` (`context`, `audience`, `voice`,
+the cards, and is kept in `brief.json`. `--degree heavy|polish|none` chooses how far the run goes instead of leaving it
+to the study, which then has to write that degree (a `--brief` brief takes it). Heavy rebuilds every section that is not
+kept, composes the first screen as one picture with a real product surface, turns repeated identical cards into
+content-specific pictures and keeps the logo, brand colour, fonts, words and section order; its cards may use tints and
+shades of the site's colours (the same hue within 8 degrees, or a neutral grey), while polish and none use exactly the
+site's colours. `--images openai|gemini` lets cards ask for generated photos or illustrations (a hero scene,
+one photo per sector in place of identical icon cards): at most 1 per card and `--images-max` per run (default 6, up to
+12). The key is read from `OPENAI_API_KEY` or `GEMINI_API_KEY` only and never printed; a missing one stops the run
+before any agent starts. After the study the run lists each image with an estimated cost (an estimate: check your
+provider's pricing) and generates nothing without a yes at the terminal or `--yes`. The images go to
+`<out>/images/`, and the craft pass copies them into the page's own image folder with real alt text. Any other field you put in `product` (`context`, `audience`, `voice`,
 `competitors`, `avoid`, or one of your own) reaches both prompts. Each card that changes the look picks a layout from its
 content (`split`, `product`, `photo`, `place`, `editorial`, `statement`, `collage`, or `centred` for a short section with
 no visual) with a line saying why; a centred hero with a visual, or two changing sections side by side with one layout, is

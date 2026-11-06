@@ -7,7 +7,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { detectStack, locateByMarkers, pageFiles } from './detect.js';
 import { designMd, diagnose } from './diagnose.js';
 import { measure, sizesInUse } from './measure.js';
-import { PAGE_CONTENT_NOTE, briefMd, buildable, craftPrompt, degreeOf, intentOf, lookOf, onlyOf, pageContent, quoted, studyPrompt, UNLISTED_TEXT, validateBrief } from './study.js';
+import { costLines, generateImages, imageKey, imagesMaxOf, PROVIDERS, slug } from './images.js';
+import { PAGE_CONTENT_NOTE, briefMd, buildable, craftPrompt, degreeOf, intentOf, lookOf, onlyOf, pageContent, quoted, studyPrompt, UNLISTED_TEXT, unlistedNames, validateBrief } from './study.js';
 import { check } from '../check.js';
 
 /**
@@ -480,7 +481,7 @@ const halt = (ctx) => {
  */
 async function agentRun(ctx, work, prompt, options, logFile) {
     const before = outsideGit(ctx.cwd, work.snap.untracked, ctx.own);
-    const result = await runAgent(ctx.runner, prompt, ctx.cwd, { ...options, signal: ctx.stop.signal, dirs: ctx.dirs });
+    const result = await runAgent(ctx.runner, prompt, ctx.cwd, { ...options, signal: ctx.stop.signal, dirs: ctx.dirs, commands: options.edits === false ? [] : [`${SELF} shot`, ctx.build, ctx.render].filter(Boolean) });
     writeFileSync(logFile, result.log);
     // The saved page has its own copy, so it is put back like the rest.
     for (const file of differ(before, outsideGit(ctx.cwd, work.snap.untracked, ctx.own))) if (file !== ctx.pageRel) work.outside.add(file);
@@ -586,8 +587,10 @@ export function agentCommand(agent, env = process.env) {
 }
 
 // dirs: folders outside the project the agent may write to (an --out folder elsewhere, a saved page outside the repository).
-async function runAgent({ agent, command }, prompt, cwd, { minutes = 20, edits = true, signal, dirs = [] } = {}) {
+// commands: the ones its prompt tells it to run (the tool's own shot, the person's --build and --render), and no others.
+async function runAgent({ agent, command }, prompt, cwd, { minutes = 20, edits = true, signal, dirs = [], commands = [] } = {}) {
     const extra = dirs.flatMap((dir) => ['--add-dir', dir]);
+    const runs = commands.map((item) => `Bash(${item}:*)`);
     if (agent === 'codex') {
         const stream = codexStream(cwd);
         const result = await run(command, ['exec', '--json', '--skip-git-repo-check', '-s', 'workspace-write', ...extra, prompt], { cwd, minutes, signal, onLine: stream.line });
@@ -596,20 +599,20 @@ async function runAgent({ agent, command }, prompt, cwd, { minutes = 20, edits =
     }
     // stream-json names every file the agent edits or writes, so the run can tell its changes from anyone else's.
     const stream = agentStream(cwd);
-    const result = await run(command, ['-p', '--output-format', 'stream-json', '--verbose', '--permission-mode', 'acceptEdits', '--allowedTools', 'Read', ...(edits ? ['Edit'] : []), 'Write', 'Glob', 'Grep', 'Bash(ls:*)', 'Bash(cat:*)', 'Bash(grep:*)', 'Bash(find:*)', ...extra], { cwd, input: prompt, minutes, signal, onLine: stream.line });
+    const result = await run(command, ['-p', '--output-format', 'stream-json', '--verbose', '--permission-mode', 'acceptEdits', '--allowedTools', 'Read', ...(edits ? ['Edit'] : []), 'Write', 'Glob', 'Grep', 'Bash(ls:*)', 'Bash(cat:*)', 'Bash(grep:*)', 'Bash(find:*)', ...runs, ...extra], { cwd, input: prompt, minutes, signal, onLine: stream.line });
 
     return { ...result, writes: stream.writes(), log: `${stream.log()}\n${result.stderr}` };
 }
 
 /** The agent's study: written, read back and checked against the page; what the check finds gets one more try. */
 /** Only unlisted text left: those cards are taken to change none, and the word check after each pass decides. */
-function unlistedAsNone(brief, problems, page, log, from) {
+function unlistedAsNone(brief, problems, page, log, from, chosen = {}) {
     if (!brief || !problems.length || !problems.every((item) => item.includes(UNLISTED_TEXT))) return problems;
     const cards = (brief.sections ?? []).filter((section) => problems.some((item) => item.startsWith(`${section.heading ?? '(no heading)'}: `)) && !('replacesText' in section));
     for (const section of cards) section.addsText = section.addsText ?? [];
     log(`  ${from}: ${cards.map((section) => `"${section.heading}"`).join(', ')} describes a text change but lists none; treated as "addsText": [] (list addsText or replacesText to allow new words)`);
 
-    return validateBrief(brief, page);
+    return validateBrief(brief, page, chosen);
 }
 
 async function study(ctx, out, context) {
@@ -628,14 +631,15 @@ async function study(ctx, out, context) {
     ctx.log('Studying the page, its code and its subject …');
     await agentRun(ctx, work, prompt, { minutes: 15, edits: false }, join(out, 'study.log'));
     let brief = read();
-    let problems = brief ? validateBrief(brief, context.page) : ['No readable brief.json was written'];
+    const chosen = { degree: context.degree ?? null, images: context.images ?? null, imagesMax: context.imagesMax };
+    let problems = brief ? validateBrief(brief, context.page, chosen) : ['No readable brief.json was written'];
     if (problems.length) {
         ctx.log(`  checked: ${problems.join('; ')}; one more try`);
         await agentRun(ctx, work, withProblems(prompt, 'Your last brief had the problems below; they quote the page and your brief. Write the whole file again with them fixed.', problems), { minutes: 15, edits: false }, join(out, 'study.retry.log'));
         brief = read();
-        problems = brief ? validateBrief(brief, context.page) : ['No readable brief.json was written'];
+        problems = brief ? validateBrief(brief, context.page, chosen) : ['No readable brief.json was written'];
     }
-    problems = unlistedAsNone(brief, problems, context.page, ctx.log, 'the study');
+    problems = unlistedAsNone(brief, problems, context.page, ctx.log, 'the study', chosen);
     putBack(ctx.cwd, work); // the study reads; anything it changed goes back
     ctx.current = null;
 
@@ -711,8 +715,12 @@ function stopped(ctx, error) {
  *   html: a saved page in place of url. With build, passes edit the sources and the build writes the file again;
  *   without, passes edit the file itself.
  */
-export async function redesign({ cwd, url, html, path, agent = 'claude', build, render, serve, buildMinutes = 10, only, kind = 'marketing', plan = false, briefFile, allowRedirect = false, auth = {}, scope = [], ignore = [], inPlace = false, files: allow = null, out: outDir, product: productFile, design: designFile, intent: intentGiven, confirm = null, log = () => {} }) {
+export async function redesign({ cwd, url, html, path, agent = 'claude', build, render, serve, buildMinutes = 10, only, kind = 'marketing', plan = false, briefFile, allowRedirect = false, auth = {}, scope = [], ignore = [], inPlace = false, files: allow = null, out: outDir, product: productFile, design: designFile, intent: intentGiven, degree = null, images = null, imagesMax: imagesMaxGiven = null, yes = false, confirm = null, log = () => {} }) {
     const runner = agent === 'none' ? null : { agent, command: agentCommand(agent) };
+    // --images: checked before any agent starts; the key is read again from the environment only when the images are made.
+    if (images && !PROVIDERS.includes(images)) throw Object.assign(new Error(`--images takes ${PROVIDERS.join(' or ')}, not ${images}.`), { exitCode: 2 });
+    const imagesMax = imagesMaxOf(imagesMaxGiven);
+    if (images && runner && !plan) imageKey(images);
     // Before anything is written: a pass must never commit or undo the person's own edits.
     if (runner && !plan) (inPlace ? assertRepo : assertClean)(cwd);
     const shown = shownFrom(cwd);
@@ -815,7 +823,7 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
         report = result;
         const screenshots = ['fold-1440', 'next-1440', 'fold-390'].map((name) => join(out, `before-${name}.png`)).filter(existsSync);
         const intent = intentGiven?.trim() || null;
-        const context = { stack, files, page: before, diagnosis, screenshots, url: pageLine, intent, notes, draft: shown(draftFile) };
+        const context = { stack, files, page: before, diagnosis, screenshots, url: pageLine, intent, notes, draft: shown(draftFile), degree, images, imagesMax };
         if (!runner) {
             writeFileSync(join(out, 'study.md'), studyPrompt({ ...context, out: shown(out) }));
             return result;
@@ -827,7 +835,10 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
             const given = briefFile ? JSON.parse(readFileSync(briefFile, 'utf8')) : null;
             // --intent says what the person wants now; without it, the intent the brief carries stays.
             if (given && intent && !given.leaveAlone) given.intent = intent;
-            const studied = given ? { brief: given, problems: unlistedAsNone(given, validateBrief(given, before), before, log, shown(briefFile)), given: true } : await study(ctx, out, context);
+            // --degree says how far this run goes; a given brief takes it.
+            if (given && degree && !given.leaveAlone) given.degree = degree;
+            const chosen = { degree, images, imagesMax };
+            const studied = given ? { brief: given, problems: unlistedAsNone(given, validateBrief(given, before, chosen), before, log, shown(briefFile), chosen), given: true } : await study(ctx, out, context);
             if (!given && intent && studied.brief && !studied.brief.leaveAlone && !intentOf(studied.brief)) studied.brief.intent = intent;
             if (!given && !notes.product && existsSync(draftFile)) {
                 result.productDraft = shown(draftFile);
@@ -839,28 +850,50 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
                 if (studied.given) result.briefFile = shown(briefFile);
             } else {
                 result.study = studied.brief;
+                result.unlistedNames = unlistedNames(studied.brief, before);
+                for (const { heading, names } of result.unlistedNames) log(`  warning: "${heading}" names ${names.join(', ')}, which are not on the page, and lists no addsText; a pass that shows them will be thrown away by the word check`);
                 writeFileSync(join(out, 'brief.json'), `${JSON.stringify(studied.brief, null, 2)}\n`);
                 writeFileSync(join(out, 'BRIEF.md'), briefMd(studied.brief, before.desktop.title));
                 cards = buildable(studied.brief);
             }
         }
         if (plan) return result;
+        let craftFile = null;
+        const pageImages = [...new Set(before.desktop.inventory.images ?? [])];
+        const writeCraft = (made = []) => writeFileSync(craftFile, craftPrompt({ stack, files, brief: cards, url: pageLine, out: shown(out), intent: intentOf(cards), notes, images: made, served: pageImages }) + seen + limit);
         if (cards) {
             passes.push({ name: 'craft', items: cards.sections.map((section) => ({ id: section.heading, decision: section.idea, evidence: section.problem })) });
-            writeFileSync(join(out, `pass-${passes.length}-craft.md`), craftPrompt({ stack, files, brief: cards, url: pageLine, out: shown(out), intent: intentOf(cards), notes }) + seen + limit);
+            craftFile = join(out, `pass-${passes.length}-craft.md`);
+            writeCraft();
         }
         if (passes.length === 0) return result;
+        // The images the cards ask for, made only with --images and a yes: each one costs money.
+        const planned = cards && images ? cards.sections.flatMap((section) => (Array.isArray(section.generateImages) ? section.generateImages : []).map((item, n) => ({
+            card: section.heading, for: item.for, prompt: item.prompt, size: item.size, file: join(out, 'images', `${slug(section.heading)}-${n + 1}.png`),
+        }))) : [];
+        const notApproved = () => {
+            result.passes = [];
+            result.notApproved = true;
+            if (existsSync(join(out, 'brief.json')) && result.study) result.continueBrief = shown(join(out, 'brief.json'));
+            return result;
+        };
         // Said before anything is applied; with a person at the terminal, nothing goes on without a yes.
         for (const line of approvalSummary(passes, result.study ?? null)) log(line);
+        if (planned.length) for (const line of costLines(planned, images)) log(line);
         if (confirm) {
-            const yes = await confirm();
+            const agreed = await confirm(planned.length ? 'Generate these images and apply these passes? [y/N] ' : undefined);
             halt(ctx);
-            if (!yes) {
-                result.passes = [];
-                result.notApproved = true;
-                if (existsSync(join(out, 'brief.json')) && result.study) result.continueBrief = shown(join(out, 'brief.json'));
-                return result;
-            }
+            if (!agreed) return notApproved();
+        } else if (planned.length && !yes) {
+            log('Images cost money: nothing is generated or applied without a yes. Run it at a terminal to be asked, or add --yes.');
+            return notApproved();
+        }
+        if (planned.length) {
+            log(`Generating ${planned.length} image${planned.length === 1 ? '' : 's'} with ${images} …`);
+            const made = await generateImages({ provider: images, key: imageKey(images), planned, log, signal: ctx.stop.signal, shown });
+            halt(ctx);
+            result.images = made.map((item) => ({ card: item.card, for: item.for, file: shown(item.file) }));
+            if (made.length) writeCraft(result.images);
         }
 
         if (!stack.git) throw new Error('redesign applies passes on a git branch; run it in a git repository (or use --agent none for the plan only)');
@@ -881,7 +914,12 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
 
         let baseline = before;
         let baselinePrefix = join(out, 'before');
-        const errors = errorsBy(check(cwd));
+        const baseFindings = check(cwd);
+        const errors = errorsBy(baseFindings);
+        // Which errors are new, by rule and value, so the log and the retry can name them; lines move when code is added.
+        const errorKey = (item) => `${item.path}|${item.rule}|${String(item.value ?? '').trim()}`;
+        const seenErrors = {};
+        for (const item of baseFindings) if (item.severity === 'error') seenErrors[errorKey(item)] = (seenErrors[errorKey(item)] ?? 0) + 1;
         const changedFiles = new Set();
         for (const [index, pass] of passes.entries()) {
             log(`Pass ${index + 1}/${passes.length}: ${pass.name} (${pass.items.length} decisions) …`);
@@ -942,9 +980,16 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
             const newErrors = () => {
                 const { tracked, added } = changedSince(cwd, work.snap);
                 const changed = [...tracked, ...added].filter((file) => !own(file));
-                const now = errorsBy(changed.length ? check(cwd, { include: changed }) : []);
+                const found = changed.length ? check(cwd, { include: changed }) : [];
+                const now = errorsBy(found);
+                const left = { ...seenErrors };
+                const fresh = found.filter((item) => item.severity === 'error' && !(left[errorKey(item)]-- > 0));
 
-                return Object.entries(now).filter(([file, count]) => count > (errors[file] ?? 0)).map(([file, count]) => `${count - (errors[file] ?? 0)} new rule errors in ${file}`);
+                return Object.entries(now).filter(([file, count]) => count > (errors[file] ?? 0)).map(([file, count]) => {
+                    const named = fresh.filter((item) => item.path === file).slice(0, 8).map((item) => `${item.rule} at ${file}:${item.line}${item.value ? ` "${String(item.value).replace(/\s+/g, ' ').slice(0, 60)}"` : ''}: ${item.message}`);
+
+                    return `${count - (errors[file] ?? 0)} new rule errors in ${file}${named.length ? ` (${named.join('; ')})` : ''}`;
+                });
             };
             // The craft cards that promised a visible change are checked by eye: one that looks the same counts as measured.
             const changes = pass.name === 'craft' ? cards.sections.filter((section) => section.changesLook === true && section.visible) : [];
@@ -960,7 +1005,7 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
             // What the arithmetic found can be fixed: one more try, with the measured problems and nothing else.
             if (problems.length) {
                 log(`  measured: ${problems.join('; ')}; one more try`);
-                await agentRun(ctx, work, withProblems(prompt, 'This pass is already applied in the working tree; keep that work. Measuring the page found the problems below; they quote the page. Fix only these.', problems), options, `${prefix}.fix.log`);
+                await agentRun(ctx, work, withProblems(prompt, `This pass is already applied in the working tree; keep that work. Measuring the page found the problems below; they quote the page. Fix only these. The page as it is now, after the build: ${['fold-1440', 'fold-390'].map((name) => `${prefix}-${name}.png`).filter(existsSync).map(shown).join(', ') || 'no screenshot'}; open them first. After you finish, the tool builds, shoots and checks the page again.`, problems), options, `${prefix}.fix.log`);
                 if (build || render) await buildRun(ctx, work);
                 after = await measured(prefix);
                 halt(ctx);

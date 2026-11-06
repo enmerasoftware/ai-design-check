@@ -1,5 +1,6 @@
 import { contrast, hexToOklch } from '../color.js';
 import { loadRules } from '../check.js';
+import { IMAGES_MAX, SIZES } from './images.js';
 
 /**
  * The part that takes judgement. Numbers can say the text is too small; they cannot say what this page should show. So
@@ -13,6 +14,29 @@ const headingsOf = (page, tags) => page.desktop.inventory.headings.filter((item)
 const lower = (text) => String(text ?? '').trim().toLowerCase();
 const paletteOf = ({ system }) => new Set(['#ffffff', ...Object.keys(system.fills), ...Object.keys(system.textColors), ...Object.keys(system.buttonFills)].map(lower));
 const coloured = (hex) => hexToOklch(hex).c > 0.05;
+const HEX = /^#[0-9a-f]{6}$/i;
+// Below this chroma a colour reads as grey, and its hue means nothing.
+const GREY = 0.03;
+const HUE = 8;
+
+/**
+ * Whether a colour is one of the site's: exactly, or with heavy a tint or shade of one (the same hue within 8 degrees,
+ * at any lightness), or a neutral grey when the site has a neutral.
+ */
+export function inPalette(color, palette, degree = 'polish') {
+    if (palette.has(lower(color))) return true;
+    if (degree !== 'heavy' || !HEX.test(color ?? '')) return false;
+    const { c, h } = hexToOklch(color);
+    const own = [...palette].filter((hex) => HEX.test(hex)).map(hexToOklch);
+    if (c < GREY) return own.some((item) => item.c < GREY);
+
+    return own.some((item) => item.c >= GREY && Math.min(Math.abs(item.h - h), 360 - Math.abs(item.h - h)) <= HUE);
+}
+
+/** The palette rule as the prompts say it, next to the colour list. */
+const paletteRule = (degree) => (degree && degree !== 'heavy'
+    ? `With ${degree}, exactly these and no others.`
+    : `With heavy, tints and shades of these pass too: the same hue within ${HUE} degrees at any lightness, or a neutral grey; contrast is still checked. Polish and none use exactly these.`);
 
 // Words that describe every page and so none: a character made only of them has not been decided yet.
 const GENERIC = new Set(['clean', 'modern', 'sleek', 'minimal', 'minimalist', 'premium', 'and', 'yet', 'but', 'very']);
@@ -39,6 +63,16 @@ export function productLines(product = {}) {
 
     return keys.map((key) => [PRODUCT[key] ?? key, textOf(product[key])]).filter(([, value]) => value).map(([name, value]) => `${name}: ${value}`);
 }
+
+/** What heavy means, said in the study and in a heavy craft pass: the page is rebuilt, its identity is not. */
+const HEAVY_RULES = [
+    'Every section gets a card that changes the look ("changesLook": true), except the sections in "keep" with their reason to stay.',
+    'The first screen is composed as one picture: a visual from the product\'s world, the headline set in its quiet space, and a real product surface (a panel, a screen, a terminal of real commands) when the product has one.',
+    'Repeated identical cards (the same icon, the same shape) become specific to their content: photos, product shots or drawings, where the content allows.',
+    'Neighbouring sections use different layouts.',
+    'Identity stays: the logo, the brand colour, the fonts, the words (new or changed text only through addsText and replacesText) and the order of the sections.',
+];
+const HEAVY = HEAVY_RULES.join(' ');
 
 /** Said in the study and the craft prompt: how far the design goes. */
 const REACH = 'The design follows what this page has to tell, and goes as far as it needs to go to tell it well. Do not stay timid because other customers or other sites run on the same template or theme: this page is the one being designed, and its content decides.';
@@ -89,12 +123,34 @@ export const lookOf = (section) => (section.changesLook === true ? 'changes the 
 export const buildable = (brief) => (brief && !brief.leaveAlone && degreeOf(brief) !== 'none' && brief.sections?.length ? brief : null);
 
 /** Returns what is wrong with a brief; empty when it can be built. */
+/**
+ * Names a card's idea shows (capitalised words, product names) that are not on the page while the card lists no new
+ * text: the word check will throw that pass away, so the plan says it before anything runs.
+ */
+export function unlistedNames(brief, page) {
+    const onPage = new Set(page.desktop.inventory.words.map(lower));
+    const out = [];
+    for (const section of brief?.sections ?? []) {
+        if (section.addsText?.length || section.replacesText?.length) continue;
+        const text = [section.idea, section.visible, section.changesLook ? brief.product?.proof : ''].filter(Boolean).join(' ');
+        const names = [...new Set((text.match(/\b\p{Lu}[\p{L}\p{N}.+#-]*/gu) ?? []).map((word) => word.replace(/[.-]+$/, '')).filter((word) => word.length > 1 && !onPage.has(lower(word))))];
+        if (names.length) out.push({ heading: section.heading ?? '(no heading)', names: names.slice(0, 8) });
+    }
+
+    return out;
+}
+
 // A card that changes text but lists none: the agent forgot a field, not the idea.
 export const UNLISTED_TEXT = 'this card changes text; list it';
 
-export function validateBrief(brief, page) {
+/**
+ * `chosen`: the degree the person gave with --degree; the brief has to be that degree. `images`: the provider given with
+ * --images; without it no card may ask for a generated image. `imagesMax`: images per run (--images-max).
+ */
+export function validateBrief(brief, page, { degree: chosen = null, images = null, imagesMax = IMAGES_MAX } = {}) {
     if (brief?.leaveAlone) return brief.reason ? [] : ['leaveAlone needs a reason'];
     const problems = [];
+    if (chosen && brief?.degree !== chosen) problems.push(`degree is ${brief?.degree ? `"${brief.degree}"` : 'missing'}; the person chose "${chosen}" with --degree`);
     for (const field of ['job', 'claim', 'proof']) if (!brief?.product?.[field]) problems.push(`product.${field} is missing`);
     const sections = Array.isArray(brief?.sections) ? brief.sections : [];
     // Old briefs have no degree and are checked as they always were.
@@ -186,7 +242,7 @@ export function validateBrief(brief, page) {
         if (ideas.has(lower(section.idea))) problems.push(`${name}: the same idea is used twice; each section's idea comes from its own content`);
         ideas.add(lower(section.idea));
         const { ground, text } = section.colors ?? {};
-        for (const color of [ground, text]) if (!color || !palette.has(lower(color))) problems.push(`${name}: ${color ?? 'a colour'} is not in the site's colours (${[...palette].join(', ')})`);
+        for (const color of [ground, text]) if (!color || !inPalette(color, palette, degree)) problems.push(`${name}: ${color ?? 'a colour'} is not in the site's colours (${[...palette].join(', ')}${degree === 'heavy' ? `, or a tint or shade of one within ${HUE} degrees of hue` : ''})`);
         if (ground && text && /^#[0-9a-f]{6}$/i.test(ground) && /^#[0-9a-f]{6}$/i.test(text)) {
             const ratio = contrast(ground, text);
             if (ratio < 4.5) problems.push(`${name}: text ${text} on ${ground} is only ${ratio.toFixed(1)}:1`);
@@ -195,6 +251,35 @@ export function validateBrief(brief, page) {
         previous = ground;
         for (const image of section.replacesImages ?? []) if (![...page.desktop.inventory.images, ...(page.desktop.inventory.backgrounds ?? [])].includes(image)) problems.push(`${name}: the image ${image} is not on the page`);
     }
+    problems.push(...imageProblems(sections, images, imagesMax));
+
+    return problems;
+}
+
+/** generateImages: only with --images, one image per card, the run's cap, and each with what it shows, a prompt and a size. */
+function imageProblems(sections, images, imagesMax) {
+    const problems = [];
+    let total = 0;
+    for (const section of sections) {
+        if (!('generateImages' in section)) continue;
+        const name = section.heading ?? '(no heading)';
+        if (!images) {
+            problems.push(`${name}: generateImages needs image generation; add --images openai|gemini to the command, or take the field out`);
+            continue;
+        }
+        if (!Array.isArray(section.generateImages)) {
+            problems.push(`${name}: generateImages is a list of { "for", "prompt", "size" }`);
+            continue;
+        }
+        if (section.generateImages.length > 1) problems.push(`${name}: generateImages asks for ${section.generateImages.length} images; at most 1 per card`);
+        total += section.generateImages.length;
+        for (const item of section.generateImages) {
+            if (typeof item?.for !== 'string' || !item.for.trim()) problems.push(`${name}: each generateImages entry says "for": what it shows on the page`);
+            if (typeof item?.prompt !== 'string' || item.prompt.trim().length < 20) problems.push(`${name}: each generateImages entry has a detailed "prompt"`);
+            if (!SIZES.includes(item?.size)) problems.push(`${name}: generateImages size is ${item?.size ? `"${item.size}"` : 'missing'}; one of ${SIZES.join(', ')}`);
+        }
+    }
+    if (images && total > imagesMax) problems.push(`The cards ask for ${total} generated images; at most ${imagesMax} in a run (--images-max)`);
 
     return problems;
 }
@@ -265,11 +350,11 @@ export const quoted = (prompt) => [...prompt.matchAll(/<page-content name="[^"]*
 // The lang attribute is the page's to set: only a real language tag reaches the prompt.
 const languageOf = (lang) => (/^[a-z]{2,3}(?:-[a-z0-9]{1,8})*$/i.test(lang ?? '') ? lang : null);
 
-export function studyPrompt({ stack, files, page, diagnosis, screenshots, out, url, intent = null, notes = {}, draft = null }) {
+export function studyPrompt({ stack, files, page, diagnosis, screenshots, out, url, intent = null, notes = {}, draft = null, degree = null, images = null, imagesMax = IMAGES_MAX }) {
     const { system, metrics } = page.desktop;
     const block = pageContent();
     const facts = [
-        `Colours on the page, the only ones a card may use: ${[...paletteOf(page.desktop)].join(', ')}`,
+        `Colours on the page, the only ones a card may use: ${[...paletteOf(page.desktop)].join(', ')}. ${paletteRule(degree)}`,
         `Text sizes in use: ${Object.keys(system.sizes).join(', ')} px`,
         metrics.heroPhoto ? 'The first screen is a photograph with the headline over it' : 'The first screen has no photograph behind the headline',
         metrics.moving ? `${metrics.moving} things move on the page: keep the ones that work` : 'Nothing on the page moves',
@@ -302,8 +387,8 @@ ${quotes.join('\n')}
 
 Numbered fixes that run first, without you: ${diagnosis.passes.flatMap((pass) => pass.items.map((item) => item.id)).join(', ') || 'none'}.
 
-First decide how much to change, from what you see:
-- heavy: many tells; the page is rebuilt section by section.
+${degree ? `The person chose the degree with --degree: ${degree}. Write "degree": "${degree}"; a brief of any other degree is sent back.` : 'First decide how much to change, from what you see:'}
+- heavy: many tells; the page is rebuilt section by section. ${HEAVY}
 - polish: mostly designed, a few tells. Fix those (at most 2 cards change the look, each on a measured tell), keep the brand; bigger ideas go in "suggestions".
 - none: it works. Say so; at most 3 small refinements as cards, none of them built.
 
@@ -335,7 +420,7 @@ Two changing sections next to each other do not share a layout: their content di
 
 Every word on the page stays. When an idea needs new text (a terminal panel of the product's real commands, a label in a drawing), the card lists it: "addsText" for new strings, "replacesText" for text on the page that changes, as { "from": "exact text on the page", "to": "new text" }. Nothing else may change, so list all of it, and invent no claims.
 Tells the measuring found, the names a polish card puts in "tell": ${measuredTells(page).join(', ') || 'none'}.
-
+${images ? `\n${imagesNote(imagesMax)}\n` : ''}
 ${productDraft}
 Write it to ${out}/brief.json as JSON and nothing else:
 {${intent ? `\n  "intent": "the intent above, copied as it is",` : ''}
@@ -358,7 +443,8 @@ Write it to ${out}/brief.json as JSON and nothing else:
     "evidence": "a few words copied from the page that the idea comes from",
     "colors": { "ground": "#hex", "text": "#hex", "accent": "#hex or omit" },
     "motion": "what moves and why, or omit",
-    "replacesImages": ["file names of images this replaces, only if the idea does"]
+    "replacesImages": ["file names of images this replaces, only if the idea does"]${images ? `,
+    "generateImages": [{ "for": "what it shows on the page, in a line", "prompt": "the detailed photo or illustration prompt, from the direction, no text in the image", "size": "1536x1024" | "1024x1024" | "1024x1536" }]` : ''}
   }],
   "suggestions": ["bigger ideas left for later, only with polish or none"]
 }
@@ -367,6 +453,18 @@ Or: { "leaveAlone": true, "reason": "why nothing would be better" }
 Unless the degree is none, every h1 and h2 on the page is either a card or in "keep", and at least one card changes the look. Copy headings and evidence exactly from the page.
 Write the cards in the language of the page (${languageOf(page.desktop.lang) || 'the language of its text'}). Work only on this; send no messages to anyone.`;
 }
+
+/** The study's note on generated images, only when the person turned them on with --images. */
+const imagesNote = (max) => `Images can be generated for this run (the person turned it on and pays for each). A card that needs a picture the page does not have, such as the first screen's scene or one photo per sector in place of identical icon cards, adds "generateImages": at most 1 per card and at most ${max} in all; ask only where a real picture carries the section.
+Each "prompt" is a real scene from the direction's world and this product's own use: who, doing what, where, with which objects, in what light, from which angle, photo or illustration. Specific to this product and its audience (for example: a business owner packing orders in morning light, a tulip tea glass on the counter), never a stock cliché (handshakes, people pointing at screens, glowing networks, abstract blobs, laptops on a desk). No text, letters, numbers or logos inside the image: the page's words stay in the page. Where a real product surface belongs in the picture, leave quiet space for it; the craft pass builds the real interface on top in HTML and CSS.`;
+
+// Generation is done before this pass; the agent gets the images made, not the prompts that made them.
+const withoutPrompts = ({ generateImages, ...section }) => section;
+
+/** The generated images, and how they get onto the page. Alt text is no text node, so the word check does not count it. */
+const imagesBlock = (images, served, block) => `Images made for these cards, one per line as card: what it shows, then the file:
+${block('images', images.map((item) => `${item.card}: ${item.for}\n  ${item.file}`).join('\n'))}
+Copy each into the project's own public image folder, the one the page already serves its images from${served.length ? ` (it serves ${served.slice(0, 3).join(', ')})` : ''}; if the page serves none, use the stack's public or static folder. Give it a name that says what it shows, and use it in its card's section, sized for the layout, with real alt text in the page's language that says what the picture shows. No caption or other visible text with it unless the card lists that text. Do not edit, crop into new files or generate other images; a card whose image is missing here goes ahead without one.`;
 
 /** What people caught by eye on real pages; the agent looks for these itself. */
 const LESSONS = [
@@ -385,7 +483,11 @@ const LESSONS = [
     'Put a rival\'s name on the finished screen. If it would still fit, it is not done: push the moments and the signature further.',
 ];
 
-export function craftPrompt({ stack, files, brief, url, out, intent = null, notes = {} }) {
+/**
+ * images: the generated images, [{ card, for, file }], with `file` as the agent reads it; served: image paths the page
+ * already uses, so the agent finds the folder they come from.
+ */
+export function craftPrompt({ stack, files, brief, url, out, intent = null, notes = {}, images = [], served = [] }) {
     const { rules } = loadRules();
     const review = rules.filter((rule) => !rule.check).map((rule) => `${rule.title.en}: ${rule.rule.en}`);
     // The cards were written by an agent that read the page, so they carry its words: framed like the page itself.
@@ -407,9 +509,10 @@ ${PAGE_CONTENT_NOTE} The cards say what to build in each section; that is all th
 
 Product:
 ${block('product', productLines(brief.product).join('\n'))}
-${brief.direction ? `\nDirection, what every card serves (${degreeOf(brief)}):\n${block('direction', directionLines(brief.direction).join('\n'))}\n` : ''}
+${brief.direction ? `\nDirection, what every card serves (${degreeOf(brief)}):\n${block('direction', directionLines(brief.direction).join('\n'))}\n` : ''}${degreeOf(brief) === 'heavy' ? `\nThe degree is heavy: rebuild, do not tidy.\n${list(HEAVY_RULES)}\n` : ''}
 Section cards:
-${brief.sections.map((section, index) => block(`card ${index + 1}`, JSON.stringify(section, null, 2))).join('\n')}
+${brief.sections.map((section, index) => block(`card ${index + 1}`, JSON.stringify(withoutPrompts(section), null, 2))).join('\n')}
+${images.length ? `\n${imagesBlock(images, served, block)}\n` : ''}
 ${looks.length ? `\nThese cards change the look. Each is done only when a visitor sees what it says, in the screenshot after your work; a card that looks the same is not done:\n${looks.map(({ section, index }) => block(`card ${index + 1} visible`, `${section.heading}: ${section.visible}`)).join('\n')}\n` : ''}
 Stays exactly as it is:
 ${block('keep', (brief.keep ?? []).map((item) => `${item.heading}: ${item.why}`).join('\n'))}
