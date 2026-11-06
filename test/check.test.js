@@ -215,6 +215,24 @@ test('narrow --stress: long names and large numbers break what short ones do not
     assert.ok(worst.some((item) => item.value.includes('Muhammed')));
 });
 
+test('narrow --scope and --ignore: only the module is reported, decoration is not text', { skip: !findChrome() && 'no Chrome', timeout: 240_000 }, async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adc-narrow-scope-'));
+    const file = join(dir, 'page.html');
+    const cut = (text) => `<div style="width:80px;overflow:hidden;white-space:nowrap">${text}</div>`;
+    writeFileSync(file, `<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width"><title>t</title></head><body style="margin:0;font:16px sans-serif"><nav>${cut('Shell navigation label cut off')}</nav><div class="badge">${cut('Test badge text cut off')}</div><div data-block-type="module-1">${cut('Module label that is cut off')}<div aria-hidden="true">${cut('0101 1100 code rain row cut off')}</div></div></body></html>`);
+    const labels = async (options) => (await narrow(file, options)).filter((item) => item.rule === 'text-not-clipped').map((item) => item.value).join(' | ');
+    const whole = await labels({});
+    assert.match(whole, /Shell navigation/);
+    assert.doesNotMatch(whole, /code rain/);
+    const scoped = await labels({ scope: ['[data-block-type=module-1]'] });
+    assert.match(scoped, /Module label/);
+    assert.doesNotMatch(scoped, /Shell|badge/);
+    const ignored = await labels({ ignore: ['nav'] });
+    assert.match(ignored, /Test badge/);
+    assert.doesNotMatch(ignored, /Shell/);
+    await assert.rejects(narrow(file, { scope: ['.module-9'] }), (error) => error.exitCode === 2 && /matches nothing/.test(error.message));
+});
+
 test('a truncated line in a flex item without min-w-0 is named where min-w-0 goes', () => {
     const dir = mkdtempSync(join(tmpdir(), 'adc-chain-'));
     mkdirSync(join(dir, 'src'));

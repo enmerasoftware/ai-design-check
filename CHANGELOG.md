@@ -1,5 +1,61 @@
 # Changelog
 
+## 0.15.0
+
+- **`redesign` starts from what you know, and asks before it applies.** A study that only saw one page with fallback
+  copy did not know the product. It now reads `PRODUCT.md` and `DESIGN.md` from the project root (or `--product`,
+  `--design`) into the study and craft prompts as quoted notes, and without a `PRODUCT.md` writes a draft to the `--out`
+  folder and says to review it and move it to the root. `--intent "<text>"` leads both prompts and is kept in
+  `brief.json`; every field of `product` (`context`, `audience`, `voice`, `competitors`, `avoid` and any of your own) now
+  reaches both prompts instead of only job, claim and proof. Before applying, the degree, direction, intent and cards
+  are printed; at a terminal it asks `Apply these passes? [y/N]` and stops with nothing changed unless the answer is
+  yes, printing the command that goes on with `--brief … --yes`. `--yes` skips the question; agents and CI go on as before.
+- **Layouts chosen from the content.** Each card that changes the look names a `layout` (`split`, `product`, `photo`,
+  `place`, `editorial`, `statement`, `collage`, `centred`) and a `layoutWhy`. A first-screen card may be `centred` only
+  when the hero has no visual and at most two lines of copy, and two changing sections side by side with one layout are
+  sent back as one recipe. `BRIEF.md` and the plan show the layout. New scan rule `no-centred-hero-cards` (info): a centred
+  headline with no visual beside it followed straight away by three or four equal cards, the default template.
+- **Part of a page, and new text on purpose.** `"only": ["exact heading"]` in `brief.json` limits validation, the craft
+  prompt and the visual check to those sections. A card may carry `addsText` and `replacesText` (`from` must be on the
+  page); the craft pass may make exactly those text changes, and any other new word throws it away.
+- **Pages drawn by a command.** `--serve <dir>` serves a folder on 127.0.0.1 and the page is a path in it;
+  `--render "<command>"` draws it before the first measurement and after every pass, and a failed render throws the pass
+  away like a failed build. `--build-minutes <n>` sets the limit for build and render (default 10).
+- **`redesign` decides how much to change, and says whether the page will look different.** In a field test the cards
+  only closed rule findings, and after applying them the hero looked almost the same. The study now starts with a degree
+  (`heavy`, `polish`: at most two visible changes, each on a measured tell, bigger ideas as suggestions; `none`: nothing
+  is built) and a direction from the product (one-sentence product, a concrete character that is not clean, modern,
+  sleek, minimal or premium, its world, the one or two moments that carry the richness, one signature detail). Each card
+  says `changesLook` and, when true, what a visitor will see; the first screen's card has to change the look and name the
+  proof it shows. `--plan` and `BRIEF.md` show the degree and direction, label each card "changes the look" or "fixes
+  only", and say in one line when nothing changes the look. The craft prompt gets the direction, each visible change as
+  what "done" means, and a rival's-name check; after the pass the visual check asks per card whether the change is in
+  the after screenshot, and one that is not gets one more try, then the pass is thrown away. Old `brief.json` files still
+  load with `--brief`, as `heavy` with no direction.
+- **`--scope` and `--ignore`: check one part of a page.** A test page that renders one CMS module inside the app's own
+  shell (nav, breadcrumb, a "Test" badge) got its findings and its redesign plan from the shell. `--scope "<css selector>"`
+  checks and measures only what is inside a match (repeatable; several are one area), `--ignore "<css selector>"` leaves
+  a part out (repeatable), for `scan`, `narrow` and `redesign`. The redesign's inventory, headings, metrics, palette and
+  section cards come from the scoped part, before and after every pass, and the prompts name it. A scope that matches
+  nothing, or a selector Chrome cannot read, stops the run with exit 2 instead of passing as clean. Sideways scrolling
+  counts when the scoped part runs past the edge; script errors stay page-wide.
+- **Decoration under `aria-hidden="true"` is not reading text.** A faded "code rain" layer (aria-hidden, no pointer
+  events, 18 % opacity) gave 31 contrast and tiny-text warnings. `scan`, `narrow` and the redesign measure now leave text
+  under `aria-hidden="true"` out of the reading rules (contrast, size, capitals, tracking, leading, measure, stragglers,
+  cut-off, covered and cramped text, heading order); the visual tells (gradients, halos, glows, neon, endless loops) still
+  look at it, since decoration is where they live.
+- **`redesign` shares a working copy.** `--in-place` makes no branch and no commits and runs on a tree with uncommitted
+  work: a thrown-away pass goes back to exactly its snapshot, the person's edits included, and a kept pass stays
+  uncommitted with its patch saved (`git apply -R` undoes it); the run ends with the changed files and the undo commands,
+  newest first. A change the agent did not make is still left alone as someone else's. `--files "a,b/**"` limits every
+  pass to those paths or globs and throws away a pass that changes anything else. `--out <dir>` moves the plan,
+  screenshots, logs and patches (default `.ai-design-check/redesign`, git-ignored; a folder outside the project works),
+  and `--plan` now says the folder is git-ignored.
+- **`redesign` on a saved page.** For a page behind a sign-in without handing over a cookie: `redesign ./page.html` (or
+  `--html page.html`) measures the file. With `--build` the passes edit the sources (found by the page's headings) and the
+  build writes the file again; without, they edit the file itself, and a file git does not keep is put back byte for
+  byte from a copy when a pass is thrown away.
+
 ## 0.14.3
 
 - **`--fix --nearest-type` moves font sizes too, when you ask.** Every `text-[Npx]` (or rem) on a flagged line moves to the

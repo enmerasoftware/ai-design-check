@@ -118,12 +118,64 @@ sayfayı bilerek denetlemek için `--allow-redirect` ve `--allow-status 404` var
 request için `--format github` ekleyin. Yapılandırmada `designSystem` (`fonts`, `sizes`, `radii`, `colors`)
 varsa sistemden sapanları da adıyla söyler.
 
+Sayfanın yalnızca bir kısmını denetlemek için, örneğin uygulamanın kendi kabuğu içinde gösterilen bir CMS modülü için,
+`--scope "[data-block-type=module-1]"` verin: yalnızca eşleşen öğenin içindekiler denetlenir, `redesign` de yalnızca o
+kısmı ölçer ve planlar. `--ignore "nav"` bir kısmı dışarıda bırakır. İkisi de `scan`, `narrow` ve `redesign` ile çalışır ve
+birden çok kez verilebilir; birden çok kapsam tek bir alan sayılır. Hiçbir şeyle eşleşmeyen kapsam temiz sayılmaz, çalışma
+2 koduyla durur. Kapsamın dışından gelen yana kaydırma bildirilmez; betik hataları ise bütün sayfaya ait olduğu için
+bildirilir. `aria-hidden="true"` altındaki yazı, örneğin başlığın arkasındaki soluk kod yağmuru, süstür: kontrast, yazı
+boyutu ve öteki okuma kuralları ona bakmaz; gradyan, parıltı, sonsuz döngü gibi görsel alışkanlıkları arayan kurallar yine
+bakar.
+
 `redesign` ajanınıza (Claude Code ya da Codex) ihtiyaç duyan tek kısımdır, çünkü sayfanın ne göstermesi gerektiğine karar
 vermek muhakeme ister. Ajan ekran görüntülerini, kodu ve konuyu inceler; her bölüm için bir kart yazar: ne söylediği, neyin
 yanlış olduğu, kendi içeriğinden çıkan fikir, sitenizden kullandığı renkler. Kartlar ölçülen sayfaya karşı denetlenir. Sonra
 numaralı düzeltmeler ve kartlar yeni bir git dalında geçiş geçiş uygulanır; içerik kaybeden, kural hatası ekleyen ya da daha
 kötü görünen geçiş atılır. `--plan` kartlardan sonra durur, okuyup düzenlersiniz; `--brief` onları uygular. Yalnızca
 çalışma ağacı temizken başlar (önce commit edin ya da stash'e alın); Ctrl-C yarım kalan geçişi geri alır.
+
+Çalışma kartlardan önce ne kadar değişeceğine karar verir: `heavy` (çok iz var, bölüm bölüm yeniden kurulur), `polish`
+(büyük ölçüde tasarlanmış: en çok iki bölümün görünüşü değişir, her biri ölçülen bir izin üzerinde; büyük fikirler öneri
+olarak kalır) ya da `none` (sayfa iyi; birkaç küçük öneri yazılır, hiçbiri uygulanmaz). Sonra ürününüzden bir yön yazar: tek
+cümlede ne olduğu, iki üç somut kelimeyle karakteri (clean, modern, sleek, minimal ya da premium olmaz), ait olduğu dünya,
+zenginliği taşıyan bir iki an ve yalnızca bu ürüne ait bir imza ayrıntısı. Her kart görünüşü değiştirip değiştirmediğini ve
+ziyaretçinin neyi farklı göreceğini söyler; `--plan` ve `BRIEF.md` her kartı "changes the look" ya da "fixes only" diye
+işaretler, hiçbiri görünüşü değiştirmiyorsa bunu tek satırda söyler. İlk ekranın kartı görünüşü değiştirmek ve iddiasının
+kanıtını göstermek zorundadır. Craft geçişinden sonra görsel denetim her kart için o değişikliğin sonraki ekran görüntüsünde
+olup olmadığını sorar; aynı görünen kart bir deneme daha alır, sonra geçiş atılır. Önceki sürümden kalan bir `brief.json`
+`--brief` ile çalışmaya devam eder; yönü olmayan bir `heavy` sayılır.
+
+`--in-place` dal açmaz, commit atmaz ve commit edilmemiş işin (sizin ya da başka bir oturumun) bulunduğu ağaçta da çalışır:
+atılan geçiş, sizin düzenlemeleriniz dahil, tam olarak önceki hâline döner; tutulan geçiş commit edilmemiş değişiklik olarak
+kalır ve yaması kaydedilir, `git apply -R <yama>` onu geri alır. Çalışma sonunda değişen dosyalar ve geri alma komutları,
+en yenisi önce olmak üzere yazılır. `--files "resources/views/home.blade.php,resources/css/**"` her geçişi bu yollar ya da
+kalıplarla sınırlar: başka bir dosyayı değiştiren geçiş atılır. `--out <klasör>` planı, ekran görüntülerini, kayıtları ve
+yamaları başka bir yere koyar (varsayılan, git'in yok saydığı `.ai-design-check/redesign`; proje dışındaki bir klasör de
+olur). Oturum açmayı gerektiren bir sayfa için çerez vermek istemiyorsanız sayfayı kaydedip dosyayı verin:
+`redesign ./page.html` (ya da `--html page.html`). `--build "<komut>"` ile geçişler kaynak dosyalarınızı düzenler ve komut
+dosyayı yeniden üretir; onsuz geçişler dosyanın kendisini düzenler ve git'in tutmadığı bir dosya, geçiş atılınca bir
+kopyasından geri yüklenir.
+
+Çalışma bildiklerinizden başlar. Proje kökündeki `PRODUCT.md` (amaç, hedef kitle, üslup, kaçınılacaklar, rakipler) ve
+`DESIGN.md` (koruduğunuz görsel sistem) sizin notlarınız olarak alıntılanıp çalışmaya ve craft istemine girer; `--product
+<dosya>` ve `--design <dosya>` başka bir yeri gösterir. `PRODUCT.md` yoksa çalışma README'den, paket açıklamasından ve
+sayfalardan `--out` klasörüne bir taslak yazar; çıktı tek satırda taslağı gözden geçirip köke taşımanızı söyler. Araç köke
+kendisi hiçbir şey yazmaz. `--intent "<metin>"` bu çalışmadan ne istediğinizi söyler: çalışmaya ve kartlara yön verir,
+`brief.json` içinde saklanır. `product` alanına koyduğunuz öteki alanlar (`context`, `audience`, `voice`, `competitors`,
+`avoid` ya da kendi alanınız) iki isteme de ulaşır. Görünüşü değiştiren her kart içeriğine göre bir yerleşim seçer
+(`split`, `product`, `photo`, `place`, `editorial`, `statement`, `collage`; görseli olmayan kısa bir bölüm için `centred`)
+ve nedenini bir satırda söyler; görseli olan ortalı bir karşılama ekranı ya da yan yana aynı yerleşimi alan iki değişen
+bölüm geri gönderilir. `brief.json` içindeki `"only": ["tam başlık"]` işi yalnızca bu bölümlerle sınırlar, gerisine
+dokunulmaz. Bir kart `addsText` ve `replacesText` (`{ "from": "sayfadaki metin", "to": "yeni metin" }`) verebilir; bir
+geçişin yapabileceği metin değişiklikleri yalnızca bunlardır. Hiçbir şey uygulanmadan önce derece, yön, amaç ve kartlar
+yazılır; terminalde `Apply these passes? [y/N]` diye sorulur ve evet demezseniz hiçbir şey değişmeden durur, devam eden
+komutu (`--brief <out>/brief.json --yes`) yazar. Ajanlar ve CI özeti alır, çalışma sürer.
+
+Yalnızca bir komut onu çizdiğinde var olan bir sayfa için, örneğin oturum açmayı gerektiren ve statik HTML'e yazılan bir
+CMS modülü: `redesign module-1.html --serve dist --render "php artisan module:export 1"`. `--serve <klasör>` o klasörü
+127.0.0.1 üzerinde boş bir portta sunar (klasör listesi yok, dışındaki hiçbir şey yok) ve sayfa onun içindeki bir yoldur;
+`--render "<komut>"` ilk ölçümden önce ve her geçişten sonra, `--build` sonrasında çalışır, başarısız olursa geçiş başarısız
+bir derleme gibi atılır. `--build-minutes <n>` ikisinin süre sınırını belirler (varsayılan 10).
 
 ## Mobil uygulamalar
 

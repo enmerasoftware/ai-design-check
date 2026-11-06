@@ -198,6 +198,41 @@ for (const [rule, extra] of Object.entries(MODERN)) {
     CASES[rule].flag.push(...extra.flag);
     CASES[rule].pass.push(...extra.pass);
 }
+// The default template: centred headline, nothing beside it, then three or four equal cards.
+const tile = (text, width = '') => `<div style="${card};min-height:80px${width}"><h3>${text}</h3><p>Short words about it.</p></div>`;
+const tiles = (count = 3, css = 'display:grid;grid-template-columns:repeat(3,1fr);gap:24px', widths = []) => `<div style="${css}">${['Fast', 'Safe', 'Simple', 'Open'].slice(0, count).map((name, index) => tile(name, widths[index] ?? '')).join('')}</div>`;
+const centred = (inner = '') => `<section style="text-align:center;padding:48px 0"><h1 style="font-size:56px;margin:0">Build things faster</h1><p>The platform for teams who ship.</p><a href="/start">Get started</a>${inner}</section>`;
+CASES['no-centred-hero-cards'] = {
+    flag: [
+        centred() + tiles(),
+        centred() + tiles(4, 'display:flex;gap:16px', [';flex:1', ';flex:1', ';flex:1', ';flex:1']),
+        `<header>${centred()}</header><section style="padding:32px 0">${tiles()}</section>`,
+        centred('<svg width="24" height="24"><circle cx="12" cy="12" r="10"/></svg>') + tiles(),
+        `<div style="text-align:center"><h1 style="font-size:56px">Build things faster</h1><p>The platform for teams who ship.</p>${tiles()}</div>`,
+    ],
+    pass: [
+        `<section style="display:grid;grid-template-columns:1fr 1fr;gap:32px"><div><h1 style="font-size:56px">Build things faster</h1><p>The platform for teams who ship.</p></div><div style="height:320px;background:#eee url(x.png)"></div></section>${tiles()}`,
+        centred('<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="700" height="360" alt="The editor">') + tiles(),
+        `${centred()}<ul><li>Fast builds on every push</li><li>Safe rollbacks</li><li>Simple pricing</li></ul>`,
+        centred() + tiles(3, 'display:flex;gap:16px', [';width:200px', ';width:420px', ';width:300px']),
+        `<section style="height:1100px"><h1 style="font-size:56px">Build things faster</h1><p>The platform for teams who ship.</p></section>${centred()}${tiles()}`,
+        centred() + tiles(2, 'display:grid;grid-template-columns:repeat(2,1fr);gap:24px'),
+    ],
+};
+// Decoration under aria-hidden="true" (a code rain, a faded numeral): the reading rules leave it alone, the tells do not.
+const rain = (inner) => `<div aria-hidden="true" style="pointer-events:none;opacity:.18">${inner}</div>`;
+const DECORATION = {
+    'legible-contrast': { flag: [], pass: [rain('<p style="font:11px monospace;color:#999">0110 1001 0011 1100 0101</p>'), '<span aria-hidden="true" style="color:#eee">Faint ornament text here</span>'] },
+    'no-tiny-text': { flag: [], pass: [rain('<p style="font-size:10px">Rows of small code in the rain here</p>'), '<div aria-hidden="true"><span style="font-size:9px">Tiny decorative label</span></div>'] },
+    'no-all-caps-sentences': { flag: [], pass: [rain('<p>THIS IS A LONG RUN OF WORDS ALL WRITTEN IN CAPITALS HERE</p>')] },
+    'text-not-clipped': { flag: [], pass: ['<div aria-hidden="true" style="width:100px;overflow:hidden;white-space:nowrap">A long sentence that will not fit in here</div>'] },
+    'no-radial-halo': { flag: ['<section aria-hidden="true" style="height:400px;background:radial-gradient(circle,#7c3aed,transparent)">x</section>'], pass: [] },
+    'no-neon-on-dark': { flag: ['<div style="background:#0a0a14;padding:16px"><div aria-hidden="true"><p style="color:#22e6f0">Neon rain one</p><p style="color:#22e6f0">Neon rain two</p></div></div>'], pass: [] },
+};
+for (const [rule, extra] of Object.entries(DECORATION)) {
+    CASES[rule].flag.push(...extra.flag);
+    CASES[rule].pass.push(...extra.pass);
+}
 const STYLE = '<style>@keyframes p{50%{opacity:.2}}</style>';
 const wrap = (html) => (html.startsWith('<!doctype') ? html : page(STYLE + html));
 
@@ -205,7 +240,7 @@ for (const [rule, { flag, pass }] of Object.entries(CASES)) {
     test(`scan: ${rule}`, { skip }, async () => {
         const wrong = [];
         for (const html of flag) if (!(await rulesOf(wrap(html))).includes(rule)) wrong.push(`should flag: ${html.slice(0, 120)}`);
-        for (const html of pass) if ((await rulesOf(wrap(html))).includes(rule)) wrong.push(`should pass: ${html.slice(0, 120)}`);
+        for (const [i, html] of pass.entries()) if ((await rulesOf(wrap(html))).includes(rule)) wrong.push(`should pass ${i}: ${html.slice(0, 120)}`);
         assert.deepEqual(wrong, []);
     });
 }
@@ -238,6 +273,41 @@ test('scan from the command line: a URL goes to the page scanner', { skip }, () 
     const { stderr, status } = spawnSync(process.execPath, [bin, 'scan'], { encoding: 'utf8' });
     assert.match(stderr, /Usage/);
     assert.equal(status, 1);
+});
+
+// A CMS module rendered inside the app's own shell: a pale nav and a "Test" badge around the module.
+const shell = (module) => page(`<nav><a href="/" style="color:#ccc">Pale shell link</a></nav><span class="badge" style="font-size:9px">Test badge here</span><div data-block-type="module-1">${module}</div>`);
+const scoped = async (html, options) => (await scanWith(browser, `data:text/html;charset=utf-8,${encodeURIComponent(html)}`, { width: 1280, quick: true, ...options })).map((item) => `${item.rule} ${item.value}`);
+
+test('scan --scope: only what is inside the scope is reported', { skip }, async () => {
+    const html = shell('<p>Module words that read well</p><p style="font-size:10px">Tiny module words here</p>');
+    const whole = await scoped(html);
+    assert.ok(whole.some((item) => item.includes('Pale shell link')), whole.join('\n'));
+    const found = await scoped(html, { scope: ['[data-block-type=module-1]'] });
+    assert.ok(found.some((item) => item.startsWith('no-tiny-text') && item.includes('Tiny module words')), found.join('\n'));
+    assert.deepEqual(found.filter((item) => /shell|badge/.test(item)), []);
+    // Several scopes are one union.
+    const both = await scoped(html, { scope: ['[data-block-type=module-1]', 'nav'] });
+    assert.ok(both.some((item) => item.includes('Pale shell link')) && both.some((item) => item.includes('Tiny module words')), both.join('\n'));
+});
+
+test('scan --ignore: a subtree is left out', { skip }, async () => {
+    const found = await scoped(shell('<p>Module words that read well</p>'), { ignore: ['nav', '.badge'] });
+    assert.deepEqual(found.filter((item) => /shell|badge/.test(item)), []);
+    const kept = await scoped(shell('<p style="color:#bbb">Pale module words here</p>'), { ignore: ['nav'] });
+    assert.ok(kept.some((item) => item.includes('Pale module words')) && kept.some((item) => item.includes('Test badge')), kept.join('\n'));
+});
+
+test('scan --scope that matches nothing stops with exit 2, not a clean pass', { skip }, async () => {
+    const url = `data:text/html;charset=utf-8,${encodeURIComponent(shell('<p>Module</p>'))}`;
+    await assert.rejects(scanWith(browser, url, { width: 1280, quick: true, scope: ['[data-block-type=module-9]'] }), (error) => error.exitCode === 2 && /module-9.*matches nothing/.test(error.message));
+    await assert.rejects(scanWith(browser, url, { width: 1280, quick: true, ignore: ['[[nope'] }), (error) => error.exitCode === 2 && /not a CSS selector/.test(error.message));
+    const bin = join(dirname(fileURLToPath(import.meta.url)), '..', 'bin', 'ai-design-check.js');
+    const run = spawnSync(process.execPath, [bin, 'scan', url, '--scope', '[data-block-type=module-9]'], { encoding: 'utf8' });
+    assert.equal(run.status, 2, run.stdout + run.stderr);
+    assert.match(run.stderr, /matches nothing/);
+    const fine = spawnSync(process.execPath, [bin, 'scan', url, '--scope=[data-block-type=module-1]', '--ignore', 'nav', '--json'], { encoding: 'utf8' });
+    assert.deepEqual(JSON.parse(fine.stdout).findings.filter((item) => /shell|badge/.test(item.value)), []);
 });
 
 test('scan: see-through text counts as what it looks like', { skip }, async () => {

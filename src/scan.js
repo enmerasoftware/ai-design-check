@@ -1,6 +1,6 @@
 import { loadRules } from './check.js';
 import { scanPage } from './scan-page.js';
-import { assertLanded, assertPage, findChrome, launch, signIn } from './story.js';
+import { assertLanded, assertPage, assertScope, findChrome, launch, signIn } from './story.js';
 
 /**
  * Checks a running page: what only the browser knows (real contrast, real sizes, what covers what, whether the scripts
@@ -9,9 +9,10 @@ import { assertLanded, assertPage, findChrome, launch, signIn } from './story.js
 
 /**
  * One page at one width. browser: from launch(). onLanded: told the address measured when a redirect led elsewhere;
- * a sign-in page in its place stops the scan unless allowRedirect.
+ * a sign-in page in its place stops the scan unless allowRedirect. scope, ignore: CSS selectors; only what is inside a
+ * scope match and outside every ignore match is checked (a scope that matches nothing stops the scan, exit 2).
  */
-export async function scanWith(browser, url, { width = 1440, config = {}, quick = false, allowStatus = [], requireContent = false, allowRedirect = false, onLanded } = {}) {
+export async function scanWith(browser, url, { width = 1440, config = {}, quick = false, allowStatus = [], requireContent = false, allowRedirect = false, onLanded, scope = [], ignore = [] } = {}) {
     const mobile = width < 768;
     const errors = [];
     await browser.send('Runtime.enable');
@@ -20,11 +21,12 @@ export async function scanWith(browser, url, { width = 1440, config = {}, quick 
         assertPage(await browser.open(url, { width, height: mobile ? 844 : 900, mobile, settle: quick ? 0 : 300, steady: !quick }), url, allowStatus);
         const landed = await assertLanded(browser, url, { allowRedirect });
         if (landed) onLanded?.(landed);
+        await assertScope(browser, url, { scope, ignore });
         // Lazy images and on-scroll reveals get their chance before anything counts as hidden.
         await browser.evaluate('(async () => { const root = () => document.documentElement; if (root()) root().style.scrollBehavior = "auto"; for (let y = 0; y < Math.min(root()?.scrollHeight ?? 0, 40000); y += innerHeight / 2) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 40)); } scrollTo(0, 0); await document.fonts.ready; await new Promise((r) => setTimeout(r, ' + (quick ? 0 : 200) + ')); })()');
         // A page with nothing on it has no findings, and that is not good news (an empty #root whose bundle failed).
         if (requireContent && await browser.evaluate('!document.body || (!document.body.innerText.trim() && !document.querySelector("img,svg,canvas,video,iframe"))')) throw new Error(`${url} rendered an empty page${errors[0] ? `: ${errors[0]}` : ''}`);
-        const hits = await browser.evaluate(`(${scanPage.toString()})(${JSON.stringify(config.designSystem ?? null)})`);
+        const hits = await browser.evaluate(`(${scanPage.toString()})(${JSON.stringify(config.designSystem ?? null)}, ${JSON.stringify({ scope, ignore })})`);
         await new Promise((done) => setTimeout(done, 50));
         for (const error of errors) hits.push({ rule: 'no-script-errors', value: error, message: `Script error on load: ${error}` });
         const catalogue = loadRules().rules;
@@ -45,10 +47,10 @@ export async function scanWith(browser, url, { width = 1440, config = {}, quick 
  * finding at both widths is reported once. A page that cannot be checked carries the reason in `error`, and the rest
  * are still checked.
  * @param {string[]} urls
- * @param {{widths?: number[], config?: object, allowStatus?: number[], allowRedirect?: boolean, auth?: {cookies?: {name: string, value: string}[], headers?: Record<string, string>}}} options
+ * @param {{widths?: number[], config?: object, allowStatus?: number[], allowRedirect?: boolean, auth?: {cookies?: {name: string, value: string}[], headers?: Record<string, string>}, scope?: string[], ignore?: string[]}} options
  * @returns {Promise<{url: string, measured?: string, findings: object[], error?: Error}[]>}
  */
-export async function scanPages(urls, { widths = [1440, 390], config = {}, allowStatus = [], allowRedirect = false, auth = {} } = {}) {
+export async function scanPages(urls, { widths = [1440, 390], config = {}, allowStatus = [], allowRedirect = false, auth = {}, scope = [], ignore = [] } = {}) {
     const chrome = findChrome();
     if (!chrome) throw new Error('Chrome or Chromium not found; set CHROME_PATH');
     const browser = await launch(chrome);
@@ -61,7 +63,7 @@ export async function scanPages(urls, { widths = [1440, 390], config = {}, allow
                 await signIn(browser, url, auth);
                 const seen = new Set();
                 for (const width of widths) {
-                    for (const item of await scanWith(browser, url, { width, config, allowStatus, allowRedirect, requireContent: true, onLanded: (landed) => { page.measured = landed; } })) {
+                    for (const item of await scanWith(browser, url, { width, config, allowStatus, allowRedirect, scope, ignore, requireContent: true, onLanded: (landed) => { page.measured = landed; } })) {
                         const key = `${item.rule}\u0000${item.value}`;
                         if (seen.has(key)) continue;
                         seen.add(key);

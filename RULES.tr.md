@@ -664,6 +664,16 @@
 
 **Nasıl düzeltilir:** Başlığın altındaki boşluğu üstüne taşıyın.
 
+### Varsayılan karşılama şablonu değil
+
+`no-centred-hero-cards` · not · denetlenir
+
+**Kural:** İlk ekran, yanında görsel olmayan ortalı bir başlık ve hemen ardından gelen üç ya da dört eşit kartlık bir sıra değildir.
+
+**Neden:** Her üretecin ve şablonun başladığı biçimdir; bu ürün hakkında hiçbir şey söylemez.
+
+**Nasıl düzeltilir:** Yerleşimi ilk ekranın gösterdiğinden seçin: ürünle bölünmüş ekran, gerçek bir fotoğraf, bir mekân, editoryal bir sütun. İçerikleri farklıysa kartlar da farklı olsun.
+
 ### Kırpan kutu içindekini kesmez
 
 `no-clipped-popover` · not · denetlenir

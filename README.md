@@ -114,6 +114,14 @@ page's own origin, never to the other hosts it loads from. `--allow-redirect` an
 `--allow-status 404` check such a page on purpose. Several URLs are scanned in one run. Add `--format github`
 for pull requests. With `designSystem` in the config (`fonts`, `sizes`, `radii`, `colors`) it also names what drifts.
 
+To check one part of a page, such as a CMS module rendered inside the app's own shell, pass
+`--scope "[data-block-type=module-1]"`: only what is inside a match is checked, and `redesign` measures and plans only that
+part. `--ignore "nav"` leaves a part out. Both work for `scan`, `narrow` and `redesign` and can be given more than once;
+several scopes are one area. A scope that matches nothing stops the run with exit 2 instead of passing as clean. Sideways
+scrolling caused outside the scope is not reported; script errors are, since they belong to the whole page. Text under `aria-hidden="true"`,
+such as a faded code rain behind the headline, is decoration: contrast, size and the other reading rules leave it alone,
+while the visual tells (gradients, glows, endless loops) still look at it.
+
 `redesign` is the one part that needs your agent (Claude Code or Codex), because deciding what a page should show takes
 judgement. The agent studies the screenshots, the code and the subject, and writes one card per section: what it says, what
 is wrong, the idea that comes from its own content, the colours it uses from your site. Those cards are checked against the
@@ -121,6 +129,48 @@ measured page. Then the numbered fixes and the cards are applied pass by pass on
 content, adds rule errors or looks worse is thrown away. `--plan` stops after the cards so you can read and edit them;
 `--brief` builds them. It starts only on a clean working tree (commit or stash first), and Ctrl-C puts back the pass in
 progress.
+
+Before any card the study decides how much to change: `heavy` (many tells, rebuilt section by section), `polish` (mostly
+designed: at most two sections change the look, each on a measured tell, and bigger ideas become suggestions) or `none`
+(it works; a few refinements are suggested and nothing is built). Then it writes a direction from your product: what it is
+in one sentence, its character in two or three concrete words (not clean, modern, sleek, minimal or premium), the world
+it belongs to, the one or two moments on the screen that carry the richness, and one signature detail. Each card says
+whether it changes the look, and what a visitor will see differently; `--plan` and `BRIEF.md` label every card "changes
+the look" or "fixes only" and say so in one line when none changes it. The first screen's card has to change the look and
+show the proof of its claim. After the craft pass the visual check asks, card by card, whether that change is in the after
+screenshot; a card that looks the same gets one more try, then the pass is thrown away. A `brief.json` from an earlier
+version still works with `--brief`, as `heavy` with no direction.
+
+`--in-place` makes no branch and no commits, and runs on a tree with uncommitted work (yours, or another session's): a pass
+that is thrown away goes back to exactly the state before it, your edits included, and a kept pass stays as uncommitted
+changes with its patch saved, so `git apply -R <patch>` undoes it; the run ends with the changed files and the undo
+commands, newest first. `--files "resources/views/home.blade.php,resources/css/**"` limits every pass to those paths or
+globs: a pass that changes any other file is thrown away. `--out <dir>` puts the plan, screenshots, logs and patches
+somewhere else (default `.ai-design-check/redesign`, which git ignores; a folder outside the project works too). For a
+page behind a sign-in when you would rather not hand over a cookie, save it and pass the file: `redesign ./page.html` (or
+`--html page.html`). With `--build "<command>"` the passes edit your sources and the command writes the file again; without
+it the passes edit the file itself, and a file git does not keep is put back from a copy when a pass is thrown away.
+
+The study starts from what you already know. A `PRODUCT.md` in the project root (purpose, audience, voice, what to
+avoid, rivals) and a `DESIGN.md` (the visual system you keep) go into the study and the craft prompt, quoted as your notes;
+`--product <file>` and `--design <file>` point elsewhere. Without a `PRODUCT.md` the study writes a draft to the `--out`
+folder from the README, the package description and the pages, and the run says in one line to review it and move it to
+the root; the tool never writes there itself. `--intent "<text>"` says what you want from this run: it leads the study and
+the cards, and is kept in `brief.json`. Any other field you put in `product` (`context`, `audience`, `voice`,
+`competitors`, `avoid`, or one of your own) reaches both prompts. Each card that changes the look picks a layout from its
+content (`split`, `product`, `photo`, `place`, `editorial`, `statement`, `collage`, or `centred` for a short section with
+no visual) with a line saying why; a centred hero with a visual, or two changing sections side by side with one layout, is
+sent back. `"only": ["exact heading"]` in `brief.json` limits the work to those sections, and the rest stays untouched. A
+card may list `addsText` and `replacesText` (`{ "from": "text on the page", "to": "new text" }`); those are the only text
+changes a pass may make. Before anything is applied the run prints the degree, direction, intent and cards; at a terminal
+it asks `Apply these passes? [y/N]` and stops with nothing changed unless you say yes, printing the command that goes on
+(`--brief <out>/brief.json --yes`). Agents and CI get the summary and the run goes on.
+
+For a page that only exists once a command draws it, such as a CMS module behind a sign-in written into static HTML:
+`redesign module-1.html --serve dist --render "php artisan module:export 1"`. `--serve <dir>` serves that folder on
+127.0.0.1 at a free port (no listing, nothing outside it) and the page is a path inside it; `--render "<command>"` runs
+before the first measurement and after every pass, after `--build`, and a failure throws the pass away as a failed build
+does. `--build-minutes <n>` sets the time limit for both (default 10).
 
 ## Mobile apps
 

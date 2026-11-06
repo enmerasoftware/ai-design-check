@@ -664,6 +664,16 @@
 
 **How to fix:** Move space from below the heading to above it.
 
+### Not the default hero template
+
+`no-centred-hero-cards` · note · checked
+
+**Rule:** The first screen is not a centred headline with no visual beside it, followed straight away by a row of three or four equal cards.
+
+**Why:** It is the shape every generator and template starts from, so it says nothing about this product.
+
+**How to fix:** Choose the layout from what the first screen shows: a split with the product, a real photo, a place, an editorial column. Let the cards differ when their content does.
+
 ### A clipping box does not cut what it holds
 
 `no-clipped-popover` · note · checked

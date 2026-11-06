@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { loadRules } from './check.js';
-import { assertLanded, assertPage, findChrome, launch, signIn } from './story.js';
+import { assertLanded, assertPage, assertScope, findChrome, launch, signIn } from './story.js';
 
 /**
  * Narrow-screen check: renders the page at a phone width and at a desktop width in Chrome and reports what only a
@@ -10,7 +10,11 @@ import { assertLanded, assertPage, findChrome, launch, signIn } from './story.js
  * there on desktop but gone on the phone. Run it with the longest locale (German, Finnish) to find the breaks early.
  */
 
-const MEASURE = `(() => {
+// options: { scope, ignore } from --scope and --ignore, written into the source as JSON.
+const MEASURE = (options) => `((options) => {
+    const scopeList = (options.scope ?? []).join(', ');
+    const ignoreList = (options.ignore ?? []).join(', ');
+    const inside = (element) => (!scopeList || Boolean(element.closest(scopeList))) && !(ignoreList && element.closest(ignoreList));
     const path = (element) => {
         const parts = [];
         for (let node = element; node && node !== document.body; node = node.parentElement) parts.unshift([...node.parentElement.children].indexOf(node));
@@ -33,14 +37,16 @@ const MEASURE = `(() => {
             if (/(auto|scroll)/.test(getComputedStyle(node).overflowX)) { scroller = true; break; }
         }
         elements.push({
-            key: path(element), label: name(element, text), text: text.length > 0, visible, scroller,
+            key: path(element), label: name(element, text), text: text.length > 0, visible, scroller, inScope: inside(element),
+            // Under aria-hidden="true": decoration a screen reader skips, not text anyone reads.
+            decor: Boolean(element.closest('[aria-hidden="true"]')),
             right: rect.right, font: parseFloat(style.fontSize),
             clipped: text.length > 0 && visible && element.scrollWidth > element.clientWidth + 1 && /(hidden|clip)/.test(style.overflowX + style.overflow) && !element.title,
             ellipsis: text.length > 0 && visible && style.textOverflow === 'ellipsis' && element.scrollWidth > element.clientWidth + 1 && !element.title,
         });
     }
-    return { width, scrollWidth: document.documentElement.scrollWidth, elements };
-})()`;
+    return { width, scrollWidth: document.documentElement.scrollWidth, scoped: Boolean(scopeList), elements };
+})(${JSON.stringify(options)})`;
 
 /**
  * Worst-case data, written over the rendered page: names become a long Turkish name, numbers a large one, other text grows
@@ -65,10 +71,11 @@ const finding = (rule, severity, path, value, message) => ({ rule, area: loadRul
 
 /**
  * @param {string} input file or URL
- * @param {{width?: number, desktop?: number, stress?: boolean, allowStatus?: number[], allowRedirect?: boolean, auth?: object, onLanded?: (url: string) => void}} options
- *   auth: cookies and headers for a page behind a sign-in (see signIn); onLanded: told the address measured after a redirect
+ * @param {{width?: number, desktop?: number, stress?: boolean, allowStatus?: number[], allowRedirect?: boolean, auth?: object, onLanded?: (url: string) => void, scope?: string[], ignore?: string[]}} options
+ *   auth: cookies and headers for a page behind a sign-in (see signIn); onLanded: told the address measured after a redirect;
+ *   scope, ignore: CSS selectors; only elements inside a scope match and outside every ignore match are reported
  */
-export async function narrow(input, { width = 320, desktop = 1280, stress = false, allowStatus = [], allowRedirect = false, auth = {}, onLanded } = {}) {
+export async function narrow(input, { width = 320, desktop = 1280, stress = false, allowStatus = [], allowRedirect = false, auth = {}, onLanded, scope = [], ignore = [] } = {}) {
     const chrome = findChrome();
     if (!chrome) throw new Error('Chrome or Chromium not found; set CHROME_PATH');
     const url = /^https?:\/\//.test(input) ? input : pathToFileURL(resolve(input)).href;
@@ -80,17 +87,22 @@ export async function narrow(input, { width = 320, desktop = 1280, stress = fals
         assertPage(await browser.open(url, { width: desktop, height: 900 }), url, allowStatus);
         const landed = await assertLanded(browser, url, { allowRedirect });
         if (landed) onLanded?.(landed);
-        const wide = await browser.evaluate(MEASURE);
+        await assertScope(browser, url, { scope, ignore });
+        const measure = MEASURE({ scope, ignore });
+        const wide = await browser.evaluate(measure);
         await browser.open(url, { width, height: 800, mobile: true });
-        const phone = await browser.evaluate(MEASURE);
+        const phone = await browser.evaluate(measure);
         const before = new Map(wide.elements.map((element) => [element.key, element]));
         const findings = [];
 
-        if (phone.scrollWidth > phone.width + 1) {
-            const culprits = phone.elements.filter((element) => element.visible && !element.scroller && element.right > phone.width + 1 && element.text).slice(0, 5);
+        // The page scrolls sideways as a whole; with --scope that counts when something in the scoped area sticks out.
+        const spills = (page) => page.elements.some((element) => element.inScope && element.visible && !element.scroller && element.right > page.width + 1);
+        if (phone.scrollWidth > phone.width + 1 && (!phone.scoped || spills(phone))) {
+            const culprits = phone.elements.filter((element) => element.inScope && element.visible && !element.scroller && element.right > phone.width + 1 && element.text).slice(0, 5);
             findings.push(finding('no-horizontal-overflow', 'error', input, `${phone.scrollWidth}px`, `Page is ${phone.scrollWidth} px wide at ${width} px; it scrolls sideways${culprits.length ? `: ${culprits.map((element) => element.label).join(', ')}` : ''}`));
         }
         for (const element of phone.elements) {
+            if (!element.inScope || element.decor) continue;
             if (element.clipped || element.ellipsis) findings.push(finding('text-not-clipped', 'warn', input, element.label, `Text cut off at ${width} px: ${element.label}`));
             const was = before.get(element.key);
             if (element.text && element.visible && element.font < 12) findings.push(finding('no-shrunk-text', 'error', input, element.label, `Text at ${element.font} px on a ${width} px screen: ${element.label}`));
@@ -102,15 +114,16 @@ export async function narrow(input, { width = 320, desktop = 1280, stress = fals
 
         if (stress) {
             // Only what the longer data breaks; what was already broken is reported above.
-            const overflowing = phone.scrollWidth > phone.width + 1;
+            const overflowing = phone.scrollWidth > phone.width + 1 && (!phone.scoped || spills(phone));
             const cut = new Set(phone.elements.filter((element) => element.clipped || element.ellipsis).map((element) => element.key));
             await browser.evaluate(STRESS);
-            const worst = await browser.evaluate(MEASURE);
-            if (!overflowing && worst.scrollWidth > worst.width + 1) {
-                const culprits = worst.elements.filter((element) => element.visible && !element.scroller && element.right > worst.width + 1 && element.text).slice(0, 3);
+            const worst = await browser.evaluate(measure);
+            if (!overflowing && worst.scrollWidth > worst.width + 1 && (!worst.scoped || spills(worst))) {
+                const culprits = worst.elements.filter((element) => element.inScope && element.visible && !element.scroller && element.right > worst.width + 1 && element.text).slice(0, 3);
                 findings.push(finding('no-horizontal-overflow', 'warn', input, `${worst.scrollWidth}px`, `With long data the page is ${worst.scrollWidth} px wide at ${width} px${culprits.length ? `: ${culprits.map((element) => element.label).join(', ')}` : ''}`));
             }
             for (const element of worst.elements) {
+                if (!element.inScope || element.decor) continue;
                 if ((element.clipped || element.ellipsis) && !cut.has(element.key)) findings.push(finding('text-not-clipped', 'warn', input, element.label, `With long data text is cut off at ${width} px: ${element.label}`));
             }
         }

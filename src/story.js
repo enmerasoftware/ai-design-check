@@ -255,6 +255,21 @@ export async function assertLanded(browser, url, { allowRedirect = false } = {})
     return where;
 }
 
+/**
+ * --scope and --ignore, checked on the page before anything is measured. A scope that matches nothing would measure
+ * nothing and read as a clean page, and a selector Chrome cannot parse would fail deep inside the measuring: both stop
+ * the run (exit 2) and name the selector. An --ignore that matches nothing is fine: there is nothing to leave out.
+ */
+export async function assertScope(browser, url, { scope = [], ignore = [] } = {}) {
+    if (!scope.length && !ignore.length) return;
+    const { bad, empty } = await browser.evaluate(`((scope, ignore) => {
+        const bad = [...scope, ...ignore].find((selector) => { try { document.querySelector(selector); return false; } catch { return true; } });
+        return bad !== undefined ? { bad } : { empty: scope.filter((selector) => !document.querySelector(selector)) };
+    })(${JSON.stringify(scope)}, ${JSON.stringify(ignore)})`);
+    if (bad !== undefined) throw Object.assign(new Error(`"${bad}" is not a CSS selector (--${scope.includes(bad) ? 'scope' : 'ignore'}).`), { exitCode: 2 });
+    if (empty.length) throw Object.assign(new Error(`--scope "${empty[0]}" matches nothing on ${url}, so nothing there would be checked. Check the selector against the page's HTML.`), { exitCode: 2 });
+}
+
 /** A local copy of the page for the checker, and the URL Chrome opens. */
 async function source(input, work, name) {
     if (/^https?:\/\//.test(input)) {

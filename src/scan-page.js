@@ -1,5 +1,6 @@
 /* eslint-disable no-undef -- runs in the page; sent to Chrome as source, so it uses nothing from outside */
-export function scanPage(designSystem) {
+// options: { scope, ignore }, CSS selector lists from --scope and --ignore; plain data, since this goes over as source.
+export function scanPage(designSystem, options = {}) {
     const found = [];
     const counts = {};
     const hit = (rule, value, message) => {
@@ -53,8 +54,18 @@ export function scanPage(designSystem) {
         }
         return { r: 255, g: 255, b: 255, a: 1 };
     };
-    const all = [...document.body.querySelectorAll('*')].filter((el) => !SKIP.has(el.tagName)).map((el) => ({ el, style: getComputedStyle(el), rect: el.getBoundingClientRect(), tag: el.tagName })).filter((item) => shown(item.style, item.rect));
+    // --scope: only what is inside a match is checked (several are one union); --ignore: what is inside a match is not.
+    const scopeList = (options?.scope ?? []).join(', ');
+    const ignoreList = (options?.ignore ?? []).join(', ');
+    const scoped = Boolean(scopeList || ignoreList);
+    const inside = (el) => (!scopeList || Boolean(el.closest(scopeList))) && !(ignoreList && el.closest(ignoreList));
+    const roots = scopeList ? [...document.querySelectorAll(scopeList)].filter((el, i, list) => !list.some((other) => other !== el && other.contains(el))) : [document.body];
+    const all = [...document.body.querySelectorAll('*')].filter((el) => !SKIP.has(el.tagName) && inside(el)).map((el) => ({ el, style: getComputedStyle(el), rect: el.getBoundingClientRect(), tag: el.tagName })).filter((item) => shown(item.style, item.rect));
     const texts = all.filter((item) => !inSvg(item.el) && own(item.el).length > 0);
+    // Text under aria-hidden="true" never reaches a screen reader: decoration (a code rain, a big faded numeral), not
+    // reading. The reading rules leave it alone; the visual tells (gradients, glows, neon, loops) still look at it.
+    const decor = (el) => Boolean(el.closest('[aria-hidden="true"]'));
+    const reading = texts.filter((item) => !decor(item.el));
     const isCard = ({ style, rect, tag }) => {
         if (['BUTTON', 'INPUT', 'SELECT', 'TEXTAREA', 'A', 'IMG', 'PRE', 'CODE', 'HR', 'TABLE'].includes(tag) || rect.width < 120 || rect.height < 60) return false;
         const border = ['Top', 'Right', 'Bottom', 'Left'].filter((side) => px(style[`border${side}Width`]) > 0 && parse(style[`border${side}Color`])).length >= 3;
@@ -122,6 +133,12 @@ export function scanPage(designSystem) {
         const label = `${tag.toLowerCase()} "${short(value)}"`;
         const color = parse(style.color);
         const back = ground(el);
+        const decoration = decor(el);
+        if (color && back && decoration) {
+            if (lum(back) < 0.04 && chroma(color) > 0.45 && hue(color) >= 165 && hue(color) <= 205) counts.neon = [...(counts.neon || []), label];
+            continue;
+        }
+        if (decoration) continue;
         if (color && back && style.backgroundClip !== 'text' && style.webkitBackgroundClip !== 'text') {
             const large = size >= 24 || (size >= 18.66 && Number(style.fontWeight) >= 700);
             let alpha = color.a;
@@ -171,7 +188,7 @@ export function scanPage(designSystem) {
     delete counts.neon;
 
     // Paragraph and heading shape
-    for (const { el, style, rect } of texts.filter((item) => item.tag === 'P').slice(0, 80)) {
+    for (const { el, style, rect } of reading.filter((item) => item.tag === 'P').slice(0, 80)) {
         if (/pretty|balance/.test(style.textWrap || '') || style.textAlign === 'center') continue;
         const node = [...el.childNodes].filter((n) => n.nodeType === 3).pop();
         const words = node?.textContent.trim().split(/\s+/) ?? [];
@@ -185,7 +202,7 @@ export function scanPage(designSystem) {
         lastWord.setEnd(node, end);
         if (Math.abs(lastWord.getBoundingClientRect().left - last.left) < 2 && rect.width > 0) hit('no-straggler', short(own(el)));
     }
-    for (const { el, style } of all.filter((item) => /^H[1-3]$/.test(item.tag))) {
+    for (const { el, style } of all.filter((item) => /^H[1-3]$/.test(item.tag) && !decor(item.el))) {
         if (/balance|pretty/.test(style.textWrap || '')) continue;
         const rows = lines(el);
         if (rows.length >= 2) {
@@ -197,7 +214,8 @@ export function scanPage(designSystem) {
     // Structure
     const headings = all.filter((item) => /^H[1-6]$/.test(item.tag) && text(item.el));
     let level = 0;
-    for (const { el, tag } of headings) {
+    // A heading under aria-hidden is not in the outline a screen reader walks.
+    for (const { el, tag } of headings.filter((item) => !decor(item.el))) {
         const next = Number(tag[1]);
         if (level && next > level + 1) hit('heading-order', short(text(el)), `h${level} then h${next}: "${short(text(el))}"`);
         level = next;
@@ -207,7 +225,7 @@ export function scanPage(designSystem) {
 
     const main = headings.filter((item) => /^H[1-3]$/.test(item.tag));
     const bodySizes = {};
-    for (const { el, style, tag } of texts) if (['P', 'LI', 'TD'].includes(tag)) bodySizes[px(style.fontSize)] = (bodySizes[px(style.fontSize)] || 0) + own(el).length;
+    for (const { el, style, tag } of reading) if (['P', 'LI', 'TD'].includes(tag)) bodySizes[px(style.fontSize)] = (bodySizes[px(style.fontSize)] || 0) + own(el).length;
     const body = Number(Object.entries(bodySizes).sort((a, b) => b[1] - a[1])[0]?.[0]);
     if (body && main.length && Math.max(...main.map((item) => px(item.style.fontSize))) / body < 1.25) hit('flat-type-scale', `${Math.max(...main.map((item) => px(item.style.fontSize)))} px on ${body} px text`);
 
@@ -314,7 +332,7 @@ export function scanPage(designSystem) {
     const dots = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     for (let node = dots.nextNode(); node; node = dots.nextNode()) {
         let line = node.parentElement;
-        if (!/[·•∙]/.test(node.textContent) || !line || line === document.body || SKIP.has(line.tagName) || inSvg(line)) continue;
+        if (!/[·•∙]/.test(node.textContent) || !line || line === document.body || SKIP.has(line.tagName) || inSvg(line) || !inside(line)) continue;
         // The line: the widest box around the dot that is still one short row.
         while (line.parentElement !== document.body && line.parentElement.getBoundingClientRect().height <= line.getBoundingClientRect().height + 16 && text(line.parentElement).length <= 80) line = line.parentElement;
         if (strung.has(line)) continue;
@@ -341,7 +359,7 @@ export function scanPage(designSystem) {
         // A card, not a whole section that happens to have a border.
         for (const leaf of card.rect.height < 500 ? card.el.querySelectorAll('*') : []) {
             const value = own(leaf);
-            if (leaf.getBoundingClientRect().width > 0 && value.length >= 3 && value.length <= 30) labels[value] = (labels[value] || 0) + 1;
+            if (leaf.getBoundingClientRect().width > 0 && value.length >= 3 && value.length <= 30 && inside(leaf)) labels[value] = (labels[value] || 0) + 1;
         }
         for (const [value, total] of Object.entries(labels)) if (total >= 3) hit('no-repeated-label', value, `"${value}" ${total} times in one card`);
     }
@@ -478,7 +496,7 @@ export function scanPage(designSystem) {
     // Animations that never end
     for (const animation of document.getAnimations()) {
         const target = animation.effect?.target;
-        if (!target || animation.effect.getComputedTiming().iterations !== Infinity) continue;
+        if (!target || animation.effect.getComputedTiming().iterations !== Infinity || !inside(target)) continue;
         const rect = target.getBoundingClientRect();
         const value = own(target);
         const parent = target.parentElement && getComputedStyle(target.parentElement);
@@ -517,24 +535,67 @@ export function scanPage(designSystem) {
         if (over) hit('cell-holds-content', `${el.tagName.toLowerCase()} "${short(text(el))}"`, `Runs ${Math.round(out.past)} px past its column onto the next one: ${el.tagName.toLowerCase()} "${short(text(el))}"`);
     }
 
+    // The default template: a centred headline with nothing beside or under it, then a row of three or four equal cards.
+    const firstH1 = all.find((item) => item.tag === 'H1' && text(item.el) && !decor(item.el));
+    const box = (el) => {
+        const rect = el.getBoundingClientRect();
+        return { left: rect.left, width: rect.width, height: rect.height, top: rect.top + scrollY };
+    };
+    if (firstH1 && firstH1.style.textAlign === 'center' && box(firstH1.el).top < vh) {
+        const seen = (el) => {
+            const look = getComputedStyle(el);
+            return shown(look, el.getBoundingClientRect()) && look.position !== 'absolute' && look.position !== 'fixed';
+        };
+        // Three or four visible children side by side with one width: the row, found in the block itself or just inside it.
+        const rowIn = (el, depth = 0) => {
+            const kids = [...el.children].filter((kid) => !SKIP.has(kid.tagName) && seen(kid));
+            const boxes = kids.map(box);
+            if (kids.length >= 3 && kids.length <= 4 && boxes.every((item) => item.width >= 120 && item.height >= 60 && Math.abs(item.top - boxes[0].top) <= 4) && Math.max(...boxes.map((item) => item.width)) - Math.min(...boxes.map((item) => item.width)) <= 2) return el;
+            return depth < 3 && kids.length <= 2 ? kids.map((kid) => rowIn(kid, depth + 1)).find(Boolean) ?? null : null;
+        };
+        // A visual that carries the first screen above the row: an image, video, canvas, drawing or picture ground at
+        // least 35% of the width (a photo behind the headline counts).
+        const visual = (row) => all.some(({ el, tag, style }) => {
+            if (el.contains(row) && !/url\(/.test(style.backgroundImage)) return false;
+            const area = box(el);
+            if (area.width < vw * 0.35 || area.height < 120 || area.top >= Math.min(vh, box(row).top)) return false;
+            return /^(IMG|PICTURE|VIDEO|CANVAS|IFRAME)$/.test(tag) || tag.toLowerCase() === 'svg' || /url\(/.test(style.backgroundImage);
+        });
+        // Up from the headline while the block is still the first screen; between it and the row only short copy and buttons.
+        let row = null;
+        for (let hero = firstH1.el; !row && hero && hero !== document.body && !roots.includes(hero) && box(hero).top < vh && box(hero).height <= vh * 1.5; hero = hero.parentElement) {
+            for (let next = hero.nextElementSibling; next; next = next.nextElementSibling) {
+                if (SKIP.has(next.tagName) || !seen(next)) continue;
+                row = rowIn(next);
+                if (row || box(next).height >= 160 || next.querySelector('img, video, canvas, svg, ul, ol, table')) break;
+            }
+        }
+        if (row && !visual(row)) hit('no-centred-hero-cards', short(text(firstH1.el)), `The default template: a centred headline "${short(text(firstH1.el))}" with no visual beside it, then ${[...row.children].filter(seen).length} equal cards in a row`);
+    }
+
     // The whole page
+    // The face the page reads in: decoration and, with --scope, the shell around the area are not it.
     const fonts = {};
-    for (const { el, style } of texts) {
+    for (const { el, style } of reading) {
         const family = style.fontFamily.split(',')[0].replace(/["']/g, '').trim();
         fonts[family] = (fonts[family] || 0) + own(el).length;
     }
     const topFont = Object.entries(fonts).sort((a, b) => b[1] - a[1])[0]?.[0];
     if (/^(Inter|Roboto|Fraunces|Geist|Plus Jakarta Sans|Space Grotesk|DM Sans|Poppins|Open Sans)\b/.test(topFont ?? '')) hit('no-overused-font', topFont);
-    const page = parse(getComputedStyle(document.body).backgroundColor) ?? parse(getComputedStyle(document.documentElement).backgroundColor);
+    // With --scope, the ground the scoped area sits on, not the shell's.
+    const page = scopeList ? ground(roots[0]) : parse(getComputedStyle(document.body).backgroundColor) ?? parse(getComputedStyle(document.documentElement).backgroundColor);
     if (page && lum(page) > 0.7 && hue(page) >= 30 && hue(page) <= 65 && chroma(page) >= 0.015 && chroma(page) <= 0.12) hit('no-default-cream', hex(page));
-    if (document.documentElement.scrollWidth > vw + 1) {
+    // The page scrolls sideways as a whole; with --scope it counts when the scoped area is what runs past the edge
+    // (scrollWidth holds a visible overflow too). --ignore alone leaves it page-wide: the whole page still scrolls.
+    const spills = !scopeList || roots.some((root) => root.getBoundingClientRect().left + Math.max(root.scrollWidth, root.getBoundingClientRect().width) > vw + 1);
+    if (document.documentElement.scrollWidth > vw + 1 && spills) {
         // Name what sticks out, so the fix has a place to start: the outermost elements past the right edge (a Bootstrap
         // .row with gutters wider than its container's padding is the usual one). Fixed layers do not widen the page.
         const wide = [];
         for (const el of document.body.querySelectorAll('*')) {
             if (wide.length >= 2) break;
             const box = el.getBoundingClientRect();
-            if (box.right <= vw + 1 || box.width === 0 || wide.some((outer) => outer.contains(el)) || getComputedStyle(el).position === 'fixed') continue;
+            if (box.right <= vw + 1 || box.width === 0 || wide.some((outer) => outer.contains(el)) || getComputedStyle(el).position === 'fixed' || (scopeList && !inside(el))) continue;
             let held = false;
             for (let node = el.parentElement; node && node !== document.body; node = node.parentElement) {
                 if (/(auto|scroll|hidden|clip)/.test(getComputedStyle(node).overflowX)) { held = true; break; }
@@ -545,11 +606,21 @@ export function scanPage(designSystem) {
         hit('no-horizontal-overflow', `${document.documentElement.scrollWidth} px at ${vw} px${wide.length ? `: ${wide.map(label).join(', ')}` : ''}`);
     }
     for (const img of document.images) {
+        if (!inside(img)) continue;
         if (!img.getAttribute('src') || (img.complete && !img.naturalWidth && getComputedStyle(img).display !== 'none')) hit('image-not-broken', img.getAttribute('src')?.slice(0, 80) || '(empty src)');
     }
 
     // Copy
-    const copy = text(document.body);
+    // With --scope or --ignore, the words of the area checked, text node by text node: innerText cannot leave a part out.
+    let copy = text(document.body);
+    if (scoped) {
+        const words = [];
+        for (const root of roots) {
+            const walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+            for (let node = walk.nextNode(); node; node = walk.nextNode()) if (node.parentElement && !SKIP.has(node.parentElement.tagName) && inside(node.parentElement) && node.parentElement.checkVisibility()) words.push(node.textContent);
+        }
+        copy = words.join(' ').replace(/\s+/g, ' ').trim();
+    }
     const dashes = (copy.match(/—| -- /g) ?? []).length;
     if (dashes >= 8 && copy.length / dashes < 500) hit('no-em-dash-saturation', `${dashes} em dashes`);
     const cadence = copy.match(/\b[\p{L}-]+\. (?:No|Just|Not|Only|Never) [\p{L}-]+\.|\bNot an? [\p{L} -]{2,30}\. An? [\p{L} -]{2,30}\./gu) ?? [];

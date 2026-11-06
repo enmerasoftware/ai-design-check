@@ -31,15 +31,41 @@ Usage
                                                  pass contrast, radius and spacing, as CSS, Tailwind, Bootstrap (CSS and
                                                  Sass), JSON, SwiftUI, Compose and a preview page (--ui/--display pick
                                                  fonts, --source any)
-  npx @enmera/ai-design-check redesign <url> [--agent claude|codex|none] [--plan] [--brief brief.json] [--build "npm run build"] [--path /] [--only type,color,craft]
+  npx @enmera/ai-design-check redesign <url|page.html> [--agent claude|codex|none] [--plan] [--brief brief.json] [--build "npm run build"] [--path /] [--only type,color,craft] [--in-place] [--files "a,b/**"] [--out dir] [--intent "..."] [--serve dir] [--render "cmd"] [--yes]
                                                  Your coding agent studies the running page, its code and its subject and
                                                  writes one card per section; the numbered fixes (type, colour, rhythm,
                                                  details, phone) and the cards are then applied pass by pass on a new git
                                                  branch. A pass that loses content or does not improve the page is thrown
                                                  away. Needs Chrome and git; web pages only. --plan: stop after the cards
-                                                 so you can read and edit them, then --brief to build them.
+                                                 so you can read and edit them, then --brief to build them. The cards
+                                                 start with a degree (heavy, polish, none) and a direction from your
+                                                 product, and each says "changes the look" or "fixes only"; a card that
+                                                 promised a visible change and does not show one is tried once more,
+                                                 then thrown away.
+                                                 --in-place: no branch, no commits, runs on a tree with uncommitted
+                                                 work; a kept pass stays uncommitted and its patch is saved to undo it.
+                                                 --files: paths or globs; a pass that changes any other file is thrown
+                                                 away. --out: where plan, screenshots, logs and patches go (default
+                                                 .ai-design-check/redesign, git-ignored; a folder outside works too).
+                                                 A saved .html file (or --html page.html) in place of the URL, for a
+                                                 page behind a sign-in: with --build, passes edit the sources and the
+                                                 build writes the file again; without, passes edit the file itself.
                                                  --agent none: the plan and the prompts, nothing run. Commit or stash
-                                                 your changes first; Ctrl-C puts the pass in progress back
+                                                 your changes first; Ctrl-C puts the pass in progress back.
+                                                 --intent "<text>": what you want from this run; it leads the study and
+                                                 the cards, and is kept in brief.json. --product PRODUCT.md and
+                                                 --design DESIGN.md: your notes on the product and its visual system
+                                                 (default: those files in the project root, when present). Without a
+                                                 PRODUCT.md the study writes a draft to the --out folder for you to
+                                                 review and move to the root.
+                                                 --serve <dir>: serve that folder on 127.0.0.1 and redesign a page in it
+                                                 (redesign module-1.html --serve dist). --render "<command>": draws the
+                                                 page (a CMS module into static HTML) before the first measurement and
+                                                 after every pass, after --build; a failure throws the pass away.
+                                                 --build-minutes <n>: time limit for --build and --render (default 10).
+                                                 Before applying, the degree, direction, intent and cards are printed;
+                                                 at a terminal it asks "Apply these passes? [y/N]" and stops with
+                                                 nothing changed unless you say yes. --yes: apply without asking
   npx @enmera/ai-design-check fonts [--character calm]
                                                  The characters and the font library behind system
 
@@ -64,6 +90,11 @@ Options
                               values are never printed
   --allow-redirect            scan, narrow, redesign: check the page a redirect lands on, even a sign-in page (without
                               it, a page that sends the browser to a sign-in page stops the run with exit 2)
+  --scope "<css selector>"    scan, narrow, redesign: check and measure only what is inside a match, such as one CMS
+                              module in the app's shell: --scope "[data-block-type=module-1]" (repeatable: any of them).
+                              A scope that matches nothing stops the run with exit 2
+  --ignore "<css selector>"   scan, narrow, redesign: leave out what is inside a match, such as the shell's nav or a
+                              test badge (repeatable)
   --force                     system: overwrite existing files
   --version                   Print the version
 
@@ -80,15 +111,17 @@ process.on('uncaughtException', (error) => {
 });
 
 const args = process.argv.slice(2);
-const SWITCHES = ['json', 'strict', 'quiet', 'fix', 'dry-run', 'nearest-type', 'write-baseline', 'no-baseline', 'tr', 'help', 'version', 'all', 'stress', 'plan', 'force', 'allow-redirect'];
-const VALUES = ['format', 'out', 'still', 'title', 'music', 'width', 'character', 'brand', 'kind', 'ui', 'display', 'source', 'path', 'agent', 'build', 'only', 'brief', 'allow-status', 'cookie', 'header'];
+const SWITCHES = ['json', 'strict', 'quiet', 'fix', 'dry-run', 'nearest-type', 'write-baseline', 'no-baseline', 'tr', 'help', 'version', 'all', 'stress', 'plan', 'force', 'allow-redirect', 'in-place', 'yes'];
+const VALUES = ['format', 'out', 'still', 'title', 'music', 'width', 'character', 'brand', 'kind', 'ui', 'display', 'source', 'path', 'agent', 'build', 'only', 'brief', 'allow-status', 'cookie', 'header', 'scope', 'ignore', 'files', 'html', 'product', 'design', 'intent', 'serve', 'render', 'build-minutes'];
+// The option before an argument takes it as its value ("redesign" is no option, though it ends in "design").
+const takesValue = (arg) => Boolean(arg?.startsWith('--') && VALUES.includes(arg.slice(2)));
 // An option that is not understood must stop the run: silently dropped, --strict is off and --dry-run writes files.
 const usageError = (message) => {
     console.error(`${message}\nSee: ai-design-check --help`);
     process.exit(2);
 };
 args.forEach((arg, index) => {
-    if (VALUES.includes(args[index - 1]?.slice(2)) || !arg.startsWith('-') || arg === '-h' || arg === '-v') return;
+    if (takesValue(args[index - 1]) || !arg.startsWith('-') || arg === '-h' || arg === '-v') return;
     const name = arg.replace(/^--?/, '').split('=')[0];
     if (arg.startsWith('--') && SWITCHES.includes(name)) {
         if (arg.includes('=')) usageError(`${arg}: --${name} takes no value.`);
@@ -130,8 +163,16 @@ const signInFrom = () => {
 
     return { cookies, headers };
 };
+/** --scope and --ignore: CSS selectors for the part of the page to check; Chrome tells whether each one parses. */
+const area = () => {
+    const [scope, ignore] = ['scope', 'ignore'].map((name) => valuesOf(name).map((selector) => selector.trim()));
+    const blank = scope.includes('') ? 'scope' : ignore.includes('') ? 'ignore' : null;
+    if (blank) usageError(`--${blank} needs a CSS selector, such as "[data-block-type=module-1]".`);
+
+    return { scope, ignore };
+};
 const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story', 'narrow', 'system', 'fonts', 'redesign', 'scan'];
-const positional = args.filter((arg, index) => !arg.startsWith('-') && !VALUES.includes(args[index - 1]?.slice(2)));
+const positional = args.filter((arg, index) => !arg.startsWith('-') && !takesValue(args[index - 1]));
 // "ai-design-check src lang" is a check of those paths; the command word is optional.
 const [command, ...named] = COMMANDS.includes(positional[0]) ? positional : ['check', ...positional];
 // "./src/a.tsx" and absolute paths name the same file as "src/a.tsx"; the walker and the globs expect the last form.
@@ -217,7 +258,7 @@ if (command === 'scan') {
     }
     const { scanPages } = await import('../src/scan.js');
     try {
-        const pages = await scanPages(named, { config: loadConfig(cwd), allowStatus, allowRedirect: flags.has('--allow-redirect'), auth: signInFrom() });
+        const pages = await scanPages(named, { config: loadConfig(cwd), allowStatus, allowRedirect: flags.has('--allow-redirect'), auth: signInFrom(), ...area() });
         const results = pages.flatMap((page) => page.findings);
         const total = (items, severity) => items.filter((item) => item.severity === severity).length;
         const counts = (items) => ({ errors: total(items, 'error'), warnings: total(items, 'warn'), notes: total(items, 'info') });
@@ -266,7 +307,7 @@ if (command === 'narrow') {
         if (!(width > 0)) throw new Error(`--width takes a number of pixels, got ${valueOf('width')}`);
         const config = loadConfig(cwd);
         let measured = null;
-        const results = (await narrow(named[0], { width, stress: flags.has('--stress'), allowStatus, allowRedirect: flags.has('--allow-redirect'), auth: signInFrom(), onLanded: (landed) => { measured = landed; } }))
+        const results = (await narrow(named[0], { width, stress: flags.has('--stress'), allowStatus, allowRedirect: flags.has('--allow-redirect'), auth: signInFrom(), ...area(), onLanded: (landed) => { measured = landed; } }))
             .map((item) => ({ ...item, severity: config.rules[item.rule] ?? item.severity }))
             .filter((item) => item.severity !== 'off');
         if (format === 'json') print(JSON.stringify({ findings: results, ...(measured ? { measured } : {}) }, null, 2));
@@ -339,16 +380,44 @@ if (command === 'system') {
 
 if (command === 'redesign') {
     const { redesign } = await import('../src/redesign/run.js');
-    const url = named[0];
-    if (!url || !/^https?:\/\//.test(url)) {
-        console.error('Usage: ai-design-check redesign <url of the running page, e.g. http://localhost:8000> [--agent claude|codex|none] [--plan] [--brief brief.json] [--build "npm run build"]\nApps have no page to open: use the checker, --fix and the fix skill.');
+    // A saved page stands in for a URL when the page is behind a sign-in and no cookie is handed over.
+    const serve = valueOf('serve');
+    // With --serve the page is a path inside the served folder, not a saved page to open from disk.
+    const html = valueOf('html') ?? (!serve && named[0] && /\.x?html?$/i.test(named[0]) && existsSync(resolve(cwd, named[0])) ? named[0] : undefined);
+    const url = html ? undefined : named[0];
+    if (html && !existsSync(resolve(cwd, html))) usageError(`Not found: ${html}`);
+    const minutes = valueOf('build-minutes') === undefined ? 10 : Number(valueOf('build-minutes'));
+    if (!(minutes > 0)) usageError('--build-minutes takes a number of minutes above 0, such as 20.');
+    if (!html && !serve && (!url || !/^https?:\/\//.test(url))) {
+        console.error('Usage: ai-design-check redesign <url of the running page, e.g. http://localhost:8000 | saved page.html> [--agent claude|codex|none] [--plan] [--brief brief.json] [--build "npm run build"] [--in-place] [--files "a,b/**"] [--out dir]\nApps have no page to open: use the checker, --fix and the fix skill.');
         done(1);
     }
+    const input = html ?? url ?? '';
+    // Asked only with a person at the terminal: an agent or CI gets the summary and the run goes on.
+    const ask = process.stdin.isTTY && process.stdout.isTTY && !flags.has('--yes') && !flags.has('--plan') && valueOf('agent') !== 'none';
+    const confirm = !ask ? null : async () => {
+        const { createInterface } = await import('node:readline');
+        const prompt = createInterface({ input: process.stdin, output: process.stderr });
+        return new Promise((done) => {
+            let answered = false;
+            const end = (yes) => {
+                if (answered) return;
+                answered = true;
+                prompt.close();
+                done(yes);
+            };
+            prompt.on('SIGINT', () => end(false));
+            prompt.on('close', () => end(false));
+            prompt.question('Apply these passes? [y/N] ', (answer) => end(['y', 'yes', 'e', 'evet'].includes(answer.trim().toLocaleLowerCase('tr'))));
+        });
+    };
     try {
         const result = await redesign({
-            cwd, url, path: valueOf('path'), agent: valueOf('agent') ?? 'claude', build: valueOf('build'),
+            cwd, url, html, path: valueOf('path'), agent: valueOf('agent') ?? 'claude', build: valueOf('build'),
             only: valueOf('only')?.split(','), kind: valueOf('kind') ?? 'marketing', plan: flags.has('--plan'), briefFile: valueOf('brief'),
-            allowRedirect: flags.has('--allow-redirect'), auth: signInFrom(), log: (line) => console.error(line),
+            allowRedirect: flags.has('--allow-redirect'), auth: signInFrom(), ...area(), inPlace: flags.has('--in-place'),
+            files: valueOf('files')?.split(',').map((item) => item.trim()).filter(Boolean), out: valueOf('out'), log: (line) => console.error(line),
+            render: valueOf('render'), serve, buildMinutes: minutes, product: valueOf('product'), design: valueOf('design'), intent: valueOf('intent'), confirm,
         });
         if (format === 'json') {
             print(JSON.stringify(result, null, 2));
@@ -365,24 +434,46 @@ if (command === 'redesign') {
             for (const item of pass.items) print(`    ${paint(1, item.id)}  ${item.decision}`, paint(2, `\n      now: ${item.evidence}`));
         }
         if (study?.sections) {
-            print(`\nSection cards (${result.out}/BRIEF.md):`);
-            for (const section of study.sections) print(`  ${paint(1, section.heading)}  ${section.idea}`);
+            const degree = study.degree ?? 'heavy';
+            print(`\nSection cards (${result.out}/BRIEF.md), degree ${degree}:`);
+            if (study.direction) print(paint(2, `  ${[study.direction.character, study.direction.world].map((item) => (Array.isArray(item) ? item.join(', ') : item)).join(' · ')}; moments: ${[study.direction.moments].flat().join(', ')}; signature: ${study.direction.signature}`));
+            for (const section of study.sections) {
+                const look = section.changesLook === true ? paint(32, 'changes the look') : section.changesLook === false ? paint(2, 'fixes only') : '';
+                print(`  ${paint(1, section.heading)}${look ? `  [${look}]` : ''}${section.layout ? `  layout ${section.layout}` : ''}  ${section.idea}`);
+                if (section.layoutWhy) print(paint(2, `      layout: ${section.layoutWhy}`));
+                if (section.changesLook && section.visible) print(paint(2, `      a visitor sees: ${section.visible}`));
+            }
+            // Said before anything is applied: cards that only close findings leave the page looking almost the same.
+            if (study.degree && !study.sections.some((section) => section.changesLook === true)) print(degree === 'none' ? 'No card changes the look: the study says the page works, and these are suggestions only.' : 'No card changes the look: after these, the page will look almost the same.');
+            if (study.suggestions?.length) print(`  Suggested, not built: ${study.suggestions.join('; ')}`);
+        }
+        if (result.productDraft) print(`\nNo PRODUCT.md yet: review the draft in ${result.productDraft} and move it to the project root, so later runs start from it.`);
+        if (result.notApproved) {
+            // The same command, built from the study just made, so the person does not wait for it again.
+            const again = args.filter((arg, index) => arg !== '--yes' && arg !== '--brief' && args[index - 1] !== '--brief' && !arg.startsWith('--brief='));
+            const quote = (arg) => (/^[\w@%+=:,./-]+$/.test(arg) ? arg : `'${arg.replace(/'/g, "'\\''")}'`);
+            print(`\nNothing changed; the plan files stay in ${result.out}. To apply them: npx @enmera/ai-design-check ${[...again, ...(result.continueBrief ? ['--brief', result.continueBrief] : []), '--yes'].map(quote).join(' ')}`);
+            done(0);
         }
         if (result.studyProblems) print(`\nNo section ideas, the study did not pass its check:\n${result.studyProblems.map((item) => `  ${item}`).join('\n')}`);
         if (!result.passes.length) {
             print(flags.has('--plan') && study?.sections
-                ? `\nNo changes made. Edit ${result.out}/brief.json if you like, then: npx @enmera/ai-design-check redesign ${url} --brief ${result.out}/brief.json`
+                ? `\nNo changes made. Edit ${result.out}/brief.json if you like, then: npx @enmera/ai-design-check redesign ${input} --brief ${result.out}/brief.json`
                 : `\nNo changes made. Prompts: ${result.out}/study.md and ${result.out}/pass-*.md (give them to your agent, or run with --agent claude).`);
+            if (flags.has('--plan')) print(result.outside ? `${result.out} is outside the project, so git never sees it.` : `${result.out} is git-ignored: nothing in it goes into a commit.`);
             done(0);
         }
         print('');
         for (const pass of result.passes) {
             print(`  ${pass.kept ? paint(32, 'kept') : paint(31, 'thrown away')}  ${pass.name}${pass.problems ? `: ${pass.problems.join('; ')}` : ''}`);
             // Git cannot put these back or commit them: the person decides what happens to them.
-            if (pass.outside) print(paint(33, `    changed outside git, ${pass.kept ? 'not in the commit' : 'not put back'}: ${pass.outside.join(', ')}`));
+            if (pass.outside) print(paint(33, `    changed outside git, ${pass.kept ? `not in the ${result.inPlace ? 'patch' : 'commit'}` : 'not put back'}: ${pass.outside.join(', ')}`));
         }
         print(`\nBefore ${JSON.stringify(result.before)}\nAfter  ${JSON.stringify(result.after)}`);
-        print(`\nBranch ${result.branch}. Screenshots and logs in ${result.out}. To undo everything: git checkout ${result.start} && git branch -D ${result.branch}`);
+        if (result.inPlace) {
+            print(`\nIn place, nothing committed. Changed: ${result.changed.length ? result.changed.join(', ') : 'nothing'}. Screenshots, logs and patches in ${result.out}.`);
+            if (result.undo.length) print(`To undo, newest first:\n${result.undo.map((command) => `  ${command}`).join('\n')}`);
+        } else print(`\nBranch ${result.branch}. Screenshots and logs in ${result.out}. To undo everything: git checkout ${result.start} && git branch -D ${result.branch}`);
         done(0);
     } catch (error) {
         // Stopped with Ctrl-C: 130, as a shell expects; the message says where the person is and how to go back.
