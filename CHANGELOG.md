@@ -2,6 +2,10 @@
 
 ## 0.16.0
 
+- **`story --style swarm`.** Labelled agent cursors (layout, type, colour) build the new screen block by block. Each
+  block gets a dashed frame with its live size, headings and text come in as if typed, and the finding count falls as
+  they work. The default `wipe` style stays. Inspired by Harnoor Singh's swarm-build and Joel Califa's Swarm; no code
+  was taken.
 - **The agent can see its own work.** Its prompt told it to run the `shot` command and the `--build` or `--render`
   command, but the agent was not allowed to run them, so a retry worked blind. Those exact commands are now allowed,
   and nothing else is. A retry also gets the screenshots of the page as it stands after the build.

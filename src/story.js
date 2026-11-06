@@ -331,6 +331,40 @@ const BOXES = (values, view) => `(() => {
     }).slice(0, 160);
 })()`;
 
+/** The after page's blocks on the first screen, for the swarm: what each agent frames and builds, in reading order. */
+const BLOCKS = (view) => `(() => {
+    const out = [];
+    const seen = new Set();
+    const kindOf = (el) => {
+        const tag = el.tagName.toLowerCase();
+        if (/^h[1-3]$/.test(tag)) return 'heading';
+        if (tag === 'p' || tag === 'li' || tag === 'blockquote') return 'text';
+        if (tag === 'img' || tag === 'svg' || tag === 'video' || tag === 'picture' || tag === 'canvas') return 'media';
+        if (tag === 'button' || (tag === 'a' && getComputedStyle(el).backgroundColor !== 'rgba(0, 0, 0, 0)')) return 'action';
+        const style = getComputedStyle(el);
+        const framed = style.backgroundColor !== 'rgba(0, 0, 0, 0)' || style.backgroundImage !== 'none' || parseFloat(style.borderTopWidth) > 0 || style.boxShadow !== 'none';
+        return framed && el.children.length ? 'block' : null;
+    };
+    for (const el of document.querySelectorAll('body *')) {
+        const kind = kindOf(el);
+        if (!kind) continue;
+        const style = getComputedStyle(el);
+        if (style.visibility === 'hidden' || Number(style.opacity) < 0.05) continue;
+        const r = el.getBoundingClientRect();
+        const left = Math.max(0, r.left), top = Math.max(0, r.top);
+        const box = { x: left, y: top, w: Math.min(${view.width}, r.right) - left, h: Math.min(${view.height}, r.bottom) - top, kind };
+        if (box.w < 24 || box.h < 12 || top >= ${view.height} || box.w * box.h > ${view.width * view.height} * 0.6) continue;
+        const key = [box.x, box.y, box.w, box.h].map((n) => Math.round(n / 4)).join(',');
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push(box);
+    }
+    // Large frames first, so the layout agent sets up the page before the others fill it in.
+    const rank = { block: 0, media: 1, heading: 2, text: 3, action: 4 };
+    out.sort((a, b) => rank[a.kind] - rank[b.kind] || Math.round(a.y / 8) - Math.round(b.y / 8) || a.x - b.x);
+    return out.slice(0, 48);
+})()`;
+
 const STAGE = (data) => `<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0;background:#0e0f12">
 <canvas id="c" width="${SIZE}" height="${SIZE}"></canvas>
 <script>
@@ -414,7 +448,124 @@ function render(t) {
     }
     ctx.globalAlpha = 1;
 }
-window.frame = async (t) => { await ready; render(t); return canvas.toDataURL('image/jpeg', 0.92); };
+// Swarm: labelled agents frame each block of the new page with its size, then build it in, one block after another.
+const AGENTS = [
+    { name: 'layout', color: '#7c9cff', kinds: ['block'] },
+    { name: 'type', color: '#ff9f5a', kinds: ['heading', 'text'] },
+    { name: 'colour', color: '#4cc38a', kinds: ['action', 'media'] },
+];
+const BUILD_FROM = 2.6, BUILD_TO = 8.4;
+const plan = (() => {
+    const queues = AGENTS.map((agent) => ({ agent, blocks: data.blocks.filter((block) => agent.kinds.includes(block.kind)) }));
+    const longest = Math.max(1, ...queues.map((queue) => queue.blocks.length));
+    const slot = (BUILD_TO - BUILD_FROM) / longest;
+    const steps = [];
+    queues.forEach(({ agent, blocks }, lane) => blocks.forEach((block, index) => {
+        // Lanes start a little apart, so three cursors do not move as one.
+        const start = BUILD_FROM + lane * slot * 0.33 + index * slot;
+        steps.push({ agent, block, start, frame: start + slot * 0.35, done: start + slot * 0.95 });
+    }));
+    return { steps, slot };
+})();
+function cursor(x, y, agent, alpha) {
+    ctx.save(); ctx.globalAlpha *= alpha; ctx.translate(x, y);
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 22); ctx.lineTo(6, 17); ctx.lineTo(10, 26); ctx.lineTo(14, 24); ctx.lineTo(10, 15); ctx.lineTo(17, 15); ctx.closePath();
+    ctx.fillStyle = agent.color; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = '#0e0f12'; ctx.stroke();
+    ctx.font = '600 16px ' + FONT; const w = ctx.measureText(agent.name).width + 16;
+    rounded(16, 24, w, 24, 12); ctx.fillStyle = agent.color; ctx.fill();
+    ctx.fillStyle = '#0e0f12'; ctx.fillText(agent.name, 24, 41);
+    ctx.restore();
+}
+function renderSwarm(t) {
+    ctx.clearRect(0, 0, ${SIZE}, ${SIZE});
+    ctx.fillStyle = '#0e0f12'; ctx.fillRect(0, 0, ${SIZE}, ${SIZE});
+    ctx.globalAlpha = span(t, 0, 0.5);
+    const built = plan.steps.filter((step) => t >= step.done).length;
+    const total = Math.max(1, plan.steps.length);
+    const finish = span(t, BUILD_TO, BUILD_TO + 0.6);
+    const share = Math.min(1, built / total + finish);
+    const count = t < BUILD_FROM ? Math.round(data.beforeCount * span(t, 0.5, 2.2)) : Math.round(data.beforeCount + (data.afterCount - data.beforeCount) * share);
+
+    ctx.fillStyle = '#8b8f98'; ctx.font = '500 26px ' + FONT; ctx.textBaseline = 'alphabetic';
+    ctx.fillText(t < BUILD_FROM ? 'Before' : t < BUILD_TO + 0.6 ? 'Agents at work' : 'After', X, 82);
+    ctx.fillStyle = '#eef0f5'; ctx.font = '600 34px ' + FONT; ctx.fillText(data.title, X, 128);
+    ctx.textAlign = 'right'; ctx.font = '500 26px ' + FONT; ctx.fillStyle = '#8b8f98';
+    const word = count === 1 ? 'finding' : 'findings';
+    ctx.fillText(word, X + W, 128);
+    const label = ctx.measureText(word).width;
+    ctx.fillStyle = count === 0 && t > BUILD_TO ? '#4cc38a' : (count > 0 ? '#ff7a8a' : '#eef0f5');
+    ctx.font = '600 84px ' + FONT; ctx.fillText(String(count), X + W - label - 16, 128); ctx.textAlign = 'left';
+
+    ctx.save(); rounded(X, Y, W, H, 18); ctx.clip();
+    ctx.drawImage(before, X, Y, W, H);
+    // The findings on the old page, until the agents start.
+    const marks = 1 - span(t, BUILD_FROM - 0.3, BUILD_FROM + 0.3);
+    if (marks > 0) data.boxes.forEach((box, index) => {
+        const appear = span(t, 0.5 + (1.7 * index) / Math.max(1, data.boxes.length), 0.8 + (1.7 * index) / Math.max(1, data.boxes.length)) * marks;
+        if (appear <= 0) return;
+        rounded(X + box.x * S - 3, Y + box.y * S - 3, box.w * S + 6, box.h * S + 6, 5);
+        ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(255, 92, 112, ' + appear + ')'; ctx.stroke();
+    });
+    // Each block of the new page comes in where its agent built it: text from left to right, as if typed.
+    for (const step of plan.steps) {
+        const grow = span(t, step.frame, step.done);
+        if (grow <= 0) continue;
+        const { x, y, w, h, kind } = step.block;
+        const typed = kind === 'heading' || kind === 'text';
+        const rw = typed ? w * grow : w, rh = typed ? h : h * grow;
+        ctx.drawImage(after, x, y, rw, rh, X + x * S, Y + y * S, rw * S, rh * S);
+        if (typed && grow < 1) { ctx.fillStyle = step.agent.color; ctx.fillRect(X + (x + rw) * S, Y + y * S, 2.5, h * S); }
+    }
+    if (finish > 0) { ctx.globalAlpha *= finish; ctx.drawImage(after, X, Y, W, H); ctx.globalAlpha = span(t, 0, 0.5); }
+    // Frames with a live size badge while a block is being built.
+    for (const step of plan.steps) {
+        const on = span(t, step.start + plan.slot * 0.15, step.frame) * (1 - span(t, step.done, step.done + 0.25));
+        if (on <= 0) continue;
+        const { x, y, w, h } = step.block;
+        const bx = X + x * S, by = Y + y * S;
+        ctx.save(); ctx.globalAlpha *= on;
+        ctx.setLineDash([6, 4]); ctx.lineWidth = 2; ctx.strokeStyle = step.agent.color;
+        ctx.strokeRect(bx, by, w * S * on, h * S * on); ctx.setLineDash([]);
+        const size = Math.round(w * on) + ' × ' + Math.round(h * on);
+        ctx.font = '600 14px ' + MONO; const tw = ctx.measureText(size).width + 12;
+        rounded(bx, Math.max(Y + 2, by - 22), tw, 20, 4); ctx.fillStyle = step.agent.color; ctx.fill();
+        ctx.fillStyle = '#0e0f12'; ctx.fillText(size, bx + 6, Math.max(Y + 2, by - 22) + 15);
+        ctx.restore();
+    }
+    ctx.restore();
+    rounded(X, Y, W, H, 18); ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(255,255,255,.12)'; ctx.stroke();
+    // Cursors: each flies to its next block and rests on the one it builds.
+    AGENTS.forEach((agent, lane) => {
+        const steps = plan.steps.filter((step) => step.agent === agent);
+        if (!steps.length) return;
+        const last = steps[steps.length - 1].done;
+        // An agent whose work is done leaves, instead of resting on its last block.
+        const alpha = span(t, BUILD_FROM - 0.4, BUILD_FROM) * (1 - span(t, Math.min(BUILD_TO + 0.2, last + 0.3), Math.min(BUILD_TO + 0.7, last + 0.8)));
+        if (alpha <= 0) return;
+        const at = (step) => ({ x: X + (step.block.x + Math.min(step.block.w, 40)) * S, y: Y + (step.block.y + Math.min(step.block.h, 24)) * S });
+        let index = steps.findIndex((step) => t < step.done);
+        if (index < 0) index = steps.length - 1;
+        const step = steps[index], to = at(step);
+        const from = index > 0 ? at(steps[index - 1]) : { x: X + W * (0.2 + 0.3 * lane), y: Y + H + 30 };
+        const move = span(t, step.start, step.start + plan.slot * 0.3);
+        cursor(from.x + (to.x - from.x) * move, from.y + (to.y - from.y) * move, agent, alpha);
+    });
+
+    ctx.fillStyle = '#eef0f5'; ctx.font = '500 30px ' + MONO; ctx.fillText('npx @enmera/ai-design-check', X, Y + H + 68);
+    ctx.textAlign = 'right'; ctx.fillStyle = '#8b8f98'; ctx.font = '500 24px ' + FONT;
+    ctx.fillText(data.rules + ' rules', X + W, Y + H + 66); ctx.textAlign = 'left';
+    const end = span(t, 9.4, 10.2);
+    if (end > 0) {
+        ctx.fillStyle = 'rgba(14, 15, 18, ' + 0.9 * end + ')'; ctx.fillRect(0, 0, ${SIZE}, ${SIZE});
+        ctx.globalAlpha = end; ctx.textAlign = 'center';
+        ctx.fillStyle = '#eef0f5'; ctx.font = '600 120px ' + FONT; ctx.fillText(data.beforeCount + ' → ' + data.afterCount, ${SIZE / 2}, 470);
+        ctx.fillStyle = '#8b8f98'; ctx.font = '500 34px ' + FONT; ctx.fillText('design findings, rebuilt by agents', ${SIZE / 2}, 530);
+        ctx.fillStyle = '#eef0f5'; ctx.font = '500 34px ' + MONO; ctx.fillText('npx @enmera/ai-design-check', ${SIZE / 2}, 660);
+        ctx.textAlign = 'left';
+    }
+    ctx.globalAlpha = 1;
+}
+window.frame = async (t) => { await ready; (data.style === 'swarm' ? renderSwarm : render)(t); return canvas.toDataURL('image/jpeg', 0.92); };
 </script></body></html>`;
 
 /**
@@ -422,7 +573,8 @@ window.frame = async (t) => { await ready; render(t); return canvas.toDataURL('i
  * @param {string} afterInput file or URL
  * @param {{out?: string, still?: string, title?: string}} options
  */
-export async function story(beforeInput, afterInput, { out = 'story.mp4', still, title, music } = {}) {
+export async function story(beforeInput, afterInput, { out = 'story.mp4', still, title, music, style = 'wipe' } = {}) {
+    if (!['wipe', 'swarm'].includes(style)) throw Object.assign(new Error(`--style is wipe or swarm, not "${style}"`), { exitCode: 2 });
     if (music && !existsSync(resolve(music))) throw new Error(`Not found: ${music}`);
     const chrome = findChrome();
     if (!chrome) throw new Error('Chrome or Chromium not found; set CHROME_PATH');
@@ -435,20 +587,22 @@ export async function story(beforeInput, afterInput, { out = 'story.mp4', still,
         const [beforeFindings, afterFindings] = pages.map((page) => check(page.dir, { include: [page.file] }));
         const shots = [];
         let boxes = [];
+        let blocks = [];
         for (const [index, page] of pages.entries()) {
             await browser.open(page.url, VIEW);
             if (index === 0) boxes = await browser.evaluate(BOXES([...new Set(beforeFindings.map((item) => item.value))], VIEW));
+            if (index === 1 && style === 'swarm') blocks = await browser.evaluate(BLOCKS(VIEW));
             const shot = await browser.send('Page.captureScreenshot', { format: 'png' });
             shots.push(`data:image/png;base64,${shot.data}`);
         }
 
         const stage = join(work, 'stage.html');
         const name = title ?? (await browser.evaluate('document.title')) ?? basename(beforeInput);
-        writeFileSync(stage, STAGE({ before: shots[0], after: shots[1], boxes, beforeCount: beforeFindings.length, afterCount: afterFindings.length, title: name, rules: loadRules().rules.length }));
+        writeFileSync(stage, STAGE({ style, blocks, before: shots[0], after: shots[1], boxes, beforeCount: beforeFindings.length, afterCount: afterFindings.length, title: name, rules: loadRules().rules.length }));
         await browser.open(pathToFileURL(stage).href, { width: SIZE, height: SIZE, settle: 100 });
 
         if (still) {
-            const image = await browser.evaluate('frame(6.5)');
+            const image = await browser.evaluate(`frame(${style === 'swarm' ? 6 : 6.5})`);
             writeFileSync(still, Buffer.from(image.split(',')[1], 'base64'));
         }
         // Music (optional) is cut to the video and faded out over the last second.
@@ -462,7 +616,7 @@ export async function story(beforeInput, afterInput, { out = 'story.mp4', still,
         encoder.stdin.end();
         await finished;
 
-        return { before: beforeFindings.length, after: afterFindings.length, marked: boxes.length, out: resolve(out) };
+        return { before: beforeFindings.length, after: afterFindings.length, marked: boxes.length, ...(style === 'swarm' ? { built: blocks.length } : {}), out: resolve(out) };
     } finally {
         await browser.close();
         rmSync(work, { recursive: true, force: true });

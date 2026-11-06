@@ -342,6 +342,10 @@ npx @enmera/ai-design-check story screen.before.html screen.html --out story.mp4
 12 saniyelik kare video: her bulgu tek tek işaretlenir, sayı düşerken yeni ekrana geçilir, sonunda kapanış kartı gelir. Dosya ya da
 adres alır; yalnız Chrome ve ffmpeg ister.
 
+`--style swarm` değişikliği başka türlü anlatır: isimli ajan imleçleri (layout, type, colour) yeni ekranın üstünde gezer,
+her bloğu canlı boyut etiketiyle çerçeveler, başlıkları ve metni yazarak getirir, kalanı kurar; bu sırada sayı düşer
+([örnek](examples/story-dashboard-swarm.mp4)).
+
 ### Diğer komutlar
 
 ```bash

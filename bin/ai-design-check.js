@@ -16,7 +16,7 @@ Usage
   npx @enmera/ai-design-check rules [--tr]       List the rules
   npx @enmera/ai-design-check init               Write ${CONFIG_FILE} with the defaults
   npx @enmera/ai-design-check hook               For agent hooks: check the file named in the hook JSON on stdin
-  npx @enmera/ai-design-check story <before> <after> [--out story.mp4] [--still frame.png] [--title name] [--music track.mp3]
+  npx @enmera/ai-design-check story <before> <after> [--out story.mp4] [--still frame.png] [--title name] [--music track.mp3] [--style wipe|swarm]
                                                  Square before/after video with every finding marked (files or URLs;
                                                  needs Chrome and ffmpeg, nothing else)
   npx @enmera/ai-design-check scan <url> [url …] Check running pages at desktop and phone width: real contrast, sizes,
@@ -132,7 +132,7 @@ process.on('uncaughtException', (error) => {
 
 const args = process.argv.slice(2);
 const SWITCHES = ['json', 'strict', 'quiet', 'fix', 'dry-run', 'nearest-type', 'write-baseline', 'no-baseline', 'tr', 'help', 'version', 'all', 'stress', 'plan', 'force', 'allow-redirect', 'in-place', 'yes', 'full'];
-const VALUES = ['format', 'out', 'still', 'title', 'music', 'width', 'character', 'brand', 'kind', 'ui', 'display', 'source', 'path', 'agent', 'build', 'only', 'brief', 'allow-status', 'cookie', 'header', 'scope', 'ignore', 'files', 'html', 'product', 'design', 'intent', 'degree', 'images', 'images-max', 'serve', 'render', 'build-minutes'];
+const VALUES = ['format', 'out', 'still', 'title', 'music', 'style', 'width', 'character', 'brand', 'kind', 'ui', 'display', 'source', 'path', 'agent', 'build', 'only', 'brief', 'allow-status', 'cookie', 'header', 'scope', 'ignore', 'files', 'html', 'product', 'design', 'intent', 'degree', 'images', 'images-max', 'serve', 'render', 'build-minutes'];
 // The option before an argument takes it as its value ("redesign" is no option, though it ends in "design").
 const takesValue = (arg) => Boolean(arg?.startsWith('--') && VALUES.includes(arg.slice(2)));
 // An option that is not understood must stop the run: silently dropped, --strict is off and --dry-run writes files.
@@ -262,7 +262,7 @@ if (command === 'story') {
     }
     const { story } = await import('../src/story.js');
     try {
-        const result = await story(named[0], named[1], { out: valueOf('out'), still: valueOf('still'), title: valueOf('title'), music: valueOf('music') });
+        const result = await story(named[0], named[1], { out: valueOf('out'), still: valueOf('still'), title: valueOf('title'), music: valueOf('music'), style: valueOf('style') ?? 'wipe' });
         print(`${result.before} → ${result.after} findings, ${result.marked} marked on screen. Wrote ${relative(cwd, result.out)}`);
         done(0);
     } catch (error) {

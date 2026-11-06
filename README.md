@@ -336,6 +336,10 @@ npx @enmera/ai-design-check story screen.before.html screen.html --out story.mp4
 A square 12 second video: every finding marked one by one, a wipe to the new screen while the count falls, and an end card.
 It takes files or URLs, and needs only your Chrome and ffmpeg.
 
+`--style swarm` tells the change another way: labelled agents (layout, type, colour) fly over the new screen, frame
+each block with its live size, type the headings and text in and build the rest, while the count falls
+([example](examples/story-dashboard-swarm.mp4)).
+
 ### Other commands
 
 ```bash
