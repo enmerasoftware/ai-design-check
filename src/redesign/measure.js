@@ -117,7 +117,7 @@ function inPage(options = {}) {
                 let alpha = color.a;
                 for (let node = el; node && node !== document.documentElement; node = node.parentElement) alpha *= +getComputedStyle(node).opacity;
                 const r = ratio({ r: color.r * alpha + bg.r * (1 - alpha), g: color.g * alpha + bg.g * (1 - alpha), b: color.b * alpha + bg.b * (1 - alpha) }, bg);
-                if (r < (large ? 3 : 4.5)) contrast.push({ text: text.slice(0, 40), ratio: Math.round(r * 100) / 100, size: Math.round(size) });
+                if (r < (large ? 3 : 4.5)) contrast.push({ text: text.slice(0, 40), ratio: Math.round(r * 100) / 100, size: Math.round(size), bg: hex(bg) });
             }
             if (/-webkit-text|text/.test(style.webkitBackgroundClip || style.backgroundClip) && style.backgroundImage.includes('gradient')) gradientText += 1;
             content.push({ top, bottom: top + rect.height });

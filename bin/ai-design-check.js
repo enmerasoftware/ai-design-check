@@ -508,6 +508,7 @@ if (command === 'redesign') {
             print(`  ${pass.name}`);
             for (const item of pass.items) print(`    ${paint(1, item.id)}  ${item.decision}`, paint(2, `\n      now: ${item.evidence}`));
         }
+        for (const line of diagnosis.reportOnly ?? []) print(paint(33, `  ${line}`));
         if (study?.sections) {
             const degree = study.degree ?? 'heavy';
             print(`\nSection cards (${result.out}/BRIEF.md), degree ${degree}:`);

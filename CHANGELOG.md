@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.16.1
+
+- **The project's own way of writing does not throw a pass away.** A rule the project already breaks ten times or more
+  (arbitrary `text-[36px]` sizes across a theme) no longer rejects a pass. Neither does a value the project already
+  uses for that rule. The run says which rules it treats this way.
+- **Build caches are not the agent's change.** Git-ignored files that the `--build` or `--render` command writes (view
+  caches, devtools files) are no longer listed as "changed outside git".
+- **Brand button contrast is report only.** Low contrast of text on the brand's own button fill is listed under the
+  plan as "report only". It is no longer a target a pass has to meet, since the fill and its text colour stay as they
+  are.
+
 ## 0.16.0
 
 - **`story --style swarm`.** Labelled agent cursors (layout, type, colour) build the new screen block by block. Each

@@ -71,7 +71,11 @@ export function diagnose(page, { kind = 'marketing' } = {}) {
 
     // Colour
     if (m.accents.length > 1) finding('color', 'one-accent', `${m.accents.length} accent fills on buttons: ${m.accents.join(', ')}`, `One accent: ${brand}. Other fills become neutral (surface + border) unless they mean danger or success in a form`);
-    const failures = m.contrast.filter((item) => item.ratio < 4.5);
+    // Text on the brand's own button fill stays as it is (the brand is fixed): reported, never a target a pass must meet.
+    const onBrand = (item) => brand && item.bg && item.bg.toLowerCase() === brand.toLowerCase();
+    const branded = m.contrast.filter((item) => item.ratio < 4.5 && onBrand(item));
+    const reportOnly = branded.length ? [`Brand colour, report only: ${branded.slice(0, 4).map((item) => `"${item.text}" ${item.ratio}:1 on ${brand}`).join(', ')}. No pass changes it; the person may change the brand colour itself.`] : [];
+    const failures = m.contrast.filter((item) => item.ratio < 4.5 && !onBrand(item));
     if (failures.length) {
         const decisions = [];
         if (brand) {
@@ -79,7 +83,7 @@ export function diagnose(page, { kind = 'marketing' } = {}) {
             if (ink) decisions.push(`Text and labels in the brand colour on white: ${brand} → ${ink} (${contrast(ink, '#ffffff').toFixed(1)}:1)`);
         }
         decisions.push('Grey text on white at least 4.5:1 (#6b7280 or darker on white); on dark grounds at least 4.5:1');
-        finding('color', 'contrast', `${m.contrastCount} text boxes under WCAG AA, e.g. ${failures.slice(0, 4).map((item) => `"${item.text}" ${item.ratio}:1`).join(', ')}`, decisions.join('. '));
+        finding('color', 'contrast', `${failures.length} text boxes under WCAG AA, e.g. ${failures.slice(0, 4).map((item) => `"${item.text}" ${item.ratio}:1`).join(', ')}`, decisions.join('. '));
     }
     if (m.gradientText) finding('color', 'gradient-text', `${m.gradientText} gradient-filled text`, 'Solid text colour; emphasis by weight or size');
 
@@ -109,7 +113,7 @@ export function diagnose(page, { kind = 'marketing' } = {}) {
 
     const list = Object.entries(passes).filter(([, items]) => items.length).map(([name, items]) => ({ name, items }));
 
-    return { keep, brand, font, headingFont: sys.headingFont, body, passes: list, sound: list.length === 0, facts: { heroPhoto: Boolean(m.heroPhoto), moving: m.moving ?? 0 } };
+    return { keep, brand, font, headingFont: sys.headingFont, body, reportOnly, passes: list, sound: list.length === 0, facts: { heroPhoto: Boolean(m.heroPhoto), moving: m.moving ?? 0 } };
 }
 
 /** DESIGN.md: what the page is now, what stays, and the decisions per pass. */

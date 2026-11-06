@@ -484,7 +484,9 @@ async function agentRun(ctx, work, prompt, options, logFile) {
     const result = await runAgent(ctx.runner, prompt, ctx.cwd, { ...options, signal: ctx.stop.signal, dirs: ctx.dirs, commands: options.edits === false ? [] : [`${SELF} shot`, ctx.build, ctx.render].filter(Boolean) });
     writeFileSync(logFile, result.log);
     // The saved page has its own copy, so it is put back like the rest.
-    for (const file of differ(before, outsideGit(ctx.cwd, work.snap.untracked, ctx.own))) if (file !== ctx.pageRel) work.outside.add(file);
+    // Ignored files a build or render writes on purpose (view caches, logs) are the build's, not the agent's change.
+    const ignored = (file) => git(ctx.cwd, 'check-ignore', '-q', '--', file).status === 0;
+    for (const file of differ(before, outsideGit(ctx.cwd, work.snap.untracked, ctx.own))) if (file !== ctx.pageRel && !(ctx.build || ctx.render ? ignored(file) : false)) work.outside.add(file);
     if (result.writes) for (const file of result.writes) work.explained.add(file);
     else work.reported = false;
     halt(ctx);
@@ -920,6 +922,13 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
         const errorKey = (item) => `${item.path}|${item.rule}|${String(item.value ?? '').trim()}`;
         const seenErrors = {};
         for (const item of baseFindings) if (item.severity === 'error') seenErrors[errorKey(item)] = (seenErrors[errorKey(item)] ?? 0) + 1;
+        const usedRule = new Set(baseFindings.map((item) => `${item.rule}|${String(item.value ?? '').trim()}`));
+        // A rule the project breaks ten times or more already is its way of writing (arbitrary px sizes across a theme):
+        // a pass that writes the same way is not thrown away for it.
+        const perRule = {};
+        for (const item of baseFindings) if (item.severity === 'error') perRule[item.rule] = (perRule[item.rule] ?? 0) + 1;
+        const houseStyle = new Set(Object.keys(perRule).filter((rule) => perRule[rule] >= 10));
+        if (houseStyle.size) log(`  the project already breaks ${[...houseStyle].map((rule) => `${rule} (${perRule[rule]}×)`).join(', ')}; a pass is not thrown away for those`);
         const changedFiles = new Set();
         for (const [index, pass] of passes.entries()) {
             log(`Pass ${index + 1}/${passes.length}: ${pass.name} (${pass.items.length} decisions) …`);
@@ -981,14 +990,15 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
                 const { tracked, added } = changedSince(cwd, work.snap);
                 const changed = [...tracked, ...added].filter((file) => !own(file));
                 const found = changed.length ? check(cwd, { include: changed }) : [];
-                const now = errorsBy(found);
                 const left = { ...seenErrors };
-                const fresh = found.filter((item) => item.severity === 'error' && !(left[errorKey(item)]-- > 0));
+                // A value the project already uses elsewhere for the same rule (text-[36px] across a theme) is its convention.
+                const fresh = found.filter((item) => item.severity === 'error' && !(left[errorKey(item)]-- > 0) && !houseStyle.has(item.rule) && !usedRule.has(`${item.rule}|${String(item.value ?? '').trim()}`));
+                const freshBy = errorsBy(fresh);
 
-                return Object.entries(now).filter(([file, count]) => count > (errors[file] ?? 0)).map(([file, count]) => {
+                return Object.entries(freshBy).map(([file, count]) => {
                     const named = fresh.filter((item) => item.path === file).slice(0, 8).map((item) => `${item.rule} at ${file}:${item.line}${item.value ? ` "${String(item.value).replace(/\s+/g, ' ').slice(0, 60)}"` : ''}: ${item.message}`);
 
-                    return `${count - (errors[file] ?? 0)} new rule errors in ${file}${named.length ? ` (${named.join('; ')})` : ''}`;
+                    return `${count} new rule errors in ${file}${named.length ? ` (${named.join('; ')})` : ''}`;
                 });
             };
             // The craft cards that promised a visible change are checked by eye: one that looks the same counts as measured.
