@@ -5,6 +5,8 @@
 - **A forgotten field no longer ends the run.** A card whose idea changes text but lists no `addsText` or
   `replacesText` still goes back to the study once. If that is the only problem left after the second try, the card is
   set to `"addsText": []` and the run goes on; the word check after each pass decides.
+  A brief given with `--brief` gets the same treatment at once, with a note naming the file and the card, and its
+  problems are reported as the brief's, not the study's.
 - **A run that changed nothing fails.** When an agent ran (not `--plan`, not `--agent none`) and no pass was kept, or
   the study did not pass its check, `redesign` prints `FAILED` and exits 1, in text and JSON output alike.
 - **`--files` without `--scope` says what is measured.** `--files` limits the edits, not the measurement, so the page's

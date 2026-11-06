@@ -602,6 +602,16 @@ async function runAgent({ agent, command }, prompt, cwd, { minutes = 20, edits =
 }
 
 /** The agent's study: written, read back and checked against the page; what the check finds gets one more try. */
+/** Only unlisted text left: those cards are taken to change none, and the word check after each pass decides. */
+function unlistedAsNone(brief, problems, page, log, from) {
+    if (!brief || !problems.length || !problems.every((item) => item.includes(UNLISTED_TEXT))) return problems;
+    const cards = (brief.sections ?? []).filter((section) => problems.some((item) => item.startsWith(`${section.heading ?? '(no heading)'}: `)) && !('replacesText' in section));
+    for (const section of cards) section.addsText = section.addsText ?? [];
+    log(`  ${from}: ${cards.map((section) => `"${section.heading}"`).join(', ')} describes a text change but lists none; treated as "addsText": [] (list addsText or replacesText to allow new words)`);
+
+    return validateBrief(brief, page);
+}
+
 async function study(ctx, out, context) {
     const file = join(out, 'brief.json');
     const read = () => {
@@ -625,12 +635,7 @@ async function study(ctx, out, context) {
         brief = read();
         problems = brief ? validateBrief(brief, context.page) : ['No readable brief.json was written'];
     }
-    // Still only unlisted text after the second try: the cards say they change none, and the word check after each pass decides.
-    if (brief && problems.length && problems.every((item) => item.includes(UNLISTED_TEXT))) {
-        for (const section of brief.sections ?? []) if (problems.some((item) => item.startsWith(`${section.heading ?? '(no heading)'}: `)) && !('replacesText' in section)) section.addsText = section.addsText ?? [];
-        ctx.log(`  ${problems.length} card(s) changed text without listing it; set to "addsText": [], the word check after each pass decides`);
-        problems = validateBrief(brief, context.page);
-    }
+    problems = unlistedAsNone(brief, problems, context.page, ctx.log, 'the study');
     putBack(ctx.cwd, work); // the study reads; anything it changed goes back
     ctx.current = null;
 
@@ -822,7 +827,7 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
             const given = briefFile ? JSON.parse(readFileSync(briefFile, 'utf8')) : null;
             // --intent says what the person wants now; without it, the intent the brief carries stays.
             if (given && intent && !given.leaveAlone) given.intent = intent;
-            const studied = given ? { brief: given, problems: validateBrief(given, before) } : await study(ctx, out, context);
+            const studied = given ? { brief: given, problems: unlistedAsNone(given, validateBrief(given, before), before, log, shown(briefFile)), given: true } : await study(ctx, out, context);
             if (!given && intent && studied.brief && !studied.brief.leaveAlone && !intentOf(studied.brief)) studied.brief.intent = intent;
             if (!given && !notes.product && existsSync(draftFile)) {
                 result.productDraft = shown(draftFile);
@@ -831,6 +836,7 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
             if (studied.problems.length) {
                 log(`  no section ideas: ${studied.problems.join('; ')}`);
                 result.studyProblems = studied.problems;
+                if (studied.given) result.briefFile = shown(briefFile);
             } else {
                 result.study = studied.brief;
                 writeFileSync(join(out, 'brief.json'), `${JSON.stringify(studied.brief, null, 2)}\n`);

@@ -505,7 +505,7 @@ if (command === 'redesign') {
             print(`\nNothing changed; the plan files stay in ${result.out}. To apply them: npx @enmera/ai-design-check ${[...again, ...(result.continueBrief ? ['--brief', result.continueBrief] : []), '--yes'].map(quote).join(' ')}`);
             done(0);
         }
-        if (result.studyProblems) print(`\nNo section ideas, the study did not pass its check:\n${result.studyProblems.map((item) => `  ${item}`).join('\n')}`);
+        if (result.studyProblems) print(`\n${result.briefFile ? `No section ideas, ${result.briefFile} did not pass its check` : 'No section ideas, the study did not pass its check'}:\n${result.studyProblems.map((item) => `  ${item}`).join('\n')}`);
         if (!result.passes.length) {
             print(flags.has('--plan') && study?.sections
                 ? `\nNo changes made. Edit ${result.out}/brief.json if you like, then: npx @enmera/ai-design-check redesign ${input} --brief ${result.out}/brief.json`
