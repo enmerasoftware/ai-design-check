@@ -106,6 +106,8 @@ npx skills add enmerasoftware/ai-design-check
 
 コマンドで描かれて初めて存在するページ（サインインの奥にあり、静的 HTML に書き出される CMS モジュールなど）には、`redesign module-1.html --serve dist --render "php artisan module:export 1"` を使います。`--serve <フォルダ>` はそのフォルダを 127.0.0.1 の空きポートで配信し（一覧表示なし、フォルダの外は配信しない）、ページはその中のパスになります。`--render "<コマンド>"` は最初の計測の前と各段階の後に、`--build` の後で実行され、失敗するとビルドの失敗と同じく段階を破棄します。`--build-minutes <n>` は両方の制限時間です（既定は 10 分）。
 
+破棄された作業も手元に残ります。どの実行も最後に `--out` フォルダへ `compare.html` を書きます。各段階の前後のスクリーンショットを並べ、残したか破棄したか、破棄した理由を示します。破棄された段階は `pass-N-<名前>.rejected.patch` を残し、`npx @enmera/ai-design-check redesign apply <パッチ>` で作業ツリーに適用できます（そのままでは合わない場合は 3-way で。きれいに適用できないパッチは何も変えません）。変わったファイルと元に戻すコマンドを表示します。単語のチェックは読むためのテキストだけを数えます。`aria-hidden="true"` の中、またはクリックを受けない配置済みのレイヤー（`pointer-events: none`、内容の背後）のテキストは装飾で、段階が置き換えてかまいません。見えるテキストを置き換える、削除する、書き直すアイデアのカードは、それを `addsText` か `replacesText` に挙げる必要があり、なければ調査は差し戻されます。段階のプロンプトには、ページの `shot` コマンド（`--serve` では配信中のアドレス）と、`--build` や `--render` がある場合はページを描き直すコマンドが入り、エージェントは報告の前に自分の作業を見ます。カードが求める動作を既存のテストが禁じている場合、エージェントはそのテストを新しい動作に合わせて変え、その名前を挙げます。段階が変えたテストは、ログ、要約、`result.json`（`testsChanged`）に別に表示されます。
+
 ## モバイルアプリ
 
 アプリのフォルダーを指定してください。SwiftUI と Jetpack Compose を読み取り、スケールから外れた余白（`spacing` を設定しない限り 4 pt。例：`.padding(13)`、`10.dp`）、スケールから外れた角丸、Dynamic Type を無視した固定テキスト、太すぎる見出し、紫のグラデーション、AI を表す `sparkles`、文字列内の絵文字、タイトルケースのラベル、重い影、大きなぼかし、ループするアニメーション、44 pt / 48 dp 未満のタップ領域を検出します。
@@ -211,6 +213,14 @@ npx @enmera/ai-design-check system --character calm --brand "#1E5A63" --kind app
 | ファイル | `tokens.css`、Tailwind の `theme.css`、Bootstrap の `bootstrap.css` と `_variables.scss`、`tokens.json`、`DesignSystem.swift`、`DesignSystem.kt`、`preview.html` |
 
 Bootstrap 5.3 では、`bootstrap.css` を Bootstrap 本体の CSS の後に読み込みます。ライトが既定で、ダークは `data-bs-theme="dark"` の下で適用されます。フォーム、チェック、メニュー、ページネーションなどに Bootstrap がコンパイルした青も置き換えます。ソースからビルドする場合は、Bootstrap より前に `_variables.scss` をインポートします。
+
+### `shot`：ページを見る
+
+```bash
+npx @enmera/ai-design-check shot http://localhost:3000 --width 390 --out look.png --full
+```
+
+Chrome が描いたままのスクリーンショットを 1 枚撮り、何も変えません。エージェントが編集の後に自分の作業を見るためのものです。`--full` はページ全体、`--scope` はその部分だけを切り出し、`--ignore` は一部を隠します。`--cookie` と `--header` は `scan` と同じように使えます。
 
 ### `story`：修正前後の動画
 

@@ -1,8 +1,9 @@
 import { spawn, spawnSync } from 'node:child_process';
-import { createReadStream, existsSync, mkdirSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { copyFileSync, createReadStream, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { createServer } from 'node:http';
 import { basename, dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { detectStack, locateByMarkers, pageFiles } from './detect.js';
 import { designMd, diagnose } from './diagnose.js';
 import { measure, sizesInUse } from './measure.js';
@@ -743,6 +744,7 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
     const handlers = { SIGINT: hear('SIGINT'), SIGTERM: hear('SIGTERM') };
     for (const [name, handler] of Object.entries(handlers)) process.on(name, handler);
     let served = null;
+    let report = null; // what ran so far, for compare.html when the run stops early
     try {
         if (runner) log(`Leave the files in ${cwd}${allow?.length ? ` that match ${allow.join(', ')}` : ''} alone until the run ends: a file saved there while a pass runs may be taken for its work. This run's own files go to ${shown(out)}.`);
         // A saved page has no host to sign in to or redirect from.
@@ -793,9 +795,13 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
         writeFileSync(measuredDesign, designMd(before, diagnosis));
         writeFileSync(join(out, 'plan.json'), `${JSON.stringify({ url, ...(landed ? { measured: landed } : {}), stack, files, diagnosis }, null, 2)}\n`);
         const passes = diagnosis.passes.filter((pass) => !only || only.includes(pass.name));
+        // The agent looks at its own work with the shot command, and draws the page again first when a command draws it.
+        const refresh = [build, render].filter(Boolean).join(' && ') || null;
+        const seen = `\n${seeing({ page: pageFile ? shown(pageFile) : pageUrl, out: shown(out), scope, ignore, refresh, signedIn: Boolean(signedIn.cookies?.length || Object.keys(signedIn.headers ?? {}).length), saved: pageFile ? shown(pageFile) : null })}`;
         const limit = allowed ? `\n\nChange only these files (or files matching them): ${[...allow, ...(pageCopy && !build ? [shown(pageFile)] : [])].join(', ')}. A change to any other file throws the whole pass away.` : '';
-        passes.forEach((pass, index) => writeFileSync(join(out, `pass-${index + 1}-${pass.name}.md`), brief({ stack, files, diagnosis, pass, url: pageLine }) + limit));
+        passes.forEach((pass, index) => writeFileSync(join(out, `pass-${index + 1}-${pass.name}.md`), brief({ stack, files, diagnosis, pass, url: pageLine }) + seen + limit));
         const result = { stack, files, diagnosis, before: summary(before), passes: [], out: shown(out), outside: !outInside, ...(landed ? { measured: landed } : {}) };
+        report = result;
         const screenshots = ['fold-1440', 'next-1440', 'fold-390'].map((name) => join(out, `before-${name}.png`)).filter(existsSync);
         const intent = intentGiven?.trim() || null;
         const context = { stack, files, page: before, diagnosis, screenshots, url: pageLine, intent, notes, draft: shown(draftFile) };
@@ -829,7 +835,7 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
         if (plan) return result;
         if (cards) {
             passes.push({ name: 'craft', items: cards.sections.map((section) => ({ id: section.heading, decision: section.idea, evidence: section.problem })) });
-            writeFileSync(join(out, `pass-${passes.length}-craft.md`), craftPrompt({ stack, files, brief: cards, url: pageLine, out: shown(out), intent: intentOf(cards), notes }) + limit);
+            writeFileSync(join(out, `pass-${passes.length}-craft.md`), craftPrompt({ stack, files, brief: cards, url: pageLine, out: shown(out), intent: intentOf(cards), notes }) + seen + limit);
         }
         if (passes.length === 0) return result;
         // Said before anything is applied; with a person at the terminal, nothing goes on without a yes.
@@ -880,6 +886,8 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
             const reject = async (problems, { rebuild = false } = {}) => {
                 const patch = patchOf(cwd, work.snap);
                 if (patch) writeFileSync(`${prefix}.rejected.patch`, patch);
+                const { tracked: was, added: made } = changedSince(cwd, work.snap);
+                const tests = [...was, ...made].filter((file) => !own(file) && looksLikeTest(file));
                 putBack(cwd, work);
                 if (rebuild && (build || render)) {
                     await buildRun(ctx, work);
@@ -887,8 +895,10 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
                 }
                 ctx.current = null;
                 log(`  thrown away: ${problems.join('; ')}`);
+                if (patch) log(`  its work is in ${shown(`${prefix}.rejected.patch`)}; to apply it anyway: npx @enmera/ai-design-check redesign apply ${shown(`${prefix}.rejected.patch`)}`);
+                if (tests.length) log(`  tests it changed (put back with it): ${tests.join(', ')}`);
                 if (work.outside.size) log(`  not put back, git does not keep them: ${[...work.outside].join(', ')}`);
-                result.passes.push({ name: pass.name, kept: false, problems, ...(work.outside.size ? { outside: [...work.outside] } : {}) });
+                result.passes.push({ name: pass.name, kept: false, problems, shots: { before: basename(baselinePrefix), after: basename(prefix) }, ...(patch ? { rejectedPatch: shown(`${prefix}.rejected.patch`) } : {}), ...(tests.length ? { testsChanged: tests } : {}), ...(work.outside.size ? { outside: [...work.outside] } : {}) });
             };
             // --files: what the agent changed outside them, by its own account (another session's edits are not its).
             const strays = () => {
@@ -993,19 +1003,32 @@ export async function redesign({ cwd, url, html, path, agent = 'claude', build, 
             if (changed.length) Object.assign(errors, errorsBy(check(cwd, { include: changed })));
             log(`  kept: ${JSON.stringify(summary(baseline))} → ${JSON.stringify(summary(after))}`);
             if (inPlace) log(`  left uncommitted: ${[...changed, ...(pageMoved ? [shown(pageFile)] : [])].join(', ')}`);
+            const tests = changed.filter(looksLikeTest);
+            if (tests.length) log(`  tests it changed, to read first: ${tests.join(', ')}`);
             if (work.outside.size) log(`  also changed, outside git and not in the ${inPlace ? 'patch' : 'commit'}: ${[...work.outside].join(', ')}`);
-            result.passes.push({ name: pass.name, kept: true, after: summary(after), ...(inPlace && changed.length ? { patch: shown(`${prefix}.patch`) } : {}), ...(work.outside.size ? { outside: [...work.outside] } : {}) });
+            result.passes.push({ name: pass.name, kept: true, after: summary(after), shots: { before: basename(baselinePrefix), after: basename(prefix) }, ...(tests.length ? { testsChanged: tests } : {}), ...(inPlace && changed.length ? { patch: shown(`${prefix}.patch`) } : {}), ...(work.outside.size ? { outside: [...work.outside] } : {}) });
             baseline = after;
             baselinePrefix = prefix;
         }
         result.after = summary(baseline);
+        const testsChanged = [...new Set(result.passes.filter((item) => item.kept).flatMap((item) => item.testsChanged ?? []))];
+        if (testsChanged.length) result.testsChanged = testsChanged;
+        result.compare = shown(comparePage(out, result.passes, { title: before.desktop.title || 'Redesign' }));
+        log(`Before and after, pass by pass: ${result.compare}`);
         if (inPlace) Object.assign(result, { inPlace: true, changed: [...changedFiles], undo: [...ctx.undo].reverse() });
         else Object.assign(result, { branch, start });
         writeFileSync(join(out, 'result.json'), `${JSON.stringify(result, null, 2)}\n`);
 
         return result;
     } catch (error) {
-        throw stopped(ctx, error);
+        const final = stopped(ctx, error);
+        // The passes that did run stay there to look at, even when a later one broke the run.
+        if (report?.passes.length && !report.compare) {
+            try {
+                final.message += `\nBefore and after, pass by pass: ${shown(comparePage(out, report.passes))}`;
+            } catch {}
+        }
+        throw final;
     } finally {
         for (const [name, handler] of Object.entries(handlers)) process.off(name, handler);
         await served?.close();
@@ -1083,4 +1106,121 @@ function outsideOf(cwd, path) {
     const rel = relative(cwd, path);
 
     return !rel || rel.startsWith('..') || isAbsolute(rel);
+}
+
+/** A path that looks like a test: a pass that changes one says so, apart from the rest, so the person reads it first. */
+export const looksLikeTest = (file) => /(?:^|\/)(?:tests?|__tests__)\//i.test(file) || /\.(?:test|spec)\.[^/]+$/i.test(file) || /Test\.php$/.test(file) || /_test\.[^/]+$/i.test(file);
+
+/** This tool's own command line, as an agent runs it from the project: the copy that runs now, so it has every command. */
+const SELF = `node ${JSON.stringify(fileURLToPath(new URL('../../bin/ai-design-check.js', import.meta.url)))}`;
+
+/**
+ * How the agent sees its own work, and keeps what it sees fresh: the shot command for the page (the served address with
+ * --serve), and with --build or --render the command that draws the page again. Secrets are never written here.
+ */
+export function seeing({ page, out, scope = [], ignore = [], refresh = null, signedIn = false, saved = null }) {
+    const quote = (arg) => (/^[\w@%+=:,./-]+$/.test(arg) ? arg : `'${String(arg).replace(/'/g, "'\\''")}'`);
+    const area = [...scope.flatMap((selector) => ['--scope', selector]), ...ignore.flatMap((selector) => ['--ignore', selector])].map(quote).join(' ');
+    const shot = (width, name) => `${SELF} shot ${quote(page)} --width ${width} --out ${quote(`${out}/${name}`)}${area ? ` ${area}` : ''}`;
+    const lines = [
+        '',
+        'Look at your work. After each edit, take a screenshot of the page and open the png before you go on:',
+        `  ${shot(1440, 'look-1440.png')}`,
+        `  ${shot(390, 'look-390.png')}`,
+        'Add --full for the whole page. Look at it before you report: a change you have not seen is not done.',
+    ];
+    if (signedIn) lines.push('The page needs a sign-in: AI_DESIGN_CHECK_COOKIE or AI_DESIGN_CHECK_HEADERS carry it if the person set them; their values are not in this prompt.');
+    if (refresh) lines.push('', `The page is drawn by a command. After each edit, run this from the project folder before you look, so the screenshot shows your change:\n  ${refresh}`, `${saved ? `${saved} is` : 'A saved HTML snapshot of the page is'} stale until that command runs.`);
+
+    return lines.join('\n');
+}
+
+/**
+ * `redesign apply <patch>`: a saved pass (thrown away or kept) back into the working tree. As it is when it fits; else
+ * a 3-way merge on a scratch index, so the person's staged work stays as it was. A patch that does not apply cleanly
+ * changes nothing.
+ * @returns {{files: string[], how: 'clean'|'3-way', undo: string}}
+ */
+export function applySaved(cwd, patchFile) {
+    const patch = resolve(cwd, patchFile);
+    if (!existsSync(patch)) throw new Error(`Not found: ${patchFile}`);
+    if (git(cwd, 'rev-parse', '--git-dir').status !== 0) throw new Error('redesign apply needs the git repository the patch was made in');
+    const sub = git(cwd, 'rev-parse', '--show-prefix').stdout.trim().replace(/\/+$/, '');
+    const dir = sub ? [`--directory=${sub}`] : [];
+    const text = readFileSync(patch, 'utf8');
+    const files = [...new Set([...text.matchAll(/^diff --git (?:a\/)?\S+ b\/(.+)$/gm)].map((match) => match[1]))];
+    if (!files.length) throw new Error(`${patchFile} holds no changes`);
+    const undo = `git apply -R${sub ? ` --directory=${sub}` : ''} ${relative(cwd, patch).startsWith('..') ? patch : relative(cwd, patch)}`;
+    const plain = git(cwd, 'apply', '--check', ...dir, patch);
+    if (plain.status === 0) {
+        gitOk(cwd, 'apply', ...dir, patch);
+        return { files, how: 'clean', undo };
+    }
+    // Already in the tree: a 3-way merge would take it in again without a word.
+    if (git(cwd, 'apply', '--check', '-R', ...dir, patch).status === 0) throw new Error(`${patchFile} is already applied, so nothing was changed. To take it out: ${undo}`);
+    // 3-way needs an index that matches the files: a scratch copy of it with the working tree, never the person's own.
+    const index = join(mkdtempSync(join(tmpdir(), 'ai-design-check-apply-')), 'index');
+    const real = resolve(cwd, git(cwd, 'rev-parse', '--git-path', 'index').stdout.trim());
+    if (existsSync(real)) copyFileSync(real, index);
+    const env = { ...process.env, GIT_INDEX_FILE: index };
+    const inScratch = (...args) => spawnSync('git', ['-c', 'core.quotePath=false', ...args], { cwd, encoding: 'utf8', env });
+    const present = files.filter((file) => existsSync(join(cwd, file)));
+    const before = new Map(files.map((file) => [file, existsSync(join(cwd, file)) ? readFileSync(join(cwd, file)) : null]));
+    try {
+        if (present.length) inScratch('add', '--', ...present);
+        const merged = inScratch('apply', '--3way', ...dir, patch);
+        if (merged.status === 0) return { files, how: '3-way', undo };
+        // Conflicts: every file goes back to exactly what it was, nothing is half applied.
+        for (const [file, content] of before) {
+            if (content === null) rmSync(join(cwd, file), { force: true });
+            else writeFileSync(join(cwd, file), content);
+        }
+        throw new Error(`${patchFile} does not apply cleanly, so nothing was changed:\n${(plain.stderr || '').trim()}${merged.stderr || merged.stdout ? `\n3-way: ${(merged.stderr || merged.stdout).trim()}` : ''}`);
+    } finally {
+        rmSync(dirname(index), { recursive: true, force: true });
+    }
+}
+
+const escapeHtml = (text) => String(text ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+/**
+ * compare.html in the output folder: each pass's before and after screenshots side by side (paths relative to the
+ * folder), its verdict and, for a pass thrown away, the command that applies it anyway. Self-contained, no assets.
+ */
+export function comparePage(out, passes, { title = 'Redesign', applyWith = 'npx @enmera/ai-design-check redesign apply' } = {}) {
+    const views = ['fold-1440', 'next-1440', 'fold-390'];
+    const image = (prefix, view) => (prefix && existsSync(join(out, `${prefix}-${view}.png`)) ? `<img src="${escapeHtml(encodeURI(`${prefix}-${view}.png`))}" alt="" loading="lazy">` : '<p class="none">no screenshot</p>');
+    const rows = passes.map((pass, index) => {
+        const verdict = pass.kept ? '<span class="kept">kept</span>' : `<span class="rejected">thrown away</span>${pass.problems?.length ? `<ul>${pass.problems.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : ''}`;
+        const apply = !pass.kept && pass.rejectedPatch ? `<p>To apply it anyway: <code>${escapeHtml(`${applyWith} ${pass.rejectedPatch}`)}</code></p>` : '';
+        const tests = pass.testsChanged?.length ? `<p>Tests changed: ${pass.testsChanged.map((file) => `<code>${escapeHtml(file)}</code>`).join(', ')}</p>` : '';
+        const shots = views.map((view) => `<div class="pair"><figure>${image(pass.shots?.before, view)}<figcaption>before · ${view}</figcaption></figure><figure>${image(pass.shots?.after, view)}<figcaption>after · ${view}</figcaption></figure></div>`).join('');
+
+        return `<section><h2>Pass ${index + 1}: ${escapeHtml(pass.name)} — ${verdict}</h2>${apply}${tests}${shots}</section>`;
+    }).join('\n');
+    const html = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escapeHtml(title)}: before and after</title>
+<style>
+:root { color-scheme: light dark; --ink: #1d1d1b; --paper: #fafaf7; --line: #d8d6cf; --kept: #1f6b3a; --rejected: #a3261b; }
+@media (prefers-color-scheme: dark) { :root { --ink: #ecebe6; --paper: #1b1b19; --line: #3a3935; --kept: #7fd29a; --rejected: #ff9b8f; } }
+body { margin: 0; padding: 24px 16px; font: 16px/1.5 system-ui, sans-serif; color: var(--ink); background: var(--paper); }
+main { max-width: 1400px; margin: 0 auto; }
+section { border-top: 1px solid var(--line); padding: 16px 0 24px; }
+h2 { font-size: 20px; margin: 0 0 8px; }
+.kept { color: var(--kept); } .rejected { color: var(--rejected); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+figure { margin: 0; } img { width: 100%; height: auto; border: 1px solid var(--line); }
+figcaption, .none { font-size: 14px; opacity: .75; }
+code { font: 14px/1.4 ui-monospace, monospace; overflow-wrap: anywhere; }
+@media (max-width: 640px) { .pair { grid-template-columns: 1fr; } }
+</style></head>
+<body><main><h1>${escapeHtml(title)}: before and after</h1>
+${rows || '<p>No pass ran.</p>'}
+</main></body></html>
+`;
+    const file = join(out, 'compare.html');
+    writeFileSync(file, html);
+
+    return file;
 }

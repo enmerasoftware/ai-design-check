@@ -2,6 +2,20 @@
 
 ## 0.15.0
 
+- **Decoration is not content, and thrown-away work stays in reach.** A good hero pass (a terminal panel of five real
+  commands in place of a decorative "code rain" of forty) was thrown away as "Kept 44.7% of the words". The word check
+  now counts only reading text: text under `aria-hidden="true"`, or in a positioned layer that takes no clicks
+  (`pointer-events: none`), is decoration a pass may replace. A card whose idea replaces, removes or rewrites visible
+  text and lists no `addsText` or `replacesText` is sent back to the study. `redesign apply <patch>` applies a saved
+  pass to the working tree (3-way when it does not fit as it is, nothing changed when it does not apply cleanly) and
+  prints the files and the undo. Every run writes `compare.html` in the `--out` folder: before and after of each pass
+  side by side, its verdict and, for a pass thrown away, the apply command.
+- **The agent looks at its own work.** New command `shot <url|file.html> [--width 1440] [--out shot.png] [--full]`: one
+  screenshot as Chrome draws it, read-only, with `--cookie`, `--header`, `--scope` and `--ignore` as for `scan`. The
+  craft and pass prompts give the exact `shot` command for the page (the served address with `--serve`) and say to look
+  before reporting; with `--build` or `--render` they give the command that draws the page again and say a saved
+  snapshot is stale until it runs. A test that forbids what a card asks for is changed to the new behaviour and named;
+  tests a pass changed are listed apart in the log, the summary and `result.json` (`testsChanged`).
 - **`redesign` starts from what you know, and asks before it applies.** A study that only saw one page with fallback
   copy did not know the product. It now reads `PRODUCT.md` and `DESIGN.md` from the project root (or `--product`,
   `--design`) into the study and craft prompts as quoted notes, and without a `PRODUCT.md` writes a draft to the `--out`
@@ -55,8 +69,6 @@
   `--html page.html`) measures the file. With `--build` the passes edit the sources (found by the page's headings) and the
   build writes the file again; without, they edit the file itself, and a file git does not keep is put back byte for
   byte from a copy when a pass is thrown away.
-
-## 0.14.3
 
 - **`--fix --nearest-type` moves font sizes too, when you ask.** Every `text-[Npx]` (or rem) on a flagged line moves to the
   nearest theme size with its variant kept: `text-[40px] sm:text-[52px] lg:text-[64px]` becomes

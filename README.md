@@ -172,6 +172,18 @@ For a page that only exists once a command draws it, such as a CMS module behind
 before the first measurement and after every pass, after `--build`, and a failure throws the pass away as a failed build
 does. `--build-minutes <n>` sets the time limit for both (default 10).
 
+Work that is thrown away stays within reach. Every run ends with `compare.html` in the `--out` folder: each pass's before
+and after screenshots side by side, whether it was kept or thrown away and why. A thrown-away pass leaves
+`pass-N-<name>.rejected.patch`, and `npx @enmera/ai-design-check redesign apply <patch>` puts it into the working tree
+(3-way when it no longer fits as it is; a patch that does not apply cleanly changes nothing) and prints the files and the
+undo command. The word check counts only reading text: text under `aria-hidden="true"`, or in a positioned layer that
+takes no clicks (`pointer-events: none`, behind the content), is decoration a pass may replace. A card whose idea replaces,
+removes or rewrites visible text has to list it in `addsText` or `replacesText`, or the study is sent back. The pass
+prompts carry the `shot` command for the page (the served address with `--serve`) and, with `--build` or `--render`, the
+command that draws it again, so the agent looks at its own work before it reports. When a test forbids what a card asks
+for, the agent changes that test and names it; tests a pass changed are listed apart in the log, the summary and
+`result.json` (`testsChanged`).
+
 ## Mobile apps
 
 Point it at the app folder. It reads SwiftUI and Jetpack Compose: spacing off the scale (4 pt unless `spacing` is set; `.padding(13)`, `10.dp`), radii
@@ -295,6 +307,15 @@ For a new product or one with no tokens. Give it a character (`calm`, `precise`,
 With Bootstrap 5.3, link `bootstrap.css` after Bootstrap's own CSS: light is the default and dark applies under
 `data-bs-theme="dark"`. It also replaces the blue Bootstrap compiles into fields, checks, menus, pagination and the rest. A
 build from source imports `_variables.scss` before Bootstrap.
+
+### `shot`: look at a page
+
+```bash
+npx @enmera/ai-design-check shot http://localhost:3000 --width 390 --out look.png --full
+```
+
+One screenshot as Chrome draws it, and nothing changed: for an agent to look at its own work after an edit. `--full` takes
+the whole page, `--scope` clips to that part and `--ignore` hides one; `--cookie` and `--header` work as for `scan`.
 
 ### `story`: a before/after video
 

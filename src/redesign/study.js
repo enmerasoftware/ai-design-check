@@ -20,6 +20,11 @@ const DIRECTION = ['product', 'character', 'world', 'moments', 'signature'];
 const textOf = (value) => (Array.isArray(value) ? value.map((item) => (item && typeof item === 'object' ? JSON.stringify(item) : String(item))).join(', ') : value && typeof value === 'object' ? JSON.stringify(value) : String(value ?? '')).trim();
 
 /** The layouts a card that changes the look picks from, by what its section shows. */
+// Words in a card that mean visible text changes, in the languages briefs are written in; decoration alone is no text.
+const NEW_TEXT = /\bnew (?:text|copy|words?|labels?)\b|\bcommands?\b|yeni metin|komut|新しい(?:テキスト|文言)|コマンド/iu;
+const CHANGES_TEXT = new RegExp(`\\b(?:replac|remov|rewrit|reword)|değiştir|kaldır|置き換|削除|書き換|${NEW_TEXT.source}`, 'iu');
+const DECORATION = /decorat|ornament|aria-hidden|backdrop|dekor|süs|装飾/iu;
+
 export const LAYOUTS = ['split', 'product', 'photo', 'place', 'editorial', 'statement', 'collage', 'centred'];
 
 /** What the person wants from this run, from the brief or its product; null when nobody said. */
@@ -147,10 +152,15 @@ export function validateBrief(brief, page) {
     const needed = only ? headingsOf(page, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']).filter((heading) => only.includes(heading)) : headingsOf(page, ['h1', 'h2']);
     if (degree !== 'none') for (const heading of needed) if (!covered.has(heading)) problems.push(`"${heading}" has no card and no reason to stay`);
     // New text a card asks for: the strings themselves, and for a replacement the exact text it replaces.
-    const flat = ` ${page.desktop.inventory.words.join(' ')} `;
+    // A replacement may take out decoration too: it is on the page, though no pass must keep it.
+    const flat = ` ${page.desktop.inventory.words.join(' ')} ${(page.desktop.inventory.decoration ?? []).join(' ')} `;
     const phrase = (text) => ` ${lower(text).split(WORDS).filter((word) => word.length > 1).join(' ')} `;
     for (const section of sections) {
         const name = section.heading ?? '(no heading)';
+        // A card whose idea changes words without saying which ones is thrown away by the word check after the work.
+        // An empty addsText says on purpose that it changes none.
+        const says = `${textOf(section.idea)} ${textOf(section.problem)}`;
+        if (CHANGES_TEXT.test(says) && !('addsText' in section) && !('replacesText' in section) && !(DECORATION.test(says) && !NEW_TEXT.test(says))) problems.push(`${name}: this card changes text; list it in addsText/replacesText or the word check will reject the pass (an empty "addsText": [] says it changes none)`);
         if ('addsText' in section && (!Array.isArray(section.addsText) || section.addsText.some((item) => typeof item !== 'string' || !item.trim()))) problems.push(`${name}: addsText is a list of the exact new strings`);
         if (!('replacesText' in section)) continue;
         if (!Array.isArray(section.replacesText)) {
@@ -407,6 +417,7 @@ How to work:
 - Every word, link and form field stays. ${added.length ? 'The only text that may be added or changed is in the "new text" block below, exactly as written; nothing else.' : 'Add or rewrite no text.'} An image goes only if its card names it. Keep template logic exactly: directives, loops, translations, props, routes.
 - Text you cannot find in the files comes from a database or CMS: style it, never move it into a template.
 - Files may be shared by other pages; keep every change sound for them too.
+- If an existing test forbids the new behaviour a card asks for, change that test to the new behaviour and name it in your report. Never weaken, skip or delete a test that has nothing to do with the cards.
 - Do not run git, install packages or touch vendor or build output.
 - Do not create or change files git ignores (.env, build output, caches, node_modules): they stay out of the commit and cannot be put back.
 
@@ -416,5 +427,5 @@ ${list(LESSONS)}
 And these rules, which need a look at the screen:
 ${list(review)}
 
-Work only in this project; send no messages to anyone. When done, list the files you changed and one line per card saying what you built.`;
+Work only in this project; send no messages to anyone. When done, list the files you changed, the tests you changed and why, and one line per card saying what you built.`;
 }

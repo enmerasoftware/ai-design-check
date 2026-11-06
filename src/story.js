@@ -1,5 +1,5 @@
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -466,5 +466,50 @@ export async function story(beforeInput, afterInput, { out = 'story.mp4', still,
     } finally {
         await browser.close();
         rmSync(work, { recursive: true, force: true });
+    }
+}
+
+/**
+ * `shot`: one screenshot of a page as Chrome draws it, for an agent to look at its own work. Read-only. --scope clips
+ * to the part inside the matches (the whole part, also below the fold), --ignore hides what it matches, --full takes
+ * the whole page. Sign-in cookies and headers as for scan.
+ * @returns {Promise<{out: string, width: number, height: number, landed: string|null}>}
+ */
+export async function shot(input, { width = 1440, out = 'shot.png', full = false, auth = {}, scope = [], ignore = [], allowRedirect = false, allowStatus = [] } = {}) {
+    if (!(width > 0)) throw new Error(`--width takes a number of pixels, got ${width}`);
+    let url = input;
+    if (!/^(?:https?|file|data):/.test(input)) {
+        if (!existsSync(resolve(input))) throw new Error(`Not found: ${input}`);
+        url = pathToFileURL(resolve(input)).href;
+    }
+    const chrome = findChrome();
+    if (!chrome) throw new Error('Chrome or Chromium not found; set CHROME_PATH');
+    const browser = await launch(chrome);
+    try {
+        await signIn(browser, url, auth);
+        const mobile = width < 768;
+        assertPage(await browser.open(url, { width, height: mobile ? 844 : 900, mobile, settle: 1200 }), url, allowStatus);
+        const landed = await assertLanded(browser, url, { allowRedirect });
+        await assertScope(browser, url, { scope, ignore });
+        // Lazy images and on-scroll reveals come in on the way down; the shot starts at the top.
+        if (full || scope.length) await browser.evaluate('(async () => { for (let y = 0; y < document.documentElement.scrollHeight; y += innerHeight / 2) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); } scrollTo(0, 0); await document.fonts.ready; await new Promise((r) => setTimeout(r, 300)); })()');
+        if (ignore.length) await browser.evaluate(`for (const el of document.querySelectorAll(${JSON.stringify(ignore.join(', '))})) el.style.setProperty('visibility', 'hidden', 'important')`);
+        const clip = scope.length
+            ? await browser.evaluate(`(() => {
+                const boxes = [...document.querySelectorAll(${JSON.stringify(scope.join(', '))})].map((el) => el.getBoundingClientRect()).filter((r) => r.width && r.height);
+                if (!boxes.length) return null;
+                const x = Math.max(0, Math.min(...boxes.map((r) => r.left)) + scrollX), y = Math.max(0, Math.min(...boxes.map((r) => r.top)) + scrollY);
+                return { x, y, width: Math.max(...boxes.map((r) => r.right)) + scrollX - x, height: Math.max(...boxes.map((r) => r.bottom)) + scrollY - y };
+            })()`)
+            : full ? await browser.evaluate('({ x: 0, y: 0, width: document.documentElement.clientWidth, height: document.documentElement.scrollHeight })') : null;
+        if (scope.length && !clip) throw Object.assign(new Error(`--scope "${scope.join(', ')}" has nothing to show on ${url}: what it matches takes no space.`), { exitCode: 2 });
+        const image = await browser.send('Page.captureScreenshot', clip ? { format: 'png', captureBeyondViewport: true, clip: { ...clip, scale: 1 } } : { format: 'png' });
+        const file = resolve(out);
+        mkdirSync(dirname(file), { recursive: true });
+        writeFileSync(file, Buffer.from(image.data, 'base64'));
+
+        return { out: file, width: Math.round(clip?.width ?? width), height: Math.round(clip?.height ?? (mobile ? 844 : 900)), landed };
+    } finally {
+        await browser.close();
     }
 }

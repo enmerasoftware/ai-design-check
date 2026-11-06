@@ -65,7 +65,18 @@ Usage
                                                  --build-minutes <n>: time limit for --build and --render (default 10).
                                                  Before applying, the degree, direction, intent and cards are printed;
                                                  at a terminal it asks "Apply these passes? [y/N]" and stops with
-                                                 nothing changed unless you say yes. --yes: apply without asking
+                                                 nothing changed unless you say yes. --yes: apply without asking.
+                                                 Every run ends with compare.html in the --out folder: each pass's
+                                                 before and after screenshots side by side, kept or thrown away and
+                                                 why. Tests a pass changed are listed apart (testsChanged)
+  npx @enmera/ai-design-check redesign apply <patch>
+                                                 Apply a saved pass (pass-N-name.rejected.patch, or a kept one's patch)
+                                                 to the working tree, 3-way when it does not fit as it is; a patch that
+                                                 does not apply cleanly changes nothing. Prints the files and the undo
+  npx @enmera/ai-design-check shot <url|file.html> [--width 1440] [--out shot.png] [--full]
+                                                 One screenshot of the page as Chrome draws it (read-only), for an agent
+                                                 to look at its own work; --full: the whole page; --scope clips to that
+                                                 part, --ignore hides one; --cookie and --header as for scan
   npx @enmera/ai-design-check fonts [--character calm]
                                                  The characters and the font library behind system
 
@@ -82,18 +93,18 @@ Options
   --write-baseline            Record current findings in ${BASELINE}; later runs report only new ones
   --no-baseline               Ignore the baseline file
   --tr                        Turkish rule texts
-  --allow-status 404          scan, narrow: check a page that answers this HTTP status (an error page you designed)
-  --cookie "name=value"       scan, narrow, redesign: a cookie for the page's host, for pages behind a sign-in
+  --allow-status 404          scan, narrow, shot: check a page that answers this HTTP status (an error page you designed)
+  --cookie "name=value"       scan, narrow, redesign, shot: a cookie for the page's host, for pages behind a sign-in
                               (repeatable). AI_DESIGN_CHECK_COOKIE="a=1; b=2" keeps it out of shell history and CI logs
-  --header "Name: value"      scan, narrow, redesign: a request header such as Authorization (repeatable); it goes only
+  --header "Name: value"      scan, narrow, redesign, shot: a request header such as Authorization (repeatable); it goes only
                               to the page's own origin. AI_DESIGN_CHECK_HEADERS takes one per line. Cookie and header
                               values are never printed
-  --allow-redirect            scan, narrow, redesign: check the page a redirect lands on, even a sign-in page (without
+  --allow-redirect            scan, narrow, redesign, shot: check the page a redirect lands on, even a sign-in page (without
                               it, a page that sends the browser to a sign-in page stops the run with exit 2)
-  --scope "<css selector>"    scan, narrow, redesign: check and measure only what is inside a match, such as one CMS
+  --scope "<css selector>"    scan, narrow, redesign, shot: check and measure only what is inside a match, such as one CMS
                               module in the app's shell: --scope "[data-block-type=module-1]" (repeatable: any of them).
                               A scope that matches nothing stops the run with exit 2
-  --ignore "<css selector>"   scan, narrow, redesign: leave out what is inside a match, such as the shell's nav or a
+  --ignore "<css selector>"   scan, narrow, redesign, shot: leave out what is inside a match, such as the shell's nav or a
                               test badge (repeatable)
   --force                     system: overwrite existing files
   --version                   Print the version
@@ -111,7 +122,7 @@ process.on('uncaughtException', (error) => {
 });
 
 const args = process.argv.slice(2);
-const SWITCHES = ['json', 'strict', 'quiet', 'fix', 'dry-run', 'nearest-type', 'write-baseline', 'no-baseline', 'tr', 'help', 'version', 'all', 'stress', 'plan', 'force', 'allow-redirect', 'in-place', 'yes'];
+const SWITCHES = ['json', 'strict', 'quiet', 'fix', 'dry-run', 'nearest-type', 'write-baseline', 'no-baseline', 'tr', 'help', 'version', 'all', 'stress', 'plan', 'force', 'allow-redirect', 'in-place', 'yes', 'full'];
 const VALUES = ['format', 'out', 'still', 'title', 'music', 'width', 'character', 'brand', 'kind', 'ui', 'display', 'source', 'path', 'agent', 'build', 'only', 'brief', 'allow-status', 'cookie', 'header', 'scope', 'ignore', 'files', 'html', 'product', 'design', 'intent', 'serve', 'render', 'build-minutes'];
 // The option before an argument takes it as its value ("redesign" is no option, though it ends in "design").
 const takesValue = (arg) => Boolean(arg?.startsWith('--') && VALUES.includes(arg.slice(2)));
@@ -171,7 +182,7 @@ const area = () => {
 
     return { scope, ignore };
 };
-const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story', 'narrow', 'system', 'fonts', 'redesign', 'scan'];
+const COMMANDS = ['check', 'rules', 'init', 'help', 'inventory', 'hook', 'story', 'narrow', 'system', 'fonts', 'redesign', 'scan', 'shot'];
 const positional = args.filter((arg, index) => !arg.startsWith('-') && !takesValue(args[index - 1]));
 // "ai-design-check src lang" is a check of those paths; the command word is optional.
 const [command, ...named] = COMMANDS.includes(positional[0]) ? positional : ['check', ...positional];
@@ -378,6 +389,41 @@ if (command === 'system') {
     }
 }
 
+if (command === 'shot') {
+    if (named.length !== 1) {
+        console.error('Usage: ai-design-check shot <url|file.html> [--width 1440] [--out shot.png] [--full]');
+        done(1);
+    }
+    const { shot } = await import('../src/story.js');
+    try {
+        const width = Number(valueOf('width') ?? 1440);
+        if (!(width > 0)) usageError(`--width takes a number of pixels, got ${valueOf('width')}.`);
+        const result = await shot(named[0], { width, out: valueOf('out') ?? 'shot.png', full: flags.has('--full'), allowStatus, allowRedirect: flags.has('--allow-redirect'), auth: signInFrom(), ...area() });
+        if (result.landed) print(paint(33, `Took ${result.landed}: ${named[0]} redirected there.`));
+        print(`Wrote ${relative(cwd, result.out) || result.out} (${result.width}×${result.height} px)`);
+        done(0);
+    } catch (error) {
+        console.error(error.message);
+        done(error.exitCode ?? 1);
+    }
+}
+
+if (command === 'redesign' && named[0] === 'apply') {
+    if (named.length !== 2) {
+        console.error('Usage: ai-design-check redesign apply <patch>');
+        done(1);
+    }
+    const { applySaved } = await import('../src/redesign/run.js');
+    try {
+        const applied = applySaved(cwd, named[1]);
+        print(`Applied ${named[1]}${applied.how === '3-way' ? ' (3-way)' : ''}. Changed:\n${applied.files.map((file) => `  ${file}`).join('\n')}\nTo undo: ${applied.undo}`);
+        done(0);
+    } catch (error) {
+        console.error(error.message);
+        done(1);
+    }
+}
+
 if (command === 'redesign') {
     const { redesign } = await import('../src/redesign/run.js');
     // A saved page stands in for a URL when the page is behind a sign-in and no cookie is handed over.
@@ -470,6 +516,9 @@ if (command === 'redesign') {
             if (pass.outside) print(paint(33, `    changed outside git, ${pass.kept ? `not in the ${result.inPlace ? 'patch' : 'commit'}` : 'not put back'}: ${pass.outside.join(', ')}`));
         }
         print(`\nBefore ${JSON.stringify(result.before)}\nAfter  ${JSON.stringify(result.after)}`);
+        if (result.testsChanged?.length) print(paint(33, `\nTests changed by the kept passes, read them first: ${result.testsChanged.join(', ')}`));
+        for (const pass of result.passes.filter((item) => item.rejectedPatch)) print(`To apply the ${pass.name} pass anyway: npx @enmera/ai-design-check redesign apply ${pass.rejectedPatch}`);
+        if (result.compare) print(`Before and after, pass by pass: ${result.compare}`);
         if (result.inPlace) {
             print(`\nIn place, nothing committed. Changed: ${result.changed.length ? result.changed.join(', ') : 'nothing'}. Screenshots, logs and patches in ${result.out}.`);
             if (result.undo.length) print(`To undo, newest first:\n${result.undo.map((command) => `  ${command}`).join('\n')}`);

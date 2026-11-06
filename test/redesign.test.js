@@ -9,10 +9,10 @@ import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { detectStack, laravelView, pageFiles } from '../src/redesign/detect.js';
 import { diagnose, typeScale } from '../src/redesign/diagnose.js';
-import { OUT, agentCommand, approvalSummary, brief, codexStream, lookPrompt, onlyReads, readVerdict, redesign, serveDir, verify } from '../src/redesign/run.js';
+import { OUT, agentCommand, approvalSummary, brief, codexStream, comparePage, looksLikeTest, lookPrompt, onlyReads, readVerdict, redesign, seeing, serveDir, verify } from '../src/redesign/run.js';
 import { measure } from '../src/redesign/measure.js';
 import { briefMd, buildable, craftPrompt, studyPrompt, validateBrief } from '../src/redesign/study.js';
-import { findChrome } from '../src/story.js';
+import { findChrome, shot } from '../src/story.js';
 
 const laravel = join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'laravel');
 
@@ -853,5 +853,123 @@ test('--intent survives --brief: the brief handed back keeps it, a new one repla
     } finally {
         process.env.PATH = path;
         project.close();
+    }
+});
+
+test('decoration is not content: a card replacing an aria-hidden code rain passes, losing a paragraph still fails', { skip: !findChrome() }, async () => {
+    const shell = (hero) => `data:text/html;charset=utf-8,${encodeURIComponent(`<!doctype html><html lang="en"><title>t</title><body style="margin:0;font:16px sans-serif;background:#fff;color:#111"><section style="position:relative"><h1>Ship sites faster</h1>${hero}</section></body></html>`)}`;
+    const rain = Array.from({ length: 40 }, (_, i) => `<span>npm run task-${i} --watch build${i}</span>`).join(' ');
+    const copy = '<p>Our module builder turns a brief into a page in an afternoon.</p>';
+    const before = await measure(shell(`${copy}<div aria-hidden="true" style="opacity:.18">${rain}</div><div style="position:absolute;inset:0;pointer-events:none;opacity:.2">layer glyphs drifting</div>`), { widths: [1440] });
+    assert.ok(!before.desktop.inventory.words.includes('watch') && !before.desktop.inventory.words.includes('glyphs'), before.desktop.inventory.words.join(' '));
+    assert.ok(before.desktop.inventory.decoration.includes('watch') && before.desktop.inventory.decoration.includes('glyphs'));
+    const commands = ['enmera new site', 'enmera add module', 'enmera preview', 'enmera publish', 'enmera rollback'];
+    const after = await measure(shell(`${copy}<pre>${commands.join('\n')}</pre>`), { widths: [1440] });
+    assert.deepEqual(verify(before, after, 'craft', { addsText: commands }), []);
+    const lost = await measure(shell(`<pre>${commands.join('\n')}</pre>`), { widths: [1440] });
+    assert.match(verify(before, lost, 'craft', { addsText: commands }).join(), /Kept \d+(\.\d)?% of the words/);
+});
+
+test('a card that changes text without addsText or replacesText is sent back; decoration only is not', () => {
+    const problem = (extra) => validateBrief(decided({ sections: [card({ changesLook: true, visible: 'x', ...extra })] }), studied()).join('\n');
+    assert.match(problem({ idea: 'Replace the code rain with a terminal panel of five real commands' }), /this card changes text; list it in addsText\/replacesText or the word check will reject the pass/);
+    assert.match(problem({ idea: 'Başlığı değiştir ve yeni metin ekle' }), /this card changes text/);
+    assert.equal(problem({ idea: 'Replace the code rain with a terminal panel of five real commands', addsText: ['enmera publish'] }), '');
+    assert.equal(problem({ idea: 'Remove the decorative glow behind the kilns' }), '');
+    assert.equal(problem({ idea: 'Rewrite the intro', addsText: [] }), ''); // an empty list says it changes none, on purpose
+});
+
+test('the prompts say how to look at the page and how to draw it again; the craft prompt says what to do with a test', () => {
+    const text = seeing({ page: 'http://127.0.0.1:5000/module-1.html', out: '.ai-design-check/redesign', scope: ['[data-block-type=module-1]'], refresh: 'npm run build && php artisan module:export 1', saved: 'dist/module-1.html' });
+    assert.match(text, /bin\/ai-design-check\.js" shot http:\/\/127\.0\.0\.1:5000\/module-1\.html --width 1440 --out \.ai-design-check\/redesign\/look-1440\.png --scope '\[data-block-type=module-1\]'/);
+    assert.match(text, /before you report/);
+    assert.ok(text.includes('run this from the project folder before you look, so the screenshot shows your change:\n  npm run build && php artisan module:export 1\ndist/module-1.html is stale until that command runs'), text);
+    assert.doesNotMatch(seeing({ page: 'x.html', out: 'o' }), /stale/);
+    const craft = craftPrompt({ stack: html, files: [], brief: decided(), url: 'http://x/', out: 'x' });
+    assert.match(craft, /If an existing test forbids the new behaviour a card asks for, change that test/);
+    assert.match(craft, /Never weaken, skip or delete a test that has nothing to do with the cards/);
+    assert.deepEqual(['tests/Feature/HomeTest.php', 'src/a.test.ts', 'app/__tests__/x.js', 'pkg/a_test.go', 'b.spec.js', 'test/x.js', 'src/contest.js', 'latest/index.html'].map(looksLikeTest), [true, true, true, true, true, true, false, false]);
+});
+
+test('compare.html shows each pass before and after, its verdict and the apply command for one thrown away', () => {
+    const out = mkdtempSync(join(tmpdir(), 'adc-compare-'));
+    try {
+        for (const name of ['before', 'pass-1-type', 'pass-2-craft']) writeFileSync(join(out, `${name}-fold-1440.png`), 'png');
+        const file = comparePage(out, [
+            { name: 'type', kept: true, shots: { before: 'before', after: 'pass-1-type' } },
+            { name: 'craft', kept: false, problems: ['Kept 44.7% of the words (needs 98%) <b>'], rejectedPatch: 'out/pass-2-craft.rejected.patch', testsChanged: ['tests/HomeTest.php'], shots: { before: 'pass-1-type', after: 'pass-2-craft' } },
+        ]);
+        const page = readFileSync(file, 'utf8');
+        assert.match(page, /Pass 1: type — <span class="kept">kept/);
+        assert.match(page, /Pass 2: craft — <span class="rejected">thrown away[\s\S]*Kept 44\.7% of the words \(needs 98%\) &lt;b&gt;/);
+        assert.match(page, /redesign apply out\/pass-2-craft\.rejected\.patch/);
+        assert.match(page, /<img src="pass-2-craft-fold-1440\.png"/);
+        assert.match(page, /tests\/HomeTest\.php/);
+        assert.doesNotMatch(page, /https?:\/\//); // no external assets
+    } finally {
+        rmSync(out, { recursive: true, force: true });
+    }
+});
+
+test('a run reports tests it changed and writes compare.html; redesign apply brings a thrown-away pass back, once', { skip: !findChrome() || process.platform === 'win32' }, async () => {
+    const project = await site(`${JUDGE}
+const page = readFileSync('index.html', 'utf8');
+if (/Pass "type"/.test(prompt)) {
+    writeFileSync('index.html', page.replace('font-size:11px', 'font-size:13px'));
+    mkdirSync('tests', { recursive: true });
+    writeFileSync('tests/home.test.js', '// the text is 13px now\\n');
+}
+// The colour pass loses the headline, so it is thrown away.
+else writeFileSync('index.html', page.replace('color:#999', 'color:#333').replace(/<h1[^>]*>Hello pottery<\\/h1>/, ''));
+`);
+    const path = process.env.PATH;
+    process.env.PATH = `${project.bin}${delimiter}${path}`;
+    try {
+        const result = await redesign({ cwd: project.cwd, url: project.url, only: ['type', 'color'], inPlace: true });
+        assert.deepEqual(result.passes.map((pass) => [pass.name, pass.kept]), [['type', true], ['color', false]]);
+        assert.deepEqual(result.testsChanged, ['tests/home.test.js']);
+        assert.deepEqual(result.passes[0].testsChanged, ['tests/home.test.js']);
+        assert.equal(result.passes[1].rejectedPatch, `${OUT}/pass-2-color.rejected.patch`);
+        assert.equal(result.compare, `${OUT}/compare.html`);
+        const compare = readFileSync(join(project.cwd, OUT, 'compare.html'), 'utf8');
+        assert.match(compare, /Pass 2: color — <span class="rejected">thrown away/);
+        assert.match(compare, /<img src="pass-2-color-fold-1440\.png"/);
+        assert.match(readFileSync(join(project.cwd, OUT, 'pass-1-type.md'), 'utf8'), new RegExp(` shot ${project.url.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')} --width 1440 --out ${OUT}/look-1440\\.png`));
+        const cli = (...args) => spawnSync(process.execPath, [fileURLToPath(new URL('../bin/ai-design-check.js', import.meta.url)), ...args], { cwd: project.cwd, encoding: 'utf8' });
+        const applied = cli('redesign', 'apply', result.passes[1].rejectedPatch);
+        assert.equal(applied.status, 0, applied.stderr);
+        assert.match(applied.stdout, /Changed:\n {2}index\.html\nTo undo: git apply -R /);
+        const html = readFileSync(join(project.cwd, 'index.html'), 'utf8');
+        assert.doesNotMatch(html, /Hello pottery/);
+        // Applied twice: refused, and nothing changes.
+        const again = cli('redesign', 'apply', result.passes[1].rejectedPatch);
+        assert.equal(again.status, 1);
+        assert.match(again.stderr, /is already applied, so nothing was changed/);
+        assert.equal(readFileSync(join(project.cwd, 'index.html'), 'utf8'), html);
+        // Against a conflicting edit: refused, and the edit stays exactly as it was.
+        assert.equal(project.git('apply', '-R', join(project.cwd, result.passes[1].rejectedPatch)).status, 0);
+        const edited = readFileSync(join(project.cwd, 'index.html'), 'utf8').replace('color:#999', 'color:#555').replace('Hello pottery', 'Hello kilns');
+        writeFileSync(join(project.cwd, 'index.html'), edited);
+        const conflict = cli('redesign', 'apply', result.passes[1].rejectedPatch);
+        assert.equal(conflict.status, 1);
+        assert.match(conflict.stderr, /does not apply cleanly, so nothing was changed/);
+        assert.equal(readFileSync(join(project.cwd, 'index.html'), 'utf8'), edited);
+        assert.equal(project.git('diff', '--cached', '--name-only').stdout, ''); // the person's index is untouched
+    } finally {
+        process.env.PATH = path;
+        project.close();
+    }
+});
+
+test('shot writes a png of the page, clipped to --scope', { skip: !findChrome() }, async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adc-shot-'));
+    try {
+        const url = `data:text/html;charset=utf-8,${encodeURIComponent('<!doctype html><body style="margin:0"><nav style="height:80px">Shell</nav><div class="module" style="width:300px;height:120px;background:#f4f1ea">Module</div></body>')}`;
+        const result = await shot(url, { width: 800, out: join(dir, 'look.png'), scope: ['.module'] });
+        const png = readFileSync(result.out);
+        assert.equal(png.subarray(1, 4).toString(), 'PNG');
+        assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [300, 120]);
+    } finally {
+        rmSync(dir, { recursive: true, force: true });
     }
 });

@@ -177,6 +177,18 @@ CMS modülü: `redesign module-1.html --serve dist --render "php artisan module:
 `--render "<komut>"` ilk ölçümden önce ve her geçişten sonra, `--build` sonrasında çalışır, başarısız olursa geçiş başarısız
 bir derleme gibi atılır. `--build-minutes <n>` ikisinin süre sınırını belirler (varsayılan 10).
 
+Atılan iş elinizin altında kalır. Her çalışma `--out` klasörüne `compare.html` yazarak biter: her geçişin önceki ve sonraki
+ekran görüntüleri yan yana, geçişin tutulup tutulmadığı ve neden atıldığı. Atılan geçiş `pass-N-<ad>.rejected.patch`
+bırakır; `npx @enmera/ai-design-check redesign apply <patch>` onu çalışma kopyasına uygular (olduğu gibi oturmuyorsa üç
+yönlü birleştirmeyle; temiz uygulanmayan yama hiçbir şeyi değiştirmez), değişen dosyaları ve geri alma komutunu yazar.
+Kelime denetimi yalnızca okunan metni sayar: `aria-hidden="true"` altındaki ya da tıklama almayan konumlu bir katmandaki
+(`pointer-events: none`, içeriğin arkasında) yazı süstür ve bir geçiş onu değiştirebilir. Fikri görünen metni değiştiren,
+kaldıran ya da yeniden yazan bir kart bunu `addsText` ya da `replacesText` içinde listelemelidir; yoksa çalışma geri
+gönderilir. Geçiş istemleri sayfanın `shot` komutunu (`--serve` ile sunulan adresle) ve `--build` ya da `--render` varsa
+sayfayı yeniden çizen komutu taşır; ajan rapor vermeden önce kendi işine bakar. Bir test kartın istediği davranışı
+yasaklıyorsa ajan o testi yeni davranışa göre değiştirir ve adını söyler; bir geçişin değiştirdiği testler günlükte, özette
+ve `result.json` içinde (`testsChanged`) ayrıca listelenir.
+
 ## Mobil uygulamalar
 
 Uygulama klasörünü verin. SwiftUI ve Jetpack Compose okur: ölçek dışı boşluk (`spacing` ayarlı değilse 4 pt; `.padding(13)`, `10.dp`), ölçek dışı köşe,
@@ -299,6 +311,16 @@ Bootstrap 5.3 ile `bootstrap.css` dosyasını Bootstrap'in kendi CSS'inden sonra
 `data-bs-theme="dark"` altında geçerli olur. Bootstrap'in alanlara, onay kutularına, menülere, sayfalamaya ve diğer
 bileşenlere derlenmiş mavisini de değiştirir. Kaynaktan derleyen projeler `_variables.scss` dosyasını Bootstrap'ten önce içe
 aktarır.
+
+### `shot`: sayfaya bakın
+
+```bash
+npx @enmera/ai-design-check shot http://localhost:3000 --width 390 --out look.png --full
+```
+
+Chrome'un çizdiği haliyle tek bir ekran görüntüsü; hiçbir şeyi değiştirmez. Ajan bir düzenlemeden sonra kendi işine bununla
+bakar. `--full` sayfanın tamamını alır, `--scope` o parçayı kırpar, `--ignore` bir parçayı gizler; `--cookie` ve `--header`
+`scan` ile aynı şekilde çalışır.
 
 ### `story`: önce/sonra videosu
 

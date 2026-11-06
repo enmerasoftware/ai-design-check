@@ -25,7 +25,6 @@ function inPage(options = {}) {
     const vh = innerHeight;
     const scopeList = (options?.scope ?? []).join(', ');
     const ignoreList = (options?.ignore ?? []).join(', ');
-    const scoped = Boolean(scopeList || ignoreList);
     const inside = (el) => (!scopeList || Boolean(el.closest(scopeList))) && !(ignoreList && el.closest(ignoreList));
     const roots = scopeList ? [...document.querySelectorAll(scopeList)].filter((el, i, list) => !list.some((other) => other !== el && other.contains(el))) : [document.body];
     const within = (selector) => [...document.querySelectorAll(selector)].filter(inside);
@@ -258,18 +257,33 @@ function inPage(options = {}) {
     const small = labels.filter((label) => /^\p{Ll}/u.test(label));
     const lowerLabels = labels.length - small.length >= small.length * 3 ? small : [];
 
-    // The words of the area measured, text node by text node: innerText cannot leave the ignored parts out.
-    const scopedText = () => {
+    // A decorative layer: under aria-hidden="true", or a positioned layer that takes no clicks (pointer-events: none,
+    // absolute or fixed), such as a faded "code rain" behind the hero. Its text is not what a visitor reads.
+    const layers = new Map();
+    const decorative = (el) => {
+        if (layers.has(el)) return layers.get(el);
+        const style = getComputedStyle(el);
+        const own = el.getAttribute('aria-hidden') === 'true' || (style.pointerEvents === 'none' && ['absolute', 'fixed'].includes(style.position));
+        const result = own || (el.parentElement ? decorative(el.parentElement) : false);
+        layers.set(el, result);
+        return result;
+    };
+    // The words of the area measured, text node by text node: innerText cannot leave the ignored parts out. Reading
+    // text and decoration apart, so a pass that rewrites the decoration is not taken for one that loses content.
+    const textOfArea = () => {
         const words = [];
+        const decor = [];
         for (const root of roots) {
             const walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
             for (let node = walk.nextNode(); node; node = walk.nextNode()) {
                 const parent = node.parentElement;
-                if (parent && !['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEMPLATE'].includes(parent.tagName) && inside(parent) && parent.checkVisibility()) words.push(node.textContent);
+                if (parent && !['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEMPLATE'].includes(parent.tagName) && inside(parent) && parent.checkVisibility()) (decorative(parent) ? decor : words).push(node.textContent);
             }
         }
-        return words.join(' ').replace(/\s+/g, ' ').trim();
+        const split = (list) => list.join(' ').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((w) => w.length > 1);
+        return { words: split(words), decoration: split(decor) };
     };
+    const text = textOfArea();
     const inventory = {
         headings: within('h1,h2,h3,h4').filter((h) => textOf(h)).map((h) => `${h.tagName.toLowerCase()} ${textOf(h).toLowerCase()}`),
         links: within('a[href]').map((a) => a.getAttribute('href')).filter((h) => h && !h.startsWith('javascript')),
@@ -280,7 +294,9 @@ function inPage(options = {}) {
         // Class strings that find the templates behind the page when the route cannot be followed.
         // The scoped area's own classes come first: they name the module's template.
         markers: [...new Set([...(scopeList ? roots : []), ...within('h1, h2, main > *, body > * > section, section')].map((el) => (el.getAttribute('class') || '').trim()).filter((c) => c.length >= 12))].slice(0, 40),
-        words: (scoped ? scopedText() : textOf(document.body)).toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((w) => w.length > 1),
+        words: text.words,
+        // Text in decorative layers: on the page, yet not content a pass must keep.
+        decoration: text.decoration,
     };
 
     // The colour the scoped area stands on: its own fill or the nearest one above it.
