@@ -6,7 +6,7 @@
 [![lisans: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [English](README.md) · [日本語](README.ja.md)
 
-Claude Code, Cursor ya da Codex ile geliştirenler için: 141 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
+Claude Code, Cursor ya da Codex ile geliştirenler için: 145 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
 denetçi ve ekranı onaran bir ajan becerisi. Web projelerini (React, Vue, Svelte, Laravel Blade, HTML; Tailwind, Bootstrap ya da düz CSS)
 ve SwiftUI, Jetpack Compose, Flutter, React Native uygulamalarını okur. Bulmak için ajan gerekmez, mekanik düzeltmeler için de gerekmez.
 

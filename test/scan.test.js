@@ -233,6 +233,25 @@ for (const [rule, extra] of Object.entries(DECORATION)) {
     CASES[rule].flag.push(...extra.flag);
     CASES[rule].pass.push(...extra.pass);
 }
+const dark = (inner) => `<div style="background:#111;padding:16px">${inner}</div>`;
+CASES['link-token-per-surface'] = {
+    flag: [
+        `<p>Read <a href="/" style="color:#f18a20">the guide</a></p>${dark('<a href="/" style="color:#f18a20">Dark link</a>')}`,
+        `<p><a href="/" style="color:#3b82f6">Blue on white</a></p>${dark('<a href="/" style="color:#3b82f6">Blue on dark</a>')}`,
+        `<p><a href="/" style="color:#22c55e">Green on white</a></p>${dark('<a href="/" style="color:#22c55e">Green on dark</a>')}`,
+        `<p><a href="/" style="color:#1d4ed8">Deep blue on white</a></p>${dark('<a href="/" style="color:#1d4ed8">Deep blue on dark</a>')}`,
+    ],
+    pass: [
+        '<p><a href="/" style="color:#c2410c">Only on white</a></p>',
+        dark('<a href="/" style="color:#f18a20">Only on dark</a>'),
+        `<p><a href="/" style="color:#c2410c">Own value on white</a></p>${dark('<a href="/" style="color:#f18a20">Own value on dark</a>')}`,
+        `<p><a href="/" style="color:#f18a20;background:#111;padding:8px">Button-like</a></p>${dark('<a href="/" style="color:#f18a20">Dark link</a>')}`,
+        `<p><a href="/" style="color:#555">Grey on white</a></p>${dark('<a href="/" style="color:#555">Grey on dark</a>')}`,
+    ],
+};
+CASES['text-not-covered'].pass.push('<div style="position:relative;width:300px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 30%);mask-image:linear-gradient(90deg,transparent,#000 30%)"><p style="margin:0">Faded marquee strip</p><div style="position:absolute;inset:0;background:#fff"></div></div>');
+CASES['no-horizontal-overflow'].pass.push(page('<div style="width:2000px;height:20px;background:#eee"></div>', 'html,body{overflow-x:hidden}'));
+
 const STYLE = '<style>@keyframes p{50%{opacity:.2}}</style>';
 const wrap = (html) => (html.startsWith('<!doctype') ? html : page(STYLE + html));
 
@@ -320,4 +339,18 @@ test('a page is measured once its styles have landed, not at a fixed moment', { 
     const html = page('<p id="p">Words</p><script>setTimeout(() => { const s = document.createElement("style"); s.textContent = "#p{font-size:14px}"; document.head.append(s); }, 1400)</script>');
     await browser.open(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`, { width: 1280, height: 800 });
     assert.equal(await browser.evaluate('getComputedStyle(document.getElementById("p")).fontSize'), '14px');
+});
+
+test('scan: a light frame on a dark section is a showcase stage, reported as information', { skip }, async () => {
+    const html = page(`<section style="background:#0b1020;padding:40px"><div style="background:#f1f5f9;border-radius:16px;padding:16px;box-shadow:0 20px 40px rgba(0,0,0,.4);width:600px;height:300px"><div style="${card};width:200px;height:80px">Lead card</div></div></section><div style="${card};width:500px;height:200px"><div style="${card};width:200px;height:80px">Inner</div></div>`);
+    const found = (await scanWith(browser, `data:text/html;charset=utf-8,${encodeURIComponent(html)}`, { width: 1280, quick: true })).filter((item) => item.rule === 'no-nested-cards');
+    assert.deepEqual(found.map((item) => item.severity).sort(), ['info', 'warn']);
+});
+
+test('scan: a reveal that hides again off screen is not invisible content; one that never runs is', { skip, timeout: 60_000 }, async () => {
+    const reveal = (script) => page(`<p>Short.</p><div style="height:3000px"></div><p class="r" style="opacity:0;transition:opacity .4s">${long}</p><p class="r" style="opacity:0;transition:opacity .4s">${long}</p>${script}`);
+    const works = '<script>new IntersectionObserver((list) => list.forEach((e) => { e.target.style.opacity = e.isIntersecting ? 1 : 0; })).observe(document.querySelectorAll(".r")[0]); new IntersectionObserver((list) => list.forEach((e) => { e.target.style.opacity = e.isIntersecting ? 1 : 0; })).observe(document.querySelectorAll(".r")[1]);</script>';
+    const rules = async (html) => (await scanWith(browser, `data:text/html;charset=utf-8,${encodeURIComponent(html)}`, { width: 1280 })).map((item) => item.rule);
+    assert.ok(!(await rules(reveal(works))).includes('no-invisible-content'));
+    assert.ok((await rules(reveal(''))).includes('no-invisible-content'));
 });

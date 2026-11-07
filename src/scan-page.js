@@ -3,10 +3,10 @@
 export function scanPage(designSystem, options = {}) {
     const found = [];
     const counts = {};
-    const hit = (rule, value, message) => {
+    const hit = (rule, value, message, severity) => {
         counts[rule] = (counts[rule] || 0) + 1;
         if (counts[rule] > (rule === 'legible-contrast' ? 60 : 12) || found.some((item) => item.rule === rule && item.value === value)) return;
-        found.push({ rule, value: String(value).slice(0, 120), ...(message ? { message } : {}) });
+        found.push({ rule, value: String(value).slice(0, 120), ...(message ? { message } : {}), ...(severity ? { severity } : {}) });
     };
     const vw = document.documentElement.clientWidth;
     const vh = innerHeight;
@@ -53,6 +53,16 @@ export function scanPage(designSystem, options = {}) {
             if (fill) return null;
         }
         return { r: 255, g: 255, b: 255, a: 1 };
+    };
+    // Faded at an edge (mask-image) or moving (a running animation on it or around it).
+    const moving = new Set(document.getAnimations?.().filter((a) => a.playState === 'running').map((a) => a.effect?.target).filter(Boolean) ?? []);
+    const faded = (el) => {
+        for (let node = el; node && node !== document.body; node = node.parentElement) {
+            if (moving.has(node)) return true;
+            const style = getComputedStyle(node);
+            if ((style.maskImage && style.maskImage !== 'none') || (style.webkitMaskImage && style.webkitMaskImage !== 'none')) return true;
+        }
+        return false;
     };
     // --scope: only what is inside a match is checked (several are one union); --ignore: what is inside a match is not.
     const scopeList = (options?.scope ?? []).join(', ');
@@ -170,8 +180,9 @@ export function scanPage(designSystem, options = {}) {
             if (painted.some((row) => row.left < margin || row.right > vw - margin)) hit('text-off-viewport-edge', label);
         }
         if (tag !== 'TD' && rect.width > 2 && rect.height > 2 && el.scrollWidth > el.clientWidth + 1 && /(hidden|clip)/.test(style.overflowX) && !el.title && lines(el).some((row) => row.right > rect.right + 1)) hit('text-not-clipped', label);
-        // Cover: what is painted over the middle of the text.
-        if (rect.top >= 0 && rect.bottom <= vh && rect.left >= 0 && rect.right <= vw) {
+        // Cover: what is painted over the middle of the text. A strip faded at its edge with mask-image, or one that is
+        // moving (a marquee), is not covered: the fade is the design and the moving text is measured mid-flight.
+        if (!faded(el) && rect.top >= 0 && rect.bottom <= vh && rect.left >= 0 && rect.right <= vw) {
             const top = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
             if (top && top !== el && !el.contains(top) && !top.contains(el)) {
                 const cover = getComputedStyle(top);
@@ -345,13 +356,39 @@ export function scanPage(designSystem, options = {}) {
         hit('no-middle-dot-lists', short(value));
     }
 
+    // One link colour on light and on dark grounds: an orange that reads on the dark band fails on white. Each ground
+    // needs its own value (a 700 on light, a 400 on dark), not one token stretched across both.
+    const surfaces = new Map();
+    for (const { el, style, tag } of texts) {
+        if (tag !== 'A' || el.closest('button, [role="button"]') || (parse(style.backgroundColor)?.a ?? 0) > 0.1 || px(style.borderTopWidth) > 0) continue;
+        const color = parse(style.color);
+        const back = ground(el);
+        if (!color || color.a < 0.9 || !back || chroma(color) < 0.08) continue;
+        const entry = surfaces.get(hex(color)) ?? { light: Infinity, dark: Infinity };
+        const side = lum(back) > 0.4 ? 'light' : 'dark';
+        entry[side] = Math.min(entry[side], ratio(color, back));
+        surfaces.set(hex(color), entry);
+    }
+    for (const [color, { light, dark }] of surfaces) {
+        if (light === Infinity || dark === Infinity || Math.min(light, dark) >= 4.5) continue;
+        const weak = light < dark ? 'light' : 'dark';
+        hit('link-token-per-surface', color, `Link colour ${color} is used on light and dark grounds: ${light.toFixed(1)}:1 on light, ${dark.toFixed(1)}:1 on dark; give the ${weak} ground its own value`);
+    }
+
     // Boxes
     const cards = all.filter(isCard);
     for (const card of cards) {
         for (let node = card.el.parentElement; node && node !== document.body; node = node.parentElement) {
             const outer = cards.find((item) => item.el === node);
             if (outer && card.rect.width * card.rect.height < outer.rect.width * outer.rect.height * 0.9) {
-                hit('no-nested-cards', `${card.tag.toLowerCase()} inside ${outer.tag.toLowerCase()}: ${short(text(card.el))}`);
+                // A light frame on a dark section (or the reverse) that holds a product example is a showcase stage, not
+                // a card: removing it changes the page's character, so it is information to weigh, not a fix to make.
+                const fill = parse(outer.style.backgroundColor);
+                const behind = ground(outer.el.parentElement ?? outer.el);
+                const stage = fill && fill.a >= 0.9 && behind && Math.abs(lum(fill) - lum(behind)) > 0.35;
+                const value = `${card.tag.toLowerCase()} inside ${outer.tag.toLowerCase()}: ${short(text(card.el))}`;
+                if (stage) hit('no-nested-cards', value, `Cards inside a frame that stands out from its section: if it is a showcase stage around a product example, leave it; ${value}`, 'info');
+                else hit('no-nested-cards', value);
                 break;
             }
         }
@@ -438,6 +475,8 @@ export function scanPage(designSystem, options = {}) {
     }
     // Text the visitor never sees, from the live page.
     for (const { el } of texts) {
+        // Shown when scrolled to (an on-scroll reveal that hides again when it leaves the screen): not invisible.
+        if (el.closest('[data-adc-revealed]')) continue;
         const value = own(el).length;
         chars.total += value;
         let opacity = 1;
@@ -588,7 +627,11 @@ export function scanPage(designSystem, options = {}) {
     // The page scrolls sideways as a whole; with --scope it counts when the scoped area is what runs past the edge
     // (scrollWidth holds a visible overflow too). --ignore alone leaves it page-wide: the whole page still scrolls.
     const spills = !scopeList || roots.some((root) => root.getBoundingClientRect().left + Math.max(root.scrollWidth, root.getBoundingClientRect().width) > vw + 1);
-    if (document.documentElement.scrollWidth > vw + 1 && spills) {
+    // Only a page the visitor can scroll sideways: with overflow-x hidden on html (or on body, passed to the viewport)
+    // scrollWidth stays wide while the page does not move (what sticks out is cut, which text-not-clipped and text-off-viewport-edge report).
+    const clipsX = (el) => /(hidden|clip)/.test(getComputedStyle(el).overflowX);
+    const sideways = !(clipsX(document.documentElement) || (getComputedStyle(document.documentElement).overflowX === 'visible' && clipsX(document.body)));
+    if (document.documentElement.scrollWidth > vw + 1 && spills && sideways) {
         // Name what sticks out, so the fix has a place to start: the outermost elements past the right edge (a Bootstrap
         // .row with gutters wider than its container's padding is the usual one). Fixed layers do not widen the page.
         const wide = [];

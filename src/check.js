@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, dirname, join, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CLASS_FUNCTIONS, blankComments, classUnits, literals, tokens, utility } from './classes.js';
+import { CLASS_FUNCTIONS, balancedEnd, blankComments, classUnits, literals, tokens, utility } from './classes.js';
 import { cssHits, markupSheet, scssAsCss } from './css.js';
 import { children, parseAttrs, readTag, tags, visibleText } from './jsx.js';
 import { LOOKS } from './looks.js';
@@ -371,7 +371,12 @@ const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input'
 function utilitiesOf(attrs) {
     const parsed = parseAttrs(attrs);
     const values = ['className', 'class', ':class', 'v-bind:class'].map((name) => parsed[name]).filter((value) => value !== undefined && value !== true);
-    return new Set(values.flatMap((value) => tokens(typeof value === 'string' ? value : literals(value.code).join(' '))).map(utility));
+    const raw = values.flatMap((value) => tokens(typeof value === 'string' ? value : literals(value.code).join(' ')));
+    const set = new Set(raw.map(utility));
+    // The column list a phone gets: grid-cols-N with no breakpoint in front of it (md:grid-cols-2 alone leaves the
+    // phone one implicit auto column, which grows to its content).
+    Object.defineProperty(set, 'base', { value: new Set(raw.filter((token) => !token.includes(':')).map(utility)) });
+    return set;
 }
 /** A width that caps how wide the text can ask its parents to be (a percentage does not: it is auto while sizing). */
 const CAPPED = /^(?:w-(?!auto$|fit$|max$|min$|full$|\d+\/\d+$)\S+|max-w-(?!none$|full$|max$|fit$)\S+|size-\S+)$/;
@@ -385,7 +390,7 @@ const ROW_FLEX = (classes) => (classes.has('flex') || classes.has('inline-flex')
 const GROWING_TRACK = /(?:^|[_,(\s])(?:\d*\.?\d+fr|auto|min-content|max-content|fit-content)(?![-\w])/;
 const AUTO_GRID = (classes) => {
     if (!classes.has('grid') && !classes.has('inline-grid')) return false;
-    const columns = [...classes].filter((name) => name.startsWith('grid-cols-'));
+    const columns = [...(classes.base ?? classes)].filter((name) => name.startsWith('grid-cols-'));
     if (!columns.length) return true;
     return columns.some((name) => name.startsWith('grid-cols-[') && GROWING_TRACK.test(name.slice(11, -1).replace(/minmax\(\s*(?!auto\b)[^,()]+,[^()]*\)/g, 'x')));
 };
@@ -408,7 +413,10 @@ function checkMinWidthChain(path, source, report) {
         const tag = match[2] ? readTag(source, match.index) : { name: '', attrs: '', selfClosing: false, start: match.index };
         if (!tag) continue;
         const element = { name: tag.name, classes: utilitiesOf(tag.attrs), start: tag.start };
-        if (element.classes.has('truncate') || element.classes.has('text-ellipsis')) {
+        // A box that scrolls sideways (a code block, a table wrapper) asks its parents for its full content width just
+        // like a truncated line: the scroll only starts once something above it is allowed to be narrower.
+        const scrolls = [...element.classes].some((name) => /^overflow-(?:x-)?(?:auto|scroll)$/.test(name));
+        if (element.classes.has('truncate') || element.classes.has('text-ellipsis') || scrolls) {
             let item = element;
             for (let index = stack.length - 1; index >= 0 && index >= stack.length - 8; index--) {
                 const parent = stack[index];
@@ -418,7 +426,8 @@ function checkMinWidthChain(path, source, report) {
                 if (item !== element && (ROW_FLEX(parent.classes) || AUTO_GRID(parent.classes)) && ![...item.classes].some((name) => SHRINKS.test(name))) {
                     if (!reported.has(item.start)) {
                         reported.add(item.start);
-                        report('cell-holds-content', path, lineOf(source, item.start), `<${item.name || '>'}`, `<${item.name}> is a ${ROW_FLEX(parent.classes) ? 'flex' : 'grid'} item holding a truncated line but has no min-w-0: a long text widens it past its column`);
+                        const held = scrolls ? `a box that scrolls sideways (<${element.name}>)` : 'a truncated line';
+                        report('cell-holds-content', path, lineOf(source, item.start), `<${item.name || '>'}`, `<${item.name}> is a ${ROW_FLEX(parent.classes) ? 'flex' : 'grid'} item holding ${held} but has no min-w-0: ${scrolls ? 'a long line widens the column instead of scrolling' : 'a long text widens it past its column'}`);
                     }
                     break;
                 }
@@ -426,6 +435,31 @@ function checkMinWidthChain(path, source, report) {
             }
         }
         if (!tag.selfClosing && !(VOID.has(tag.name) && !/^[A-Z]/.test(tag.name))) stack.push(element);
+    }
+}
+
+/**
+ * tailwind-merge drops a line height written before a font size: text-xl sets its own, so cn('leading-snug', 'text-xl')
+ * renders at text-xl's 1.2 and leading-snug is gone. Only the merging helpers (cn, twMerge, tv); a plain class string
+ * keeps both. text-xl/snug, or leading after the size, keeps it.
+ */
+const SIZE = /^text-(?:xs|sm|base|lg|[2-9]?xl|\[\d[^\]/]*\])$/;
+function checkMergedLeading(path, source, report) {
+    for (const match of source.matchAll(/(?<![\w.$])(?:cn|twMerge|tv)\s*\(/g)) {
+        const open = match.index + match[0].length - 1;
+        const end = balancedEnd(source, open, '(', ')');
+        if (end < 0) continue;
+        const unit = { index: match.index };
+        const list = tokens(literals(source.slice(open, end)).join(' '));
+        const variant = (token) => token.split(':').slice(0, -1).join(':');
+        for (const [index, token] of list.entries()) {
+            if (!/^leading-/.test(utility(token))) continue;
+            const size = list.slice(index + 1).find((other) => SIZE.test(utility(other)) && variant(other) === variant(token));
+            if (size) {
+                report('leading-survives-merge', path, lineOf(source, unit.index), `${token} … ${size}`, `${token} comes before ${size} in a merging call: tailwind-merge drops it and the size's own line height wins; write ${size}/${utility(token).slice(8)} or put ${token} after it`);
+                break;
+            }
+        }
     }
 }
 
@@ -632,6 +666,7 @@ export function check(cwd, overrides = {}) {
         if (reactNative && JSX.includes(extension)) checkTouchables(path, code, report);
         if (on('icon-button-name') && HTML_LIKE.includes(extension)) checkMarkupIconButtons(path, source, report);
         if (on('cell-holds-content') && MARKUP.includes(extension)) checkMinWidthChain(path, source, report);
+        if (on('leading-survives-merge') && (MARKUP.includes(extension) || SCRIPT.includes(extension))) checkMergedLeading(path, source, report);
         if (JSX.includes(extension)) {
             if (on('icon-button-name')) checkIconButtons(path, source, report);
             if (on('use-shared-components')) checkSharedComponents(config, path, source, report);

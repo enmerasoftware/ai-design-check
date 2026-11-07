@@ -176,6 +176,16 @@
 
 **How to fix:** Leave tracking at 0 for small text; slightly positive is fine for muted captions.
 
+### Line height survives the class merge
+
+`leading-survives-merge` · warning · checked
+
+**Rule:** In cn() or twMerge() a leading-* class does not come before a text-<size> class: write the size with its line height (text-xl/snug) or put leading after it.
+
+**Why:** tailwind-merge treats a font size as also setting line height, so cn('leading-snug', 'text-xl') silently drops leading-snug and the heading renders at 1.2 instead of 1.375.
+
+**How to fix:** text-xl/snug, or move leading-* after the size class.
+
 ### Text is not shrunk to fit
 
 `no-shrunk-text` · warning · checked
@@ -757,6 +767,16 @@
 **Why:** Grey on colour looks washed out and fails readers in sunlight.
 
 **How to fix:** Use a darker shade of the background colour or near-white.
+
+### Links have a colour for each ground
+
+`link-token-per-surface` · warning · checked
+
+**Rule:** A link colour used on both light and dark grounds passes 4.5:1 on each; when one value cannot, light and dark grounds get their own link value.
+
+**Why:** A brand orange that reads on the dark band is 2.5:1 on white: one token stretched across both grounds always fails one of them.
+
+**How to fix:** A darker step (700) for links on light grounds and a lighter one (400) on dark sections, through a token per ground or a dark-section helper.
 
 ### No icon tile above every heading
 

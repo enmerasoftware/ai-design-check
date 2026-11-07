@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.16.2
+
+From the Searvia home page fix.
+
+- **`link-token-per-surface` (new, scan).** One link colour used on both light and dark grounds that fails 4.5:1 on
+  one of them is reported with both ratios: that ground needs its own value (a 700 on light, a 400 on dark).
+- **`leading-survives-merge` (new, code).** In `cn()`, `twMerge()` or `tv()`, a `leading-*` before a `text-<size>`
+  is dropped by tailwind-merge (`cn('leading-snug', 'text-xl')` renders at 1.2). Write `text-xl/snug` or put the
+  leading after the size.
+- **A code block widens its column.** `cell-holds-content` now also walks up from a box that scrolls sideways
+  (`overflow-x-auto` on a `pre` or a table wrapper) and names the grid or flex item that needs `min-w-0`. A grid with
+  only `md:grid-cols-*` counts as one growing column on a phone.
+- **A page that cannot scroll sideways does not scroll sideways.** When `overflow-x: hidden` or `clip` on `html` (or on
+  `body`, which passes it to the viewport) keeps the page still, `narrow` reports the wide content as information and `scan`
+  leaves it to the cut-off text rules. Content inside a clipping strip (a marquee) is no longer named as the culprit.
+- **Marquee strips are not covered text.** Text under a `mask-image` fade, or inside something that is animating, no
+  longer raises `text-not-covered`.
+- **Reveals get their chance.** Before counting invisible text, `scan` scrolls each faded block that animates its way
+  in to the middle of the screen and waits for its transition. A reveal that shows there is not counted, even when it
+  hides again once it leaves the screen. One that never shows still is.
+- **A showcase stage is not a nested card.** A frame that stands out from its section (a light panel on a dark band
+  holding a product example) is reported as information. The design-fix skill says not to remove it to lower the
+  count: ask, or leave it with an ignore comment.
+
 ## 0.16.1
 
 - **The project's own way of writing does not throw a pass away.** A rule the project already breaks ten times or more

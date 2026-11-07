@@ -31,10 +31,11 @@ const MEASURE = (options) => `((options) => {
         const rect = element.getBoundingClientRect();
         const text = ownText(element);
         const visible = style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
-        // Inside a container that scrolls sideways on purpose (a wide table), overflow is the design.
+        // Inside a container that scrolls sideways on purpose (a wide table) or clips (a marquee strip), it does not
+        // widen the page.
         let scroller = false;
         for (let node = element.parentElement; node && node !== document.body; node = node.parentElement) {
-            if (/(auto|scroll)/.test(getComputedStyle(node).overflowX)) { scroller = true; break; }
+            if (/(auto|scroll|hidden|clip)/.test(getComputedStyle(node).overflowX)) { scroller = true; break; }
         }
         elements.push({
             key: path(element), label: name(element, text), text: text.length > 0, visible, scroller, inScope: inside(element),
@@ -45,7 +46,13 @@ const MEASURE = (options) => `((options) => {
             ellipsis: text.length > 0 && visible && style.textOverflow === 'ellipsis' && element.scrollWidth > element.clientWidth + 1 && !element.title,
         });
     }
-    return { width, scrollWidth: document.documentElement.scrollWidth, scoped: Boolean(scopeList), elements };
+    // Whether the visitor can actually scroll sideways: overflow-x hidden or clip on html (or on body, which passes
+    // it to the viewport when html leaves it visible) keeps scrollWidth wide while the page stays put; what sticks
+    // out is cut, which text-not-clipped reports. Read from the styles: a phone zooms out instead of scrolling.
+    const clips = (element) => /(hidden|clip)/.test(getComputedStyle(element).overflowX);
+    const rootStyle = getComputedStyle(document.documentElement).overflowX;
+    const sideways = !(clips(document.documentElement) || (rootStyle === 'visible' && clips(document.body)));
+    return { width, scrollWidth: document.documentElement.scrollWidth, sideways, scoped: Boolean(scopeList), elements };
 })(${JSON.stringify(options)})`;
 
 /**
@@ -99,7 +106,9 @@ export async function narrow(input, { width = 320, desktop = 1280, stress = fals
         const spills = (page) => page.elements.some((element) => element.inScope && element.visible && !element.scroller && element.right > page.width + 1);
         if (phone.scrollWidth > phone.width + 1 && (!phone.scoped || spills(phone))) {
             const culprits = phone.elements.filter((element) => element.inScope && element.visible && !element.scroller && element.right > phone.width + 1 && element.text).slice(0, 5);
-            findings.push(finding('no-horizontal-overflow', 'error', input, `${phone.scrollWidth}px`, `Page is ${phone.scrollWidth} px wide at ${width} px; it scrolls sideways${culprits.length ? `: ${culprits.map((element) => element.label).join(', ')}` : ''}`));
+            const where = culprits.length ? `: ${culprits.map((element) => element.label).join(', ')}` : '';
+            if (phone.sideways) findings.push(finding('no-horizontal-overflow', 'error', input, `${phone.scrollWidth}px`, `Page is ${phone.scrollWidth} px wide at ${width} px; it scrolls sideways${where}`));
+            else findings.push(finding('no-horizontal-overflow', 'info', input, `${phone.scrollWidth}px`, `Content is ${phone.scrollWidth} px wide at ${width} px but the page does not scroll sideways (overflow hidden); what sticks out is cut${where}`));
         }
         for (const element of phone.elements) {
             if (!element.inScope || element.decor) continue;
@@ -120,7 +129,9 @@ export async function narrow(input, { width = 320, desktop = 1280, stress = fals
             const worst = await browser.evaluate(measure);
             if (!overflowing && worst.scrollWidth > worst.width + 1 && (!worst.scoped || spills(worst))) {
                 const culprits = worst.elements.filter((element) => element.inScope && element.visible && !element.scroller && element.right > worst.width + 1 && element.text).slice(0, 3);
-                findings.push(finding('no-horizontal-overflow', 'warn', input, `${worst.scrollWidth}px`, `With long data the page is ${worst.scrollWidth} px wide at ${width} px${culprits.length ? `: ${culprits.map((element) => element.label).join(', ')}` : ''}`));
+                const where = culprits.length ? `: ${culprits.map((element) => element.label).join(', ')}` : '';
+                if (worst.sideways) findings.push(finding('no-horizontal-overflow', 'warn', input, `${worst.scrollWidth}px`, `With long data the page is ${worst.scrollWidth} px wide at ${width} px${where}`));
+                else findings.push(finding('no-horizontal-overflow', 'info', input, `${worst.scrollWidth}px`, `With long data the content is ${worst.scrollWidth} px wide at ${width} px but the page does not scroll sideways; what sticks out is cut${where}`));
             }
             for (const element of worst.elements) {
                 if (!element.inScope || element.decor) continue;

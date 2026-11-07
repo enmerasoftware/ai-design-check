@@ -19,7 +19,7 @@ const values = (rule) => by(rule).map((item) => item.value);
 
 test('every rule has both languages, a known area and a valid check type', () => {
     const { areas, rules } = loadRules();
-    const types = ['render', 'native', 'class', 'regex', 'i18n-case', 'icon-button-name', 'shared-components', 'style-overrides', 'repeated-markup', 'shared-looks', 'min-width-chain'];
+    const types = ['render', 'native', 'class', 'regex', 'i18n-case', 'icon-button-name', 'shared-components', 'style-overrides', 'repeated-markup', 'shared-looks', 'min-width-chain', 'merged-leading'];
     for (const rule of rules) {
         assert.ok(areas[rule.area], rule.id);
         for (const field of ['title', 'rule', 'why', 'fix']) assert.ok(rule[field].en && rule[field].tr, `${rule.id}.${field}`);
@@ -285,4 +285,54 @@ test('Blade: classes inside {{ }} ternaries, @class() and Alpine :class are read
     ].join('\n');
     const text = classUnits(source).map((unit) => unit.text).join(' | ');
     assert.equal(text, 'mx-auto text-4xl text-[40px] leading-[44px] | p-[13px] font-bold | text-[21px] | p-[7px]');
+});
+
+test('a box that scrolls sideways in a grid item without min-w-0 is named where min-w-0 goes', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adc-scroll-'));
+    mkdirSync(join(dir, 'src'));
+    writeFileSync(join(dir, 'src', 'Cli.tsx'), [
+        'export function Cli() {',
+        '    return (',
+        '        <div className="grid gap-6 lg:grid-cols-2">',
+        '            <div>',
+        '                <pre className="overflow-x-auto rounded p-4">npx @enmera/ai-design-check scan https://example.com --scope main</pre>',
+        '            </div>',
+        '            <div className="min-w-0"><pre className="overflow-x-auto">fine</pre></div>',
+        '            <pre className="overflow-x-auto">the box itself may be the item</pre>',
+        '        </div>',
+        '    );',
+        '}',
+    ].join('\n'));
+    const found = check(dir).filter((item) => item.rule === 'cell-holds-content').map((item) => `${item.path}:${item.line}`);
+    assert.deepEqual(found, ['src/Cli.tsx:4']);
+});
+
+test('cn(): a line height before a font size is dropped by tailwind-merge', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adc-merge-'));
+    mkdirSync(join(dir, 'src'));
+    writeFileSync(join(dir, 'src', 'Via.tsx'), [
+        'export function Via({ big }) {',
+        '    return (',
+        '        <div>',
+        "            <h2 className={cn('font-semibold leading-snug', 'text-xl')}>Via</h2>",
+        "            <h3 className={twMerge('leading-tight md:text-2xl', big && 'text-3xl')}>Big</h3>",
+        "            <h4 className={cn('text-xl leading-snug')}>After the size</h4>",
+        "            <h5 className={cn('text-xl/snug')}>Paired</h5>",
+        "            <h6 className={clsx('leading-snug', 'text-xl')}>clsx does not merge</h6>",
+        "            <p className={cn('md:leading-snug', 'text-xl')}>Other variant</p>",
+        "            <p className=\"leading-snug text-xl\">Plain string</p>",
+        '        </div>',
+        '    );',
+        '}',
+    ].join('\n'));
+    const found = check(dir).filter((item) => item.rule === 'leading-survives-merge').map((item) => `${item.line} ${item.value}`);
+    assert.deepEqual(found, ['4 leading-snug … text-xl', '5 leading-tight … text-3xl']);
+});
+
+test('narrow: content wider than the screen on a page that cannot scroll sideways is information', { skip: !findChrome() && 'no Chrome', timeout: 90_000 }, async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adc-sideways-'));
+    const file = join(dir, 'page.html');
+    writeFileSync(file, '<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width"><style>body{margin:0;overflow-x:hidden;font:16px/1.5 Georgia,serif}</style></head><body><p>Short words.</p><div style="width:485px;height:20px;background:#eee"></div></body></html>');
+    const found = (await narrow(file)).filter((item) => item.rule === 'no-horizontal-overflow');
+    assert.deepEqual(found.map((item) => item.severity), ['info']);
 });

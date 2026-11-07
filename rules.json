@@ -734,6 +734,32 @@
       }
     },
     {
+      "id": "link-token-per-surface",
+      "area": "visual",
+      "severity": "warn",
+      "title": {
+        "en": "Links have a colour for each ground",
+        "tr": "Bağlantının her zemin için rengi var"
+      },
+      "rule": {
+        "en": "A link colour used on both light and dark grounds passes 4.5:1 on each; when one value cannot, light and dark grounds get their own link value.",
+        "tr": "Hem açık hem koyu zeminde kullanılan bağlantı rengi ikisinde de 4,5:1’i geçer; tek değer geçemiyorsa açık ve koyu zemin kendi bağlantı değerini alır."
+      },
+      "why": {
+        "en": "A brand orange that reads on the dark band is 2.5:1 on white: one token stretched across both grounds always fails one of them.",
+        "tr": "Koyu bantta okunan marka turuncusu beyazda 2,5:1 kalır: iki zemine yayılan tek token mutlaka birinde kalır."
+      },
+      "fix": {
+        "en": "A darker step (700) for links on light grounds and a lighter one (400) on dark sections, through a token per ground or a dark-section helper.",
+        "tr": "Açık zeminde bağlantıya koyu ton (700), koyu bölümde açık ton (400); zemine göre ayrı token ya da koyu bölüm yardımcısıyla."
+      },
+      "check": {
+        "type": "render",
+        "command": "scan",
+        "scan": true
+      }
+    },
+    {
       "id": "instant-filters",
       "area": "interaction",
       "severity": "info",
@@ -2725,6 +2751,30 @@
       "check": {
         "type": "min-width-chain",
         "scan": true
+      }
+    },
+    {
+      "id": "leading-survives-merge",
+      "area": "type",
+      "severity": "warn",
+      "title": {
+        "en": "Line height survives the class merge",
+        "tr": "Satır aralığı sınıf birleştirmede kaybolmaz"
+      },
+      "rule": {
+        "en": "In cn() or twMerge() a leading-* class does not come before a text-<size> class: write the size with its line height (text-xl/snug) or put leading after it.",
+        "tr": "cn() ya da twMerge() içinde leading-* sınıfı text-<boyut> sınıfından önce gelmez: boyutu satır aralığıyla yazın (text-xl/snug) ya da leading’i sonra koyun."
+      },
+      "why": {
+        "en": "tailwind-merge treats a font size as also setting line height, so cn('leading-snug', 'text-xl') silently drops leading-snug and the heading renders at 1.2 instead of 1.375.",
+        "tr": "tailwind-merge yazı boyutunu satır aralığını da ayarlıyor sayar; cn('leading-snug', 'text-xl') leading-snug’ı sessizce siler, başlık 1,375 yerine 1,2 ile çizilir."
+      },
+      "fix": {
+        "en": "text-xl/snug, or move leading-* after the size class.",
+        "tr": "text-xl/snug yazın ya da leading-* sınıfını boyuttan sonraya alın."
+      },
+      "check": {
+        "type": "merged-leading"
       }
     },
     {

@@ -176,6 +176,16 @@
 
 **Nasıl düzeltilir:** Küçük metinde harf aralığını 0 bırakın; soluk açıklamada hafif artı olabilir.
 
+### Satır aralığı sınıf birleştirmede kaybolmaz
+
+`leading-survives-merge` · uyarı · denetlenir
+
+**Kural:** cn() ya da twMerge() içinde leading-* sınıfı text-<boyut> sınıfından önce gelmez: boyutu satır aralığıyla yazın (text-xl/snug) ya da leading’i sonra koyun.
+
+**Neden:** tailwind-merge yazı boyutunu satır aralığını da ayarlıyor sayar; cn('leading-snug', 'text-xl') leading-snug’ı sessizce siler, başlık 1,375 yerine 1,2 ile çizilir.
+
+**Nasıl düzeltilir:** text-xl/snug yazın ya da leading-* sınıfını boyuttan sonraya alın.
+
 ### Metin sığsın diye küçültülmez
 
 `no-shrunk-text` · uyarı · denetlenir
@@ -757,6 +767,16 @@
 **Neden:** Renkli zeminde gri soluk görünür ve güneş altında okunmaz.
 
 **Nasıl düzeltilir:** Zemin renginin koyu tonunu ya da beyaza yakın rengi kullanın.
+
+### Bağlantının her zemin için rengi var
+
+`link-token-per-surface` · uyarı · denetlenir
+
+**Kural:** Hem açık hem koyu zeminde kullanılan bağlantı rengi ikisinde de 4,5:1’i geçer; tek değer geçemiyorsa açık ve koyu zemin kendi bağlantı değerini alır.
+
+**Neden:** Koyu bantta okunan marka turuncusu beyazda 2,5:1 kalır: iki zemine yayılan tek token mutlaka birinde kalır.
+
+**Nasıl düzeltilir:** Açık zeminde bağlantıya koyu ton (700), koyu bölümde açık ton (400); zemine göre ayrı token ya da koyu bölüm yardımcısıyla.
 
 ### Her başlığın üstünde ikon kutusu yok
 
