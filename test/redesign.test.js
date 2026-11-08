@@ -652,7 +652,7 @@ test('redesign reads PRODUCT.md from the project root into the study, and asks f
     const url = `data:text/html;charset=utf-8,${encodeURIComponent(KILNS)}`;
     try {
         await redesign({ cwd, url, agent: 'none' });
-        assert.match(readFileSync(join(cwd, OUT, 'study.md'), 'utf8'), new RegExp(`write a draft of one to ${OUT}/PRODUCT\\.md`));
+        assert.match(readFileSync(join(cwd, OUT, 'study.md'), 'utf8'), new RegExp(`write a draft of one to ${OUT.replace(/\//g, '[\\\\/]')}[\\\\/]PRODUCT\\.md`));
         writeFileSync(join(cwd, 'PRODUCT.md'), 'Purpose: weekly firings for the village.');
         writeFileSync(join(cwd, 'DESIGN.md'), 'Mine, not measured.');
         await redesign({ cwd, url, agent: 'none', intent: 'Make the kilns the hero' });
@@ -882,7 +882,7 @@ test('a card that changes text without addsText or replacesText is sent back; de
 
 test('the prompts say how to look at the page and how to draw it again; the craft prompt says what to do with a test', () => {
     const text = seeing({ page: 'http://127.0.0.1:5000/module-1.html', out: '.ai-design-check/redesign', scope: ['[data-block-type=module-1]'], refresh: 'npm run build && php artisan module:export 1', saved: 'dist/module-1.html' });
-    assert.match(text, /bin\/ai-design-check\.js" shot http:\/\/127\.0\.0\.1:5000\/module-1\.html --width 1440 --out \.ai-design-check\/redesign\/look-1440\.png --scope '\[data-block-type=module-1\]'/);
+    assert.match(text, /bin[\\/]ai-design-check\.js" shot http:\/\/127\.0\.0\.1:5000\/module-1\.html --width 1440 --out \.ai-design-check\/redesign\/look-1440\.png --scope '\[data-block-type=module-1\]'/);
     assert.match(text, /before you report/);
     assert.ok(text.includes('run this from the project folder before you look, so the screenshot shows your change:\n  npm run build && php artisan module:export 1\ndist/module-1.html is stale until that command runs'), text);
     assert.doesNotMatch(seeing({ page: 'x.html', out: 'o' }), /stale/);
