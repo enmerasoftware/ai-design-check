@@ -9,32 +9,58 @@ import { assertLanded, assertPage, assertScope, findChrome, launch, signIn } fro
 
 const REVEAL = `(async () => {
     const wait = (ms) => new Promise((done) => setTimeout(done, ms));
-    const hidden = (el) => { let o = 1; for (let n = el; n; n = n.parentElement) o *= +getComputedStyle(n).opacity; return o < 0.05; };
+    const start = performance.now();
+    // Bounded: a long page gets fewer, shorter stops, never more than 8 s in all.
+    const until = start + 8000;
+    const opacity = (el) => { let o = 1; for (let n = el; n; n = n.parentElement) o *= +getComputedStyle(n).opacity; return o; };
     const own = (el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
-    // The faded box around each hidden text, once per box; only boxes that animate their way in (a transition or an
-    // animation on them), since a reveal is one and a closed menu at opacity 0 usually is too but costs one wait.
+    // A box the first pass revealed may still be fading out again: let it settle, or it is missed here and counted after.
+    const settle = (ms) => Promise.race([Promise.all(document.getAnimations().filter((a) => a.playState === 'running' && Number.isFinite(a.effect?.getComputedTiming?.().endTime)).map((a) => a.finished.catch(() => {}))), wait(ms)]);
+    await settle(1000);
+    // The faded box around each hidden text, once per box. Any box: a reveal may swap a class with no transition at all.
     const veils = new Set();
     for (const el of document.body.querySelectorAll('*')) {
-        if (['SCRIPT', 'STYLE', 'TEMPLATE', 'NOSCRIPT'].includes(el.tagName) || !own(el) || !hidden(el)) continue;
+        if (veils.size >= 400) break;
+        if (['SCRIPT', 'STYLE', 'TEMPLATE', 'NOSCRIPT'].includes(el.tagName) || !own(el) || opacity(el) >= 0.05) continue;
         for (let n = el; n && n !== document.body; n = n.parentElement) {
-            const style = getComputedStyle(n);
-            if (+style.opacity < 0.05) {
-                if (style.transitionDuration.split(',').some((t) => parseFloat(t) > 0) || style.animationName !== 'none') veils.add(n);
-                break;
-            }
+            if (+getComputedStyle(n).opacity < 0.05) { veils.add(n); break; }
         }
     }
-    const until = performance.now() + 6000;
+    // A closed panel (inert, a shut <details>, or one its toggle marks aria-expanded="false") waits for a click, not a
+    // scroll: no time spent on it, and the page scan leaves it out anyway.
+    const shut = (veil) => veil.closest('[inert], [aria-hidden="true"], details:not([open])') || veil.previousElementSibling?.getAttribute('aria-expanded') === 'false' || (veil.id && document.querySelector('[aria-expanded="false"][aria-controls~="' + CSS.escape(veil.id) + '"]'));
+    for (const veil of veils) if (shut(veil)) veils.delete(veil);
+    if (!veils.size) return;
+    const open = () => [...veils].filter((veil) => !veil.hasAttribute('data-adc-revealed'));
+    // Revealed: seen at 5% or more while on screen, at any moment, even mid-fade or before it hides again. An observer
+    // near its threshold fires on one run and not the next; whatever showed once counts as shown.
+    const look = () => {
+        for (const veil of open()) {
+            const box = veil.getBoundingClientRect();
+            if (box.bottom > 0 && box.top < innerHeight && box.width > 0 && box.height > 0 && opacity(veil) >= 0.05) veil.setAttribute('data-adc-revealed', '');
+        }
+    };
+    const watch = async (ms) => { const end = Math.min(performance.now() + ms, until); do { look(); await wait(30); } while (performance.now() < end && open().length); look(); };
     const y = scrollY;
-    for (const veil of veils) {
+    const root = document.documentElement;
+    root.style.scrollBehavior = 'auto';
+    // Down the whole page in steps, each long enough for observers to fire and a fade to start.
+    const height = Math.min(root.scrollHeight, 40000);
+    const step = Math.max(innerHeight * 0.6, height / 40);
+    const pause = Math.max(60, Math.min(160, 5000 / Math.ceil(height / step)));
+    for (let top = 0; top <= height && performance.now() < until && open().length; top += step) {
+        scrollTo(0, top);
+        await watch(pause);
+    }
+    // Animations under way at the bottom get their end, within reason.
+    await Promise.race([settle(800), watch(800)]);
+    // What is still hidden: each brought to the middle of the screen, where any threshold is met, while time is left.
+    for (const veil of open()) {
         if (performance.now() > until) break;
         if (veil.hasAttribute('data-adc-revealed')) continue;
-        veil.scrollIntoView({ block: 'center' });
-        // Up to a second for the observer to fire and the transition to start, on a busy machine too.
-        for (let t = 0; t < 20 && +getComputedStyle(veil).opacity < 0.05; t++) await wait(50);
-        const running = document.getAnimations().filter((a) => a.playState === 'running' && Number.isFinite(a.effect?.getComputedTiming?.().endTime));
-        await Promise.race([Promise.all(running.map((a) => a.finished.catch(() => {}))), wait(1500)]);
-        for (const other of veils) if (!other.hasAttribute('data-adc-revealed') && +getComputedStyle(other).opacity >= 0.05) other.setAttribute('data-adc-revealed', '');
+        const box = veil.getBoundingClientRect();
+        scrollTo(0, scrollY + box.top + box.height / 2 - innerHeight / 2);
+        await watch(500);
     }
     scrollTo(0, y);
     await wait(50);
@@ -57,8 +83,8 @@ export async function scanWith(browser, url, { width = 1440, config = {}, quick 
         await assertScope(browser, url, { scope, ignore });
         // Lazy images and on-scroll reveals get their chance before anything counts as hidden.
         await browser.evaluate('(async () => { const root = () => document.documentElement; if (root()) root().style.scrollBehavior = "auto"; for (let y = 0; y < Math.min(root()?.scrollHeight ?? 0, 40000); y += innerHeight / 2) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 40)); } scrollTo(0, 0); await document.fonts.ready; await new Promise((r) => setTimeout(r, ' + (quick ? 0 : 200) + ')); })()');
-        // Reveals that hide again once they leave the screen, or that need longer than the pass gave them: bring each
-        // still-hidden text into view, wait for its transition, and mark what shows so it does not count as invisible.
+        // Reveals that hide again once they leave the screen, fire near their threshold, or need longer than the pass
+        // gave them: walk the page again slowly and mark every faded box that shows at any moment while on screen.
         if (!quick) await browser.evaluate(REVEAL);
         // A page with nothing on it has no findings, and that is not good news (an empty #root whose bundle failed).
         if (requireContent && await browser.evaluate('!document.body || (!document.body.innerText.trim() && !document.querySelector("img,svg,canvas,video,iframe"))')) throw new Error(`${url} rendered an empty page${errors[0] ? `: ${errors[0]}` : ''}`);

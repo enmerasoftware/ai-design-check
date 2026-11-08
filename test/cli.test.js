@@ -128,6 +128,17 @@ test('the hook respects the baseline and the config ignore, and bounds what it e
     assert.equal(hook('a.html').status, 0);
 });
 
+test('the hook names the file of each finding, when one sits in the component it uses', () => {
+    const dir = project({
+        'src/Market.tsx': "import { MarketAppTile } from './MarketAppTile';\nexport function Market({ apps }) {\n    return (\n        <div className=\"grid gap-4 lg:grid-cols-3\">\n            {apps.map((app) => <MarketAppTile key={app.id} app={app} />)}\n        </div>\n    );\n}\n",
+        'src/MarketAppTile.tsx': 'export function MarketAppTile({ app }) {\n    return (\n        <a href={app.url} className="flex items-center gap-3">\n            <div className="min-w-0 flex-1"><p className="truncate">{app.name}</p></div>\n        </a>\n    );\n}\n',
+    });
+    const result = run(dir, ['hook'], JSON.stringify({ tool_input: { file_path: join(dir, 'src/Market.tsx') } }));
+    assert.equal(result.status, 2);
+    assert.match(result.stderr, /^ {2}src\/MarketAppTile\.tsx:3 {2}cell-holds-content/m);
+    assert.doesNotMatch(result.stderr, /src\/Market\.tsx:3 {2}cell-holds-content/);
+});
+
 test('nothing is written through a symbolic link', () => {
     const dir = project({ 'a.html': BAD, 'target.txt': 'mine' });
     symlinkSync(join(dir, 'target.txt'), join(dir, '.ai-design-check-baseline.json'));

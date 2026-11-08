@@ -482,7 +482,7 @@
 
 **Why:** Long lines lose the reader on the way back.
 
-**How to fix:** Cap the paragraph width, not the card.
+**How to fix:** Cap the paragraph width, not the card: max-w-prose (65ch) or about 60ch.
 
 ### Spacing with rhythm
 
@@ -553,6 +553,26 @@
 **Why:** A flex item never shrinks below its content by default, so one long name in a truncate line widens the card past its column and over its neighbour, while the column itself looks fine.
 
 **How to fix:** Add min-w-0 to every flex or grid item between the cell and the truncated text (or overflow-hidden on the cell).
+
+### A scroll box holds its absolute children
+
+`scroller-holds-absolute` · warning · checked
+
+**Rule:** A box that scrolls sideways (overflow-x-auto, overflow-auto, overflow-x-scroll) and holds an absolute or sr-only element is itself positioned: relative, or absolute, fixed or sticky.
+
+**Why:** An absolute element is clipped only by a scroll box that is its containing block. Inside a static scroller it escapes the scroll and widens the whole page: an sr-only table caption made a 390 px page 610 px wide.
+
+**How to fix:** Add relative to the scroller.
+
+### A snap row has scroll padding
+
+`snap-scroll-padding` · warning · checked
+
+**Rule:** A scroller with snap points (snap-x, or snap-mandatory or snap-proximity with overflow-x-auto) and side padding (px-*, ps-*, pl-*) also has the same scroll padding (scroll-px-*, scroll-ps-*, scroll-pl-*).
+
+**Why:** The padding shows at rest, but a snap aligns the card to the scroller's edge, not to the padding: after the first swipe every card sits flush against the screen.
+
+**How to fix:** Add scroll-px-* matching the px-* (scroll-px-4 beside px-4).
 
 ### Phones get the same content
 

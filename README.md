@@ -6,7 +6,7 @@
 [![license: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [Türkçe](README.tr.md) · [日本語](README.ja.md)
 
-For anyone building with Claude Code, Cursor or Codex: 145 design rules, a checker with no dependencies and no API key, and
+For anyone building with Claude Code, Cursor or Codex: 147 design rules, a checker with no dependencies and no API key, and
 an agent skill that repairs the screen. It reads web projects (React, Vue, Svelte, Laravel Blade, HTML; Tailwind, Bootstrap or plain
 CSS) and SwiftUI, Jetpack Compose, Flutter and React Native apps. Finding needs no agent, and neither do the mechanical fixes.
 
@@ -266,6 +266,24 @@ Ignore one place, always with a reason after `--`. An ignore without a reason do
 ```tsx
 {/* ai-design-check-ignore-next-line type-scale -- hero display size, see DESIGN.md */}
 // ai-design-check-ignore-file use-shared-components -- this file is the Button component
+```
+
+Among JSX children the comment goes in braces, as above. Directly after `=> (` or `return (` there are no children
+yet, so `{/* */}` there breaks the JSX: use a `//` line comment instead.
+
+```tsx
+{items.map((item) => (
+    // ai-design-check-ignore-next-line type-scale -- hero display size, see DESIGN.md
+    <h2 className="text-[56px]">{item.title}</h2>
+))}
+```
+
+On a running page (`scan`), mark the element instead. A finding on it or inside it is not reported for the rules listed,
+separated by spaces; `*` or an empty value means every rule:
+
+```html
+<div class="faq" data-ai-design-check-ignore="no-invisible-content text-not-covered">…</div>
+<section data-ai-design-check-ignore="*">…</section>
 ```
 
 ## Commands

@@ -19,7 +19,7 @@ const values = (rule) => by(rule).map((item) => item.value);
 
 test('every rule has both languages, a known area and a valid check type', () => {
     const { areas, rules } = loadRules();
-    const types = ['render', 'native', 'class', 'regex', 'i18n-case', 'icon-button-name', 'shared-components', 'style-overrides', 'repeated-markup', 'shared-looks', 'min-width-chain', 'merged-leading'];
+    const types = ['render', 'native', 'class', 'regex', 'i18n-case', 'icon-button-name', 'shared-components', 'style-overrides', 'repeated-markup', 'shared-looks', 'min-width-chain', 'merged-leading', 'positioned-scroller', 'snap-padding'];
     for (const rule of rules) {
         assert.ok(areas[rule.area], rule.id);
         for (const field of ['title', 'rule', 'why', 'fix']) assert.ok(rule[field].en && rule[field].tr, `${rule.id}.${field}`);
@@ -307,6 +307,168 @@ test('a box that scrolls sideways in a grid item without min-w-0 is named where 
     assert.deepEqual(found, ['src/Cli.tsx:4']);
 });
 
+test('a component is looked through to its root: where it is defined, in this file or a relative import', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adc-root-'));
+    mkdirSync(join(dir, 'src'));
+    writeFileSync(join(dir, 'src', 'Market.tsx'), [
+        "import { MarketAppTile } from './MarketAppTile';",
+        "import Quiet, { Chip as Pill } from './parts';",
+        'function Section({ className, children }) {',
+        "    return <section className={cn('min-w-0 rounded-xl border p-4', className)}>{children}</section>;",
+        '}',
+        'const Row = ({ app }) => (',
+        '    <a className="flex items-center gap-3">',
+        '        <div className="min-w-0"><p className="truncate">{app.name}</p></div>',
+        '    </a>',
+        ');',
+        'export function Market({ apps }) {',
+        '    return (',
+        '        <div className="grid gap-4 lg:grid-cols-3">',
+        '            <Section className="lg:col-span-2">',
+        '                <pre className="overflow-x-auto">npx @enmera/ai-design-check scan https://example.com</pre>',
+        '            </Section>',
+        '            {apps.map((app) => <Row key={app.id} app={app} />)}',
+        '            {apps.map((app) => <MarketAppTile key={app.id} app={app} />)}',
+        '            <Quiet />',
+        '            <Pill className="min-w-0" />',
+        '            <Unknown><span className="truncate">Not found</span></Unknown>',
+        '        </div>',
+        '    );',
+        '}',
+    ].join('\n'));
+    writeFileSync(join(dir, 'src', 'MarketAppTile.tsx'), [
+        'export function MarketAppTile({ app }) {',
+        '    if (!app) return null;',
+        '    return (',
+        '        <Link href={app.url} className="flex items-center gap-3 rounded-lg border p-3">',
+        '            <img src={app.icon} />',
+        '            <div className="min-w-0 flex-1"><p className="truncate font-medium">{app.name}</p></div>',
+        '        </Link>',
+        '    );',
+        '}',
+    ].join('\n'));
+    writeFileSync(join(dir, 'src', 'parts.tsx'), [
+        'export const Chip = forwardRef((props, ref) => (',
+        '    <span ref={ref} className="flex gap-1"><b className="min-w-0"><i className="truncate">{props.label}</i></b></span>',
+        '));',
+        'export default function Quiet() {',
+        '    return (',
+        '        // ai-design-check-ignore-next-line cell-holds-content -- a fixed set of short labels',
+        '        <div className="flex gap-2"><p className="min-w-0"><span className="truncate">Short</span></p></div>',
+        '    );',
+        '}',
+    ].join('\n'));
+    const found = check(dir).filter((item) => item.rule === 'cell-holds-content');
+    assert.deepEqual(found.map((item) => `${item.path}:${item.line}`), ['src/Market.tsx:7', 'src/MarketAppTile.tsx:4']);
+    assert.match(found[0].message, /^<a> \(the root of <Row>, a grid item at src\/Market\.tsx:17\) is a grid item holding a truncated line but has no min-w-0/);
+    assert.match(found[1].message, /^<Link> \(the root of <MarketAppTile>, a grid item at src\/Market\.tsx:18\)/);
+});
+
+test('a link laid out as a card is not a hand-written button link', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adc-cardlink-'));
+    mkdirSync(join(dir, 'src'));
+    writeFileSync(join(dir, 'src', 'Links.tsx'), [
+        'export function Links() {',
+        '    return (',
+        '        <div>',
+        '            <Link href="/a" className="flex flex-col rounded-3xl border bg-white p-5">Tile</Link>',
+        '            <Link href="/b" className="h-full rounded-xl border bg-card px-3 py-2">Tile</Link>',
+        '            <a href="/c" className="grid rounded bg-muted px-2">Tile</a>',
+        '            <a href="/d" className="rounded-2xl bg-card p-6">Tile</a>',
+        '            <a href="/e" className="rounded-lg bg-card px-4 py-2">',
+        '                <h3>Title</h3>',
+        '                <p>Body</p>',
+        '            </a>',
+        '            <a href="/f" className="rounded-lg bg-card px-4 py-2"><span>App</span><span>Free</span></a>',
+        '            <Link href="/g" className="rounded-md bg-primary px-4 py-2 text-white">Save</Link>',
+        '            <a href="/h" className="rounded-md bg-primary px-3 py-1.5"><ArrowIcon /> Next</a>',
+        '            <a href="/i" className="rounded bg-primary p-2">Go</a>',
+        '            <a href="/j" className="flex items-center gap-2 rounded bg-primary px-4 py-2"><svg /> Start</a>',
+        // A logo and a label, or a label and a lucide icon (no Icon suffix), are still a button.
+        '            <a href="/k" className="btn rounded-md bg-primary px-4 py-2"><img src="/google.svg" alt="" />Continue with Google</a>',
+        '            <Link href="/l" className="inline-flex px-4 py-2 rounded-md bg-primary"><span>Get started</span><ArrowRight className="size-4" /></Link>',
+        '            <a href="/m" className="rounded-lg bg-card px-4 py-2"><Image src="/a.png" alt="" /><span>App</span><span>Free</span></a>',
+        '        </div>',
+        '    );',
+        '}',
+    ].join('\n'));
+    const found = check(dir).filter((item) => item.rule === 'use-shared-looks').map((item) => `${item.line} ${item.value}`);
+    assert.deepEqual(found, ['13 button link:Link', '14 button link:a', '15 button link:a', '16 button link:a', '17 button link:a', '18 button link:Link']);
+});
+
+test('a scroll box holding an absolute or sr-only child is positioned', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adc-scroller-'));
+    mkdirSync(join(dir, 'src'));
+    writeFileSync(join(dir, 'src', 'Plans.tsx'), [
+        'export function Plans() {',
+        '    return (',
+        '        <div>',
+        '            <div className="overflow-x-auto"><table><caption className="sr-only">Plans</caption></table></div>',
+        '            <div className="overflow-auto rounded"><div><span className="absolute right-0">New</span></div></div>',
+        '            <div className="overflow-x-scroll md:overflow-visible"><span className="sr-only">Swipe</span></div>',
+        '            <div className="relative overflow-x-auto"><table><caption className="sr-only">Plans</caption></table></div>',
+        '            <div className="overflow-x-auto"><div className="relative"><span className="absolute inset-0" /></div></div>',
+        '            <div className="overflow-x-auto"><Card><span className="sr-only">Inside a component</span></Card></div>',
+        '            <div className="overflow-hidden"><span className="sr-only">Clipped anyway</span></div>',
+        '            <div className="sticky top-0 overflow-x-auto"><span className="absolute">Positioned</span></div>',
+        '        </div>',
+        '    );',
+        '}',
+    ].join('\n'));
+    writeFileSync(join(dir, 'src', 'table.html'), '<div class="overflow-x-auto"><table><caption class="sr-only">Plans</caption></table></div>\n<div class="relative overflow-x-auto"><span class="sr-only">ok</span></div>\n');
+    const found = check(dir).filter((item) => item.rule === 'scroller-holds-absolute');
+    assert.deepEqual(found.map((item) => `${item.path}:${item.line}`), ['src/Plans.tsx:4', 'src/Plans.tsx:5', 'src/Plans.tsx:6', 'src/table.html:1']);
+    assert.match(found[0].message, /holds <caption> that is sr-only.*add relative to the scroller$/);
+});
+
+test('a snap row with side padding has the same scroll padding', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adc-snap-'));
+    mkdirSync(join(dir, 'src'));
+    writeFileSync(join(dir, 'src', 'Row.tsx'), [
+        'export function Row() {',
+        '    return (',
+        '        <div>',
+        '            <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-4">a</div>',
+        '            <div className="flex snap-mandatory overflow-x-auto ps-6">b</div>',
+        "            <div className={cn('flex snap-x', 'md:pl-8')}>c</div>",
+        '            <div className="flex snap-x gap-4 overflow-x-auto px-4 scroll-px-4">d</div>',
+        '            <div className="flex snap-mandatory px-4">e</div>',
+        '            <div className="flex overflow-x-auto px-4">f</div>',
+        '            <div className="flex snap-x md:px-8 md:scroll-pl-8">g</div>',
+        '            <div className="flex snap-x overflow-x-auto p-4">h</div>',
+        '        </div>',
+        '    );',
+        '}',
+    ].join('\n'));
+    const found = check(dir).filter((item) => item.rule === 'snap-scroll-padding');
+    assert.deepEqual(found.map((item) => `${item.line} ${item.value}`), ['4 px-4', '5 ps-6', '6 md:pl-8']);
+    assert.match(found[0].message, /add scroll-px-4 to match it$/);
+});
+
+test('an ignore directly after "=> (" or "return (" is a // line comment, and it counts', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adc-ignore-jsx-'));
+    mkdirSync(join(dir, 'src'));
+    writeFileSync(join(dir, 'src', 'List.tsx'), [
+        'export const List = ({ items }) => (',
+        '    <div>',
+        '        {items.map((item) => (',
+        '            // ai-design-check-ignore-next-line spacing-scale -- matches the photo grid',
+        '            <p key={item} className="mt-[13px]">{item}</p>',
+        '        ))}',
+        '        <p className="mt-[13px]">Kept</p>',
+        '    </div>',
+        ');',
+        'export function Hero() {',
+        '    return (',
+        '        // ai-design-check-ignore-next-line spacing-scale -- the hero lines up with the photo',
+        '        <div className="mt-[13px]">Hero</div>',
+        '    );',
+        '}',
+    ].join('\n'));
+    const found = check(dir).filter((item) => item.rule === 'spacing-scale').map((item) => item.line);
+    assert.deepEqual(found, [7]);
+});
+
 test('cn(): a line height before a font size is dropped by tailwind-merge', () => {
     const dir = mkdtempSync(join(tmpdir(), 'adc-merge-'));
     mkdirSync(join(dir, 'src'));
@@ -335,4 +497,50 @@ test('narrow: content wider than the screen on a page that cannot scroll sideway
     writeFileSync(file, '<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width"><style>body{margin:0;overflow-x:hidden;font:16px/1.5 Georgia,serif}</style></head><body><p>Short words.</p><div style="width:485px;height:20px;background:#eee"></div></body></html>');
     const found = (await narrow(file)).filter((item) => item.rule === 'no-horizontal-overflow');
     assert.deepEqual(found.map((item) => item.severity), ['info']);
+});
+
+const narrowPage = (body, style = '') => `<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width"><title>t</title><style>body{margin:0;font:16px/1.5 sans-serif}${style}</style></head><body>${body}</body></html>`;
+
+test('narrow: screen-reader-only text is cut on purpose, a real label is not', { skip: !findChrome() && 'no Chrome', timeout: 90_000 }, async () => {
+    const file = join(mkdtempSync(join(tmpdir(), 'adc-sronly-')), 'page.html');
+    writeFileSync(file, narrowPage([
+        '<a href="#main"><span class="sr-only">Skip to the main content of this page</span></a>',
+        '<span class="vh">Visually hidden heading text for readers</span>',
+        '<span style="position:absolute;width:60px;overflow:hidden;white-space:nowrap;clip:rect(0 0 0 0)">Clipped away with rect only, no 1 px box</span>',
+        '<div class="sr-wrap"><span style="white-space:nowrap">A long label inside a hidden wrapper box</span></div>',
+        '<div style="width:80px;overflow:hidden;white-space:nowrap">Real label that is cut off</div>',
+    ].join(''), '.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.sr-wrap{position:absolute;width:1px;height:1px;overflow:hidden}'));
+    const cut = (await narrow(file)).filter((item) => item.rule === 'text-not-clipped').map((item) => item.value);
+    assert.deepEqual(cut, ['div "Real label that is cut off"']);
+});
+
+test('narrow: a link that moves into the hamburger menu is not hidden content', { skip: !findChrome() && 'no Chrome', timeout: 90_000 }, async () => {
+    const file = join(mkdtempSync(join(tmpdir(), 'adc-hamburger-')), 'page.html');
+    writeFileSync(file, narrowPage([
+        '<header><nav class="top"><a href="/pricing">Pricing</a><a href="/docs">Docs</a><a href="/blog">Blog</a></nav>',
+        '<button class="burger" aria-controls="menu" aria-expanded="false">Menu</button>',
+        '<div id="menu" hidden><a href="/pricing">Pricing</a><a href="/docs">Docs</a><a href="/news">Blog</a></div></header>',
+        '<span class="desk">Free for teams</span><details><summary>More</summary><span>Free for teams</span></details>',
+        '<p class="desk">Only on desktop, nowhere else</p>',
+    ].join(''), '.burger{display:none}@media (max-width:600px){.top,.desk{display:none}.burger{display:block}}'));
+    const hidden = (await narrow(file)).filter((item) => item.rule === 'no-hidden-content-narrow').map((item) => item.value).sort();
+    // Blog points elsewhere in the menu, so it is gone; the text in <details> is the same words in a menu.
+    assert.deepEqual(hidden, ['a "Blog"', 'p "Only on desktop, nowhere else"']);
+});
+
+test('narrow: the deepest box that sticks out is named, with its classes, even without text', { skip: !findChrome() && 'no Chrome', timeout: 180_000 }, async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adc-culprit-'));
+    const plain = join(dir, 'plain.html');
+    writeFileSync(plain, narrowPage('<p>Short words.</p><button class="q faq-row" style="display:flex;width:100%;padding:0;border:0"><span>Question</span><span class="size-8 rounded-full bg-ink extra" style="flex:none;width:32px;height:32px;margin-left:400px;background:#222"></span></button>'));
+    const found = (await narrow(plain)).filter((item) => item.rule === 'no-horizontal-overflow');
+    assert.equal(found.length, 1);
+    assert.match(found[0].message, /scrolls sideways: span\.size-8\.rounded-full\.bg-ink$/);
+    const stressed = join(dir, 'stress.html');
+    writeFileSync(stressed, narrowPage('<div class="row" style="display:flex;align-items:center"><span class="who" style="white-space:nowrap;font-size:24px">Ada Lovelace</span><i class="dot size-8" style="flex:none;width:32px;height:32px;background:#222"></i></div>'));
+    assert.deepEqual((await narrow(stressed)).filter((item) => item.rule === 'no-horizontal-overflow'), []);
+    const worst = (await narrow(stressed, { stress: true })).filter((item) => item.rule === 'no-horizontal-overflow');
+    assert.equal(worst.length, 1);
+    assert.match(worst[0].message, /^With long data the page is \d+ px wide at 320 px: .*i\.dot\.size-8/);
+    assert.match(worst[0].message, /span\.who "Muhammed/);
+    assert.doesNotMatch(worst[0].message, /div\.row/);
 });

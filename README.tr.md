@@ -6,7 +6,7 @@
 [![lisans: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [English](README.md) · [日本語](README.ja.md)
 
-Claude Code, Cursor ya da Codex ile geliştirenler için: 145 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
+Claude Code, Cursor ya da Codex ile geliştirenler için: 147 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
 denetçi ve ekranı onaran bir ajan becerisi. Web projelerini (React, Vue, Svelte, Laravel Blade, HTML; Tailwind, Bootstrap ya da düz CSS)
 ve SwiftUI, Jetpack Compose, Flutter, React Native uygulamalarını okur. Bulmak için ajan gerekmez, mekanik düzeltmeler için de gerekmez.
 
@@ -272,6 +272,24 @@ Bir yeri yok saymak için `--` sonrasına mutlaka gerekçe yazın. Gerekçesiz y
 ```tsx
 {/* ai-design-check-ignore-next-line type-scale -- tanıtım başlığı boyutu, bkz. DESIGN.md */}
 // ai-design-check-ignore-file use-shared-components -- Button bileşeninin kendisi
+```
+
+JSX çocukları arasında yorum yukarıdaki gibi süslü parantez içinde yazılır. `=> (` ya da `return (` hemen sonrasında
+henüz çocuk yoktur; orada `{/* */}` JSX’i bozar, bunun yerine `//` satır yorumu kullanın.
+
+```tsx
+{items.map((item) => (
+    // ai-design-check-ignore-next-line type-scale -- tanıtım başlığı boyutu, bkz. DESIGN.md
+    <h2 className="text-[56px]">{item.title}</h2>
+))}
+```
+
+Çalışan sayfada (`scan`) öğeyi işaretleyin. Öğenin kendisinde ya da içinde bulunan bulgu, boşlukla ayrılmış kurallar için
+bildirilmez; `*` ya da boş değer bütün kurallar demektir:
+
+```html
+<div class="faq" data-ai-design-check-ignore="no-invisible-content text-not-covered">…</div>
+<section data-ai-design-check-ignore="*">…</section>
 ```
 
 ## Komutlar

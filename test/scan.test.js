@@ -252,6 +252,74 @@ CASES['link-token-per-surface'] = {
 CASES['text-not-covered'].pass.push('<div style="position:relative;width:300px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 30%);mask-image:linear-gradient(90deg,transparent,#000 30%)"><p style="margin:0">Faded marquee strip</p><div style="position:absolute;inset:0;background:#fff"></div></div>');
 CASES['no-horizontal-overflow'].pass.push(page('<div style="width:2000px;height:20px;background:#eee"></div>', 'html,body{overflow-x:hidden}'));
 
+// Shapes from a real front end (FAQ accordions, sr-only labels, switchers, badges, prose measure) that must not be caught,
+// next to the real targets that still must.
+const narrow = 'il it lilt still tilt ill fill till lit '.repeat(20);
+const corner = '<div style="position:fixed;right:0;bottom:0;width:240px;height:100px"><a href="/" style="display:block;height:100px;background:#111;color:#fff">Chat</a></div>';
+const FRONT = {
+    'no-invisible-content': {
+        flag: [
+            `<button aria-expanded="true">Question?</button><div style="opacity:0">${long}</div><p>Short.</p>`,
+            // A closed menu button before the page's wrapper does not make every faded text in it a shut panel.
+            `<button aria-expanded="false" aria-controls="menu">☰</button><div class="site"><p>Short.</p><p style="opacity:0">${long}</p></div>`,
+            `<button aria-expanded="false">☰</button><main><p>Short.</p><section style="opacity:0"><p>${long}</p></section></main>`,
+            // A toggle that names another panel does not shut this one.
+            `<p>Short.</p><button aria-expanded="false" aria-controls="other">Question?</button><div style="opacity:0">${long}</div><div id="other"></div>`,
+        ],
+        pass: [
+            `<p>${long}</p><button aria-expanded="false">Question?</button><div style="display:grid;grid-template-rows:0fr"><div style="opacity:0;overflow:hidden"><p>${long}</p></div></div>`,
+            `<p>${long}</p><h3><button aria-expanded="false" aria-controls="a1">Question?</button></h3><div id="a1" inert style="opacity:0;display:grid;grid-template-rows:0fr"><div style="overflow:hidden"><p>${long}</p></div></div>`,
+            `<p>${long}</p><button aria-expanded="false" aria-controls="a2">Question?</button><section><div id="a2" style="opacity:0"><p>${long}</p></div></section>`,
+            `<p>${long}</p><button aria-expanded="false">Question?</button><div style="opacity:0">${long}</div>`,
+            `<p>${long}</p><h3 style="margin:0"><button aria-expanded="false">Question?</button></h3><div role="region" style="opacity:0"><p>${long}</p></div>`,
+            `<p>${long}</p><div aria-hidden="true" style="opacity:0"><p>${long}</p></div>`,
+            `<p>${long}</p><details><summary>Question?</summary><p style="opacity:0">${long}</p></details>`,
+        ],
+    },
+    'text-not-covered': {
+        flag: ['<div style="position:sticky;top:0"><div style="position:relative;width:300px"><p style="margin:0">Covered inside a sticky bar</p><div style="position:absolute;inset:0;background:#fff"></div></div></div>'],
+        pass: [`${corner}<p style="position:absolute;top:820px;right:20px;width:180px;margin:0">Words under the corner button</p>`, `<div style="position:fixed;top:0;left:0;right:0"><div style="height:60px;background:#fff">Bar</div></div><p style="margin:20px 0 0">Under a bar child</p>`],
+    },
+    'text-not-clipped': {
+        flag: [],
+        pass: ['<div style="width:100px;overflow:hidden;white-space:nowrap;clip-path:inset(50%)">A long sentence that will not fit in here</div>', '<div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"><div style="width:100px;overflow:hidden;white-space:nowrap">A long sentence that will not fit in here</div></div>'],
+    },
+    'no-nested-cards': {
+        flag: [],
+        pass: [`<div style="${card};width:600px;height:300px"><h3>Preview</h3><div style="border:1px solid #ddd;border-radius:8px;width:400px;height:200px;overflow:hidden"><img alt="" src="${gif}" width="400" height="200"></div></div>`, `<div style="${card};width:600px;height:300px"><div style="border:1px solid #ddd;border-radius:8px;overflow-x:auto;width:400px;height:100px"><table><tr><td>Plan</td><td>Price</td></tr></table></div></div>`],
+    },
+    'no-announcement-pill': {
+        flag: [`<span style="${pill};background:#eee">Powered by AI</span><h1 style="font-size:48px">A small tool</h1>`, `<span style="${pill};background:#eee">AI-native workspace</span><h1 style="font-size:48px">A small tool</h1>`, `<span style="${pill};background:#eee">Backed by YC</span><h1 style="font-size:48px">A small tool</h1>`, `<span style="${pill};background:#eee">YC W24</span><h1 style="font-size:48px">A small tool</h1>`, `<span style="${pill};background:#eee">Seed funded</span><h1 style="font-size:48px">A small tool</h1>`, `<span style="${pill};background:#eee">🎉 v2.0 is out</span><h1 style="font-size:48px">A small tool</h1>`, `<a href="/" style="${pill};background:#eee">v0.2.0</a><h1 style="font-size:48px">A small tool</h1>`, `<span style="${pill};background:#eee">Now live in 40 countries</span><h1 style="font-size:48px">A small tool</h1>`],
+        pass: [`<div style="display:inline-flex;gap:4px;padding:4px;border-radius:999px;background:#eee;font-size:13px"><a href="/seo" aria-current="page" style="${pill};background:#fff">SEO</a><a href="/aso" style="${pill}">ASO</a></div><h1 style="font-size:48px">Rank higher</h1>`, `<span style="${pill};background:#eee">v0.1.0</span><h1 style="font-size:48px">A small tool</h1>`, `<span style="${pill};border:1px solid #ddd">Open source · MIT</span><h1 style="font-size:48px">A small tool</h1>`, `<span style="${pill};background:#eee">Developer tools</span><h1 style="font-size:48px">A small tool</h1>`],
+    },
+    'no-eyebrow-label': {
+        flag: ['<p style="font-size:12px;margin:0;letter-spacing:.1em">SEO</p><h2>Ranks that hold</h2>', '<p style="font-size:12px;margin:0;text-transform:uppercase">seo</p><h2>Ranks that hold</h2>'],
+        pass: ['<p style="font-size:12px;margin:0">SEO</p><h2>Ranks that hold</h2>', '<p style="font-size:12px;margin:0">ASO</p><h3>Store pages</h3>'],
+    },
+    'no-icon-tile-stack': {
+        flag: [],
+        pass: [`${'<div style="display:flex;align-items:center;gap:12px"><div style="width:48px;height:48px;border-radius:12px;background:#eef"><svg width="24" height="24"></svg></div><h3 style="margin:0">Fast</h3></div>'.repeat(3)}`],
+    },
+    'no-cramped-padding': {
+        flag: ['<div style="border:1px solid #333;border-bottom:0;padding:0;width:max-content">Three sides</div>'],
+        pass: ['<h2 style="border-top:1px solid #ccc;padding:0;margin:0;width:max-content">Divider heading</h2>', '<p style="border-bottom:2px solid #ccc;padding:0;margin:0;width:max-content">Underlined line</p>'],
+    },
+    'readable-measure': {
+        // The cap counts in the text's font: 60ch of a 20 px font is about 86ch of a 14 px one.
+        flag: [`<p style="max-width:90ch">${narrow}</p>`, `<div style="max-width:60ch;font-size:20px"><p style="font-size:14px">${narrow}</p></div>`],
+        pass: [`<p style="max-width:65ch">${narrow}</p>`, `<div style="max-width:65ch"><p>${narrow}</p></div>`, `<p style="width:65ch">${narrow}</p>`],
+    },
+    'no-flush-cards': {
+        // The last one is full bleed (-mx-4 px-4 snap-x): the scroller sits at the screen edge.
+        flag: [`<div style="margin:0 60px;display:flex;gap:16px;overflow-x:auto;width:600px;padding:0 16px;scroll-snap-type:x mandatory">${`<div style="${card};flex:0 0 300px;scroll-snap-align:start">Card</div>`.repeat(4)}</div>`, `<div style="margin:0 -24px;display:flex;gap:16px;overflow-x:auto;padding:0 24px;scroll-snap-type:x mandatory">${`<div style="${card};flex:0 0 300px;scroll-snap-align:start">Card</div>`.repeat(6)}</div>`],
+        pass: [`<div style="margin:0 60px;display:flex;gap:16px;overflow-x:auto;width:600px;padding:0 16px;scroll-padding-inline:16px;scroll-snap-type:x mandatory">${`<div style="${card};flex:0 0 300px;scroll-snap-align:start">Card</div>`.repeat(4)}</div>`, `<div style="margin:0 -24px;display:flex;gap:16px;overflow-x:auto;padding:0 24px;scroll-padding-inline:24px;scroll-snap-type:x mandatory">${`<div style="${card};flex:0 0 300px;scroll-snap-align:start">Card</div>`.repeat(6)}</div>`, `<div style="margin:0 -24px;display:flex;gap:16px;overflow-x:auto;padding:0 24px">${`<div style="${card};flex:0 0 300px">Card</div>`.repeat(6)}</div>`],
+    },
+};
+for (const [rule, extra] of Object.entries(FRONT)) {
+    CASES[rule].flag.push(...extra.flag);
+    CASES[rule].pass.push(...extra.pass);
+}
+
 const STYLE = '<style>@keyframes p{50%{opacity:.2}}</style>';
 const wrap = (html) => (html.startsWith('<!doctype') ? html : page(STYLE + html));
 
@@ -353,4 +421,56 @@ test('scan: a reveal that hides again off screen is not invisible content; one t
     const rules = async (html) => (await scanWith(browser, `data:text/html;charset=utf-8,${encodeURIComponent(html)}`, { width: 1280 })).map((item) => item.rule);
     assert.ok(!(await rules(reveal(works))).includes('no-invisible-content'));
     assert.ok((await rules(reveal(''))).includes('no-invisible-content'));
+});
+
+const findingsOf = async (html, options = {}) => scanWith(browser, `data:text/html;charset=utf-8,${encodeURIComponent(wrap(html))}`, { width: 1280, quick: true, ...options });
+
+test('scan: one call to action repeated on many cards is one finding that says how often', { skip }, async () => {
+    const found = (await findingsOf(`${'<div><a href="/">Try it free →</a></div>'.repeat(5)}<a href="/">Read the docs →</a>`)).filter((item) => item.rule === 'no-arrow-suffix');
+    assert.deepEqual(found.map((item) => item.value).sort(), ['Read the docs →', 'Try it free →']);
+    assert.match(found.find((item) => item.value === 'Try it free →').message, /×5/);
+});
+
+test('scan: a page that runs past the edge names the deepest box that sticks out', { skip }, async () => {
+    const found = (await findingsOf('<div class="faq"><button class="q" style="display:flex;width:calc(100% + 40px)">Question<span class="size-8" style="display:block;flex:none;width:32px;height:32px;margin-left:auto;background:#111"></span></button></div>')).find((item) => item.rule === 'no-horizontal-overflow');
+    assert.match(found?.value ?? '', /span\.size-8 in button\.q/);
+});
+
+test('scan: a sideways spill is dropped only when every box that sticks out is marked as known', { skip }, async () => {
+    const overflow = async (html) => (await findingsOf(html)).find((item) => item.rule === 'no-horizontal-overflow');
+    const mark = 'data-ai-design-check-ignore="no-horizontal-overflow"';
+    assert.equal(await overflow(`<div ${mark} style="width:2000px;height:10px"></div>`), undefined);
+    // Two marked boxes first do not use up the two that are named: the third, unmarked one still counts.
+    assert.match((await overflow(`<div ${mark} style="width:2000px;height:10px"></div><div ${mark} style="width:2000px;height:10px"></div><div class="third" style="width:1500px;height:10px"></div>`))?.value ?? '', /div\.third/);
+    // Inside one wide box, a marked child that sticks out furthest does not hide an unmarked sibling.
+    assert.match((await overflow(`<div class="w" style="width:calc(100vw + 10px)"><div ${mark} style="width:calc(100vw + 300px);height:10px"></div><div class="u" style="width:calc(100vw + 50px);height:10px"></div></div>`))?.value ?? '', /div\.u in div\.w/);
+});
+
+test('scan: a snap scroller without scroll-padding is told to add it', { skip }, async () => {
+    const found = (await findingsOf(CASES['no-flush-cards'].flag.at(-1))).find((item) => item.rule === 'no-flush-cards');
+    assert.match(found?.message ?? '', /scroll-px-\*/);
+});
+
+test('scan: data-ai-design-check-ignore on an element drops the listed rules on it and inside it', { skip }, async () => {
+    const tiny = '<p style="font-size:10px">Very small words on this page here</p>';
+    const rules = async (html) => (await findingsOf(html)).map((item) => item.rule);
+    assert.ok((await rules(`<div data-ai-design-check-ignore="no-overused-font">${tiny}</div>`)).includes('no-tiny-text'));
+    assert.ok(!(await rules(`<div data-ai-design-check-ignore="legible-contrast no-tiny-text">${tiny}</div>`)).includes('no-tiny-text'));
+    assert.ok(!(await rules(`<section data-ai-design-check-ignore="*"><div>${tiny}</div></section>`)).includes('no-tiny-text'));
+    assert.ok(!(await rules(`<div data-ai-design-check-ignore>${tiny}</div>`)).includes('no-tiny-text'));
+    // An outer mark counts too, under an inner one that lists other rules.
+    assert.ok(!(await rules(`<div data-ai-design-check-ignore="no-tiny-text"><div data-ai-design-check-ignore="no-overused-font">${tiny}</div></div>`)).includes('no-tiny-text'));
+    assert.ok(!(await rules(`<div style="${card};width:500px;height:200px"><div data-ai-design-check-ignore="no-nested-cards" style="${card};width:200px;height:80px">Inner</div></div>`)).includes('no-nested-cards'));
+    assert.ok(!(await rules(`<p>Short.</p><div data-ai-design-check-ignore="no-invisible-content" style="opacity:0"><p>${long}</p></div>`)).includes('no-invisible-content'));
+    assert.ok(!(await rules(`<div data-ai-design-check-ignore="no-arrow-suffix"><a href="/">Start free →</a> <a href="/">Read the docs →</a></div>`)).includes('no-arrow-suffix'));
+    assert.ok(!(await rules(`<div data-ai-design-check-ignore="no-announcement-pill"><span style="${pill};background:#eef2ff">✨ Introducing Acme 2.0</span></div><h1 style="font-size:56px">Close the books in a day</h1>`)).includes('no-announcement-pill'));
+    assert.ok(!(await rules('<div data-ai-design-check-ignore="text-not-covered" style="position:relative;width:300px"><p style="margin:0">Hidden words under a box here</p><div style="position:absolute;inset:0;background:#fff"></div></div>')).includes('text-not-covered'));
+});
+
+test('scan: a reveal by class swap with no transition, near its threshold, is not invisible content', { skip, timeout: 60_000 }, async () => {
+    const html = page(`<style>.r{opacity:0}.r.in{opacity:1}</style><p>Short.</p><div style="height:3000px"></div><p class="r">${long}</p><div style="height:600px"></div><p class="r">${long}</p><div style="height:1200px"></div><script>const io = new IntersectionObserver((list) => list.forEach((e) => e.target.classList.toggle("in", e.isIntersecting)), { threshold: 0.6 }); document.querySelectorAll(".r").forEach((el) => io.observe(el));</script>`);
+    const started = Date.now();
+    const found = (await scanWith(browser, `data:text/html;charset=utf-8,${encodeURIComponent(html)}`, { width: 390 })).map((item) => item.rule);
+    assert.ok(!found.includes('no-invisible-content'), found.join(' '));
+    assert.ok(Date.now() - started < 20_000);
 });

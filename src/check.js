@@ -401,7 +401,199 @@ const AUTO_GRID = (classes) => {
  * fixed width or max-w caps it; min-w-0 on one item lets that item shrink but does not stop the width travelling on,
  * so each flex or grid item on the way needs its own.
  */
-function checkMinWidthChain(path, source, report) {
+function checkMinWidthChain(chain, path, source, raw, report) {
+    const file = chainFile(chain, path, source);
+    file.raw = raw;
+    // A dry pass first: a component defined further down the file is used before the walk reaches its root.
+    if (file.roots.size) walkChain(chain, file, null, 0);
+    walkChain(chain, file, report, 0);
+}
+
+/** Two class sets as one: a component's root classes and the className its caller passes in. */
+function mergedClasses(root, own) {
+    const set = new Set([...root, ...own]);
+    Object.defineProperty(set, 'base', { value: new Set([...(root.base ?? root), ...(own.base ?? own)]) });
+    return set;
+}
+
+/** One file read for the chain rule: its source, the components it defines and the ones it imports. */
+function chainFile(chain, path, source) {
+    if (chain.files.has(path)) return chain.files.get(path);
+    const file = { path, source, roots: componentRoots(source), imports: relativeImports(source), carried: new Map() };
+    chain.files.set(path, file);
+    return file;
+}
+
+/** The component a tag names, defined in this file or imported from a relative path in the project; null when unknown. */
+function resolveComponent(chain, file, name, depth) {
+    let target = file;
+    let exported = name;
+    if (!file.roots.has(name)) {
+        const imported = file.imports.get(name);
+        if (!imported || depth >= 2 || !chain.cwd) return null;
+        const path = resolveImport(chain, file.path, imported.from);
+        if (!path) return null;
+        if (!chain.files.has(path)) {
+            const raw = readFileSync(join(chain.cwd, path), 'utf8');
+            const read = chainFile(chain, path, blankMarkupComments(raw));
+            read.raw = raw;
+            walkChain(chain, read, null, depth + 1);
+        }
+        target = chain.files.get(path);
+        exported = imported.name === 'default' ? (/\bexport\s+default\s+(?:[\w.]+\(\s*)?(?:function\s+)?([A-Z]\w*)/.exec(target.source)?.[1] ?? '') : imported.name;
+    }
+    const root = target.roots.get(exported);
+    if (!root) return null;
+
+    return { file: target, root, name, classes: utilitiesOf(root.attrs) };
+}
+
+const IMPORTABLE = ['', '.tsx', '.jsx', '.js', '/index.tsx', '/index.jsx', '/index.js'];
+function resolveImport(chain, from, specifier) {
+    const base = join(dirname(from), specifier).split(sep).join('/');
+    if (base.startsWith('..')) return null;
+    for (const suffix of IMPORTABLE) {
+        const path = base + suffix;
+        if (!/\.(?:tsx|jsx|js)$/.test(path) || matches(chain.ignore, path)) continue;
+        const full = join(chain.cwd, path);
+        if (existsSync(full) && statSync(full).isFile()) return path;
+    }
+    return null;
+}
+
+/** import Foo, { Bar, Baz as Qux } from './x': local name → { name it is exported as, from }. Relative paths only. */
+function relativeImports(source) {
+    const out = new Map();
+    for (const match of source.matchAll(/\bimport\s+(?!type\s)(?:([A-Za-z_$][\w$]*)\s*,?\s*)?(?:\{([^}]*)\})?\s*from\s*['"](\.{1,2}\/[^'"]+)['"]/g)) {
+        if (match[1]) out.set(match[1], { name: 'default', from: match[3] });
+        for (const entry of (match[2] ?? '').split(',')) {
+            const named = /^\s*(?:type\s+)?([\w$]+)(?:\s+as\s+([\w$]+))?\s*$/.exec(entry);
+            if (named && !/^\s*type\s/.test(entry)) out.set(named[2] ?? named[1], { name: named[1], from: match[3] });
+        }
+    }
+    return out;
+}
+
+/** The JSX a function body returns at its own level (not a callback's): the last such return wins. */
+function returnedTag(source, from, to) {
+    let found = null;
+    const body = source.slice(from, to);
+    for (const match of body.matchAll(/\breturn\s*\(?\s*<(?=[A-Za-z])/g)) {
+        const before = body.slice(0, match.index);
+        if ((before.match(/\{/g) ?? []).length === (before.match(/\}/g) ?? []).length) found = from + match.index + match[0].length - 1;
+    }
+    return found === null ? null : readTag(source, found);
+}
+
+/**
+ * Components a file defines and the element each one renders at its root: function Foo(…) { return (<root …>) } and
+ * const Foo = (…) => (<root …>), also inside forwardRef() or memo(). A fragment or a computed root is left out.
+ */
+function componentRoots(source) {
+    const roots = new Map();
+    for (const match of source.matchAll(/\bfunction\s+([A-Z]\w*)\s*(?:<[^<>()]*>)?\s*\(|\b(?:const|let)\s+([A-Z]\w*)\s*(?::[^=;]+)?=(?!=)/g)) {
+        const name = match[1] ?? match[2];
+        if (roots.has(name)) continue;
+        let at = match.index + match[0].length;
+        if (match[2]) {
+            // Wrappers (forwardRef(, React.memo(, async) in front of the parameters.
+            at += /^\s*(?:(?:[\w$.]+\s*(?:<[^<>()]*>)?\s*\(\s*)(?=[(\w])|async\s+)*/.exec(source.slice(at, at + 200))[0].length;
+            if (source[at] === '(') at = balancedEnd(source, at, '(', ')');
+            else if (/[\w$]/.test(source[at] ?? '')) at += /^[\w$]+/.exec(source.slice(at))[0].length;
+            else continue;
+            const arrow = at > 0 && /^\s*(?::[^=;{}]*)?=>\s*/.exec(source.slice(at, at + 200));
+            if (!arrow) continue;
+            at += arrow[0].length;
+            if (source[at] !== '{') {
+                const head = /^\(?\s*/.exec(source.slice(at))[0];
+                const root = source[at + head.length] === '<' ? readTag(source, at + head.length) : null;
+                if (root) roots.set(name, root);
+                continue;
+            }
+        } else {
+            at = balancedEnd(source, at - 1, '(', ')');
+            if (at < 0) continue;
+            const brace = /^[^{;]*/.exec(source.slice(at, at + 200))[0].length + at;
+            if (source[brace] !== '{') continue;
+            at = brace;
+        }
+        const end = balancedEnd(source, at);
+        const root = end > 0 ? returnedTag(source, at + 1, end - 1) : null;
+        if (root) roots.set(name, root);
+    }
+    return roots;
+}
+
+/**
+ * The walk itself. With report null it only records which elements carry a content width up (file.carried: start →
+ * 'truncate' | 'scroll'), so a component's root can be looked through from where the component is used.
+ */
+function walkChain(chain, file, report, depth) {
+    const { path, source } = file;
+    const stack = [];
+    for (const match of source.matchAll(/<(\/?)(?:([A-Za-z][\w.-]*)(?=[\s/>])|(?=>))/g)) {
+        if (match[1]) {
+            const at = stack.map((item) => item.name).lastIndexOf(match[2] ?? '');
+            if (at >= 0) stack.length = at;
+            continue;
+        }
+        const tag = match[2] ? readTag(source, match.index) : { name: '', attrs: '', selfClosing: false, start: match.index };
+        if (!tag) continue;
+        const own = utilitiesOf(tag.attrs);
+        // A component known by its source: its root's classes, with the caller's className on top.
+        const def = /^[A-Z]/.test(tag.name) ? resolveComponent(chain, file, tag.name, depth) : null;
+        const element = { name: tag.name, classes: def ? mergedClasses(def.classes, own) : own, start: tag.start, def };
+        // A box that scrolls sideways (a code block, a table wrapper) asks its parents for its full content width just
+        // like a truncated line: the scroll only starts once something above it is allowed to be narrower.
+        const scrolls = [...element.classes].some((name) => /^overflow-(?:x-)?(?:auto|scroll)$/.test(name));
+        const held = def?.file.carried.get(def.root.start) ?? (element.classes.has('truncate') || element.classes.has('text-ellipsis') ? 'truncate' : scrolls ? 'scroll' : null);
+        if (held) {
+            const capped = (item) => [...item.classes].some((name) => CAPPED.test(name));
+            let item = element;
+            let open = true;
+            for (let index = stack.length - 1; index >= 0 && index >= stack.length - 8; index--) {
+                const parent = stack[index];
+                if (!parent.name) continue; // a fragment draws no box: its children belong to the box around it
+                if (/^[A-Z]/.test(parent.name) && !parent.def && !parent.classes.size) { open = false; break; } // a component: its layout is elsewhere
+                if (capped(item)) { open = false; break; }
+                file.carried.set(item.start, held);
+                // The truncated element itself is never the culprit (truncate clips); a component holding one may be.
+                if ((item !== element || item.def) && (ROW_FLEX(parent.classes) || AUTO_GRID(parent.classes)) && ![...item.classes].some((name) => SHRINKS.test(name))) {
+                    if (report) reportChain(chain, file, item, parent, held, element, report);
+                    open = false;
+                    break;
+                }
+                item = parent;
+            }
+            if (open && !capped(item)) file.carried.set(item.start, held);
+        }
+        if (!tag.selfClosing && !(VOID.has(tag.name) && !/^[A-Z]/.test(tag.name))) stack.push(element);
+    }
+}
+
+/** Names the box that needs min-w-0: for a component, its root element in the file that defines it. */
+function reportChain(chain, file, item, parent, held, element, report) {
+    const at = item.def ? item.def.file : file;
+    const start = item.def ? item.def.root.start : item.start;
+    const key = `${at.path}:${start}`;
+    if (chain.seen.has(key)) return;
+    chain.seen.add(key);
+    const name = item.def ? item.def.root.name : item.name;
+    const kind = ROW_FLEX(parent.classes) ? 'flex' : 'grid';
+    const what = held === 'scroll' ? (item.def ? 'a box that scrolls sideways' : `a box that scrolls sideways (<${element.name}>)`) : 'a truncated line';
+    const where = item.def ? ` (the root of <${item.def.name}>, a ${kind} item at ${file.path}:${lineOf(file.source, item.start)})` : '';
+    const ignored = at === file ? undefined : (chain.ignores.get(at.path) ?? chain.ignores.set(at.path, ignores(at.raw ?? '')).get(at.path));
+    report('cell-holds-content', at.path, lineOf(at.source, start), `<${name || '>'}`, `<${name}>${where} is a ${kind} item holding ${what} but has no min-w-0: ${held === 'scroll' ? 'a long line widens the column instead of scrolling' : 'a long text widens it past its column'}`, ignored);
+}
+
+const POSITIONED = /^(?:relative|absolute|fixed|sticky)$/;
+const SCROLLER = /^overflow-(?:x-)?(?:auto|scroll)$/;
+/**
+ * An absolute (or sr-only, which is absolute) element is clipped by a scroll box only when that box, or a box inside
+ * it, is positioned. Inside a static scroller it takes its containing block from further up, escapes the scroll and
+ * widens the page: a table's sr-only caption made a 390 px page 610 px wide.
+ */
+function checkScrollerPosition(path, source, report) {
     const stack = [];
     const reported = new Set();
     for (const match of source.matchAll(/<(\/?)(?:([A-Za-z][\w.-]*)(?=[\s/>])|(?=>))/g)) {
@@ -412,30 +604,37 @@ function checkMinWidthChain(path, source, report) {
         }
         const tag = match[2] ? readTag(source, match.index) : { name: '', attrs: '', selfClosing: false, start: match.index };
         if (!tag) continue;
-        const element = { name: tag.name, classes: utilitiesOf(tag.attrs), start: tag.start };
-        // A box that scrolls sideways (a code block, a table wrapper) asks its parents for its full content width just
-        // like a truncated line: the scroll only starts once something above it is allowed to be narrower.
-        const scrolls = [...element.classes].some((name) => /^overflow-(?:x-)?(?:auto|scroll)$/.test(name));
-        if (element.classes.has('truncate') || element.classes.has('text-ellipsis') || scrolls) {
-            let item = element;
-            for (let index = stack.length - 1; index >= 0 && index >= stack.length - 8; index--) {
-                const parent = stack[index];
-                if (!parent.name) continue; // a fragment draws no box: its children belong to the box around it
-                if (/^[A-Z]/.test(parent.name) && !parent.classes.size) break; // a component: its layout is elsewhere
-                if ([...item.classes].some((name) => CAPPED.test(name))) break;
-                if (item !== element && (ROW_FLEX(parent.classes) || AUTO_GRID(parent.classes)) && ![...item.classes].some((name) => SHRINKS.test(name))) {
-                    if (!reported.has(item.start)) {
-                        reported.add(item.start);
-                        const held = scrolls ? `a box that scrolls sideways (<${element.name}>)` : 'a truncated line';
-                        report('cell-holds-content', path, lineOf(source, item.start), `<${item.name || '>'}`, `<${item.name}> is a ${ROW_FLEX(parent.classes) ? 'flex' : 'grid'} item holding ${held} but has no min-w-0: ${scrolls ? 'a long line widens the column instead of scrolling' : 'a long text widens it past its column'}`);
-                    }
-                    break;
+        const classes = utilitiesOf(tag.attrs);
+        const element = { name: tag.name, classes, start: tag.start };
+        if (classes.has('absolute') || classes.has('sr-only')) {
+            for (let index = stack.length - 1; index >= 0; index--) {
+                const box = stack[index];
+                if (!box.name) continue;
+                if ([...box.classes].some((name) => POSITIONED.test(name))) break;
+                if (/^[A-Z]/.test(box.name) && !box.classes.size) break; // a component: it may be positioned inside
+                if (![...box.classes].some((name) => SCROLLER.test(name))) continue;
+                if (!reported.has(box.start)) {
+                    reported.add(box.start);
+                    const scroll = [...box.classes].find((name) => SCROLLER.test(name));
+                    report('scroller-holds-absolute', path, lineOf(source, box.start), `<${box.name} ${scroll}>`, `<${box.name}> scrolls (${scroll}) but is not positioned, and holds <${tag.name}> that is ${classes.has('sr-only') ? 'sr-only' : 'absolute'}: it escapes the scroll box and widens the page; add relative to the scroller`);
                 }
-                item = parent;
+                break;
             }
         }
         if (!tag.selfClosing && !(VOID.has(tag.name) && !/^[A-Z]/.test(tag.name))) stack.push(element);
     }
+}
+
+/**
+ * A snap row with side padding but no scroll padding: the padding shows at rest, but the first snap lands the card on
+ * the scroller's edge, so the cards end flush with the screen. scroll-px-* gives the snap the same inset.
+ */
+function snapPadding(text) {
+    const list = tokens(text);
+    const names = list.map(utility);
+    const snaps = names.includes('snap-x') || (names.some((name) => /^snap-(?:mandatory|proximity)$/.test(name)) && names.some((name) => /^overflow-(?:x-)?(?:auto|scroll)$/.test(name)));
+    if (!snaps || names.some((name) => /^scroll-p[xsl]?-/.test(name))) return null;
+    return list.find((token) => /^p[xsl]-/.test(utility(token))) ?? null;
 }
 
 /**
@@ -472,6 +671,40 @@ function checkSharedComponents(config, path, source, report) {
     }
 }
 
+/** Tags whose presence makes a link's content a block (a tile), not a button label. An image alone does not: a logo
+ * beside the label is a button too ("Continue with Google"). */
+const BLOCK_CHILD = /<(?:div|p|h[1-6]|ul|ol|li|dl|section|article|header|footer|figure|picture|table)(?=[\s/>])/;
+/** Elements directly inside a fragment of JSX children that hold something; icons (svg, *Icon, <i>) and self-closing
+ * tags (a lucide <ArrowRight />, a logo <img />) do not count. */
+function topLevelElements(markup) {
+    let count = 0;
+    let depth = 0;
+    for (const match of markup.matchAll(/<(\/?)([A-Za-z][\w.-]*)?/g)) {
+        if (match[1]) {
+            depth = Math.max(0, depth - 1);
+            continue;
+        }
+        if (!match[2]) continue;
+        const tag = readTag(markup, match.index);
+        if (!tag) continue;
+        if (depth === 0 && !tag.selfClosing && !/^(?:svg|i|[A-Z]\w*Icon)$/.test(tag.name)) count++;
+        if (!tag.selfClosing) depth++;
+    }
+    return count;
+}
+/**
+ * A link laid out as a card: a column, full height, a grid, padding of 16 px or more on every side, or children that
+ * are blocks (a title and a line of text). LinkButton is for a link that looks like a button, not for a clickable tile.
+ */
+function cardLink(source, tag, text) {
+    const list = tokens(text).map(utility);
+    if (list.some((name) => /^(?:flex-col|flex-col-reverse|h-full|grid|inline-grid)$/.test(name))) return true;
+    if (list.some((name) => /^p-(?:\d+(?:\.\d+)?|\[\d+(?:\.\d+)?(?:px|rem)\])$/.test(name) && (name.startsWith('p-[') ? parseFloat(name.slice(3)) * (name.endsWith('rem]') ? 16 : 1) >= 16 : Number(name.slice(2)) >= 4))) return true;
+    const inner = children(source, tag);
+    if (inner === null) return true; // more than a label's worth of markup
+    return BLOCK_CHILD.test(inner) || topLevelElements(inner) >= 2;
+}
+
 function checkLooks(config, path, source, report) {
     if (matches(config.componentDirs, path)) return;
     const looks = Object.values(config.looks);
@@ -480,6 +713,7 @@ function checkLooks(config, path, source, report) {
         if (raw === undefined) continue;
         const text = typeof raw === 'string' ? raw : classUnits(`className={${raw.code}}`, config.classFunctions).map((unit) => unit.text).join(' ');
         const look = looks.find((item) => item.tags.includes(tag.name) && item.test(text));
+        if (look?.name === 'button link' && cardLink(source, tag, text)) continue;
         if (look) report('use-shared-looks', path, lineOf(source, tag.start), `${look.name}:${tag.name}`, `Hand-written ${look.name} <${tag.name}>: use ${look.component}`);
     }
 }
@@ -520,10 +754,11 @@ export function check(cwd, overrides = {}) {
     // Read on first use: a run that meets no bracket value (the post-edit hook, usually) never walks the project.
     let scales = config.scales;
     const spacing = () => (scales ??= spacingScales(cwd, config));
-    const report = (id, path, line, value, message) => {
+    // skipped: the inline ignores of another file, for a finding named where its fix goes (a component's root).
+    const report = (id, path, line, value, message, skipped = skip) => {
         const rule = catalogue.rules.find((item) => item.id === id);
         const severity = severityOf(rule);
-        if (severity === 'off' || allowed(config, id, path, value) || skip(id, line)) return null;
+        if (severity === 'off' || allowed(config, id, path, value) || skipped(id, line)) return null;
         const finding = { rule: id, area: rule.area, severity, path, line, value, message: message ?? rule.title.en };
         findings.push(finding);
 
@@ -535,7 +770,10 @@ export function check(cwd, overrides = {}) {
     const classRules = active.filter((rule) => rule.check.type === 'class');
     const regexRules = active.filter((rule) => rule.check.type === 'regex');
     const repeated = active.find((rule) => rule.check.type === 'repeated-markup');
+    const snapRule = active.some((rule) => rule.check.type === 'snap-padding');
     const groups = new Map();
+    // Shared by every file of the run: components are looked through across files, each culprit named once.
+    const chain = { cwd, ignore: config.ignore, files: new Map(), seen: new Set(), ignores: new Map() };
 
     for (const path of files) {
         let extension = extensionOf(path);
@@ -580,6 +818,10 @@ export function check(cwd, overrides = {}) {
                         seen.add(`${rule.id}:${match.index}`);
                         report(rule.id, path, line, match[0].trim(), check.scale ? `Off the spacing scale, ${describeScale(spacing().web)}: ${match[0].trim()}` : `${rule.title.en}: ${match[0].trim()}`);
                     }
+                }
+                if (snapRule) {
+                    const pad = snapPadding(unit.text);
+                    if (pad) report('snap-scroll-padding', path, line, pad, `Snap scroller with ${pad} but no scroll padding: the first card snaps flush to the edge; add scroll-${utility(pad)} to match it`);
                 }
                 if (repeated) {
                     const key = signature(unit.text);
@@ -665,7 +907,8 @@ export function check(cwd, overrides = {}) {
         if (on('sentence-case') && config.labels && ['tsx', 'jsx', 'vue', 'svelte'].includes(extension)) checkLabels(config, path, source, report);
         if (reactNative && JSX.includes(extension)) checkTouchables(path, code, report);
         if (on('icon-button-name') && HTML_LIKE.includes(extension)) checkMarkupIconButtons(path, source, report);
-        if (on('cell-holds-content') && MARKUP.includes(extension)) checkMinWidthChain(path, source, report);
+        if (on('cell-holds-content') && MARKUP.includes(extension)) checkMinWidthChain(chain, path, source, raw, report);
+        if (on('scroller-holds-absolute') && MARKUP.includes(extension)) checkScrollerPosition(path, source, report);
         if (on('leading-survives-merge') && (MARKUP.includes(extension) || SCRIPT.includes(extension))) checkMergedLeading(path, source, report);
         if (JSX.includes(extension)) {
             if (on('icon-button-name')) checkIconButtons(path, source, report);

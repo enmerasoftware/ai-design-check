@@ -482,7 +482,7 @@
 
 **Neden:** Uzun satırda göz bir sonraki satırın başını kaybeder.
 
-**Nasıl düzeltilir:** Kartı değil paragrafı daraltın.
+**Nasıl düzeltilir:** Kartı değil paragrafı daraltın: max-w-prose (65ch) ya da yaklaşık 60ch.
 
 ### Boşlukta ritim
 
@@ -553,6 +553,26 @@
 **Neden:** Flex öğesi varsayılan olarak içeriğinden dar olamaz; truncate satırındaki tek bir uzun ad kartı sütunundan taşırıp komşusunun üstüne çıkarır, sütun ise doğru görünür.
 
 **Nasıl düzeltilir:** Hücre ile kısaltılan metin arasındaki her flex ya da ızgara öğesine min-w-0 ekleyin (ya da hücreye overflow-hidden).
+
+### Kaydırma kutusu mutlak konumlu çocuklarını tutar
+
+`scroller-holds-absolute` · uyarı · denetlenir
+
+**Kural:** Yana kayan (overflow-x-auto, overflow-auto, overflow-x-scroll) ve içinde absolute ya da sr-only bir öğe bulunan kutu kendisi konumludur: relative ya da absolute, fixed, sticky.
+
+**Neden:** Mutlak konumlu öğeyi yalnızca onun kapsayıcı bloğu olan kaydırma kutusu kırpar. Konumsuz bir kaydırma kutusunda öğe kaydırmadan kaçar ve bütün sayfayı genişletir: sr-only bir tablo başlığı 390 px’lik sayfayı 610 px yaptı.
+
+**Nasıl düzeltilir:** Kaydırma kutusuna relative ekleyin.
+
+### Kaydırma şeridinin kaydırma iç boşluğu vardır
+
+`snap-scroll-padding` · uyarı · denetlenir
+
+**Kural:** Tutunma noktalı (snap-x ya da overflow-x-auto ile snap-mandatory veya snap-proximity) ve yan iç boşluklu (px-*, ps-*, pl-*) kaydırma kutusunda aynı kaydırma iç boşluğu da bulunur (scroll-px-*, scroll-ps-*, scroll-pl-*).
+
+**Neden:** İç boşluk durağan hâlde görünür, ama tutunma kartı iç boşluğa değil kaydırma kutusunun kenarına hizalar: ilk kaydırmadan sonra her kart ekranın kenarına yapışır.
+
+**Nasıl düzeltilir:** px-* ile aynı değerde scroll-px-* ekleyin (px-4 yanına scroll-px-4).
 
 ### Telefon aynı içeriği alır
 

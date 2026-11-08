@@ -1,5 +1,42 @@
 # Changelog
 
+## 0.16.3
+
+Second round from the Searvia front end (92 addresses, three widths).
+
+- **Fewer false alarms in `scan`:**
+  - `no-invisible-content` leaves out a closed accordion (`aria-expanded="false"` toggle, `inert`, `hidden`,
+    `aria-hidden`, a closed `<details>`).
+  - Its reveal pass now scrolls the whole page and counts any block seen while on screen, so on-scroll reveals stop
+    flapping around the threshold.
+  - `text-not-covered` ignores sticky and fixed layers and checks again with the text in the middle of the screen.
+  - `text-not-clipped` skips screen-reader-only text, in `narrow` too.
+  - `no-nested-cards` skips boxes with no text of their own (screenshot frames) and table scroll wrappers.
+  - `no-announcement-pill` skips segmented switchers and version or licence badges.
+  - `no-eyebrow-label` skips short acronyms written in capitals.
+  - `no-icon-tile-stack` only counts a tile above its heading, not beside it.
+  - `no-arrow-suffix` reports a repeated label once, with ×N.
+  - `no-cramped-padding` skips a heading with a single rule.
+  - `readable-measure` accepts text capped at `max-w-prose` (65ch).
+- **`narrow`:**
+  - A top link that moved into the phone menu is not hidden content.
+  - The sideways spill names the element that sticks out, text or not, also with `--stress`.
+- **`scan` names the cause.** The horizontal overflow finding names the deepest box past the edge
+  (`span.size-8 in button.q`). `no-flush-cards` says when snap-start skips the padding (add `scroll-px-*`).
+- **Ignore in the page.** `data-ai-design-check-ignore="rule-a rule-b"` (or empty for every rule) on an element keeps
+  page-scan findings for it and its children out, for decisions made on purpose.
+- **Code rules:**
+  - `cell-holds-content` looks through components: a same-file or relatively imported component's root is read with
+    the className at the usage. The finding lands in the file that defines the root.
+  - `use-shared-looks` no longer calls a card-sized link a button.
+  - New `scroller-holds-absolute`: a scroll box without `relative` that holds an `absolute` or `sr-only` child lets
+    it escape and widen the page.
+  - New `snap-scroll-padding`: a snap row with `px-*` and no `scroll-px-*`.
+- **Ignore comments in JSX.** Right after `=> (` or `return (` an ignore needs a `//` line comment; the docs, help and
+  hook say so.
+- **design-fix:** the 0.16.2 wording that asked for small touches is gone. The skill makes the visible changes the
+  rules call for; only the frame that stages a product example stays protected.
+
 ## 0.16.2
 
 From the Searvia home page fix.

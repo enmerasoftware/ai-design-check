@@ -410,8 +410,8 @@
         "tr": "Uzun satırda göz bir sonraki satırın başını kaybeder."
       },
       "fix": {
-        "en": "Cap the paragraph width, not the card.",
-        "tr": "Kartı değil paragrafı daraltın."
+        "en": "Cap the paragraph width, not the card: max-w-prose (65ch) or about 60ch.",
+        "tr": "Kartı değil paragrafı daraltın: max-w-prose (65ch) ya da yaklaşık 60ch."
       },
       "check": {
         "type": "render",
@@ -2775,6 +2775,54 @@
       },
       "check": {
         "type": "merged-leading"
+      }
+    },
+    {
+      "id": "scroller-holds-absolute",
+      "area": "layout",
+      "severity": "warn",
+      "title": {
+        "en": "A scroll box holds its absolute children",
+        "tr": "Kaydırma kutusu mutlak konumlu çocuklarını tutar"
+      },
+      "rule": {
+        "en": "A box that scrolls sideways (overflow-x-auto, overflow-auto, overflow-x-scroll) and holds an absolute or sr-only element is itself positioned: relative, or absolute, fixed or sticky.",
+        "tr": "Yana kayan (overflow-x-auto, overflow-auto, overflow-x-scroll) ve içinde absolute ya da sr-only bir öğe bulunan kutu kendisi konumludur: relative ya da absolute, fixed, sticky."
+      },
+      "why": {
+        "en": "An absolute element is clipped only by a scroll box that is its containing block. Inside a static scroller it escapes the scroll and widens the whole page: an sr-only table caption made a 390 px page 610 px wide.",
+        "tr": "Mutlak konumlu öğeyi yalnızca onun kapsayıcı bloğu olan kaydırma kutusu kırpar. Konumsuz bir kaydırma kutusunda öğe kaydırmadan kaçar ve bütün sayfayı genişletir: sr-only bir tablo başlığı 390 px’lik sayfayı 610 px yaptı."
+      },
+      "fix": {
+        "en": "Add relative to the scroller.",
+        "tr": "Kaydırma kutusuna relative ekleyin."
+      },
+      "check": {
+        "type": "positioned-scroller"
+      }
+    },
+    {
+      "id": "snap-scroll-padding",
+      "area": "layout",
+      "severity": "warn",
+      "title": {
+        "en": "A snap row has scroll padding",
+        "tr": "Kaydırma şeridinin kaydırma iç boşluğu vardır"
+      },
+      "rule": {
+        "en": "A scroller with snap points (snap-x, or snap-mandatory or snap-proximity with overflow-x-auto) and side padding (px-*, ps-*, pl-*) also has the same scroll padding (scroll-px-*, scroll-ps-*, scroll-pl-*).",
+        "tr": "Tutunma noktalı (snap-x ya da overflow-x-auto ile snap-mandatory veya snap-proximity) ve yan iç boşluklu (px-*, ps-*, pl-*) kaydırma kutusunda aynı kaydırma iç boşluğu da bulunur (scroll-px-*, scroll-ps-*, scroll-pl-*)."
+      },
+      "why": {
+        "en": "The padding shows at rest, but a snap aligns the card to the scroller's edge, not to the padding: after the first swipe every card sits flush against the screen.",
+        "tr": "İç boşluk durağan hâlde görünür, ama tutunma kartı iç boşluğa değil kaydırma kutusunun kenarına hizalar: ilk kaydırmadan sonra her kart ekranın kenarına yapışır."
+      },
+      "fix": {
+        "en": "Add scroll-px-* matching the px-* (scroll-px-4 beside px-4).",
+        "tr": "px-* ile aynı değerde scroll-px-* ekleyin (px-4 yanına scroll-px-4)."
+      },
+      "check": {
+        "type": "snap-padding"
       }
     },
     {

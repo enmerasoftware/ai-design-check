@@ -121,6 +121,8 @@ Options
 Inline ignore (a reason is required):
   // ai-design-check-ignore-next-line rule-id -- why
   // ai-design-check-ignore-file rule-id -- why
+  Among JSX children write {/* ai-design-check-ignore-next-line rule-id -- why */}; directly after "=> (" or
+  "return (" keep the // form: {/* */} there breaks the JSX
 
 Rules and reasons: https://github.com/enmerasoftware/ai-design-check/blob/main/RULES.md`;
 
@@ -654,9 +656,11 @@ if (command === 'hook') {
     const baselineCounts = existsSync(join(cwd, BASELINE)) ? readBaseline(join(cwd, BASELINE)) : {};
     const findings = applyBaseline(check(cwd, { include: [path] }), baselineCounts).filter((item) => item.rule !== 'repeated-markup' && item.severity !== 'info');
     if (findings.length === 0) done(0);
-    console.error(`ai-design-check found ${findings.length} design rule issue(s) in ${path}. Fix them, or add "// ai-design-check-ignore-next-line <rule> -- <reason>" when the rule does not apply:`);
+    // A finding can sit in another file (cell-holds-content reports in the component's own file): each line names its file.
+    const files = new Set(findings.map((item) => item.path ?? path));
+    console.error(`ai-design-check found ${findings.length} design rule issue(s) in ${files.size === 1 ? [...files][0] : `${files.size} files`}. Fix them, or add "// ai-design-check-ignore-next-line <rule> -- <reason>" when the rule does not apply (among JSX children as {/* … */}, but directly after "=> (" or "return (" as the // line):`);
     // Repository text goes back to an agent: one bounded line, so a file cannot write it a page of instructions.
-    for (const item of findings) console.error(`  ${path}:${item.line}  ${item.rule}  ${item.message.replace(/\s+/g, ' ').slice(0, 200)}`);
+    for (const item of findings) console.error(`  ${item.path ?? path}:${item.line}  ${item.rule}  ${item.message.replace(/\s+/g, ' ').slice(0, 200)}`);
     console.error('Rules and how to fix them: npx @enmera/ai-design-check rules');
     done(2);
 }

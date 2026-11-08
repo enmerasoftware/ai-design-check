@@ -3,11 +3,23 @@
 export function scanPage(designSystem, options = {}) {
     const found = [];
     const counts = {};
-    const hit = (rule, value, message, severity) => {
+    // data-ai-design-check-ignore="rule-a rule-b" (or "*", or empty for all) on an element: the page's own way to say a
+    // finding on it or inside it is known and kept. Every marked ancestor counts, not only the nearest.
+    const ignored = (rule, el) => {
+        for (let node = el?.closest?.('[data-ai-design-check-ignore]'); node; node = node.parentElement?.closest('[data-ai-design-check-ignore]')) {
+            const list = node.getAttribute('data-ai-design-check-ignore').split(/[\s,]+/).filter(Boolean);
+            if (!list.length || list.includes('*') || list.includes(rule)) return true;
+        }
+        return false;
+    };
+    // el: the element the finding is about, when there is one, so an ignore on it or around it can drop the finding.
+    const hit = (rule, value, message, severity, el) => {
+        if (el && ignored(rule, el)) return;
         counts[rule] = (counts[rule] || 0) + 1;
         if (counts[rule] > (rule === 'legible-contrast' ? 60 : 12) || found.some((item) => item.rule === rule && item.value === value)) return;
         found.push({ rule, value: String(value).slice(0, 120), ...(message ? { message } : {}), ...(severity ? { severity } : {}) });
     };
+    const on = (el) => (rule, value, message, severity) => hit(rule, value, message, severity, el);
     const vw = document.documentElement.clientWidth;
     const vh = innerHeight;
     const phone = vw < 768;
@@ -76,10 +88,78 @@ export function scanPage(designSystem, options = {}) {
     // reading. The reading rules leave it alone; the visual tells (gradients, glows, neon, loops) still look at it.
     const decor = (el) => Boolean(el.closest('[aria-hidden="true"]'));
     const reading = texts.filter((item) => !decor(item.el));
-    const isCard = ({ style, rect, tag }) => {
+    // Screen-reader-only text (sr-only, visually-hidden): a 1 px clipping box, clip: rect(0 0 0 0) or clip-path: inset(50%).
+    // It is meant to be cut; it is not a clipped label.
+    const concealed = (el) => {
+        for (let node = el; node && node !== document.body; node = node.parentElement) {
+            const look = getComputedStyle(node);
+            const box = node.getBoundingClientRect();
+            const clip = look.clip.match(/-?[\d.]+(?=px)/g)?.map(Number);
+            if (clip?.length === 4 && (clip[1] - clip[3] <= 1 || clip[2] - clip[0] <= 1)) return true;
+            if (/^inset\(50%/.test(look.clipPath)) return true;
+            if ((box.width <= 1 || box.height <= 1) && /(hidden|clip)/.test(look.overflowX + look.overflowY)) return true;
+        }
+        return false;
+    };
+    // Shut away on purpose: inert, hidden, aria-hidden, the body of a closed <details>, or a panel whose toggle says
+    // aria-expanded="false" (by aria-controls, or as the button just before it, alone or in a heading: the accordion
+    // pattern). A closed FAQ answer at opacity 0 is waiting for a click, not lost.
+    // The button just before counts only for the faded box itself or a wrapper holding nothing else: a closed menu
+    // button before the page's main wrapper does not make every faded text on the page a shut panel. A button that
+    // names what it controls has to name this box.
+    const shuts = (button, node) => button.getAttribute('aria-expanded') === 'false' && (!button.hasAttribute('aria-controls') || (node.id && button.getAttribute('aria-controls').split(/\s+/).includes(node.id)));
+    const collapsed = (el) => {
+        if (el.closest('[inert], [hidden], [aria-hidden="true"]')) return true;
+        const details = el.closest('details:not([open])');
+        if (details && el.closest('summary')?.parentElement !== details) return true;
+        let veiled = false;
+        for (let node = el, only = true; node && node !== document.body; node = node.parentElement) {
+            if (node.id && document.querySelector(`[aria-expanded="false"][aria-controls~="${CSS.escape(node.id)}"]`)) return true;
+            if (veiled) only &&= node.children.length === 1;
+            else veiled = +getComputedStyle(node).opacity < 0.05;
+            const prev = node.previousElementSibling;
+            if (veiled && only && prev && (shuts(prev, node) || (/^H[1-6]$/.test(prev.tagName) && [...prev.querySelectorAll('[aria-expanded="false"]')].some((button) => shuts(button, node))))) return true;
+        }
+        return false;
+    };
+    // How wide a "0" is in an element's font: what 1ch means there.
+    const ruler = document.createElement('canvas').getContext('2d');
+    const zero = (look) => {
+        ruler.font = `${look.fontStyle} ${look.fontWeight} ${look.fontSize} ${look.fontFamily}`;
+        return ruler.measureText('0').width || px(look.fontSize) / 2;
+    };
+    // Set at a prose measure: the text box, or a max-width on it or up to three boxes around it, is at most about 66ch.
+    // 65ch (max-w-prose) holds 86 to 88 characters a line of Turkish or English, since "0" is wider than the average letter.
+    const prose = (el, style, rect) => {
+        if (rect.width <= 66 * zero(style) + 1) return true;
+        for (let node = el, depth = 0; node && node !== document.body && depth <= 3; node = node.parentElement, depth++) {
+            const look = getComputedStyle(node);
+            const cap = look.maxWidth.endsWith('px') ? px(look.maxWidth) : look.maxWidth.endsWith('ch') ? px(look.maxWidth) * zero(look) : 0;
+            // The cap in the text's own font: under a larger ancestor font (max-w-[60ch] text-xl around a text-sm p)
+            // the same width holds many more of the text's characters.
+            if (cap && cap <= 66 * zero(style) + 1) return true;
+        }
+        return false;
+    };
+    const framed = (style) => ['Top', 'Right', 'Bottom', 'Left'].filter((side) => px(style[`border${side}Width`]) > 0 && parse(style[`border${side}Color`])).length >= 3;
+    // What is painted over the middle of the text, if a solid box. Something pinned (fixed or sticky, or inside such a
+    // layer) is a bar or a corner button whose overlap depends on the scroll position, not a covered text.
+    const coverOf = (el) => {
+        const box = el.getBoundingClientRect();
+        const top = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+        if (!top || top === el || el.contains(top) || top.contains(el)) return null;
+        const cover = getComputedStyle(top);
+        if ((parse(cover.backgroundColor)?.a ?? 0) < 0.9 || cover.pointerEvents === 'none') return null;
+        for (let node = top; node && node !== document.documentElement; node = node.parentElement) {
+            if (/fixed|sticky/.test(getComputedStyle(node).position) && !node.contains(el)) return null;
+        }
+        return top;
+    };
+    const isCard = ({ el, style, rect, tag }) => {
         if (['BUTTON', 'INPUT', 'SELECT', 'TEXTAREA', 'A', 'IMG', 'PRE', 'CODE', 'HR', 'TABLE'].includes(tag) || rect.width < 120 || rect.height < 60) return false;
-        const border = ['Top', 'Right', 'Bottom', 'Left'].filter((side) => px(style[`border${side}Width`]) > 0 && parse(style[`border${side}Color`])).length >= 3;
-        return border || style.boxShadow !== 'none';
+        // A scroll wrapper around a table is the table's frame, not a card.
+        if (/(auto|scroll)/.test(style.overflowX) && el.querySelector('table')) return false;
+        return framed(style) || style.boxShadow !== 'none';
     };
     // Every colour inside a computed value, brackets and all: Chrome writes Tailwind 4 colours as oklch() and oklab(),
     // others as lab(), lch(), hwb(), color() or color-mix(), so a pattern for rgb() alone misses them. parse() reads each.
@@ -141,11 +221,12 @@ export function scanPage(designSystem, options = {}) {
         const size = px(style.fontSize);
         const value = own(el);
         const label = `${tag.toLowerCase()} "${short(value)}"`;
+        const flag = on(el);
         const color = parse(style.color);
         const back = ground(el);
         const decoration = decor(el);
         if (color && back && decoration) {
-            if (lum(back) < 0.04 && chroma(color) > 0.45 && hue(color) >= 165 && hue(color) <= 205) counts.neon = [...(counts.neon || []), label];
+            if (lum(back) < 0.04 && chroma(color) > 0.45 && hue(color) >= 165 && hue(color) <= 205 && !ignored('no-neon-on-dark', el)) counts.neon = [...(counts.neon || []), label];
             continue;
         }
         if (decoration) continue;
@@ -154,45 +235,49 @@ export function scanPage(designSystem, options = {}) {
             let alpha = color.a;
             for (let node = el; node && node !== document.documentElement; node = node.parentElement) alpha *= +getComputedStyle(node).opacity;
             const contrast = alpha < 0.05 ? 21 : ratio({ r: color.r * alpha + back.r * (1 - alpha), g: color.g * alpha + back.g * (1 - alpha), b: color.b * alpha + back.b * (1 - alpha) }, back); // nearly gone is no-invisible-content
-            if (contrast < (large ? 3 : 4.5)) hit('legible-contrast', label, `${contrast.toFixed(1)}:1, needs ${large ? 3 : 4.5}:1: ${label}`);
-            if (chroma(color) < 0.1 && lum(color) > 0.08 && lum(color) < 0.75 && chroma(back) > 0.25) hit('no-gray-on-color', label);
-            if (lum(back) < 0.04 && chroma(color) > 0.45 && hue(color) >= 165 && hue(color) <= 205) counts.neon = [...(counts.neon || []), label];
+            if (contrast < (large ? 3 : 4.5)) flag('legible-contrast', label, `${contrast.toFixed(1)}:1, needs ${large ? 3 : 4.5}:1: ${label}`);
+            if (chroma(color) < 0.1 && lum(color) > 0.08 && lum(color) < 0.75 && chroma(back) > 0.25) flag('no-gray-on-color', label);
+            if (lum(back) < 0.04 && chroma(color) > 0.45 && hue(color) >= 165 && hue(color) <= 205 && !ignored('no-neon-on-dark', el)) counts.neon = [...(counts.neon || []), label];
         }
         if (tag !== 'SUP' && tag !== 'SUB' && value.length >= 3) {
             const interactive = ['A', 'BUTTON', 'LABEL', 'TH', 'TD'].includes(tag);
-            if (size < (interactive ? 11 : 12)) hit('no-tiny-text', label, `${size} px: ${label}`);
+            if (size < (interactive ? 11 : 12)) flag('no-tiny-text', label, `${size} px: ${label}`);
         }
         const words = value.split(' ').length;
-        if (words >= 8 && (style.textTransform === 'uppercase' || (value === value.toUpperCase() && /\p{Lu}/u.test(value)))) hit('no-all-caps-sentences', label);
+        if (words >= 8 && (style.textTransform === 'uppercase' || (value === value.toUpperCase() && /\p{Lu}/u.test(value)))) flag('no-all-caps-sentences', label);
         const spacing = px(style.letterSpacing) / size;
-        if (spacing < -0.05) hit('no-crushed-tracking', label, `Letter spacing ${spacing.toFixed(2)}em: ${label}`);
-        if (spacing > 0.05 && value.length >= 20 && style.textTransform !== 'uppercase' && value !== value.toUpperCase()) hit('no-wide-tracking-body', label);
+        if (spacing < -0.05) flag('no-crushed-tracking', label, `Letter spacing ${spacing.toFixed(2)}em: ${label}`);
+        if (spacing > 0.05 && value.length >= 20 && style.textTransform !== 'uppercase' && value !== value.toUpperCase()) flag('no-wide-tracking-body', label);
         const height = px(style.lineHeight) || size * 1.2;
         const rows = value.length >= 30 && rect.height >= height * 1.5 ? lines(el).length : 1;
         if (rows >= 2) {
-            if (height / size < 1.28 && size < 32 && value.length >= 60 && style.display !== 'inline' && !/^H[1-6]$/.test(tag)) hit('no-tight-leading', label, `Line height ${(height / size).toFixed(2)}: ${label}`);
-            if (value.length / rows > 85 && !['PRE', 'CODE'].includes(tag)) hit('readable-measure', label, `About ${Math.round(value.length / rows)} characters a line: ${label}`);
+            if (height / size < 1.28 && size < 32 && value.length >= 60 && style.display !== 'inline' && !/^H[1-6]$/.test(tag)) flag('no-tight-leading', label, `Line height ${(height / size).toFixed(2)}: ${label}`);
+            if (value.length / rows > 85 && !['PRE', 'CODE'].includes(tag) && !prose(el, style, rect)) flag('readable-measure', label, `About ${Math.round(value.length / rows)} characters a line: ${label}`);
         }
-        if (style.textAlign === 'justify' && style.hyphens !== 'auto') hit('no-justified-text', label);
+        if (style.textAlign === 'justify' && style.hyphens !== 'auto') flag('no-justified-text', label);
         if (value.length >= 40 && ['P', 'LI'].includes(tag)) {
             const margin = phone ? 12 : 16;
             const painted = lines(el);
-            if (painted.some((row) => row.left < margin || row.right > vw - margin)) hit('text-off-viewport-edge', label);
+            if (painted.some((row) => row.left < margin || row.right > vw - margin)) flag('text-off-viewport-edge', label);
         }
-        if (tag !== 'TD' && rect.width > 2 && rect.height > 2 && el.scrollWidth > el.clientWidth + 1 && /(hidden|clip)/.test(style.overflowX) && !el.title && lines(el).some((row) => row.right > rect.right + 1)) hit('text-not-clipped', label);
+        if (tag !== 'TD' && rect.width > 2 && rect.height > 2 && el.scrollWidth > el.clientWidth + 1 && /(hidden|clip)/.test(style.overflowX) && !el.title && lines(el).some((row) => row.right > rect.right + 1) && !concealed(el)) flag('text-not-clipped', label);
         // Cover: what is painted over the middle of the text. A strip faded at its edge with mask-image, or one that is
         // moving (a marquee), is not covered: the fade is the design and the moving text is measured mid-flight.
-        if (!faded(el) && rect.top >= 0 && rect.bottom <= vh && rect.left >= 0 && rect.right <= vw) {
-            const top = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
-            if (top && top !== el && !el.contains(top) && !top.contains(el)) {
-                const cover = getComputedStyle(top);
-                if (!['fixed', 'sticky'].includes(cover.position) && (parse(cover.backgroundColor)?.a ?? 0) >= 0.9 && cover.pointerEvents !== 'none') hit('text-not-covered', label);
-            }
+        if (!faded(el) && rect.top >= 0 && rect.bottom <= vh && rect.left >= 0 && rect.right <= vw && coverOf(el)) {
+            // A pinned bar or corner button only covers it at this scroll position: test again with the text in the middle
+            // of the screen (the window only; an inner scroller left moved would skew what is measured after).
+            const x = scrollX, y = scrollY;
+            const box = el.getBoundingClientRect();
+            scrollTo({ left: x, top: y + box.top + box.height / 2 - vh / 2, behavior: 'instant' });
+            const still = coverOf(el);
+            scrollTo({ left: x, top: y, behavior: 'instant' });
+            if (still) flag('text-not-covered', label);
         }
-        // Boxes that hold their own text with no room around it.
-        if (rect.width >= 30 && rect.height < 120 && (px(style.paddingLeft) < 3 || px(style.paddingRight) < 3) && (parse(style.backgroundColor) || px(style.borderTopWidth) > 0) && style.display !== 'inline' && !['TD', 'TH', 'INPUT', 'LABEL'].includes(tag)) {
+        // Boxes that hold their own text with no room around it: a filled box or one framed on three sides or more. A
+        // heading with only a rule above it is a divider, not a box.
+        if (rect.width >= 30 && rect.height < 120 && (px(style.paddingLeft) < 3 || px(style.paddingRight) < 3) && (parse(style.backgroundColor) || framed(style)) && style.display !== 'inline' && !['TD', 'TH', 'INPUT', 'LABEL'].includes(tag)) {
             const row = lines(el)[0];
-            if (row && Math.min(row.left - rect.left, rect.right - row.right, row.top - rect.top + 2) < 3 && ground(el.parentElement ?? el) !== null && hex(parse(style.backgroundColor) ?? { r: 0, g: 0, b: 0 }) !== hex(ground(el.parentElement) ?? { r: 1, g: 1, b: 1 })) hit('no-cramped-padding', label);
+            if (row && Math.min(row.left - rect.left, rect.right - row.right, row.top - rect.top + 2) < 3 && ground(el.parentElement ?? el) !== null && hex(parse(style.backgroundColor) ?? { r: 0, g: 0, b: 0 }) !== hex(ground(el.parentElement) ?? { r: 1, g: 1, b: 1 })) flag('no-cramped-padding', label);
         }
     }
     if ((counts.neon || []).length >= 2) hit('no-neon-on-dark', counts.neon[0]);
@@ -201,6 +286,7 @@ export function scanPage(designSystem, options = {}) {
     // Paragraph and heading shape
     for (const { el, style, rect } of reading.filter((item) => item.tag === 'P').slice(0, 80)) {
         if (/pretty|balance/.test(style.textWrap || '') || style.textAlign === 'center') continue;
+        const flag = on(el);
         const node = [...el.childNodes].filter((n) => n.nodeType === 3).pop();
         const words = node?.textContent.trim().split(/\s+/) ?? [];
         if (words.length < 4 || el.lastChild !== node) continue;
@@ -211,14 +297,14 @@ export function scanPage(designSystem, options = {}) {
         const end = node.textContent.trimEnd().length;
         lastWord.setStart(node, end - words[words.length - 1].length);
         lastWord.setEnd(node, end);
-        if (Math.abs(lastWord.getBoundingClientRect().left - last.left) < 2 && rect.width > 0) hit('no-straggler', short(own(el)));
+        if (Math.abs(lastWord.getBoundingClientRect().left - last.left) < 2 && rect.width > 0) flag('no-straggler', short(own(el)));
     }
     for (const { el, style } of all.filter((item) => /^H[1-3]$/.test(item.tag) && !decor(item.el))) {
         if (/balance|pretty/.test(style.textWrap || '')) continue;
         const rows = lines(el);
         if (rows.length >= 2) {
             const [before, after] = rows.slice(-2);
-            if (after.right - after.left < (before.right - before.left) / 2.5) hit('balanced-headings', short(text(el)));
+            if (after.right - after.left < (before.right - before.left) / 2.5) hit('balanced-headings', short(text(el)), undefined, undefined, el);
         }
     }
 
@@ -302,6 +388,22 @@ export function scanPage(designSystem, options = {}) {
         const rows = lines(hero.el);
         const left = rows.length ? Math.min(...rows.map((row) => row.left)) : hero.rect.left;
         const right = rows.length ? Math.max(...rows.map((row) => row.right)) : hero.rect.right;
+        // A segmented switcher (a row of two or more links or buttons, one marked current or pressed) is navigation.
+        const CONTROLS = 'a[href], button, [role="tab"], [role="radio"], [role="button"]';
+        const STATE = '[aria-current], [aria-pressed], [aria-selected]';
+        const switcher = (node) => node.matches(`${STATE}, [role="tab"], [role="radio"]`) || node.querySelectorAll(CONTROLS).length >= 2 || Boolean(node.querySelector(STATE));
+        const grouped = (el) => {
+            if (switcher(el)) return true;
+            for (let node = el.parentElement, depth = 0; node && node !== document.body && depth < 3 && !node.contains(hero.el) && node.getBoundingClientRect().height <= 60; node = node.parentElement, depth++) if (switcher(node)) return true;
+            return false;
+        };
+        // A plain badge that only says what the thing is (a version, a licence, a short category) announces nothing; a
+        // link, an emoji or an arrow, or a word of news, of action or of backing (Powered by AI, Backed by YC, YC W24)
+        // keeps it a pill.
+        const VERSION = /^(?:v(?:ersion)?\s?)?\d+(?:\.\d+)+(?:[-+][\w.]+)?$/i;
+        const NEWS = /\p{Extended_Pictographic}|[→›»↗]|\b(?:new|neu|nuevo|nouveau|yeni|introducing|announcing|now|just|launch(?:ed|ing)?|live|beta|alpha|preview|early access|waitlist|available|out|released?|coming|soon|updated?|running|online|operational|free|sign ?up|join|try|get|read|see|learn|discover|meet|hiring|raised|funding|funded|series [a-d]|powered|backed|built|trusted|ai|yc|y combinator|[wsf]\d{2})\b/iu;
+        const LICENCE = /\b(?:open[ -]source|MIT|Apache|GPL|BSD|MPL|licen[cs]e|lisans)\b|açık kaynak/i;
+        const label = (el, value) => !el.closest('a[href]') && !el.querySelector('a[href]') && (VERSION.test(value) || (!NEWS.test(value) && (LICENCE.test(value) || value.split(' ').length <= 3)));
         for (const { el, style, rect, tag } of all) {
             if (rect.bottom > hero.rect.top + 4 || rect.bottom < hero.rect.top - 160 || rect.height < 14 || rect.height > 44 || rect.width < 24 || rect.width > 480) continue;
             const value = text(el);
@@ -313,8 +415,8 @@ export function scanPage(designSystem, options = {}) {
             if ((frame && !frame.contains(hero.el)) || el.closest('nav, [role="navigation"]')) continue;
             let pinned = false;
             for (let node = el; node && node !== document.body; node = node.parentElement) pinned ||= /fixed|sticky/.test(getComputedStyle(node).position);
-            if (pinned) continue;
-            hit('no-announcement-pill', short(value));
+            if (pinned || grouped(el) || label(el, value)) continue;
+            hit('no-announcement-pill', short(value), undefined, undefined, el);
             claimed.add(el);
             break;
         }
@@ -325,9 +427,12 @@ export function scanPage(designSystem, options = {}) {
             const style = getComputedStyle(prev);
             const value = text(prev);
             const small = px(style.fontSize) <= 14 && value.length > 0 && value.length <= 40 && !prev.querySelector('a, button, img, svg') && !['A', 'NAV', 'BUTTON'].includes(prev.tagName);
-            const shouted = style.textTransform === 'uppercase' || px(style.letterSpacing) / px(style.fontSize) >= 0.05 || (value === value.toUpperCase() && /\p{Lu}/u.test(value));
+            // An acronym written in capitals in the source (SEO, ASO, API) with no uppercase transform and no tracking is
+            // a word, not a label set to shout.
+            const acronym = /^[\p{Lu}\d]{2,4}$/u.test(prev.textContent.trim()) && /\p{Lu}/u.test(prev.textContent) && style.textTransform !== 'uppercase' && px(style.letterSpacing) <= 0;
+            const shouted = style.textTransform === 'uppercase' || px(style.letterSpacing) / px(style.fontSize) >= 0.05 || (value === value.toUpperCase() && /\p{Lu}/u.test(value) && !acronym);
             if (small && shouted && !/^0?\d+[.)]?$/.test(value) && !taken(prev)) {
-                hit('no-eyebrow-label', value);
+                hit('no-eyebrow-label', value, undefined, undefined, prev);
                 claimed.add(prev);
             }
         }
@@ -353,7 +458,7 @@ export function scanPage(designSystem, options = {}) {
         if (items.length < 3 || value.length > 80 || items.some((item) => !/\p{L}/u.test(item) || item.trim().split(' ').length > 5)) continue;
         if (!visible.has(line) || line.closest('footer, nav, table, pre, code, [role="contentinfo"], [role="navigation"]') || line.querySelectorAll('a').length >= 2) continue;
         if (/^(?:©|\(c\)|copyright)/i.test(value) || DATED.test(value) || taken(line)) continue;
-        hit('no-middle-dot-lists', short(value));
+        hit('no-middle-dot-lists', short(value), undefined, undefined, line);
     }
 
     // One link colour on light and on dark grounds: an orange that reads on the dark band fails on white. Each ground
@@ -378,7 +483,8 @@ export function scanPage(designSystem, options = {}) {
     // Boxes
     const cards = all.filter(isCard);
     for (const card of cards) {
-        for (let node = card.el.parentElement; node && node !== document.body; node = node.parentElement) {
+        // An inner box with no words of its own is a frame around a screenshot, a video or an embed, not a card.
+        for (let node = text(card.el) ? card.el.parentElement : null; node && node !== document.body; node = node.parentElement) {
             const outer = cards.find((item) => item.el === node);
             if (outer && card.rect.width * card.rect.height < outer.rect.width * outer.rect.height * 0.9) {
                 // A light frame on a dark section (or the reverse) that holds a product example is a showcase stage, not
@@ -387,8 +493,8 @@ export function scanPage(designSystem, options = {}) {
                 const behind = ground(outer.el.parentElement ?? outer.el);
                 const stage = fill && fill.a >= 0.9 && behind && Math.abs(lum(fill) - lum(behind)) > 0.35;
                 const value = `${card.tag.toLowerCase()} inside ${outer.tag.toLowerCase()}: ${short(text(card.el))}`;
-                if (stage) hit('no-nested-cards', value, `Cards inside a frame that stands out from its section: if it is a showcase stage around a product example, leave it; ${value}`, 'info');
-                else hit('no-nested-cards', value);
+                if (stage) hit('no-nested-cards', value, `Cards inside a frame that stands out from its section: if it is a showcase stage around a product example, leave it; ${value}`, 'info', card.el);
+                else hit('no-nested-cards', value, undefined, undefined, card.el);
                 break;
             }
         }
@@ -398,7 +504,7 @@ export function scanPage(designSystem, options = {}) {
             const value = own(leaf);
             if (leaf.getBoundingClientRect().width > 0 && value.length >= 3 && value.length <= 30 && inside(leaf)) labels[value] = (labels[value] || 0) + 1;
         }
-        for (const [value, total] of Object.entries(labels)) if (total >= 3) hit('no-repeated-label', value, `"${value}" ${total} times in one card`);
+        for (const [value, total] of Object.entries(labels)) if (total >= 3) hit('no-repeated-label', value, `"${value}" ${total} times in one card`, undefined, card.el);
     }
     for (const parent of new Set(cards.map((item) => item.el.parentElement))) {
         const row = cards.filter((item) => item.el.parentElement === parent);
@@ -409,17 +515,18 @@ export function scanPage(designSystem, options = {}) {
     // A tinted shadow cast below a card, button or picture. A focus ring has no blur and a glow no offset: other rules.
     const tinted = (shadow) => shadow.color && !shadow.inset && shadow.blur >= 6 && Math.abs(shadow.x) + Math.abs(shadow.y) >= 2 && shadow.color.a >= 0.15 && chroma(shadow.color) > 0.25;
     for (const { el, style, rect, tag } of all) {
+        const flag = on(el);
         // Shadows
         for (const shadow of shadows(style.boxShadow)) {
             if (!shadow.color) continue;
-            if (chroma(shadow.color) > 0.2 && !shadow.x && !shadow.y && shadow.blur >= 8) hit('glow-in-charts-only', `${tag.toLowerCase()}: ${shadow.blur} px glow`);
-            if ((Math.abs(shadow.x) >= 4 || Math.abs(shadow.y) >= 4) && !shadow.blur && shadow.color.a > 0.3) hit('no-hard-offset-shadow', `${tag.toLowerCase()}: ${shadow.x} ${shadow.y} 0`);
+            if (chroma(shadow.color) > 0.2 && !shadow.x && !shadow.y && shadow.blur >= 8) flag('glow-in-charts-only', `${tag.toLowerCase()}: ${shadow.blur} px glow`);
+            if ((Math.abs(shadow.x) >= 4 || Math.abs(shadow.y) >= 4) && !shadow.blur && shadow.color.a > 0.3) flag('no-hard-offset-shadow', `${tag.toLowerCase()}: ${shadow.x} ${shadow.y} 0`);
         }
-        if (rect.width >= 32 && rect.height >= 20 && [...shadows(style.boxShadow), ...drops(style.filter)].some(tinted)) hit('no-colored-shadow', `${tag.toLowerCase()}: ${short(text(el)) || 'no text'}`);
+        if (rect.width >= 32 && rect.height >= 20 && [...shadows(style.boxShadow), ...drops(style.filter)].some(tinted)) flag('no-colored-shadow', `${tag.toLowerCase()}: ${short(text(el)) || 'no text'}`);
         if (rect.width >= 100 && rect.height >= 40 && tag !== 'BLOCKQUOTE') {
             const sides = ['Top', 'Right', 'Bottom', 'Left'].map((side) => px(style[`border${side}Width`]));
             const thick = sides.filter((width) => width >= 3).length === 1 && sides.filter((width) => width <= 1).length === 3;
-            if (thick && ['Left', 'Right'].some((side) => px(style[`border${side}Width`]) >= 3 && chroma(parse(style[`border${side}Color`]) ?? { r: 0, g: 0, b: 0 }) > 0.15)) hit('no-side-stripe', short(text(el)));
+            if (thick && ['Left', 'Right'].some((side) => px(style[`border${side}Width`]) >= 3 && chroma(parse(style[`border${side}Color`]) ?? { r: 0, g: 0, b: 0 }) > 0.15)) flag('no-side-stripe', short(text(el)));
         }
         // Painted surfaces
         const painted = [style.backgroundImage];
@@ -432,31 +539,40 @@ export function scanPage(designSystem, options = {}) {
             const tokens = colors(image).map((token) => (/^currentcolor$/i.test(token) ? style.color : token));
             const stops = tokens.map(parse).filter(Boolean);
             const fading = tokens.some((token) => (parse(token)?.a ?? 0) < 0.05);
-            if (/radial-gradient/.test(image) && fading && rect.width >= 240 && rect.height >= 120 && stops.some((stop) => chroma(stop) > 0.2)) hit('no-radial-halo', `${tag.toLowerCase()}: ${short(text(el)) || 'background'}`);
-            if (/gradient/.test(image) && rect.width >= 120 && stops.some((stop) => chroma(stop) > 0.3 && hue(stop) >= 245 && hue(stop) <= 320)) hit('no-ai-gradients', `${tag.toLowerCase()}: purple gradient`);
-            if (/repeating-(linear|radial)-gradient/.test(image) && rect.width >= 200 && rect.height >= 100) hit('no-stripe-surface', tag.toLowerCase());
-            if ((image.match(/linear-gradient/g) ?? []).length >= 2 && /\d+px/.test(style.backgroundSize) && rect.width >= 200 && rect.height >= 150 && !/repeating/.test(image)) hit('no-grid-wallpaper', `${tag.toLowerCase()}: ${style.backgroundSize}`);
+            if (/radial-gradient/.test(image) && fading && rect.width >= 240 && rect.height >= 120 && stops.some((stop) => chroma(stop) > 0.2)) flag('no-radial-halo', `${tag.toLowerCase()}: ${short(text(el)) || 'background'}`);
+            if (/gradient/.test(image) && rect.width >= 120 && stops.some((stop) => chroma(stop) > 0.3 && hue(stop) >= 245 && hue(stop) <= 320)) flag('no-ai-gradients', `${tag.toLowerCase()}: purple gradient`);
+            if (/repeating-(linear|radial)-gradient/.test(image) && rect.width >= 200 && rect.height >= 100) flag('no-stripe-surface', tag.toLowerCase());
+            if ((image.match(/linear-gradient/g) ?? []).length >= 2 && /\d+px/.test(style.backgroundSize) && rect.width >= 200 && rect.height >= 150 && !/repeating/.test(image)) flag('no-grid-wallpaper', `${tag.toLowerCase()}: ${style.backgroundSize}`);
             if (/url\(/.test(image) && /gradient/.test(image.split('url(')[0])) {
                 const stops = colors(image.split('url(')[0]).map(parse);
-                if (stops.length && stops.every((stop) => stop && stop.a >= 0.9)) hit('no-buried-image', `${tag.toLowerCase()}: picture under a solid wash`);
+                if (stops.length && stops.every((stop) => stop && stop.a >= 0.9)) flag('no-buried-image', `${tag.toLowerCase()}: picture under a solid wash`);
             }
         }
-        if ((style.webkitBackgroundClip === 'text' || style.backgroundClip === 'text') && /gradient/.test(style.backgroundImage)) hit('no-ai-gradients', `gradient text: ${short(text(el))}`);
-        if (/polygon\(/.test(style.clipPath) && (style.clipPath.match(/,/g) ?? []).length >= 11) hit('no-blob-clip-path', `${tag.toLowerCase()}: polygon`);
-        if (/^path\(/.test(style.clipPath)) hit('no-blob-clip-path', `${tag.toLowerCase()}: path`);
+        if ((style.webkitBackgroundClip === 'text' || style.backgroundClip === 'text') && /gradient/.test(style.backgroundImage)) flag('no-ai-gradients', `gradient text: ${short(text(el))}`);
+        if (/polygon\(/.test(style.clipPath) && (style.clipPath.match(/,/g) ?? []).length >= 11) flag('no-blob-clip-path', `${tag.toLowerCase()}: polygon`);
+        if (/^path\(/.test(style.clipPath)) flag('no-blob-clip-path', `${tag.toLowerCase()}: path`);
         if (tag === 'IMG') {
-            if (+style.opacity < 0.1 && rect.width >= 200) hit('no-buried-image', `${el.src.split('/').pop()}: near-zero opacity`);
+            if (+style.opacity < 0.1 && rect.width >= 200) flag('no-buried-image', `${el.src.split('/').pop()}: near-zero opacity`);
         }
         // Motion
         for (const timing of [style.transitionTimingFunction, style.animationTimingFunction]) {
             const curve = /cubic-bezier\(([^)]+)\)/.exec(timing)?.[1].split(',').map(Number);
-            if (curve && (curve[1] > 1.1 || curve[3] > 1.1 || curve[1] < -0.1 || curve[3] < -0.1)) hit('no-bounce-easing', `${tag.toLowerCase()}: ${timing}`);
+            if (curve && (curve[1] > 1.1 || curve[3] > 1.1 || curve[1] < -0.1 || curve[3] < -0.1)) flag('no-bounce-easing', `${tag.toLowerCase()}: ${timing}`);
         }
         // Scrollers whose first card touches the edge while the page around them has a gutter.
-        if (/(auto|scroll)/.test(style.overflowX) && el.scrollWidth > el.clientWidth + 1 && el.children.length >= 2 && rect.left > 16 && !['PRE', 'CODE', 'TABLE'].includes(tag)) {
+        if (/(auto|scroll)/.test(style.overflowX) && el.scrollWidth > el.clientWidth + 1 && el.children.length >= 2 && !['PRE', 'CODE', 'TABLE'].includes(tag)) {
             const first = el.children[0];
             const firstStyle = getComputedStyle(first);
-            if (Math.abs(first.getBoundingClientRect().left - rect.left) < 2 && (px(firstStyle.borderRadius) > 0 || px(firstStyle.borderTopWidth) > 0)) hit('no-flush-cards', short(text(first)));
+            // A snap scroller with padding but no scroll-padding: the padding shows at rest, then snapping lines each card
+            // up with the bare edge (and may already have at load). Full bleed (-mx-4 px-4 snap-x, at the screen edge) is
+            // the usual phone row, so this one does not need a gutter around the scroller.
+            const snaps = style.scrollSnapType !== 'none' && px(style.paddingLeft) > 0 && !px(style.scrollPaddingLeft) && /start/.test(firstStyle.scrollSnapAlign);
+            if (rect.left > 16 || snaps) {
+                const boxed = px(firstStyle.borderRadius) > 0 || px(firstStyle.borderTopWidth) > 0;
+                const value = short(text(first));
+                if (boxed && snaps) flag('no-flush-cards', value, `Snap scroller with padding but no scroll-padding: snap-start ignores the padding and lines the cards up with the edge; add scroll-px-* (scroll-padding-inline) to match the padding: ${value}`);
+                else if (boxed && rect.left > 16 && Math.abs(first.getBoundingClientRect().left - rect.left) < 2) flag('no-flush-cards', value);
+            }
         }
         // A clipping box cutting off something positioned inside it.
         if (/(hidden|clip)/.test(style.overflowX + style.overflowY) && style.position !== 'static') {
@@ -465,28 +581,32 @@ export function scanPage(designSystem, options = {}) {
                 if (inner.position !== 'absolute') continue;
                 const box = child.getBoundingClientRect();
                 const out = Math.max(box.bottom - rect.bottom, box.right - rect.right, rect.left - box.left, rect.top - box.top);
-                if (out >= 8 && box.width >= 60 && box.height >= 24 && text(child) && out < Math.max(box.width, box.height) && inner.transform === 'none') hit('no-clipped-popover', short(text(child)));
+                if (out >= 8 && box.width >= 60 && box.height >= 24 && text(child) && out < Math.max(box.width, box.height) && inner.transform === 'none') flag('no-clipped-popover', short(text(child)));
             }
         }
         if (tag === 'svg' && rect.width >= 280 && rect.height >= 180) {
             const shapes = el.querySelectorAll('rect, circle, ellipse, polygon, line').length;
-            if (shapes >= 14 && el.querySelectorAll('text').length < 3) hit('no-clipart-svg', `${shapes} shapes, ${Math.round(rect.width)}×${Math.round(rect.height)}`);
+            if (shapes >= 14 && el.querySelectorAll('text').length < 3) flag('no-clipart-svg', `${shapes} shapes, ${Math.round(rect.width)}×${Math.round(rect.height)}`);
         }
     }
     // Text the visitor never sees, from the live page.
     for (const { el } of texts) {
         // Shown when scrolled to (an on-scroll reveal that hides again when it leaves the screen): not invisible.
-        if (el.closest('[data-adc-revealed]')) continue;
+        if (el.closest('[data-adc-revealed]') || ignored('no-invisible-content', el)) continue;
         const value = own(el).length;
-        chars.total += value;
         let opacity = 1;
         for (let node = el; node; node = node.parentElement) opacity *= +getComputedStyle(node).opacity;
+        // A closed accordion answer or a shut panel is not counted at all, neither hidden nor shown.
+        if (opacity < 0.05 && collapsed(el)) continue;
+        chars.total += value;
         if (opacity < 0.05) chars.hidden += value;
     }
     if (chars.total >= 100 && chars.hidden / chars.total > 0.2) hit('no-invisible-content', `${Math.round((chars.hidden / chars.total) * 100)}% of the text`);
 
     // Icon tiles and repeats
-    const tiles = all.filter(({ el, rect, style }) => rect.width >= 28 && rect.width <= 72 && Math.abs(rect.width - rect.height) <= 4 && px(style.borderRadius) >= 6 && (parse(style.backgroundColor) || style.backgroundImage !== 'none') && el.querySelector('svg, img, i') && !own(el) && el.nextElementSibling && (/^H[1-5]$/.test(el.nextElementSibling.tagName) || el.nextElementSibling.querySelector?.('h1,h2,h3,h4,h5')));
+    // Above means above: a tile beside its heading in one row (flex, items-center) is an icon with a title, not a stack.
+    const headingAfter = (el) => (/^H[1-5]$/.test(el.nextElementSibling?.tagName ?? '') ? el.nextElementSibling : el.nextElementSibling?.querySelector?.('h1,h2,h3,h4,h5'));
+    const tiles = all.filter(({ el, rect, style }) => rect.width >= 28 && rect.width <= 72 && Math.abs(rect.width - rect.height) <= 4 && px(style.borderRadius) >= 6 && (parse(style.backgroundColor) || style.backgroundImage !== 'none') && el.querySelector('svg, img, i') && !own(el) && headingAfter(el) && rect.bottom <= headingAfter(el).getBoundingClientRect().top + 2 && !ignored('no-icon-tile-stack', el));
     if (tiles.length >= 2) hit('no-icon-tile-stack', `${tiles.length} tiles above headings`);
 
     // Calls to action that end in an arrow, as a glyph or an icon. One such link is fine; two different ones are a habit.
@@ -504,10 +624,11 @@ export function scanPage(designSystem, options = {}) {
         }
         return null;
     };
-    const arrowed = new Set();
+    // Label -> how often and where: one component repeated (the same "Try it free →" on 22 cards) is one finding.
+    const arrowed = new Map();
     for (const { el, style, rect, tag } of all) {
         const control = ['A', 'BUTTON'].includes(tag) || el.getAttribute('role') === 'button' || (tag === 'INPUT' && /^(submit|button)$/.test(el.type));
-        if (!control || rect.width < 8 || rect.height < 8 || rect.right <= 0 || rect.bottom <= 0 || rect.left >= vw || +style.opacity < 0.1 || el.closest('nav, [role="navigation"], .pagination')) continue;
+        if (!control || rect.width < 8 || rect.height < 8 || rect.right <= 0 || rect.bottom <= 0 || rect.left >= vw || +style.opacity < 0.1 || el.closest('nav, [role="navigation"], .pagination') || ignored('no-arrow-suffix', el)) continue;
         const label = tag === 'INPUT' ? el.value.replace(/\s+/g, ' ').trim() : text(el);
         const end = tag === 'INPUT' ? null : tail(el);
         // Material icons are a word drawn as a picture: arrow_forward.
@@ -515,9 +636,11 @@ export function scanPage(designSystem, options = {}) {
         const ligature = host && /material-(?:icons|symbols)/.test(host.getAttribute('class') ?? '') && /^(?:arrow_forward|arrow_right_alt|east)$/.test(host.textContent.trim());
         const words = ligature ? label.slice(0, -host.textContent.trim().length) : label.replace(ARROW, '');
         const icon = ligature || (end?.nodeType === 1 && ARROW_ICON.test(named(end))) || /(?:→|⟶|➜|➔|›|»|->)\s*["']$/.test(getComputedStyle(el, '::after').content);
-        if (/\p{L}/u.test(words) && (ARROW.test(label) || icon)) arrowed.add(label);
+        if (/\p{L}/u.test(words) && (ARROW.test(label) || icon)) arrowed.set(label, (arrowed.get(label) ?? 0) + 1);
     }
-    if (arrowed.size >= 2) hit('no-arrow-suffix', `${arrowed.size} calls to action: ${[...arrowed].slice(0, 3).map((label) => `"${short(label)}"`).join(', ')}`);
+    if (arrowed.size >= 2) {
+        for (const [label, total] of arrowed) hit('no-arrow-suffix', label, `Call to action ends in an arrow (${arrowed.size} different ones on the page): "${short(label)}"${total > 1 ? ` ×${total}` : ''}`);
+    }
 
     // Rhythm: one gap repeated everywhere.
     const gaps = {};
@@ -571,7 +694,7 @@ export function scanPage(designSystem, options = {}) {
             const next = other.getBoundingClientRect();
             return Math.min(box.right, next.right) - Math.max(box.left, next.left) > 1 && Math.min(box.bottom, next.bottom) - Math.max(box.top, next.top) > 1;
         });
-        if (over) hit('cell-holds-content', `${el.tagName.toLowerCase()} "${short(text(el))}"`, `Runs ${Math.round(out.past)} px past its column onto the next one: ${el.tagName.toLowerCase()} "${short(text(el))}"`);
+        if (over) hit('cell-holds-content', `${el.tagName.toLowerCase()} "${short(text(el))}"`, `Runs ${Math.round(out.past)} px past its column onto the next one: ${el.tagName.toLowerCase()} "${short(text(el))}"`, undefined, el);
     }
 
     // The default template: a centred headline with nothing beside or under it, then a row of three or four equal cards.
@@ -634,19 +757,41 @@ export function scanPage(designSystem, options = {}) {
     if (document.documentElement.scrollWidth > vw + 1 && spills && sideways) {
         // Name what sticks out, so the fix has a place to start: the outermost elements past the right edge (a Bootstrap
         // .row with gutters wider than its container's padding is the usual one). Fixed layers do not widen the page.
+        // A box marked as known is passed over here, so the two named are unmarked ones and one behind it still counts.
         const wide = [];
+        let marked = false;
         for (const el of document.body.querySelectorAll('*')) {
             if (wide.length >= 2) break;
             const box = el.getBoundingClientRect();
             if (box.right <= vw + 1 || box.width === 0 || wide.some((outer) => outer.contains(el)) || getComputedStyle(el).position === 'fixed' || (scopeList && !inside(el))) continue;
+            if (ignored('no-horizontal-overflow', el)) {
+                marked = true;
+                continue;
+            }
             let held = false;
             for (let node = el.parentElement; node && node !== document.body; node = node.parentElement) {
                 if (/(auto|scroll|hidden|clip)/.test(getComputedStyle(node).overflowX)) { held = true; break; }
             }
             if (!held) wide.push(el);
         }
+        // The deepest box inside each that still ends past the edge is the one to fix (a size-8 circle that pushes out of
+        // a FAQ button), unless the outer box is wide on its own. Marked children are passed over: an unmarked sibling
+        // that sticks out less is still the one to name. Null when all that sticks out inside is marked.
+        const deepest = (el) => {
+            for (let node = el; ;) {
+                if (/(auto|scroll|hidden|clip)/.test(getComputedStyle(node).overflowX)) return node;
+                const out = [...node.children].filter((child) => !SKIP.has(child.tagName) && getComputedStyle(child).position !== 'fixed').map((child) => ({ child, box: child.getBoundingClientRect() })).filter(({ box }) => box.right > vw + 1 && box.width > 0);
+                const next = out.filter(({ child }) => !ignored('no-horizontal-overflow', child)).sort((x, y) => y.box.right - x.box.right)[0];
+                if (!next) return out.length ? null : node;
+                node = next.child;
+            }
+        };
         const label = (el) => el.tagName.toLowerCase() + [...el.classList].slice(0, 3).map((name) => `.${name}`).join('');
-        hit('no-horizontal-overflow', `${document.documentElement.scrollWidth} px at ${vw} px${wide.length ? `: ${wide.map(label).join(', ')}` : ''}`);
+        const spots = wide.map((el) => ({ el, culprit: deepest(el) })).filter(({ culprit }) => culprit);
+        const culprits = spots.map(({ el, culprit }) => (culprit === el ? label(el) : `${label(culprit)} in ${label(el)}`));
+        // All of it marked as known on the page (data-ai-design-check-ignore): not reported. Nothing named at all (a
+        // pseudo-element, a text run) still is.
+        if (spots.length || (!wide.length && !marked)) hit('no-horizontal-overflow', `${document.documentElement.scrollWidth} px at ${vw} px${culprits.length ? `: ${culprits.join(', ')}` : ''}`);
     }
     for (const img of document.images) {
         if (!inside(img)) continue;
