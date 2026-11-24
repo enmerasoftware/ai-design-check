@@ -8,7 +8,7 @@
 
 Claude Code, Cursor ya da Codex ile geliştirenler için: 147 tasarım kuralı, bağımlılık ve API anahtarı gerektirmeyen bir
 denetçi ve ekranı onaran bir ajan becerisi. Web projelerini (React, Vue, Svelte, Laravel Blade, HTML; Tailwind, Bootstrap ya da düz CSS)
-ve SwiftUI, Jetpack Compose, Flutter, React Native uygulamalarını okur. Bulmak için ajan gerekmez, mekanik düzeltmeler için de gerekmez.
+ve SwiftUI (iOS ve macOS), Jetpack Compose, Flutter, React Native uygulamalarını okur. Bulmak için ajan gerekmez, mekanik düzeltmeler için de gerekmez.
 
 ## Üç adımda başlayın
 
@@ -205,6 +205,13 @@ ve `result.json` içinde (`testsChanged`) ayrıca listelenir.
 Uygulama klasörünü verin. SwiftUI ve Jetpack Compose okur: ölçek dışı boşluk (`spacing` ayarlı değilse 4 pt; `.padding(13)`, `10.dp`), ölçek dışı köşe,
 Dynamic Type'ı yok sayan sabit yazı, çok kalın başlık, mor gradyan, yapay zekâ için `sparkles`, metinde emoji, Her Kelimesi Büyük
 etiket, ağır gölge, büyük bulanıklık, sürekli dönen animasyon ve 44 pt / 48 dp altı dokunma alanı.
+
+Mac uygulaması Mac uygulaması olarak okunur. AppKit ya da Cocoa içe aktaran ya da AppKit görünümleri (`NSView`,
+`NSViewRepresentable`, `NSHostingView`) kullanan Swift dosyası, böyle bir dosya içeren Swift paket hedefi ve yalnızca macOS için
+derlenen projenin (`Package.swift` platformları, XcodeGen `project.yml`, `.xcodeproj` içindeki `SDKROOT`) bütün dosyaları,
+macOS'ta olmayan Dynamic Type'a bakmaz ve Apple'ın işaretçi ölçülerini kullanır: 20 pt altı hedef (varsayılan 28 pt) ve 10 pt
+altı yazı bildirilir. `#if os(…)` ile dallanan dosyalar ve iOS için de derlenen projeler iOS kurallarıyla okunur. Boşluk ve köşe
+ikisinde de aynı ölçeği kullanır.
 
 ```bash
 npx @enmera/ai-design-check Cebbin/Views
@@ -450,7 +457,7 @@ Kurallar [`rules.json`](rules.json) içinde: `id`, `area`, `severity`, `en` ve `
 - `class`: sınıf dizgisinde desen (ya da desen listesi); `unless`, `with`, `exceptElements`, `unlessBefore` ve `css` ile.
   `css` stil dosyalarında bir desendir ya da bildirim bildirim okunan girdilerdir (`property`, `value`, `scale`, `hue` ile
   `gradient`, `selector`, `unless`, `unlessRule`)
-- `native`: `swift` ve `kt` altında platform başına desen; `notMultipleOf`, `min`, `max`, `unlessBefore`, `unlessAfter`, `onlyIf` ile
+- `native`: `swift` ve `kt` altında platform başına desen (Mac uygulamasının Swift'i farklıysa `macos`, atlamak için `null`; bulgunun adı `message`); `notMultipleOf`, `min`, `max`, `unlessBefore`, `unlessAfter`, `onlyIf` ile
 - `regex`: yorumlar hariç kodda desen; `flags` ve `files` ile
 - ya da yapısal denetim
 

@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.17.0
+
+Mac apps are read as Mac apps. On the SwiftUI and AppKit code of a macOS terminal app, 0.16.3 reported 53 Dynamic Type
+findings and 12 touch-sized targets, none of which apply to the Mac.
+
+- **A Swift file knows its platform.** A file is a Mac file when it imports AppKit or Cocoa, uses AppKit views
+  (`NSView`, `NSViewRepresentable`, `NSHostingView`, `NSWindow` and the like; Foundation's `NSString` or `NSRange` do
+  not count), sits in a Swift package target (`Sources/<Target>`) where another file does, or belongs to a project that
+  builds only for macOS: `platforms` in `Package.swift`, `platform` in an XcodeGen `project.yml`, `SDKROOT` in the
+  `.xcodeproj`. A file that imports UIKit, branches with `#if os(…)` or `#if canImport(AppKit)`, or a project that also
+  builds for iOS keeps the iOS rules, as before.
+- **`dynamic-type`** is not checked on the Mac: macOS has no Dynamic Type.
+- **`tap-target`** uses Apple's pointer sizes on the Mac (HIG, Accessibility: 28×28 pt by default, 20×20 pt at the
+  least): a frame under 20 pt on a button is reported as a pointer target, not as a 44 pt finger target.
+- **`no-tiny-text`** reports Mac text under 10 pt, Apple's macOS minimum (HIG, Typography: 13 pt by default), instead
+  of iOS's 11 pt.
+- **Unchanged on purpose:** `spacing-scale` and `radius-scale` read the same SwiftUI `.padding`, `spacing:` and
+  `cornerRadius` values on both platforms; AppKit frame and layer arithmetic (`NSRect`, `layer.cornerRadius = …`,
+  `NSFont.systemFont(ofSize:)`) was never matched. The web rules do not change.
+- **Rule files:** a `native` entry may have a `macos` pattern for a Mac app's Swift (`null` turns the rule off there)
+  and a `message` that names the finding.
+
 ## 0.16.3
 
 Second round from the Searvia front end (92 addresses, three widths).

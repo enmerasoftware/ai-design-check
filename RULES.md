@@ -310,7 +310,7 @@
 
 `no-tiny-text` · warning · checked
 
-**Rule:** Text is at least 12 px; links, buttons and table cells at least 11 px.
+**Rule:** Text is at least 12 px; links, buttons and table cells at least 11 px. In a SwiftUI app at least 11 pt on iOS and 10 pt on the Mac, Apple's minimums.
 
 **Why:** Under that it is a legibility failure, whatever the screen.
 
@@ -1084,7 +1084,7 @@
 
 `dynamic-type` · warning · checked
 
-**Rule:** In SwiftUI, set text with text styles (.body, .headline, .caption) or a custom font with relativeTo, not a fixed .system(size:). Icons may use a fixed size.
+**Rule:** In SwiftUI, set text with text styles (.body, .headline, .caption) or a custom font with relativeTo, not a fixed .system(size:). Icons may use a fixed size. macOS has no Dynamic Type, so a Mac app's Swift is not checked for it.
 
 **Why:** A fixed size ignores the reader's text size setting, so people who need larger text cannot read the screen, and every screen ends up with its own ad hoc sizes.
 
@@ -1094,11 +1094,11 @@
 
 `tap-target` · warning · checked
 
-**Rule:** Anything that can be tapped is at least 44×44 pt on iOS, 48×48 dp on Android and 24×24 px on the web (44 px where you can). A small icon keeps its size; the area around it grows.
+**Rule:** Anything that can be tapped is at least 44×44 pt on iOS, 48×48 dp on Android and 24×24 px on the web (44 px where you can). A Mac app is used with a pointer: 20×20 pt at least, 28×28 pt by default (Apple HIG, Accessibility). A small icon keeps its size; the area around it grows.
 
 **Why:** A small target is missed and hits its neighbour, most of all for people with larger fingers, a tremor or one hand on a moving bus. Apple, Material and WCAG 2.2 (2.5.8) all set a minimum.
 
-**How to fix:** SwiftUI: keep the icon's frame and add .frame(minWidth: 44, minHeight: 44) or padding, then .contentShape(Rectangle()). Compose: use IconButton (48 dp) or Modifier.minimumInteractiveComponentSize(); put .size() after the padding, not on the clickable. Web: size-11/h-11 on icon buttons, or padding around the icon.
+**How to fix:** SwiftUI: keep the icon's frame and add .frame(minWidth: 44, minHeight: 44) or padding, then .contentShape(Rectangle()); on the Mac, .frame(minWidth: 28, minHeight: 28) (20 at the least). Compose: use IconButton (48 dp) or Modifier.minimumInteractiveComponentSize(); put .size() after the padding, not on the clickable. Web: size-11/h-11 on icon buttons, or padding around the icon.
 
 ### Never remove the focus ring without a replacement
 
