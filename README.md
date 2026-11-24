@@ -8,7 +8,7 @@
 
 For anyone building with Claude Code, Cursor or Codex: 147 design rules, a checker with no dependencies and no API key, and
 an agent skill that repairs the screen. It reads web projects (React, Vue, Svelte, Laravel Blade, HTML; Tailwind, Bootstrap or plain
-CSS) and SwiftUI, Jetpack Compose, Flutter and React Native apps. Finding needs no agent, and neither do the mechanical fixes.
+CSS) and SwiftUI (iOS and macOS), Jetpack Compose, Flutter and React Native apps. Finding needs no agent, and neither do the mechanical fixes.
 
 ## Start in three steps
 
@@ -199,6 +199,13 @@ for, the agent changes that test and names it; tests a pass changed are listed a
 Point it at the app folder. It reads SwiftUI and Jetpack Compose: spacing off the scale (4 pt unless `spacing` is set; `.padding(13)`, `10.dp`), radii
 off the scale, fixed text that ignores Dynamic Type, heavy headings, purple gradients, `sparkles` for AI, emoji in strings,
 Title Case labels, heavy shadows, big blurs, looping animations, and tap targets under 44 pt / 48 dp.
+
+A Mac app is read as a Mac app. A Swift file that imports AppKit or Cocoa or uses AppKit views (`NSView`, `NSViewRepresentable`,
+`NSHostingView`), a file in a Swift package target that does, and every file of a project that builds only for macOS
+(`Package.swift` platforms, XcodeGen `project.yml`, `SDKROOT` in the `.xcodeproj`) skip Dynamic Type, which macOS does not
+have, and use Apple's pointer sizes: targets under 20 pt are reported (28 pt is the default) and text under 10 pt. Files
+that branch with `#if os(…)` and projects that also build for iOS keep the iOS rules. Spacing and corners use the same
+scale on both.
 
 ```bash
 npx @enmera/ai-design-check Cebbin/Views
@@ -443,7 +450,7 @@ optional `check`:
 - `class`: a pattern on class strings (or a list of them), with `unless`, `with`, `exceptElements`, `unlessBefore`, and `css`:
   a pattern on stylesheets, or entries read declaration by declaration (`property`, `value`, `scale`, `gradient` with `hue`,
   `selector`, `unless`, `unlessRule`)
-- `native`: one pattern per platform under `swift` and `kt`, with `notMultipleOf`, `min`, `max`, `unlessBefore`, `unlessAfter`
+- `native`: one pattern per platform under `swift` and `kt` (`macos` for a Mac app's Swift when it differs, `null` to skip; `message` names the finding), with `notMultipleOf`, `min`, `max`, `unlessBefore`, `unlessAfter`
   and `onlyIf`
 - `regex`: a pattern on code with comments excluded, with `flags` and `files`
 - or a structural check

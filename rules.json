@@ -219,8 +219,8 @@
         "tr": "Dinamik yazı boyutuna uyan metin stilleri"
       },
       "rule": {
-        "en": "In SwiftUI, set text with text styles (.body, .headline, .caption) or a custom font with relativeTo, not a fixed .system(size:). Icons may use a fixed size.",
-        "tr": "SwiftUI'da metni metin stilleriyle (.body, .headline, .caption) ya da relativeTo ile özel yazı tipiyle verin, sabit .system(size:) ile değil. İkonlar sabit boyut kullanabilir."
+        "en": "In SwiftUI, set text with text styles (.body, .headline, .caption) or a custom font with relativeTo, not a fixed .system(size:). Icons may use a fixed size. macOS has no Dynamic Type, so a Mac app's Swift is not checked for it.",
+        "tr": "SwiftUI'da metni metin stilleriyle (.body, .headline, .caption) ya da relativeTo ile özel yazı tipiyle verin, sabit .system(size:) ile değil. İkonlar sabit boyut kullanabilir. macOS'ta Dynamic Type yoktur; Mac uygulamasının Swift kodu bu kurala göre denetlenmez."
       },
       "why": {
         "en": "A fixed size ignores the reader's text size setting, so people who need larger text cannot read the screen, and every screen ends up with its own ad hoc sizes.",
@@ -237,6 +237,7 @@
             "pattern": "\\.font\\(\\s*\\.system\\(\\s*size:\\s*([0-9.]+)(?![^)\\n]*relativeTo)",
             "unlessBefore": "Image\\((?:systemName:)?[^)\\n]*\\)\\s*(?:\\.[a-zA-Z]+\\([^()\\n]*\\)\\s*){0,3}$"
           },
+          "macos": null,
           "rn": "allowFontScaling=\\{\\s*false\\s*\\}",
           "dart": "textScaler:\\s*TextScaler\\.noScaling|textScaleFactor:\\s*1(?:\\.0)?\\b"
         }
@@ -816,16 +817,16 @@
         "tr": "Parmağa yetecek dokunma alanı"
       },
       "rule": {
-        "en": "Anything that can be tapped is at least 44×44 pt on iOS, 48×48 dp on Android and 24×24 px on the web (44 px where you can). A small icon keeps its size; the area around it grows.",
-        "tr": "Dokunulabilen her şey iOS'ta en az 44×44 pt, Android'de 48×48 dp, web'de 24×24 px'tir (olabildiğince 44 px). Küçük ikon boyutunu korur; çevresindeki alan büyür."
+        "en": "Anything that can be tapped is at least 44×44 pt on iOS, 48×48 dp on Android and 24×24 px on the web (44 px where you can). A Mac app is used with a pointer: 20×20 pt at least, 28×28 pt by default (Apple HIG, Accessibility). A small icon keeps its size; the area around it grows.",
+        "tr": "Dokunulabilen her şey iOS'ta en az 44×44 pt, Android'de 48×48 dp, web'de 24×24 px'tir (olabildiğince 44 px). Mac uygulaması işaretçiyle kullanılır: en az 20×20 pt, varsayılan 28×28 pt (Apple HIG, Erişilebilirlik). Küçük ikon boyutunu korur; çevresindeki alan büyür."
       },
       "why": {
         "en": "A small target is missed and hits its neighbour, most of all for people with larger fingers, a tremor or one hand on a moving bus. Apple, Material and WCAG 2.2 (2.5.8) all set a minimum.",
         "tr": "Küçük hedef ıskalanır ve yanındakine basılır; özellikle iri parmaklı, eli titreyen ya da hareket eden otobüste tek eliyle kullanan kişilerde. Apple, Material ve WCAG 2.2 (2.5.8) bir alt sınır koyar."
       },
       "fix": {
-        "en": "SwiftUI: keep the icon's frame and add .frame(minWidth: 44, minHeight: 44) or padding, then .contentShape(Rectangle()). Compose: use IconButton (48 dp) or Modifier.minimumInteractiveComponentSize(); put .size() after the padding, not on the clickable. Web: size-11/h-11 on icon buttons, or padding around the icon.",
-        "tr": "SwiftUI: ikonun çerçevesini koruyup .frame(minWidth: 44, minHeight: 44) ya da dolgu ekleyin, ardından .contentShape(Rectangle()). Compose: IconButton (48 dp) ya da Modifier.minimumInteractiveComponentSize() kullanın; .size()'ı tıklanan öğeye değil dolgudan sonraya koyun. Web: ikon düğmelerinde size-11/h-11 ya da ikonun çevresinde dolgu."
+        "en": "SwiftUI: keep the icon's frame and add .frame(minWidth: 44, minHeight: 44) or padding, then .contentShape(Rectangle()); on the Mac, .frame(minWidth: 28, minHeight: 28) (20 at the least). Compose: use IconButton (48 dp) or Modifier.minimumInteractiveComponentSize(); put .size() after the padding, not on the clickable. Web: size-11/h-11 on icon buttons, or padding around the icon.",
+        "tr": "SwiftUI: ikonun çerçevesini koruyup .frame(minWidth: 44, minHeight: 44) ya da dolgu ekleyin, ardından .contentShape(Rectangle()); Mac'te .frame(minWidth: 28, minHeight: 28) (en az 20). Compose: IconButton (48 dp) ya da Modifier.minimumInteractiveComponentSize() kullanın; .size()'ı tıklanan öğeye değil dolgudan sonraya koyun. Web: ikon düğmelerinde size-11/h-11 ya da ikonun çevresinde dolgu."
       },
       "check": {
         "type": "class",
@@ -840,6 +841,16 @@
               "after": "^(?:\\s*\\.[a-zA-Z]+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*\\.onTapGesture\\b"
             },
             "unlessAfter": "^(?:\\s*\\.[a-zA-Z]+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*\\.(?:padding|frame)\\("
+          },
+          "macos": {
+            "pattern": "\\.frame\\(\\s*(?:width:\\s*[0-9.]+\\s*,\\s*height|width|height):\\s*([0-9.]+)\\s*\\)",
+            "max": 20,
+            "onlyIf": {
+              "before": "(?:\\bButton\\s*(?:\\([^()]*\\))?\\s*\\{|\\blabel:\\s*\\{)[^{}]*$",
+              "after": "^(?:\\s*\\.[a-zA-Z]+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*\\.onTapGesture\\b"
+            },
+            "unlessAfter": "^(?:\\s*\\.[a-zA-Z]+\\((?:[^()]|\\([^()]*\\))*\\))*\\s*\\.(?:padding|frame)\\(",
+            "message": "Pointer target under 20 pt, the macOS minimum (28 pt by default)"
           },
           "kt": {
             "pattern": "\\.(?:size|height|requiredSize)\\(\\s*([0-9.]+)\\.dp\\s*\\)",
@@ -4207,8 +4218,8 @@
         "tr": "Minik yazı yok"
       },
       "rule": {
-        "en": "Text is at least 12 px; links, buttons and table cells at least 11 px.",
-        "tr": "Yazı en az 12 px; bağlantı, düğme ve tablo hücresi en az 11 px'tir."
+        "en": "Text is at least 12 px; links, buttons and table cells at least 11 px. In a SwiftUI app at least 11 pt on iOS and 10 pt on the Mac, Apple's minimums.",
+        "tr": "Yazı en az 12 px; bağlantı, düğme ve tablo hücresi en az 11 px'tir. SwiftUI uygulamasında iOS'ta en az 11 pt, Mac'te 10 pt; Apple'ın alt sınırları."
       },
       "why": {
         "en": "Under that it is a legibility failure, whatever the screen.",
@@ -4226,6 +4237,11 @@
           "swift": {
             "pattern": "\\.font\\(\\s*\\.system\\(\\s*size:\\s*([0-9]+(?:\\.[0-9]+)?)",
             "max": 11,
+            "unlessBefore": "Image\\((?:systemName:)?[^)\\n]*\\)\\s*(?:\\.[a-zA-Z]+\\([^()\\n]*\\)\\s*){0,3}$"
+          },
+          "macos": {
+            "pattern": "\\.font\\(\\s*\\.system\\(\\s*size:\\s*([0-9]+(?:\\.[0-9]+)?)",
+            "max": 10,
             "unlessBefore": "Image\\((?:systemName:)?[^)\\n]*\\)\\s*(?:\\.[a-zA-Z]+\\([^()\\n]*\\)\\s*){0,3}$"
           },
           "kt": {

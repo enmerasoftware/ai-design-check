@@ -6,7 +6,7 @@
 [![license: MIT](https://img.shields.io/npm/l/@enmera/ai-design-check)](LICENSE)
 [English](README.md) · [Türkçe](README.tr.md)
 
-Claude Code、Cursor、Codex で開発するすべての人へ。141 のデザインルール、依存関係も API キーも不要なチェッカー、そして画面を修復するエージェントスキルを提供します。Web プロジェクト（React、Vue、Svelte、Laravel Blade、HTML。Tailwind、Bootstrap、素の CSS のいずれでも）と、SwiftUI、Jetpack Compose、Flutter、React Native のアプリを読み取れます。問題の検出にエージェントは不要で、機械的な修正にも必要ありません。
+Claude Code、Cursor、Codex で開発するすべての人へ。141 のデザインルール、依存関係も API キーも不要なチェッカー、そして画面を修復するエージェントスキルを提供します。Web プロジェクト（React、Vue、Svelte、Laravel Blade、HTML。Tailwind、Bootstrap、素の CSS のいずれでも）と、SwiftUI（iOS と macOS）、Jetpack Compose、Flutter、React Native のアプリを読み取れます。問題の検出にエージェントは不要で、機械的な修正にも必要ありません。
 
 ## 3 ステップで始める
 
@@ -111,6 +111,8 @@ npx skills add enmerasoftware/ai-design-check
 ## モバイルアプリ
 
 アプリのフォルダーを指定してください。SwiftUI と Jetpack Compose を読み取り、スケールから外れた余白（`spacing` を設定しない限り 4 pt。例：`.padding(13)`、`10.dp`）、スケールから外れた角丸、Dynamic Type を無視した固定テキスト、太すぎる見出し、紫のグラデーション、AI を表す `sparkles`、文字列内の絵文字、タイトルケースのラベル、重い影、大きなぼかし、ループするアニメーション、44 pt / 48 dp 未満のタップ領域を検出します。
+
+Mac アプリは Mac アプリとして読み取ります。AppKit や Cocoa を import する Swift ファイル、AppKit のビュー（`NSView`、`NSViewRepresentable`、`NSHostingView`）を使うファイル、そのようなファイルを含む Swift パッケージのターゲット、macOS 専用にビルドされるプロジェクト（`Package.swift` の platforms、XcodeGen の `project.yml`、`.xcodeproj` の `SDKROOT`）のすべてのファイルでは、macOS にない Dynamic Type はチェックせず、Apple のポインター向けサイズを使います：20 pt 未満のターゲット（標準は 28 pt）と 10 pt 未満のテキストを報告します。`#if os(…)` で分岐するファイルや iOS 向けにもビルドされるプロジェクトは iOS のルールのままです。余白と角丸はどちらでも同じスケールを使います。
 
 ```bash
 npx @enmera/ai-design-check Cebbin/Views
@@ -301,7 +303,7 @@ npx @enmera/ai-design-check init     # write a config with the defaults
 ルールは [`rules.json`](rules.json) にあります：`id`、`area`、`severity`、そして `en` と `tr` の `title`、`rule`、`why`、`fix`、さらに任意の `check` です。
 
 - `class`：クラス文字列に対するパターン（またはその一覧）。`unless`、`with`、`exceptElements`、`unlessBefore`、`css` を指定できます。`css` はスタイルシートに対するパターン、または宣言ごとに読む項目（`property`、`value`、`scale`、`hue` 付きの `gradient`、`selector`、`unless`、`unlessRule`）です
-- `native`：`swift` と `kt` の下にプラットフォームごとに 1 つのパターン。`notMultipleOf`、`min`、`max`、`unlessBefore`、`unlessAfter`、`onlyIf` を指定できます
+- `native`：`swift` と `kt` の下にプラットフォームごとに 1 つのパターン（Mac アプリの Swift で異なる場合は `macos`、スキップするには `null`、指摘の名前は `message`）。`notMultipleOf`、`min`、`max`、`unlessBefore`、`unlessAfter`、`onlyIf` を指定できます
 - `regex`：コメントを除いたコードに対するパターン。`flags` と `files` を指定できます
 - または構造的なチェック
 

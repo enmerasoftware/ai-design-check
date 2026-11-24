@@ -310,7 +310,7 @@
 
 `no-tiny-text` · uyarı · denetlenir
 
-**Kural:** Yazı en az 12 px; bağlantı, düğme ve tablo hücresi en az 11 px'tir.
+**Kural:** Yazı en az 12 px; bağlantı, düğme ve tablo hücresi en az 11 px'tir. SwiftUI uygulamasında iOS'ta en az 11 pt, Mac'te 10 pt; Apple'ın alt sınırları.
 
 **Neden:** Bunun altı, ekran ne olursa olsun okunamazlıktır.
 
@@ -1084,7 +1084,7 @@
 
 `dynamic-type` · uyarı · denetlenir
 
-**Kural:** SwiftUI'da metni metin stilleriyle (.body, .headline, .caption) ya da relativeTo ile özel yazı tipiyle verin, sabit .system(size:) ile değil. İkonlar sabit boyut kullanabilir.
+**Kural:** SwiftUI'da metni metin stilleriyle (.body, .headline, .caption) ya da relativeTo ile özel yazı tipiyle verin, sabit .system(size:) ile değil. İkonlar sabit boyut kullanabilir. macOS'ta Dynamic Type yoktur; Mac uygulamasının Swift kodu bu kurala göre denetlenmez.
 
 **Neden:** Sabit boyut, kullanıcının yazı boyutu ayarını yok sayar: büyük yazıya ihtiyacı olan ekranı okuyamaz ve her ekran kendi gelişigüzel boyutlarına sahip olur.
 
@@ -1094,11 +1094,11 @@
 
 `tap-target` · uyarı · denetlenir
 
-**Kural:** Dokunulabilen her şey iOS'ta en az 44×44 pt, Android'de 48×48 dp, web'de 24×24 px'tir (olabildiğince 44 px). Küçük ikon boyutunu korur; çevresindeki alan büyür.
+**Kural:** Dokunulabilen her şey iOS'ta en az 44×44 pt, Android'de 48×48 dp, web'de 24×24 px'tir (olabildiğince 44 px). Mac uygulaması işaretçiyle kullanılır: en az 20×20 pt, varsayılan 28×28 pt (Apple HIG, Erişilebilirlik). Küçük ikon boyutunu korur; çevresindeki alan büyür.
 
 **Neden:** Küçük hedef ıskalanır ve yanındakine basılır; özellikle iri parmaklı, eli titreyen ya da hareket eden otobüste tek eliyle kullanan kişilerde. Apple, Material ve WCAG 2.2 (2.5.8) bir alt sınır koyar.
 
-**Nasıl düzeltilir:** SwiftUI: ikonun çerçevesini koruyup .frame(minWidth: 44, minHeight: 44) ya da dolgu ekleyin, ardından .contentShape(Rectangle()). Compose: IconButton (48 dp) ya da Modifier.minimumInteractiveComponentSize() kullanın; .size()'ı tıklanan öğeye değil dolgudan sonraya koyun. Web: ikon düğmelerinde size-11/h-11 ya da ikonun çevresinde dolgu.
+**Nasıl düzeltilir:** SwiftUI: ikonun çerçevesini koruyup .frame(minWidth: 44, minHeight: 44) ya da dolgu ekleyin, ardından .contentShape(Rectangle()); Mac'te .frame(minWidth: 28, minHeight: 28) (en az 20). Compose: IconButton (48 dp) ya da Modifier.minimumInteractiveComponentSize() kullanın; .size()'ı tıklanan öğeye değil dolgudan sonraya koyun. Web: ikon düğmelerinde size-11/h-11 ya da ikonun çevresinde dolgu.
 
 ### Odak halkası yerine yenisi konmadan kaldırılmaz
 

@@ -6,6 +6,7 @@ import { CLASS_FUNCTIONS, balancedEnd, blankComments, classUnits, literals, toke
 import { cssHits, markupSheet, scssAsCss } from './css.js';
 import { children, parseAttrs, readTag, tags, visibleText } from './jsx.js';
 import { LOOKS } from './looks.js';
+import { swiftPlatform } from './platform.js';
 import { RADIUS_STEPS, describeScale, onRadiusScale, onScale, readScales } from './spacing.js';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -774,6 +775,8 @@ export function check(cwd, overrides = {}) {
     const groups = new Map();
     // Shared by every file of the run: components are looked through across files, each culprit named once.
     const chain = { cwd, ignore: config.ignore, files: new Map(), seen: new Set(), ignores: new Map() };
+    // Project manifests and Swift package targets, read once per run.
+    const platforms = { projects: new Map(), modules: new Map() };
 
     for (const path of files) {
         let extension = extensionOf(path);
@@ -789,7 +792,10 @@ export function check(cwd, overrides = {}) {
         const source = markup ? blankMarkupComments(raw) : raw;
         const reactNative = SCRIPT.includes(extension) && REACT_NATIVE.test(source);
         const platform = reactNative ? 'rn' : extension;
-        const nativeFor = NATIVE.includes(extension) || reactNative ? active.filter((rule) => rule.check.native?.[platform]) : [];
+        // A Mac app's Swift is read with a rule's macos entry when it has one (null: the rule does not apply on the Mac).
+        const mac = extension === 'swift' && swiftPlatform(cwd, path, raw, platforms) === 'macos';
+        const nativeKey = (rule) => (mac && 'macos' in rule.check.native ? 'macos' : platform);
+        const nativeFor = NATIVE.includes(extension) || reactNative ? active.filter((rule) => rule.check.native && rule.check.native[nativeKey(rule)]) : [];
 
         if (markup) {
             for (const unit of classUnits(source, config.classFunctions)) {
@@ -870,7 +876,7 @@ export function check(cwd, overrides = {}) {
         // Code rules read code and copy, not comments (inline ignores were read above, before blanking).
         const code = ['tsx', 'jsx', 'ts', 'js', 'vue', 'svelte', 'css', 'scss', ...NATIVE].includes(extension) ? blankComments(source, extension !== 'css') : source;
         // Native rules: one pattern per platform; group 1 is the number when the rule checks a scale or a limit.
-        for (const rule of nativeFor) for (const entry of [rule.check.native[platform]].flat()) {
+        for (const rule of nativeFor) for (const entry of [rule.check.native[nativeKey(rule)]].flat()) {
             const native = typeof entry === 'string' ? { pattern: entry } : entry;
             for (const match of code.matchAll(new RegExp(native.pattern, `gmu${native.flags ?? ''}`))) {
                 const number = Number(match[1]);
@@ -887,7 +893,7 @@ export function check(cwd, overrides = {}) {
                 if (native.onlyIf && !((native.onlyIf.before && new RegExp(native.onlyIf.before, 'u').test(before)) || (native.onlyIf.after && new RegExp(native.onlyIf.after, 'u').test(after)))) continue;
                 // A corner of half the box's width is a circle, not a guess.
                 if (native.unlessCircle && new RegExp(`\\b(?:width|height|size)\\s*[:=(]\\s*${number * 2}\\b`).test(before.slice(-120) + after.slice(0, 120))) continue;
-                const finding = report(rule.id, path, lineOf(source, match.index), match[0].trim(), native.scale ? `Off the spacing scale, ${describeScale(spacing().native, 'pt/dp')}: ${match[0].trim()}` : `${rule.title.en}: ${match[0].trim()}`);
+                const finding = report(rule.id, path, lineOf(source, match.index), match[0].trim(), native.scale ? `Off the spacing scale, ${describeScale(spacing().native, 'pt/dp')}: ${match[0].trim()}` : `${native.message ?? rule.title.en}: ${match[0].trim()}`);
                 if (finding) Object.defineProperty(finding, 'offset', { value: match.index });
             }
         }
